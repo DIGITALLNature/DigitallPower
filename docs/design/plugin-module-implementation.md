@@ -112,7 +112,7 @@ deployment; package-specific behavior is limited to upload and resolution of ser
 assembly/type records. This core is not wired to commands until P8.
 Cross-resource features not yet implemented are explicitly rejected instead of ignored.
 Platform-only stages remain outside declarative step cleanup and block type/assembly deletion
-until their owning association phase is supported.
+until their lifecycle is verified.
 
 Test the production use case, not a duplicate test pipeline. Establish zero-write dry-run,
 unchanged repeat deployment, ambiguity rejection, preserved configuration on updates,
@@ -138,8 +138,9 @@ create duplicate active registrations or delete still-referenced types.
 Selected recovery boundary: at most two same-name standalone records, exactly one in the
 desired major/minor train, with target content matching the requested artifact. The hash
 check is a provisional conservative guard, not proof of a failed push. More/duplicate trains,
-content mismatch, and ambiguous step candidates fail. Identity/provider/API dependencies
-and platform-only steps block cleanup until their relevant phases are implemented.
+content mismatch, and ambiguous step candidates fail. Identity/provider dependencies
+and platform-only steps block cleanup until their lifecycles are supported and verified.
+Custom API associations are reassigned or unlinked before cleanup by the shared P5 slice.
 
 ## P4: Add package deployment
 
@@ -197,6 +198,17 @@ The guarded package subset does not complete P4. Keep these requirements explici
 
 Implement Custom API linking/unlinking within agreed ownership, identity compatibility
 checks, conflict rejection for package declarations, and documented omission semantics.
+
+The Custom API slice uses shared flat `CustomApiChange` decisions for standalone/package
+deployment. Explicit declarations authorize handler reassignment, including from outside
+the target; omission unlinks only APIs currently handled by target-owned types. API records
+are external prerequisites and never created/deleted. Duplicate declarations across a target
+and missing/ambiguous API records fail during preparation. Links resolve against assembly-scoped
+type IDs and execute before registration/type cleanup. Package-wide omission calculation avoids
+unlinking an API that moves to another assembly in the same package.
+The preview shows link/reassign/unlink/unchanged associations and counts handler reassignment
+and unlinking as destructive changes. Retry reconciles completed association writes.
+Identity and solution membership are still pending; this does not complete P5 or wire the CLI.
 
 Ensure requested solution membership without removing unrelated memberships.
 Preview unsupported membership explicitly or fail according to the agreed policy.

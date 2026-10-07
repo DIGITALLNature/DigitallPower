@@ -37,7 +37,9 @@ create/attribute-update/removal. Matching IDs and fields
 outside the SDK registration payload, including configuration associations, enabled state,
 and impersonation, are retained.
 
-Unsupported identity/provider/API declarations and existing linked APIs fail explicitly.
+Unsupported identity/provider declarations fail explicitly. Custom API associations use
+shared target-wide preparation and application; see
+[Custom API ownership](decision-plugin-custom-api-ownership.md).
 Superseded assembly identity associations, platform-only steps on deleted types, and
 provider references to deleted types also block replacement/cleanup. These guards prevent an incomplete replacement
 slice from applying an apparently successful partial deployment. No solution option or
@@ -76,7 +78,8 @@ Preparation/application separation is not a transaction or concurrency guarantee
 The diff accepts a destination snapshot and optional replacement-source snapshot. It selects
 step candidates across both for each exact CLR type name, then calculates changes once.
 Any matching old step becomes a write against its existing ID and the destination type.
-Old types and assembly are removed only after step/image writes and obsolete-step cleanup.
+Old types and assembly are removed only after step/image writes, Custom API associations,
+and obsolete-step cleanup.
 No separate migration patching is used.
 
 Two-assembly recovery permits exactly one desired major/minor train and one other same-name
@@ -96,7 +99,7 @@ still require live verification.
 ## Reused remote access
 
 `DataverseQueryReader` collects all pages and forwards paging cookies. Assembly lookup,
-type lists, step lists, and image lists use it, so reconciliation is not based on truncated
+type lists, step lists, image lists, and Custom API lookups use it, so reconciliation is not based on truncated
 first-page state. These shared read improvements also apply to the currently wired core.
 
 Tests invoke the replacement use case and renderer directly rather than maintaining a

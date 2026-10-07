@@ -43,6 +43,40 @@ public class CustomApiRepositoryTests
     }
 
     [Test]
+    public async Task FindIdByUniqueNameAsync_DuplicateMatches_RejectsAmbiguity()
+    {
+        var service = CreateService();
+        service.Create(new CustomAPI { UniqueName = "new_Api" });
+        service.Create(new CustomAPI { UniqueName = "new_Api" });
+
+        await Assert.That(async () => await new CustomApiRepository(service).FindIdByUniqueNameAsync("new_Api")).ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task FindIdByUniqueNameAsync_MatchesAcrossPages_RejectsAmbiguity()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        await Assert.That(async () => await new CustomApiRepository(service).FindIdByUniqueNameAsync("new_Api")).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, (string?)null, 5000), (2, "next-page", 5000)]);
+    }
+
+    [Test]
+    public async Task ListLinkedToPluginTypeAsync_MultiplePages_ReadsEveryPage()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        var result = await new CustomApiRepository(service).ListLinkedToPluginTypeAsync(Guid.NewGuid());
+
+        await Assert.That(result).Count().IsEqualTo(2);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, (string?)null, 5000), (2, "next-page", 5000)]);
+    }
+
+    [Test]
     public async Task ListLinkedToPluginTypeAsync_ReturnsOnlyLinkedApis()
     {
         var service = CreateService();

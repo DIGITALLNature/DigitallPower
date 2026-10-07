@@ -311,11 +311,15 @@ public class StandaloneReplacementTests
     }
 
     [Test]
-    public async Task Prepare_CustomApiReferencesOldType_BlocksUntilAssociationPhase()
+    public async Task Apply_OmittedCustomApiOnOldType_UnlinksBeforeCleanup()
     {
         var (service, _, typeId, _, _) = Seed();
-        service.Create(new CustomAPI(Guid.NewGuid()) { UniqueName = "my_api", PluginTypeId = new EntityReference("plugintype", typeId) });
+        var apiId = service.Create(new CustomAPI(Guid.NewGuid()) { UniqueName = "my_api", PluginTypeId = new EntityReference("plugintype", typeId) });
 
-        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
+
+        await Assert.That(service.Retrieve(CustomAPI.EntityLogicalName, apiId, new ColumnSet(true)).ToEntity<CustomAPI>().PluginTypeId).IsNull();
+        await Assert.That(All(service, PluginType.EntityLogicalName).Any(type => type.Id == typeId)).IsFalse();
     }
 }

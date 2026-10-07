@@ -867,6 +867,7 @@ Data providers appear in a separate tree after the package or assembly tree; han
 reference plugin types rather than nesting the provider beneath them.
 `--dry-run` stops after rendering the plan. Missing declared Custom APIs and unresolved step
 messages fail before Dataverse changes occur.
+Custom API unique names must resolve to exactly one record; ambiguous matches are rejected.
 `--confirm` prompts after each target plan in interactive sessions; declining leaves that target
 unchanged. Non-interactive and CI execution suppress the prompt.
 For assembly upgrades, the tree represents the effective replacement-assembly state, including

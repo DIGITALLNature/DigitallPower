@@ -30,11 +30,12 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
     private async Task<StandaloneDeploymentChanges> PrepareCoreAsync(LocalAssembly desired, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (desired.ManagedIdentityClientId is not null || desired.PluginTypes.Any(type => type.CustomApi.Length > 0 || type.DataProviders.Count > 0))
+        if (desired.ManagedIdentityClientId is not null || desired.PluginTypes.Any(type => type.DataProviders.Count > 0))
         {
-            throw new NotSupportedException("The replacement standalone core does not yet support identity, Custom API, or provider declarations.");
+            throw new NotSupportedException("The replacement standalone core does not yet support identity or provider declarations.");
         }
 
+        ValidateCustomApiDeclarations([desired]);
         // Validate the whole local target before remote reads or resolving individual operations.
         RegistrationDiff.Compare(desired.PluginTypes, new RegistrationSnapshot([], new Dictionary<Guid, IReadOnlyList<RemotePluginStep>>(),
             new Dictionary<Guid, IReadOnlyList<RemotePluginStepImage>>()));
@@ -97,8 +98,11 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             messages.Add((write.TypeName, step), message ?? throw new UnresolvedPluginStepMessageException(step.Name, step.MessageName, step.PrimaryEntityName));
         }
 
+        var customApis = await PrepareCustomApisAsync([desired], [.. snapshot.Types, .. oldSnapshot.Types],
+            changes.ExistingTypeIds.ToDictionary(pair => new PluginTypeReference(desired.Name, pair.Key), pair => pair.Value), cancellationToken);
         return new StandaloneDeploymentChanges(desired, existing?.Id,
-            existing is not null && !string.Equals(desired.ContentHash, existing.ContentHash, StringComparison.OrdinalIgnoreCase), changes, messages, assemblies, superseded);
+            existing is not null && !string.Equals(desired.ContentHash, existing.ContentHash, StringComparison.OrdinalIgnoreCase),
+            changes, messages, assemblies, superseded, customApis);
     }
 
     private async Task<RegistrationSnapshot> LoadSnapshotAsync(Guid? assemblyId, CancellationToken cancellationToken)
@@ -108,11 +112,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var imagesByStep = new Dictionary<Guid, IReadOnlyList<RemotePluginStepImage>>();
         foreach (var type in types)
         {
-            if ((await _apis.ListLinkedToPluginTypeAsync(type.Id, cancellationToken)).Count > 0)
-            {
-                throw new NotSupportedException("Existing Custom API associations require the association phase, which is not implemented yet.");
-            }
-
             var steps = await _steps.ListByPluginTypeAsync(type.Id, cancellationToken);
             stepsByType.Add(type.Id, steps);
             foreach (var step in steps.Where(step => LocalPluginStepValidator.IsDeclarativeStage(step.Stage)))
@@ -150,7 +149,10 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             Report(PluginDeploymentOperation.Updated, "assembly", changes.Desired.Identity);
         }
 
-        await ApplyRegistrationsAsync(changes.Registrations, changes.Messages, assemblyId, progress, cancellationToken);
+        var typeIds = await ApplyRegistrationsAsync(changes.Registrations, changes.Messages, assemblyId, progress, cancellationToken);
+        await ApplyCustomApisAsync(changes.CustomApis,
+            typeIds.ToDictionary(pair => new PluginTypeReference(changes.Desired.Name, pair.Key), pair => pair.Value), progress, cancellationToken);
+        await CleanupRegistrationsAsync(changes.Registrations, progress, cancellationToken);
 
         if (changes.AssemblyToDelete is { } oldAssembly)
         {
@@ -169,7 +171,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             progress?.Invoke(new PluginDeploymentProgress(operation, resource, name));
     }
 
-    private async Task ApplyRegistrationsAsync(RegistrationChanges registrations,
+    private async Task<IReadOnlyDictionary<string, Guid>> ApplyRegistrationsAsync(RegistrationChanges registrations,
         IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> messages,
         Guid assemblyId, Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
     {
@@ -217,6 +219,15 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
         }
 
+        return typeIds;
+
+        void Report(PluginDeploymentOperation operation, string resource, string name) =>
+            progress?.Invoke(new PluginDeploymentProgress(operation, resource, name));
+    }
+
+    private async Task CleanupRegistrationsAsync(RegistrationChanges registrations,
+        Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
+    {
         foreach (var image in registrations.ImagesToDelete)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -238,7 +249,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             if ((await _types.GetDependentStepIdsAsync(type.Id, cancellationToken)).Count > 0 ||
                 (await _apis.ListLinkedToPluginTypeAsync(type.Id, cancellationToken)).Count > 0)
             {
-                throw new InvalidOperationException($"Plugin type '{type.TypeName}' still has dependent SDK steps; cleanup stopped.");
+                throw new InvalidOperationException($"Plugin type '{type.TypeName}' still has dependent SDK steps or Custom API associations; cleanup stopped.");
             }
 
             await _types.DeleteAsync(type.Id, cancellationToken);
@@ -282,11 +293,12 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             throw new AssemblyException("Plugin assembly names must be unique within the package.");
         }
 
+        ValidateCustomApiDeclarations(desired.Assemblies);
         foreach (var assembly in desired.Assemblies)
         {
-            if (assembly.ManagedIdentityClientId is not null || assembly.PluginTypes.Any(type => type.CustomApi.Length > 0 || type.DataProviders.Count > 0))
+            if (assembly.ManagedIdentityClientId is not null || assembly.PluginTypes.Any(type => type.DataProviders.Count > 0))
             {
-                throw new NotSupportedException("The replacement package core does not yet support identity, Custom API, or provider declarations.");
+                throw new NotSupportedException("The replacement package core does not yet support identity or provider declarations.");
             }
 
             RegistrationDiff.Compare(assembly.PluginTypes, new RegistrationSnapshot([], new Dictionary<Guid, IReadOnlyList<RemotePluginStep>>(),
@@ -318,10 +330,13 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         }
 
         var assemblies = new List<PackageAssemblyChanges>();
+        var ownedTypes = new List<RemotePluginType>();
+        var existingTypeIds = new Dictionary<PluginTypeReference, Guid>();
         foreach (var assembly in desired.Assemblies)
         {
             var remote = remoteAssemblies.SingleOrDefault(candidate => string.Equals(candidate.Name, assembly.Name, StringComparison.OrdinalIgnoreCase));
             var snapshot = await LoadSnapshotAsync(remote?.Id, cancellationToken);
+            ownedTypes.AddRange(snapshot.Types);
             var registrations = RegistrationDiff.Compare(assembly.PluginTypes, snapshot);
             if (registrations.TypesToDelete.Count > 0)
             {
@@ -341,10 +356,16 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
 
             assemblies.Add(new PackageAssemblyChanges(assembly, remote, registrations, messages));
+            foreach (var (typeName, id) in registrations.ExistingTypeIds)
+            {
+                existingTypeIds.Add(new PluginTypeReference(assembly.Name, typeName), id);
+            }
         }
 
+        var customApis = await PrepareCustomApisAsync(desired.Assemblies, ownedTypes, existingTypeIds, cancellationToken);
         return new PackageDeploymentChanges(desired, name, existing,
-            existing is not null && !string.Equals(existing.PackageHash, desired.Package.PackageHash, StringComparison.OrdinalIgnoreCase), remoteAssemblies, assemblies);
+            existing is not null && !string.Equals(existing.PackageHash, desired.Package.PackageHash, StringComparison.OrdinalIgnoreCase),
+            remoteAssemblies, assemblies, customApis);
     }
 
     internal Task<Guid> ApplyPackageAsync(PackageDeploymentChanges changes, Action<PluginDeploymentProgress>? progress = null, CancellationToken cancellationToken = default)
@@ -442,6 +463,82 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             await ApplyRegistrationsAsync(assembly.Registrations, assembly.Changes.Messages, assembly.AssemblyId, progress, cancellationToken);
         }
 
+        var resolvedTypeIds = resolved.SelectMany(assembly => assembly.Registrations.ExistingTypeIds.Select(pair =>
+            new KeyValuePair<PluginTypeReference, Guid>(new PluginTypeReference(assembly.Changes.Desired.Name, pair.Key), pair.Value))).ToDictionary();
+        await ApplyCustomApisAsync(changes.CustomApis, resolvedTypeIds, progress, cancellationToken);
+        foreach (var assembly in resolved)
+        {
+            await CleanupRegistrationsAsync(assembly.Registrations, progress, cancellationToken);
+        }
+
         return packageId;
+    }
+
+    private static void ValidateCustomApiDeclarations(IReadOnlyList<LocalAssembly> desired)
+    {
+        var duplicate = desired.SelectMany(assembly => assembly.PluginTypes)
+            .Where(type => type.CustomApi.Length > 0)
+            .GroupBy(type => type.CustomApi, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(group => group.Count() > 1);
+        if (duplicate is not null)
+        {
+            throw new InvalidOperationException($"Custom API '{duplicate.Key}' is declared by multiple plugin types in the deployment target.");
+        }
+    }
+
+    private async Task<IReadOnlyList<CustomApiChange>> PrepareCustomApisAsync(IReadOnlyList<LocalAssembly> desired,
+        IReadOnlyList<RemotePluginType> ownedTypes, Dictionary<PluginTypeReference, Guid> existingTypeIds,
+        CancellationToken cancellationToken)
+    {
+        var changes = new List<CustomApiChange>();
+        var declaredIds = new HashSet<Guid>();
+        foreach (var assembly in desired)
+        {
+            foreach (var type in assembly.PluginTypes.Where(type => type.CustomApi.Length > 0))
+            {
+                var api = await _apis.FindByUniqueNameAsync(type.CustomApi, cancellationToken) ??
+                    throw new MissingCustomApiException(type.CustomApi);
+                declaredIds.Add(api.Id);
+                var handler = new PluginTypeReference(assembly.Name, type.TypeName);
+                if (!existingTypeIds.TryGetValue(handler, out var id) || api.PluginTypeId != id)
+                {
+                    changes.Add(new CustomApiChange(api.Id, type.CustomApi, handler, api.PluginTypeId));
+                }
+            }
+        }
+
+        var omittedIds = new HashSet<Guid>();
+        foreach (var type in ownedTypes)
+        {
+            foreach (var api in await _apis.ListAssociationsAsync(type.Id, cancellationToken))
+            {
+                if (!declaredIds.Contains(api.Id) && omittedIds.Add(api.Id))
+                {
+                    changes.Add(new CustomApiChange(api.Id, api.Name, null, type.Id));
+                }
+            }
+        }
+
+        return changes;
+    }
+
+    private async Task ApplyCustomApisAsync(IReadOnlyList<CustomApiChange> changes,
+        Dictionary<PluginTypeReference, Guid> typeIds,
+        Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
+    {
+        foreach (var change in changes)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (change.Handler is { } handler)
+            {
+                await _apis.LinkPluginTypeAsync(change.Id, typeIds[handler], cancellationToken);
+            }
+            else
+            {
+                await _apis.UnlinkPluginTypeAsync(change.Id, cancellationToken);
+            }
+
+            progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Updated, "Custom API", change.Name));
+        }
     }
 }

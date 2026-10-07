@@ -15,7 +15,19 @@ internal sealed record StandaloneDeploymentChanges(
     RegistrationChanges Registrations,
     IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> Messages,
     IReadOnlyList<RemoteAssembly> ExpectedAssemblies,
-    RemoteAssembly? AssemblyToDelete)
+    RemoteAssembly? AssemblyToDelete,
+    IReadOnlyList<CustomApiChange> CustomApis)
 {
-    internal bool HasChanges => ExistingAssemblyId is null || UpdateContent || Registrations.HasChanges || AssemblyToDelete is not null;
+    internal bool HasChanges
+    {
+        get
+        {
+            if (ExistingAssemblyId is null || UpdateContent || AssemblyToDelete is not null)
+            {
+                return true;
+            }
+
+            return Registrations.HasChanges || CustomApis.Count > 0;
+        }
+    }
 }

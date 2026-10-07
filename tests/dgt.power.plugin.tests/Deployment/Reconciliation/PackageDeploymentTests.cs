@@ -9,6 +9,7 @@ using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Reconciliation;
+using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.tests.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
@@ -56,6 +57,124 @@ public class PackageDeploymentTests
 
     private static IReadOnlyList<Entity> All(FakeOrganizationServiceAsync service, string entityName) =>
         service.RetrieveMultiple(new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) }).Entities;
+
+    [Test]
+    public async Task Apply_CustomApisWithSameClrTypeAcrossAssemblies_UsesScopedHandlers()
+    {
+        const string firstApi = "new_First";
+        const string secondApi = "new_Second";
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("Shared.Plugin") with { CustomApi = firstApi }),
+            Assembly("Second", CreateLocalType("Shared.Plugin") with { CustomApi = secondApi }));
+        var store = CreateStore();
+        var firstId = store.Create(new CustomAPI { UniqueName = firstApi });
+        var secondId = store.Create(new CustomAPI { UniqueName = secondApi });
+        var deployment = new PluginDeployment(new PackageUploadService(store, desired));
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        using var console = new TestConsole();
+        new DeploymentRenderer(console).RenderPackage(changes);
+
+        await Assert.That(console.Output).Contains(firstApi);
+        await Assert.That(console.Output).Contains(secondApi);
+        await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(0);
+        await deployment.ApplyPackageAsync(changes);
+
+        var types = All(store, PluginType.EntityLogicalName);
+        var assemblies = All(store, PluginAssembly.EntityLogicalName);
+        foreach (var (name, apiId) in new[] { ("First", firstId), ("Second", secondId) })
+        {
+            var assemblyId = assemblies.Single(assembly => assembly.GetAttributeValue<string>("name") == name).Id;
+            var typeId = types.Single(type => type.GetAttributeValue<EntityReference>("pluginassemblyid").Id == assemblyId).Id;
+            await Assert.That(store.Retrieve(CustomAPI.EntityLogicalName, apiId, new ColumnSet(true)).ToEntity<CustomAPI>().PluginTypeId!.Id).IsEqualTo(typeId);
+        }
+
+        await Assert.That((await deployment.PreparePackageAsync(desired, "new")).HasChanges).IsFalse();
+    }
+
+    [Test]
+    public async Task Apply_ApiMovesBetweenExistingPackageTypes_ReassignsWithoutUnlinkingItAgain()
+    {
+        var first = CreateLocalType("Shared.Plugin") with { CustomApi = "new_Api" };
+        var second = CreateLocalType("Shared.Plugin");
+        var original = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", first), Assembly("Second", second));
+        var store = CreateStore();
+        var apiId = store.Create(new CustomAPI { UniqueName = "new_Api" });
+        var omittedId = store.Create(new CustomAPI { UniqueName = "new_Omitted" });
+        var service = new PackageUploadService(store, original);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(original, "new"));
+        var oldHandler = store.Retrieve(CustomAPI.EntityLogicalName, apiId, new ColumnSet(true)).ToEntity<CustomAPI>().PluginTypeId!;
+        store.Update(new CustomAPI(omittedId) { PluginTypeId = oldHandler });
+        var desired = original with
+        {
+            Assemblies = [Assembly("First", first with { CustomApi = string.Empty }), Assembly("Second", second with { CustomApi = "new_Api" })]
+        };
+
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
+
+        var newHandler = store.Retrieve(CustomAPI.EntityLogicalName, apiId, new ColumnSet(true)).ToEntity<CustomAPI>().PluginTypeId;
+        await Assert.That(newHandler).IsNotNull();
+        await Assert.That(newHandler!.Id).IsNotEqualTo(oldHandler.Id);
+        await Assert.That(store.Retrieve(CustomAPI.EntityLogicalName, omittedId, new ColumnSet(true)).ToEntity<CustomAPI>().PluginTypeId).IsNull();
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+        await Assert.That((await deployment.PreparePackageAsync(desired, "new")).HasChanges).IsFalse();
+    }
+
+    [Test]
+    public async Task Prepare_DuplicateApiAcrossAssemblies_RejectsBeforeUpload()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin") with { CustomApi = "new_Api" }),
+            Assembly("Second", CreateLocalType("Second.Plugin") with { CustomApi = "NEW_API" }));
+        var store = CreateStore();
+        store.Create(new CustomAPI { UniqueName = "new_Api" });
+        var service = new PackageUploadService(store, desired);
+
+        await Assert.That(async () => await new PluginDeployment(service).PreparePackageAsync(desired, "new")).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(service.UploadCount).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Prepare_MissingApiInLaterAssembly_RejectsBeforeAnyUpload()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin") with { CustomApi = "new_Api" }),
+            Assembly("Second", CreateLocalType("Second.Plugin") with { CustomApi = "new_Missing" }));
+        var store = CreateStore();
+        var apiId = store.Create(new CustomAPI { UniqueName = "new_Api" });
+        var service = new PackageUploadService(store, desired);
+
+        await Assert.That(async () => await new PluginDeployment(service).PreparePackageAsync(desired, "new")).ThrowsExactly<MissingCustomApiException>();
+        await Assert.That(service.UploadCount).IsEqualTo(0);
+        await Assert.That(store.Retrieve(CustomAPI.EntityLogicalName, apiId, new ColumnSet(true)).ToEntity<CustomAPI>().PluginTypeId).IsNull();
+    }
+
+    [Test]
+    public async Task Apply_InterruptedApiLink_RetryReusesPackageAndAssociation()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin") with { CustomApi = "new_Api" }));
+        var store = CreateStore();
+        var apiId = store.Create(new CustomAPI { UniqueName = "new_Api" });
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+
+        await Assert.That(async () => await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"), progress =>
+        {
+            if (progress.Resource == "Custom API")
+            {
+                throw new InvalidOperationException("Interrupted after linking.");
+            }
+        })).ThrowsExactly<InvalidOperationException>();
+        var retry = await deployment.PreparePackageAsync(desired, "new");
+        var writes = new List<PluginDeploymentProgress>();
+        await deployment.ApplyPackageAsync(retry, writes.Add);
+
+        await Assert.That(retry.HasChanges).IsFalse();
+        await Assert.That(writes).IsEmpty();
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+        await Assert.That(store.Retrieve(CustomAPI.EntityLogicalName, apiId, new ColumnSet(true)).ToEntity<CustomAPI>().PluginTypeId).IsNotNull();
+    }
 
     [Test]
     public async Task PrepareAndApply_NewPackage_ResolvesServerOwnedAssembliesAndTypes()

@@ -25,6 +25,9 @@ recommended reconciliation design, and unresolved product/platform decisions.
 - Continue independent directory targets after failure, return overall failure, and stop on cancellation.
 - Verify the solution-aware component matrix, add supported components, and fail membership errors.
 - Keep step configuration behavior; combined transactions are not rewrite scope.
+- Reconcile Custom API associations authoritatively: unlink omitted target-owned handlers,
+  allow explicit reassignment from external handlers, and never delete shared API records.
+  See [Custom API ownership](decision-plugin-custom-api-ownership.md).
 - Provisionally deploy providers against existing data-source tables. Verify independent
   provisioning after the provider slice and before cutover; agree a fallback if infeasible.
 

@@ -294,7 +294,7 @@ resources. Association ownership does not imply ownership of the associated reco
 | Owned plugin types, steps, and images | Converge to declarations; own all non-internal steps on selected plugin types and remove absent owned registrations |
 | Secure/unsecure step configuration | Environment-owned; push neither reads nor reconciles values |
 | Step operational overrides | Preserve enabled state and impersonation; reconcile only declared registration fields |
-| Custom API records | External prerequisite; only the owned handler association is reconciled |
+| Custom API records | External prerequisite; explicit declarations reassign handlers, including from outside the target; omitted target-owned associations are unlinked, never delete API records |
 | Providers and individual operation handlers | Define ownership per provider/operation before authoritative removal |
 | Managed identity records | Potentially shared; linking does not authorize deleting an identity |
 | Solution membership | Ensure requested membership; do not implicitly remove other memberships |
@@ -302,6 +302,13 @@ resources. Association ownership does not imply ownership of the associated reco
 
 The current mixture of authoritative step/API behavior and preserving provider/identity
 omissions must become documented policy, not incidental null-handling.
+
+Custom API ownership is established by the current handler type belonging to the target
+(including its superseded standalone assembly). Omission unlinks only those associations.
+An explicit declaration authorizes reassignment from any current handler. Reject duplicate
+declarations across the whole target, including all package assemblies, and missing or
+ambiguous API records before writes. Preview existing-handler reassignment and unlinking
+as destructive association changes. Apply associations before type cleanup.
 
 For comparison, upsert-by-default with explicit prune is safer for adoption but allows stale
 registrations to accumulate. That alternative is not the selected direction.

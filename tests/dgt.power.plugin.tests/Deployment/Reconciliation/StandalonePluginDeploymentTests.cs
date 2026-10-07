@@ -274,13 +274,13 @@ public class StandalonePluginDeploymentTests
     }
 
     [Test]
-    public async Task Prepare_CustomApiDeclaration_RefusesUnsupportedScopeBeforeWrites()
+    public async Task Prepare_MissingCustomApi_FailsBeforeWrites()
     {
         var service = Service();
         var desired = Assembly();
         desired = desired with { PluginTypes = [desired.PluginTypes[0] with { CustomApi = "my_api" }] };
 
-        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(desired)).ThrowsExactly<NotSupportedException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(desired)).ThrowsExactly<MissingCustomApiException>();
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(0);
     }
 }
