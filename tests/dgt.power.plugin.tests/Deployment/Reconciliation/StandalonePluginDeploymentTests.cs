@@ -106,6 +106,28 @@ public class StandalonePluginDeploymentTests
     }
 
     [Test]
+    public async Task Apply_Update_PreservesExistingIdentityWithoutProvisioning()
+    {
+        var service = Service();
+        var desired = Assembly();
+        SeedAssembly(service, desired);
+        var assemblyId = All(service, PluginAssembly.EntityLogicalName).Single().Id;
+        var identityId = service.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        service.Update(new PluginAssembly(assemblyId) { ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, identityId) });
+        desired = desired with { Content = "bmV3", ContentHash = Convert.ToHexString(SHA256.HashData("new"u8)) };
+        var deployment = new PluginDeployment(service);
+
+        var id = await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
+
+        var actual = service.Retrieve(PluginAssembly.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginAssembly>();
+        await Assert.That(id).IsEqualTo(assemblyId);
+        await Assert.That(actual.Content).IsEqualTo(desired.Content);
+        await Assert.That(actual.ManagedIdentityId!.Id).IsEqualTo(identityId);
+        await Assert.That(All(service, ManagedIdentity.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That((await deployment.PrepareAsync(desired)).HasChanges).IsFalse();
+    }
+
+    [Test]
     public async Task Apply_UpdateStepAndImage_PreservesIdsAndEnvironmentFields()
     {
         var service = Service();

@@ -811,7 +811,6 @@ later. Other registration namespaces are not recognized.
 | `PluginRegistrationAttribute` | Registers plugin steps, including message, stage, mode, entity filters, and images |
 | `CustomApiRegistrationAttribute` | Links a plugin type to the declared Custom API |
 | `CustomDataProviderRegistrationAttribute` | Creates/updates a custom data provider and links its operation handlers |
-| `ManagedIdentityRegistrationAttribute` | Links the assembly, or the package containing it, to a managed identity |
 
 Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
 Every concrete `IPlugin` type must carry one of the supported registration attributes; assemblies
@@ -853,10 +852,18 @@ attributes or source-controlled configuration files.
 
 ##### Managed identity
 
-When an assembly has `ManagedIdentityRegistrationAttribute`, `plugin push` finds or creates the
-managed identity for its client ID and links it to the assembly. For a package, the first bundled
-assembly with this attribute also determines the package identity. If no tenant ID is declared, the
-environment tenant is used.
+Managed identity provisioning and binding are outside `plugin push`. Configure the Dataverse
+managed identity record and assembly/package binding separately in each environment, together
+with that environment's Entra app registration or user-assigned managed identity, federated
+credential, and resource permissions.
+
+The same signed artifact can be promoted across stages; the federated credential's subject
+includes the Dataverse environment ID. Identity client/tenant IDs do not belong in registration
+attributes. See [Microsoft's managed identity setup guide](https://learn.microsoft.com/en-us/power-platform/admin/set-up-managed-identity).
+
+Push leaves identity bindings on existing assembly/package records untouched. A newly created
+replacement assembly does not inherit the superseded assembly's binding; provision its identity
+binding separately. Push never creates or deletes shared managed identity records.
 
 ##### Planning and execution
 

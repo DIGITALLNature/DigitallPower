@@ -30,10 +30,10 @@ public class PluginDeploymentPlanExtensionsTests
             change == 3 ? new SolutionLink(78, "Provider", "solution") : null,
             change == 4 ? new SolutionLink(1, "dgt_source", "solution") : null);
         var assemblyPlan = new AssemblyDeploymentPlan(new AssemblyComparison(local, remote),
-            new PluginTypeDeployment([], []) { DataProviders = [provider] }, new OutdatedAssemblyDeployment([]), false, null, null);
+            new PluginTypeDeployment([], []) { DataProviders = [provider] }, new OutdatedAssemblyDeployment([]), null, null);
         var package = new LocalPackage("Package", "1.0.0", string.Empty, "hash");
         var packagePlan = new PackageDeploymentPlan(new LocalPluginPackage(package, []), "dgt_Package",
-            new PackageComparison(package, new RemotePackage(Guid.NewGuid(), "hash", package.Version)), [], false, null, null)
+            new PackageComparison(package, new RemotePackage(Guid.NewGuid(), "hash", package.Version)), [], null, null)
         {
             DataProviders = [provider]
         };
@@ -59,7 +59,6 @@ public class PluginDeploymentPlanExtensionsTests
             new AssemblyComparison(local, remote),
             PluginTypes: null,
             new OutdatedAssemblyDeployment([]),
-            LinkManagedIdentity: false,
             SolutionMembership: null,
             Solution: null);
 
@@ -81,7 +80,6 @@ public class PluginDeploymentPlanExtensionsTests
             new AssemblyComparison(local, remote),
             PluginTypes: null,
             new OutdatedAssemblyDeployment([]),
-            LinkManagedIdentity: false,
             SolutionMembership: new SolutionMembershipPlan("test_solution"),
             Solution: new SolutionLink(91, local.Name, "test_solution"));
 

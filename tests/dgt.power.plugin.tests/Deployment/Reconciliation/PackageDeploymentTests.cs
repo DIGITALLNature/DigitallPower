@@ -59,6 +59,34 @@ public class PackageDeploymentTests
         service.RetrieveMultiple(new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) }).Entities;
 
     [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Apply_ExistingPackageAndAssemblyBindings_PreservesBothWithoutProvisioning(bool updateContent)
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin")));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired);
+        var packageId = service.SeedPackage("new_Contoso.Plugins", desired, updateContent ? "older-package"u8.ToArray() : s_initialPackage);
+        service.MaterializeAssemblies(packageId, desired);
+        var assemblyId = All(store, PluginAssembly.EntityLogicalName).Single().Id;
+        var packageIdentity = store.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        var assemblyIdentity = store.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        store.Update(new PluginPackage(packageId) { Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, packageIdentity) });
+        store.Update(new PluginAssembly(assemblyId) { ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, assemblyIdentity) });
+        var deployment = new PluginDeployment(service);
+
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        await Assert.That(changes.HasChanges).IsEqualTo(updateContent);
+        await deployment.ApplyPackageAsync(changes);
+
+        await Assert.That(store.Retrieve(PluginPackage.EntityLogicalName, packageId, new ColumnSet(true)).ToEntity<PluginPackage>().Managedidentityid!.Id).IsEqualTo(packageIdentity);
+        await Assert.That(store.Retrieve(PluginAssembly.EntityLogicalName, assemblyId, new ColumnSet(true)).ToEntity<PluginAssembly>().ManagedIdentityId!.Id).IsEqualTo(assemblyIdentity);
+        await Assert.That(All(store, ManagedIdentity.EntityLogicalName)).Count().IsEqualTo(2);
+        await Assert.That(service.UploadCount).IsEqualTo(updateContent ? 1 : 0);
+        await Assert.That((await deployment.PreparePackageAsync(desired, "new")).HasChanges).IsFalse();
+    }
+
+    [Test]
     public async Task Apply_CustomApisWithSameClrTypeAcrossAssemblies_UsesScopedHandlers()
     {
         const string firstApi = "new_First";

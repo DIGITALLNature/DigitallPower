@@ -36,7 +36,7 @@ public class PluginTypeDeploymentExecutorTests
             };
             var typePlan = await planner.BuildPluginTypesAsync(assemblyId, localTypes, options.Solution);
             var deployment = new AssemblyDeploymentPlan(new AssemblyComparison(localAssembly, new RemoteAssembly(assemblyId, localAssembly.Version, null)), typePlan,
-                new OutdatedAssemblyDeployment([]), LinkManagedIdentity: false, SolutionMembership: string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution),
+                new OutdatedAssemblyDeployment([]), SolutionMembership: string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution),
                 Solution: null);
             renderer.Render(deployment);
             if (!options.DryRun)

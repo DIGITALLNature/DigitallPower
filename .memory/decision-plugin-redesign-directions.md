@@ -28,6 +28,9 @@ recommended reconciliation design, and unresolved product/platform decisions.
 - Reconcile Custom API associations authoritatively: unlink omitted target-owned handlers,
   allow explicit reassignment from external handlers, and never delete shared API records.
   See [Custom API ownership](decision-plugin-custom-api-ownership.md).
+- Exclude managed identity provisioning and binding from push. Preserve existing target
+  bindings, never transfer them to a new replacement, and do not parse or detect the removed
+  attribute. See [environment identity boundary](decision-plugin-managed-identity-boundary.md).
 - Provisionally deploy providers against existing data-source tables. Verify independent
   provisioning after the provider slice and before cutover; agree a fallback if infeasible.
 

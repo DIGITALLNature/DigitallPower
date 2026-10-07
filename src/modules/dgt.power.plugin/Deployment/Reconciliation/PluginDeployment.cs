@@ -30,9 +30,9 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
     private async Task<StandaloneDeploymentChanges> PrepareCoreAsync(LocalAssembly desired, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (desired.ManagedIdentityClientId is not null || desired.PluginTypes.Any(type => type.DataProviders.Count > 0))
+        if (desired.PluginTypes.Any(type => type.DataProviders.Count > 0))
         {
-            throw new NotSupportedException("The replacement standalone core does not yet support identity or provider declarations.");
+            throw new NotSupportedException("The replacement standalone core does not yet support provider declarations.");
         }
 
         ValidateCustomApiDeclarations([desired]);
@@ -54,11 +54,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         var existing = targetTrain.SingleOrDefault();
         var superseded = assemblies.SingleOrDefault(assembly => assembly.Id != existing?.Id);
-        if (superseded?.ManagedIdentityId is not null)
-        {
-            throw new NotSupportedException("The superseded assembly has a managed identity association; identity transfer must be implemented before replacement.");
-        }
-
         if (assemblies.Count == 2 && !string.Equals(existing!.ContentHash, desired.ContentHash, StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException($"Recovery of '{desired.Name}' requires the target assembly content to match the requested artifact. Resolve the content mismatch before retrying.");
@@ -296,9 +291,9 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         ValidateCustomApiDeclarations(desired.Assemblies);
         foreach (var assembly in desired.Assemblies)
         {
-            if (assembly.ManagedIdentityClientId is not null || assembly.PluginTypes.Any(type => type.DataProviders.Count > 0))
+            if (assembly.PluginTypes.Any(type => type.DataProviders.Count > 0))
             {
-                throw new NotSupportedException("The replacement package core does not yet support identity or provider declarations.");
+                throw new NotSupportedException("The replacement package core does not yet support provider declarations.");
             }
 
             RegistrationDiff.Compare(assembly.PluginTypes, new RegistrationSnapshot([], new Dictionary<Guid, IReadOnlyList<RemotePluginStep>>(),
@@ -307,11 +302,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         var name = $"{publisherPrefix}_{desired.Package.Name}";
         var existing = await _packages.FindByNameAsync(name, cancellationToken);
-        if (existing?.ManagedIdentityId is not null)
-        {
-            throw new NotSupportedException("The replacement package core does not yet support packages with managed identity associations.");
-        }
-
         if (existing is not null && !string.Equals(existing.Version, desired.Package.Version, StringComparison.Ordinal))
         {
             throw new InvalidOperationException($"Package '{name}' already exists at immutable version '{existing.Version}', not '{desired.Package.Version}'.");

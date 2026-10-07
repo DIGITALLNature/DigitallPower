@@ -49,11 +49,6 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             AddAssemblyChildren(node, assembly);
         }
 
-        if (plan.LinkManagedIdentity)
-        {
-            tree.AddNode($"Managed identity {ActionMarkup("Link")}");
-        }
-
         return tree;
     }
 
@@ -133,10 +128,6 @@ public sealed class PluginPlanRenderer(IAnsiConsole console)
             AddPluginTypes(parent, plan.PluginTypes);
         }
 
-        if (plan.LinkManagedIdentity)
-        {
-            parent.AddNode($"Managed identity {ActionMarkup("Link")}");
-        }
     }
 
     // Providers are environment-level records that only reference plugin types, so they get their own tree.

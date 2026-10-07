@@ -11,7 +11,6 @@ public sealed record PackageDeploymentPlan(
     string DataverseName,
     PackageComparison Comparison,
     IReadOnlyList<AssemblyDeploymentPlan> Assemblies,
-    bool LinkManagedIdentity,
     SolutionMembershipPlan? SolutionMembership,
     SolutionLink? Solution) : PluginDeploymentPlan
 {

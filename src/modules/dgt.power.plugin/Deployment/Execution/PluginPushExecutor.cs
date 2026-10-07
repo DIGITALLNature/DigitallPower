@@ -10,7 +10,6 @@ public sealed class PluginPushExecutor(
     IPluginAssemblyRepository assemblyRepository,
     IPluginPackageRepository packageRepository,
     ISolutionComponentRepository solutionRepository,
-    IManagedIdentityRepository managedIdentityRepository,
     PluginTypeDeploymentExecutor typeExecutor,
     OutdatedAssemblyMigrator outdatedAssemblyMigrator)
 {
@@ -37,21 +36,8 @@ public sealed class PluginPushExecutor(
         await typeExecutor.ApplyDataProvidersAsync(plan.PluginTypes.DataProviders, typeIds, reportProgress, cancellationToken);
         await typeExecutor.ApplyRegistrationsAsync(plan.PluginTypes, typeIds, reportProgress, cancellationToken);
         await typeExecutor.DeleteTypesAsync(plan.PluginTypes.Deletions, reportProgress, cancellationToken);
-        await ApplyAssemblyManagedIdentityAsync(plan, assemblyId, reportProgress, cancellationToken);
         await outdatedAssemblyMigrator.ApplyAsync(plan.OutdatedAssemblies, reportProgress, cancellationToken);
         return assemblyId;
-    }
-
-    private async Task ApplyAssemblyManagedIdentityAsync(AssemblyDeploymentPlan plan, Guid assemblyId,
-        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
-    {
-        if (plan.LinkManagedIdentity)
-        {
-            var local = plan.Comparison.Local;
-            var managedIdentityId = await managedIdentityRepository.EnsureAsync(local.ManagedIdentityClientId!, local.ManagedIdentityTenantId, cancellationToken);
-            await managedIdentityRepository.LinkToAssemblyAsync(assemblyId, managedIdentityId, cancellationToken);
-            Report(reportProgress, PluginDeploymentOperation.Linked, "managed identity", local.ManagedIdentityClientId!);
-        }
     }
 
     private async Task<Guid> ApplyAssemblyAsync(AssemblyDeploymentPlan deployment, Guid? resolvedPackageAssemblyId, Action<PluginDeploymentProgress>? reportProgress,
@@ -112,7 +98,6 @@ public sealed class PluginPushExecutor(
 
             var typeIds = await typeExecutor.ApplyTypesAsync(types, assemblyId, reportProgress, cancellationToken);
             await typeExecutor.ApplyRegistrationsAsync(types, typeIds, reportProgress, cancellationToken);
-            await ApplyAssemblyManagedIdentityAsync(assembly, assemblyId, reportProgress, cancellationToken);
             foreach (var (typeName, typeId) in typeIds)
             {
                 packageTypeIds[typeName] = typeId;
@@ -128,14 +113,6 @@ public sealed class PluginPushExecutor(
             }
 
             await outdatedAssemblyMigrator.ApplyAsync(assembly.OutdatedAssemblies, reportProgress, cancellationToken);
-        }
-
-        if (deployment.LinkManagedIdentity)
-        {
-            var source = deployment.Package.Assemblies.First(assembly => !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId));
-            var managedIdentityId = await managedIdentityRepository.EnsureAsync(source.ManagedIdentityClientId!, source.ManagedIdentityTenantId, cancellationToken);
-            await managedIdentityRepository.LinkToPackageAsync(packageId, managedIdentityId, cancellationToken);
-            Report(reportProgress, PluginDeploymentOperation.Linked, "managed identity", source.ManagedIdentityClientId!);
         }
 
         return packageId;

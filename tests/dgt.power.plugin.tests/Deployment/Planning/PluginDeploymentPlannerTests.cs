@@ -25,7 +25,6 @@ public class PluginDeploymentPlannerTests
             Images = new SdkMessageProcessingStepImageRepository(service),
             Messages = new SdkMessageRepository(service),
             CustomApis = new CustomApiRepository(service),
-            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = new SolutionComponentRepository(service),
             DataProviders = new ProviderTestRepository()
         });
@@ -77,7 +76,7 @@ public class PluginDeploymentPlannerTests
     }
 
     [Test]
-    public async Task BuildPackageAsync_ExistingManagedIdentityLink_IsNotPlannedAgain()
+    public async Task BuildPackageAsync_ExistingManagedIdentityLink_IsNotDeploymentIntent()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddDefaultRequests();
@@ -97,18 +96,17 @@ public class PluginDeploymentPlannerTests
                 Version = Version.Parse("1.0.0.0"),
                 Content = "Y29udGVudA==",
                 ContentHash = "hash",
-                Kind = LocalAssemblyKind.Plugin,
-                ManagedIdentityClientId = clientId
+                Kind = LocalAssemblyKind.Plugin
             }
         ]);
 
         var plan = await CreatePlanner(service).BuildPackageAsync(package, new PluginPushOptions(null, DryRun: true, PublisherPrefix: "contoso"));
 
-        await Assert.That(plan.LinkManagedIdentity).IsFalse();
+        await Assert.That(plan.Comparison.Remote!.ManagedIdentityId).IsEqualTo(identityId);
     }
 
     [Test]
-    public async Task BuildAssemblyAsync_ExistingStandaloneManagedIdentityLink_IsNotPlannedAgain()
+    public async Task BuildAssemblyAsync_ExistingStandaloneManagedIdentityLink_IsNotDeploymentIntent()
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddDefaultRequests();
@@ -130,13 +128,12 @@ public class PluginDeploymentPlannerTests
             Version = Version.Parse("1.0.0.0"),
             Content = "Y29udGVudA==",
             ContentHash = "hash",
-            Kind = LocalAssemblyKind.Plugin,
-            ManagedIdentityClientId = clientId
+            Kind = LocalAssemblyKind.Plugin
         };
 
         var plan = await CreatePlanner(service).BuildAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: true));
 
-        await Assert.That(plan.LinkManagedIdentity).IsFalse();
+        await Assert.That(plan.Comparison.Remote!.ManagedIdentityId).IsEqualTo(identityId);
     }
 
     [Test]
@@ -165,29 +162,6 @@ public class PluginDeploymentPlannerTests
         var plan = await CreatePlanner(service).BuildPackageAsync(package, new PluginPushOptions(null, DryRun: true, PublisherPrefix: "contoso"));
 
         await Assert.That(plan.Assemblies.Single().Comparison.Remote).IsNull();
-    }
-
-    [Test]
-    public async Task BuildPackageAsync_AttributedAssembly_LinksManagedIdentityOnlyOnPackage()
-    {
-        var service = new FakeOrganizationServiceAsync();
-        service.AddDefaultRequests();
-        var package = new LocalPluginPackage(new LocalPackage("Contoso.Plugins", "1.0.0", string.Empty, string.Empty), [
-            new LocalAssembly
-            {
-                Name = "Contoso.Plugins",
-                Version = Version.Parse("1.0.0.0"),
-                Content = "Y29udGVudA==",
-                ContentHash = "hash",
-                Kind = LocalAssemblyKind.Plugin,
-                ManagedIdentityClientId = "12345678-1234-1234-1234-123456789abc"
-            }
-        ]);
-
-        var plan = await CreatePlanner(service).BuildPackageAsync(package, new PluginPushOptions(null, DryRun: true, PublisherPrefix: "contoso"));
-
-        await Assert.That(plan.LinkManagedIdentity).IsTrue();
-        await Assert.That(plan.Assemblies.Single().LinkManagedIdentity).IsFalse();
     }
 
     [Test]

@@ -37,10 +37,10 @@ create/attribute-update/removal. Matching IDs and fields
 outside the SDK registration payload, including configuration associations, enabled state,
 and impersonation, are retained.
 
-Unsupported identity/provider declarations fail explicitly. Custom API associations use
+Unsupported provider declarations fail explicitly. Custom API associations use
 shared target-wide preparation and application; see
 [Custom API ownership](decision-plugin-custom-api-ownership.md).
-Superseded assembly identity associations, platform-only steps on deleted types, and
+Platform-only steps on deleted types and
 provider references to deleted types also block replacement/cleanup. These guards prevent an incomplete replacement
 slice from applying an apparently successful partial deployment. No solution option or
 package entry point is exposed by this slice.
@@ -50,7 +50,7 @@ steps, API links, and provider references are checked; before deleting the old a
 remaining types are checked. Preparation verifies that dependent step IDs are represented
 in the joined snapshot rather than trusting an incomplete join.
 Package reconciliation supports new, changed, and unchanged content while rejecting immutable
-version changes, package identity associations, undeclared server assemblies/types, and asset,
+version changes, undeclared server assemblies/types, and asset,
 step, or image removal before upload. Package upload is expected to create/update its owned
 assembly/type records; missing or unexpected records fail without standalone fallback. Tests
 use a dedicated fake for those server-owned side effects, which is not live Dataverse verification.
@@ -72,6 +72,12 @@ protection would require a separate platform-supported design.
 CLI integration of package tree presentation and platform-verified removal/type-move behavior are also outstanding;
 the guarded package subset must not be treated as completion of all package acceptance gates.
 Preparation/application separation is not a transaction or concurrency guarantee.
+
+Managed identity provisioning and binding are outside push in both pipelines. Local declarations,
+identity repositories, plan flags, and identity write/render phases are removed; there is no
+retired-attribute parsing or detection path. Preserve existing target bindings, never copy an old
+binding to a new standalone replacement, and never delete shared identity records. See
+[environment identity boundary](decision-plugin-managed-identity-boundary.md).
 
 ## Replacement and recovery policy
 

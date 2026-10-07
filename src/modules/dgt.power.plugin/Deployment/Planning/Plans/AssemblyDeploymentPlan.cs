@@ -9,6 +9,5 @@ public sealed record AssemblyDeploymentPlan(
     AssemblyComparison Comparison,
     PluginTypeDeployment? PluginTypes,
     OutdatedAssemblyDeployment OutdatedAssemblies,
-    bool LinkManagedIdentity,
     SolutionMembershipPlan? SolutionMembership,
     SolutionLink? Solution) : PluginDeploymentPlan;

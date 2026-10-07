@@ -19,8 +19,6 @@ namespace dgt.power.plugin.tests.Deployment.Execution;
 
 public class PluginPushExecutorTests
 {
-    private const string ClientId = "12345678-1234-1234-1234-123456789abc";
-
     private sealed class DeploymentTestHarness(PluginDeploymentPlanner planner, PluginPlanRenderer renderer, PluginPushExecutor executor, TestConsole console)
     {
         public async Task<Guid> ProcessAssemblyAsync(LocalAssembly assembly, PluginPushOptions options)
@@ -104,15 +102,14 @@ public class PluginPushExecutorTests
         return (service, executor);
     }
 
-    private static LocalAssembly Assembly(string name = "MyPlugins", string version = "1.0.0.0", string? managedIdentityClientId = null) =>
+    private static LocalAssembly Assembly(string name = "MyPlugins", string version = "1.0.0.0") =>
         new()
         {
             Name = name,
             Version = Version.Parse(version),
             Content = "YmFzZTY0",
             ContentHash = Convert.ToHexString(SHA256.HashData("base64"u8.ToArray())),
-            Kind = LocalAssemblyKind.Plugin,
-            ManagedIdentityClientId = managedIdentityClientId
+            Kind = LocalAssemblyKind.Plugin
         };
 
     private static LocalPackage Package(string name, string version, string content) => new(name, version, content, Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(content))));
@@ -469,7 +466,7 @@ public class PluginPushExecutorTests
             PackageId = new EntityReference(PluginPackage.EntityLogicalName, packageId)
         });
 
-        var assembly = Assembly(managedIdentityClientId: ClientId) with { PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])] };
+        var assembly = Assembly() with { PluginTypes = [new LocalPluginType("MyPlugin", "MyPlugin", string.Empty, true, [])] };
         await executor.ProcessAssemblyAsync(assembly, new PluginPushOptions(null, DryRun: false));
 
         using (Assert.Multiple())
@@ -484,14 +481,43 @@ public class PluginPushExecutorTests
     }
 
     [Test]
-    public async Task ProcessAssemblyAsync_ManagedIdentityClientId_LinksIdentity()
+    public async Task ProcessAssemblyAsync_Update_PreservesExistingIdentityWithoutProvisioning()
     {
         var (service, executor) = CreateExecutor();
+        var identityId = service.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        var assemblyId = service.Create(new PluginAssembly
+        {
+            Name = "MyPlugins", Version = "1.0.0.0", Content = "b2xk",
+            SourceType = new OptionSetValue(0), IsolationMode = new OptionSetValue(2),
+            ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, identityId)
+        });
 
-        var id = await executor.ProcessAssemblyAsync(Assembly(managedIdentityClientId: ClientId), new PluginPushOptions(null, DryRun: false));
+        var id = await executor.ProcessAssemblyAsync(Assembly(), new PluginPushOptions(null, DryRun: false));
 
         var created = service.Retrieve(PluginAssembly.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginAssembly>();
-        await Assert.That(created.ManagedIdentityId).IsNotNull();
+        await Assert.That(id).IsEqualTo(assemblyId);
+        await Assert.That(created.ManagedIdentityId!.Id).IsEqualTo(identityId);
+        await Assert.That(service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName)).Entities).Count().IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task ProcessAssemblyAsync_Replacement_DoesNotTransferOrDeleteSharedIdentity()
+    {
+        var (service, executor) = CreateExecutor();
+        var identityId = service.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        var oldAssembly = service.Create(new PluginAssembly
+        {
+            Name = "MyPlugins", Version = "1.0.0.0", Content = "b2xk",
+            SourceType = new OptionSetValue(0), IsolationMode = new OptionSetValue(2),
+            ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, identityId)
+        });
+
+        var id = await executor.ProcessAssemblyAsync(Assembly(version: "2.0.0.0"), new PluginPushOptions(null, DryRun: false));
+
+        await Assert.That(id).IsNotEqualTo(oldAssembly);
+        await Assert.That(service.Retrieve(PluginAssembly.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginAssembly>().ManagedIdentityId).IsNull();
+        await Assert.That(service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName)).Entities.Single().Id).IsEqualTo(identityId);
+        await Assert.That(service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName)).Entities).Count().IsEqualTo(1);
     }
 
     [Test]
@@ -569,16 +595,23 @@ public class PluginPushExecutorTests
     }
 
     [Test]
-    public async Task ProcessPackageAsync_OnlyFirstAssemblyWithManagedIdentity_LinksPackageIdentity()
+    public async Task ProcessPackageAsync_Update_PreservesExistingIdentityWithoutProvisioning()
     {
         var (service, executor) = CreateExecutor();
+        var identityId = service.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        var packageId = service.Create(new PluginPackage
+        {
+            Name = "new_MyPackage", Version = "1.0.0",
+            Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, identityId)
+        });
         var package = new LocalPluginPackage(Package("MyPackage", "1.0.0", "cGtnY29udGVudA=="),
-            [Assembly("First", managedIdentityClientId: ClientId), Assembly("Second", managedIdentityClientId: ClientId)]);
+            []);
 
         var id = await executor.ProcessPackageAsync(package, new PluginPushOptions(null, DryRun: false, PublisherPrefix: "new"));
 
         var created = service.Retrieve(PluginPackage.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginPackage>();
-        await Assert.That(created.Managedidentityid).IsNotNull();
+        await Assert.That(id).IsEqualTo(packageId);
+        await Assert.That(created.Managedidentityid!.Id).IsEqualTo(identityId);
         var identities = service.RetrieveMultiple(new QueryExpression(ManagedIdentity.EntityLogicalName) { ColumnSet = new ColumnSet(true) });
         await Assert.That(identities.Entities.Count).IsEqualTo(1);
     }

@@ -100,7 +100,7 @@ restriction, output string, or internal public type.
 | `--dry-run` | Preview intended changes without writes |
 | `--confirm` | Per-target confirmation after preview; suppressed in dry-run, CI, and non-interactive execution |
 | Shared CLI settings | Preserve connection/authentication, non-interactive, and telemetry integration |
-| Registration attributes | Steps/images, Custom API handlers, custom data providers, and managed identities |
+| Registration attributes | Steps/images, Custom API handlers, and custom data providers |
 | Artifact updates | Content-based idempotence; standalone build/revision updates in place and major/minor replacement |
 | `plugin step config set` | Update secure and/or unsecure configuration on an existing step |
 | Step selection | Direct GUID or complete composite criteria with optional secondary entity and execution order |
@@ -110,8 +110,9 @@ Current declarative input requires supported `Digitall.Plugins.Registration` att
 on every concrete plugin type. Missing Custom APIs, unresolved messages, incompatible
 provider tables, and incomplete metadata reads fail before deployment writes.
 
-The first rewrite requires no registration-library change for identity. This document
-does not approve a new CLI option or change shared exit-code contracts.
+Composite step identity requires no registration-library change. Managed identity declarations
+are removed from registration scope; provisioning belongs to each environment's deployment
+pipeline. This document does not approve a new CLI option or change shared exit-code contracts.
 
 ## Architecture options
 
@@ -296,7 +297,7 @@ resources. Association ownership does not imply ownership of the associated reco
 | Step operational overrides | Preserve enabled state and impersonation; reconcile only declared registration fields |
 | Custom API records | External prerequisite; explicit declarations reassign handlers, including from outside the target; omitted target-owned associations are unlinked, never delete API records |
 | Providers and individual operation handlers | Define ownership per provider/operation before authoritative removal |
-| Managed identity records | Potentially shared; linking does not authorize deleting an identity |
+| Managed identity records and bindings | Environment-provisioned; push does not create, bind, unbind, transfer, or delete identities |
 | Solution membership | Ensure requested membership; do not implicitly remove other memberships |
 | Provider tables | No deletion from absence without a separately approved schema ownership policy |
 
@@ -320,7 +321,7 @@ One visible lifecycle establishes replacements before removing dependencies:
 1. Create/update the artifact.
 2. Resolve package-created assemblies and establish missing plugin types across the target.
 3. Establish provider-table prerequisites, if provisioning is retained, and replacement handler references.
-4. Apply steps/images, Custom API associations, and managed identity associations.
+4. Apply steps/images and Custom API associations.
 5. Ensure requested solution membership.
 6. Remove obsolete owned registrations, types, and assemblies.
 
@@ -391,13 +392,19 @@ and omission semantics must be settled independently of table provisioning.
 
 ### Managed identities
 
-Reject conflicting package declarations rather than selecting the first attributed assembly.
-Validate a declared tenant against an existing identity instead of matching application ID alone.
+Managed identity provisioning and binding are outside push. Do not parse or recognize
+`ManagedIdentityRegistrationAttribute`, retain a compatibility path, or add identity-selection
+CLI options. Environment deployment tooling owns the Dataverse identity record, assembly/package
+binding, Entra federation trust, and resource permissions.
 
-Decide whether identity selection belongs in build artifacts or environment deployment input.
-Environment-specific identities can otherwise require environment-specific builds.
-Decide what removing a declaration means for an existing association; never infer permission
-to delete a shared identity record.
+Keep the signing certificate and artifact reusable across stages. The federation subject
+includes the environment ID, allowing separate identities per stage without rebuilding the DLL.
+Federation establishes trust; the Dataverse binding selects the identity.
+
+In-place updates leave the target binding untouched. A new standalone replacement does not
+inherit a binding from the superseded assembly; a retry preserves any independently provisioned
+binding already on the target. Shared identity records are never deleted. Identity-record and
+binding transport through managed solutions still needs verification in the provisioning workflow.
 
 ### Solutions
 
@@ -530,8 +537,8 @@ changes public behavior. This proposal alone does not change the current command
 | D3 | Can specialized provider tables be provisioned independently through a practical supported route? | Provisional existing-table cutoff; post-implementation verification and fallback gate |
 | D4 | Is the initial recovery recognition policy sufficient? | Two-record/one-target-train rule with a provisional target-content guard; verify platform behavior |
 | D5 | Which environment overrides survive authoritative registration reconciliation? | Preserve configuration, enabled state, and impersonation; reconcile only declared fields |
-| D6 | Does omitted provider/identity declaration remove an owned association? | Define ownership before deciding; shared records are not implicitly deleted |
-| D7 | Is managed identity selection artifact-owned or environment-supplied? | Reject conflicts and validate tenant compatibility in either design |
+| D6 | Does omitted provider declaration remove an owned association? | Define ownership before deciding; shared records are not implicitly deleted |
+| D7 | Is managed identity selection artifact-owned or environment-supplied? | Environment-provisioned outside push; no attribute parsing or automatic binding transfer |
 | D8 | What is the verified solution-aware component matrix? | Add supported components; fail actual membership errors |
 | D9 | Do independent directory targets continue after failure? | Yes, with overall failure; stop on cancellation |
 | D10 | How are concurrent changes or stale previews detected? | Guard critical assumptions; require fresh approval when intent changes |
@@ -554,8 +561,6 @@ Paths below are relative to `src/modules/dgt.power.plugin/` unless stated otherw
 | Reassignment and cleanup | `Execution/PluginTypeDeploymentExecutor.cs:158-176`, `Execution/OutdatedAssemblyMigrator.cs:30-58` |
 | Retry limitation | `Planning/PluginDeploymentPlanner.cs:27-35`, `tests/dgt.power.plugin.tests/Execution/DataProviderDeploymentTests.cs:132-144` |
 | Separate test orchestration | `tests/dgt.power.plugin.tests/Execution/PluginPushExecutorTests.cs:25-68` |
-| Package identity selection | `Planning/PluginDeploymentPlanner.cs:76-82` |
-| Identity lookup | `Repositories/ManagedIdentityRepository.cs:14-40` |
 | Configuration sequencing | `Commands/PluginStepConfigSetCommand.cs`, `Repositories/SdkMessageProcessingStepSecureConfigRepository.cs` |
 
 Additional code-level caveats are indexed in

@@ -43,8 +43,6 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 
             var pluginTypes = GetLoadableTypes(assembly).Where(IsIPluginBased).ToList();
 
-            var (managedIdentityClientId, managedIdentityTenantId) = ParseAssemblyLevelAttributes(assembly);
-
             var localPluginTypes = pluginTypes.Select(BuildPluginType).ToList();
             EnsureAllPluginTypesDeclared(localPluginTypes);
             foreach (var pluginType in localPluginTypes)
@@ -71,9 +69,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
                 Content = Convert.ToBase64String(contentBytes),
                 ContentHash = Convert.ToHexString(SHA256.HashData(contentBytes)),
                 Kind = kind,
-                PluginTypes = localPluginTypes,
-                ManagedIdentityClientId = managedIdentityClientId,
-                ManagedIdentityTenantId = managedIdentityTenantId
+                PluginTypes = localPluginTypes
             };
         }
         catch (WorkflowActivityNotSupportedException)
@@ -208,35 +204,6 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         }
 
         return steps;
-    }
-
-    private static (string? ClientId, string? TenantId) ParseAssemblyLevelAttributes(Assembly assembly)
-    {
-        string? clientId = null;
-        string? tenantId = null;
-        var assemblyAttributes = CustomAttributeData.GetCustomAttributes(assembly);
-        foreach (var attr in assemblyAttributes)
-        {
-            if (!IsSupportedRegistrationNamespace(attr.AttributeType.Namespace) || attr.AttributeType.Name != RegistrationAttributeNames.ManagedIdentityRegistration)
-            {
-                continue;
-            }
-
-            clientId = GetValue<string>(attr, "clientId");
-            tenantId = GetValue<string>(attr, "TenantId");
-        }
-
-        ValidateGuidAttribute(clientId, "clientId");
-        ValidateGuidAttribute(tenantId, "TenantId");
-        return (clientId, tenantId);
-    }
-
-    internal static void ValidateGuidAttribute(string? value, string attributeName)
-    {
-        if (!string.IsNullOrWhiteSpace(value) && !Guid.TryParse(value, out _))
-        {
-            throw new AssemblyException($"Managed identity attribute '{attributeName}' must contain a valid GUID, but '{value}' was provided.");
-        }
     }
 
     /// <summary>

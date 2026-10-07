@@ -19,18 +19,17 @@ internal sealed class PluginDeploymentTestFactory
         var images = new SdkMessageProcessingStepImageRepository(service);
         var customApis = new CustomApiRepository(service);
         var solutions = new SolutionComponentRepository(service);
-        var identities = new ManagedIdentityRepository(service);
         providers ??= new ProviderTestRepository();
 
         Planner = new PluginDeploymentPlanner(new PluginPlanningRepositories
         {
             Assemblies = assemblies, Packages = packages, Types = types, Steps = steps, Images = images,
             Messages = new SdkMessageRepository(service), CustomApis = customApis,
-            ManagedIdentities = identities, Solutions = solutions, DataProviders = providers
+            Solutions = solutions, DataProviders = providers
         });
         TypeExecutor = new PluginTypeDeploymentExecutor(types, steps, images, customApis, solutions, providers);
         Migrator = new OutdatedAssemblyMigrator(assemblies, types, steps, customApis);
-        PushExecutor = new PluginPushExecutor(assemblies, packages, solutions, identities, TypeExecutor, Migrator);
+        PushExecutor = new PluginPushExecutor(assemblies, packages, solutions, TypeExecutor, Migrator);
     }
 
     internal PluginDeploymentPlanner Planner { get; }

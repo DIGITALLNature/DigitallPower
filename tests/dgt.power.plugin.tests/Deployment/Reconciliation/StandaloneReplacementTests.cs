@@ -223,12 +223,37 @@ public class StandaloneReplacementTests
     }
 
     [Test]
-    public async Task Prepare_ManagedIdentityOnSupersededAssembly_BlocksUntilIdentityPhase()
+    public async Task Apply_ManagedIdentityOnSupersededAssembly_DoesNotTransferOrDeleteSharedIdentity()
     {
         var (service, oldAssembly, _, _, _) = Seed();
-        service.Update(new PluginAssembly(oldAssembly) { ManagedIdentityId = new EntityReference("managedidentity", Guid.NewGuid()) });
+        var identityId = service.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        service.Update(new PluginAssembly(oldAssembly) { ManagedIdentityId = new EntityReference("managedidentity", identityId) });
+        var deployment = new PluginDeployment(service);
 
-        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
+        var id = await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
+
+        await Assert.That(service.Retrieve(PluginAssembly.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginAssembly>().ManagedIdentityId).IsNull();
+        await Assert.That(All(service, ManagedIdentity.EntityLogicalName).Single().Id).IsEqualTo(identityId);
+        await Assert.That(All(service, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task Apply_RecoveryWithDifferentIdentityOnTarget_PreservesTargetBinding()
+    {
+        var (service, oldAssembly, _, _, _) = Seed();
+        var oldIdentity = service.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        var targetIdentity = service.Create(new ManagedIdentity { ApplicationId = Guid.NewGuid() });
+        service.Update(new PluginAssembly(oldAssembly) { ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, oldIdentity) });
+        var targetId = SeedAssembly(service, Desired().Version.ToString(), Desired().Content);
+        service.Update(new PluginAssembly(targetId) { ManagedIdentityId = new EntityReference(ManagedIdentity.EntityLogicalName, targetIdentity) });
+        var deployment = new PluginDeployment(service);
+
+        var id = await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
+
+        await Assert.That(id).IsEqualTo(targetId);
+        await Assert.That(service.Retrieve(PluginAssembly.EntityLogicalName, id, new ColumnSet(true)).ToEntity<PluginAssembly>().ManagedIdentityId!.Id).IsEqualTo(targetIdentity);
+        await Assert.That(All(service, ManagedIdentity.EntityLogicalName)).Count().IsEqualTo(2);
+        await Assert.That(All(service, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
     }
 
     [Test]

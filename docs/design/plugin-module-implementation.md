@@ -26,6 +26,9 @@ Selected scope:
 
 No new runtime flags, persistent deployment journal, or key-storage mechanism are approved.
 No dependency changes are assumed.
+Managed identity provisioning/binding is excluded from push. Do not parse the removed
+attribute or add a compatibility/detection path. Preserve bindings on existing target records,
+but do not transfer them to new replacement assemblies.
 
 ## Work packages and dependencies
 
@@ -36,7 +39,7 @@ No dependency changes are assumed.
 | P2 | Replacement core and standalone create/update | P0, P1 | Production use case prepares/applies changes; previews faithful; repeat push is unchanged |
 | P3 | Standalone replacement and retry/recovery | P2 | Stable step/config associations retained; phase failures and retries covered |
 | P4 | Package deployment | P3 | Package-created IDs resolved; cross-assembly references and package removals safe |
-| P5 | Custom APIs, identities, and solution membership | P2; P4 for package acceptance | Owned associations reconciled; conflicts and unsupported outcomes explicit |
+| P5 | Custom APIs and solution membership | P2; P4 for package acceptance | Owned API associations reconciled; membership errors explicit; identity bindings remain environment-owned |
 | P6 | Provider-record deployment and cutoff verification | P4, P5 ownership/membership policies | Cross-assembly handlers work; independently provisioned table validated or fallback scope agreed |
 | P7 | Batch handling and final presentation | P3-P6 | Conflicts detected, deterministic execution, correct confirmation/cancellation/results |
 | P8 | CLI cutover, removal, documentation, release verification | P7 and all unresolved gates affecting release | One core remains; command tests/docs current; platform-sensitive behavior verified |
@@ -57,7 +60,7 @@ Specify:
   impersonation are already selected as preserved environment state.
 - Scoped tuple matching, duplicate handling, and unambiguous existing-step reuse.
 - Permitted recovery states, ambiguous states, and cleanup authorization.
-- Identity conflict/tenant validation and whether identity selection remains artifact-based.
+- Identity bindings remain environment-provisioned outside push; no copying on replacement.
 - Verify/document the solution-aware component matrix; membership errors fail deployment.
 - Continue independent batch targets after failure, return overall failure, and stop on cancellation.
 - Guarding critical assumptions changed between preview and execution.
@@ -138,7 +141,7 @@ create duplicate active registrations or delete still-referenced types.
 Selected recovery boundary: at most two same-name standalone records, exactly one in the
 desired major/minor train, with target content matching the requested artifact. The hash
 check is a provisional conservative guard, not proof of a failed push. More/duplicate trains,
-content mismatch, and ambiguous step candidates fail. Identity/provider dependencies
+content mismatch, and ambiguous step candidates fail. Provider dependencies
 and platform-only steps block cleanup until their lifecycles are supported and verified.
 Custom API associations are reassigned or unlinked before cleanup by the shared P5 slice.
 
@@ -151,7 +154,7 @@ Use assembly-scoped logical type references instead of package-wide type-name id
 The current slice covers new, updated, and unchanged packages. It requires the exact expected
 server-owned assembly/type set after upload and never falls back to standalone assembly creation.
 Duplicate type names in different assemblies remain assembly-scoped. Package version changes,
-managed-identity associations, assembly/type removals, and moves between assemblies fail before
+assembly/type removals and moves between assemblies fail before
 upload until their behavior is supported. Step/image removals are also rejected pending
 verification that package upload leaves those records available for explicit cleanup.
 `RetrieveDependenciesForDelete` is a candidate for
@@ -196,8 +199,9 @@ The guarded package subset does not complete P4. Keep these requirements explici
 
 ## P5: Add associations and membership
 
-Implement Custom API linking/unlinking within agreed ownership, identity compatibility
-checks, conflict rejection for package declarations, and documented omission semantics.
+Implement Custom API linking/unlinking within agreed ownership, conflict rejection for
+duplicate declarations, and documented omission semantics. Managed identity provisioning
+and binding remain outside push in both current and replacement pipelines.
 
 The Custom API slice uses shared flat `CustomApiChange` decisions for standalone/package
 deployment. Explicit declarations authorize handler reassignment, including from outside
@@ -208,11 +212,11 @@ type IDs and execute before registration/type cleanup. Package-wide omission cal
 unlinking an API that moves to another assembly in the same package.
 The preview shows link/reassign/unlink/unchanged associations and counts handler reassignment
 and unlinking as destructive changes. Retry reconciles completed association writes.
-Identity and solution membership are still pending; this does not complete P5 or wire the CLI.
+Solution membership is still pending; this does not complete P5 or wire the CLI.
 
 Ensure requested solution membership without removing unrelated memberships.
 Preview unsupported membership explicitly or fail according to the agreed policy.
-Keep shared API/identity records separate from owned associations.
+Keep shared API records separate from owned associations and identity records outside push.
 
 Gate: absent declarations and shared dependencies follow the P0 contract; no first-match
 or first-assembly selection silently resolves conflicts.

@@ -75,14 +75,6 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             assemblies.Add(deployment);
         }
 
-        var identityAssembly = package.Assemblies.FirstOrDefault(assembly => !string.IsNullOrWhiteSpace(assembly.ManagedIdentityClientId));
-        var linkManagedIdentity = false;
-        if (identityAssembly?.ManagedIdentityClientId is { } clientId)
-        {
-            var desiredIdentityId = await repositories.ManagedIdentities.FindIdByClientIdAsync(clientId, cancellationToken);
-            linkManagedIdentity = desiredIdentityId is null || packageComparison.Remote?.ManagedIdentityId != desiredIdentityId;
-        }
-
         SolutionLink? solution = null;
         if (!string.IsNullOrWhiteSpace(options.Solution))
         {
@@ -95,7 +87,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
 
         var typePlans = assemblies.Select(assembly => assembly.PluginTypes).OfType<PluginTypeDeployment>().ToList();
         var providers = await BuildDataProvidersAsync(packageTypes, typePlans, assemblies.Select(assembly => assembly.OutdatedAssemblies), options.Solution, cancellationToken);
-        return new PackageDeploymentPlan(package, packageName, packageComparison, assemblies, linkManagedIdentity,
+        return new PackageDeploymentPlan(package, packageName, packageComparison, assemblies,
             string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution), solution) { DataProviders = providers };
     }
 
@@ -123,13 +115,6 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             }
         }
 
-        var linkManagedIdentity = false;
-        if (!skipStandaloneDeployment && !packageOwned && assembly.ManagedIdentityClientId is { } clientId)
-        {
-            var desiredIdentityId = await repositories.ManagedIdentities.FindIdByClientIdAsync(clientId, cancellationToken);
-            linkManagedIdentity = desiredIdentityId is null || assemblyComparison.Remote?.ManagedIdentityId != desiredIdentityId;
-        }
-
         SolutionLink? solution = null;
         if (!packageOwned)
         {
@@ -137,7 +122,7 @@ public sealed class PluginDeploymentPlanner(PluginPlanningRepositories repositor
             solution = await PlanSolutionLinkAsync(IPluginAssemblyRepository.ComponentType, existingComponentId, assembly.Name, options.Solution, cancellationToken);
         }
 
-        return new AssemblyDeploymentPlan(assemblyComparison, pluginTypes, outdated, linkManagedIdentity,
+        return new AssemblyDeploymentPlan(assemblyComparison, pluginTypes, outdated,
             string.IsNullOrWhiteSpace(options.Solution) ? null : new SolutionMembershipPlan(options.Solution), solution);
     }
 

@@ -28,7 +28,6 @@ public static class PluginDeploymentPlanExtensions
 
         return plan.DataProviders.Any(provider => provider.HasChanges) ||
                plan.Assemblies.Any(AssemblyHasChanges) ||
-               plan.LinkManagedIdentity ||
                plan.Solution is not null;
     }
 
@@ -41,8 +40,7 @@ public static class PluginDeploymentPlanExtensions
             return true;
         }
 
-        if (plan.LinkManagedIdentity ||
-            plan.Solution is not null ||
+        if (plan.Solution is not null ||
             plan.OutdatedAssemblies.Assemblies.Count > 0)
         {
             return true;

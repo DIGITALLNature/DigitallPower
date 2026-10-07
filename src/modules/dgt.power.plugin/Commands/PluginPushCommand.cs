@@ -99,11 +99,10 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
             Images = imageRepository,
             Messages = new SdkMessageRepository(service),
             CustomApis = customApiRepository,
-            ManagedIdentities = new ManagedIdentityRepository(service),
             Solutions = solutionRepository,
             DataProviders = dataProviderRepository
         });
-        var executor = new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
+        var executor = new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository,
             new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository, dataProviderRepository),
             new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository));
         var renderer = new PluginPlanRenderer(Console);

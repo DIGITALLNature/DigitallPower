@@ -163,14 +163,6 @@ public class AssemblyReflectionReaderTests
     }
 
     [Test]
-    [Arguments("invalid", "clientId")]
-    [Arguments("invalid", "TenantId")]
-    public async Task ValidateGuidAttribute_InvalidValue_Throws(string value, string attributeName)
-    {
-        await Assert.That(() => AssemblyReflectionReader.ValidateGuidAttribute(value, attributeName)).ThrowsExactly<AssemblyException>();
-    }
-
-    [Test]
     public async Task BuildPluginType_LegacyRegistrationNamespace_IsIgnored()
     {
         using var console = new TestConsole();
