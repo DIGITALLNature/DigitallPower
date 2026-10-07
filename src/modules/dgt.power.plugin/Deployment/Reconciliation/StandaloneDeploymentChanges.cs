@@ -16,7 +16,8 @@ internal sealed record StandaloneDeploymentChanges(
     IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> Messages,
     IReadOnlyList<RemoteAssembly> ExpectedAssemblies,
     RemoteAssembly? AssemblyToDelete,
-    IReadOnlyList<CustomApiChange> CustomApis)
+    IReadOnlyList<CustomApiChange> CustomApis,
+    StandaloneSolutionChanges? Solution)
 {
     internal bool HasChanges
     {
@@ -27,7 +28,7 @@ internal sealed record StandaloneDeploymentChanges(
                 return true;
             }
 
-            return Registrations.HasChanges || CustomApis.Count > 0;
+            return Registrations.HasChanges || CustomApis.Count > 0 || Solution is { HasChanges: true };
         }
     }
 }

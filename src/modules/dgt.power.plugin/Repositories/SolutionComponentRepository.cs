@@ -52,8 +52,8 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
                 }
             }
         };
-        var components = await service.RetrieveMultipleAsync(componentQuery, cancellationToken);
-        return components.Entities.Select(entity => entity.ToEntity<SolutionComponent>().ObjectId).OfType<Guid>().ToHashSet();
+        var components = await DataverseQueryReader.ReadAllAsync(service, componentQuery, cancellationToken);
+        return components.Select(entity => entity.ToEntity<SolutionComponent>().ObjectId).OfType<Guid>().ToHashSet();
     }
 
     public async Task AddToSolutionAsync(int componentType, Guid componentId, string solutionUniqueName, CancellationToken cancellationToken = default)

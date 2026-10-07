@@ -42,8 +42,8 @@ shared target-wide preparation and application; see
 [Custom API ownership](decision-plugin-custom-api-ownership.md).
 Platform-only steps on deleted types and
 provider references to deleted types also block replacement/cleanup. These guards prevent an incomplete replacement
-slice from applying an apparently successful partial deployment. No solution option or
-package entry point is exposed by this slice.
+slice from applying an apparently successful partial deployment. The standalone preparation
+entry point accepts an optional solution; the replacement entry points remain unwired to CLI.
 
 Assembly state is checked again before application. Before deleting types, dependent
 steps, API links, and provider references are checked; before deleting the old assembly,
@@ -72,6 +72,14 @@ protection would require a separate platform-supported design.
 CLI integration of package tree presentation and platform-verified removal/type-move behavior are also outstanding;
 the guarded package subset must not be treated as completion of all package acceptance gates.
 Preparation/application separation is not a transaction or concurrency guarantee.
+
+Standalone solution membership is prepared from complete assembly/step membership reads.
+Flat additions reference desired steps by CLR type and declaration; `ResolvedRegistrations`
+returns actual type/step IDs from shared registration application. Membership writes occur
+after Custom API associations and before cleanup. Failure leaves superseded types/assemblies
+available for recovery; fresh preparation skips successful membership writes. Existing and
+unrelated memberships are never removed. Package/provider membership remains a separate
+implementation and platform-verification gate.
 
 Managed identity provisioning and binding are outside push in both pipelines. Local declarations,
 identity repositories, plan flags, and identity write/render phases are removed; there is no

@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Deployment.Local;
+using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Reconciliation;
 using Spectre.Console;
 
@@ -23,6 +24,22 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         }
 
         console.Write(tree);
+        if (changes.Solution is { } solution)
+        {
+            console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solution.UniqueName)}[/]");
+            if (!solution.HasChanges)
+            {
+                console.MarkupLine("No membership additions needed.");
+            }
+            if (solution.AddAssembly)
+            {
+                console.MarkupLine($"Assembly {Markup.Escape(changes.Desired.Identity)} [bold]Add[/]");
+            }
+            foreach (var step in solution.Steps)
+            {
+                console.MarkupLine($"Step {Markup.Escape(step.TypeName)} / {Markup.Escape(step.Step.Name)} [bold]Add[/]");
+            }
+        }
         var deletionCount = registrations.ImagesToDelete.Count + registrations.StepsToDelete.Count + registrations.TypesToDelete.Count +
             changes.CustomApis.Count(api => api.PreviousHandlerId is not null);
         if (changes.AssemblyToDelete is not null)

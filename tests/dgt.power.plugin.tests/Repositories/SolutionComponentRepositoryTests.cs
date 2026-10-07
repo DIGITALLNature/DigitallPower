@@ -7,6 +7,8 @@ using dgt.power.plugin.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.tests.Repositories;
 
@@ -74,6 +76,47 @@ public class SolutionComponentRepositoryTests
         var repository = new SolutionComponentRepository(CreateService());
 
         await Assert.That(async () => await repository.ListComponentIdsAsync("MissingSolution", IPluginAssemblyRepository.ComponentType)).ThrowsExactly<MissingSolutionException>();
+    }
+
+    [Test]
+    public async Task ListComponentIdsAsync_MultiplePages_CollectsEveryMembership()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var solutionId = Guid.NewGuid();
+        var firstId = Guid.NewGuid();
+        var secondId = Guid.NewGuid();
+        var pages = new List<(int Page, string? Cookie)>();
+        service.AddRequests(new ProviderRequestFake(typeof(RetrieveMultipleRequest), request =>
+        {
+            var query = (QueryExpression)((RetrieveMultipleRequest)request).Query;
+            if (query.EntityName == Solution.EntityLogicalName)
+            {
+                return new RetrieveMultipleResponse
+                {
+                    Results = { ["EntityCollection"] = new EntityCollection([new Solution(solutionId)]) }
+                };
+            }
+
+            pages.Add((query.PageInfo.PageNumber, query.PageInfo.PagingCookie));
+            var componentId = query.PageInfo.PageNumber == 1 ? firstId : secondId;
+            return new RetrieveMultipleResponse
+            {
+                Results =
+                {
+                    ["EntityCollection"] = new EntityCollection(
+                        [CreateSolutionComponent(solutionId, componentId, IPluginAssemblyRepository.ComponentType)])
+                    {
+                        MoreRecords = query.PageInfo.PageNumber == 1,
+                        PagingCookie = "next-page"
+                    }
+                }
+            };
+        }));
+
+        var result = await new SolutionComponentRepository(service).ListComponentIdsAsync("target", IPluginAssemblyRepository.ComponentType);
+
+        await Assert.That(result).IsEquivalentTo([firstId, secondId]);
+        await Assert.That(pages).IsEquivalentTo([(1, (string?)null), (2, "next-page")]);
     }
 
     private static SolutionComponent CreateSolutionComponent(Guid solutionId, Guid componentId, int componentType)

@@ -212,7 +212,15 @@ type IDs and execute before registration/type cleanup. Package-wide omission cal
 unlinking an API that moves to another assembly in the same package.
 The preview shows link/reassign/unlink/unchanged associations and counts handler reassignment
 and unlinking as destructive changes. Retry reconciles completed association writes.
-Solution membership is still pending; this does not complete P5 or wire the CLI.
+Standalone solution membership now uses flat `StandaloneSolutionChanges`: add the target
+assembly and desired steps only when missing. Preparation validates the solution and reads all
+membership pages; rendering lists additions or confirms none are needed. Application resolves
+new step IDs, writes membership after associations, and stops before cleanup on membership
+failure. Matched/migrated steps keep existing memberships. Unrelated memberships are untouched.
+Microsoft documents that assemblies and steps must be added separately; this slice does not
+implicitly add types, images, APIs, or identities.
+Package/provider membership and their platform verification remain pending; this does not
+complete P5 or wire the CLI.
 
 Ensure requested solution membership without removing unrelated memberships.
 Preview unsupported membership explicitly or fail according to the agreed policy.
@@ -257,6 +265,9 @@ Complete per-target confirmation, dry-run/non-interactive/CI precedence, destruc
 and applied/unchanged/declined/failed batch reporting.
 Keep cancellation distinct from a recoverable independent-target failure.
 Exercise console behavior through production orchestration.
+
+Defer visual output polish until all capabilities are wired and running through the CLI.
+Earlier slices must keep previews accurate, but need not finalize their layout.
 
 Gate: directory containing a package and its constituent DLL cannot accidentally perform
 competing deployments; failed batches cannot produce success-shaped results.
