@@ -41,7 +41,8 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
             }
         }
         var deletionCount = registrations.ImagesToDelete.Count + registrations.StepsToDelete.Count + registrations.TypesToDelete.Count +
-            changes.CustomApis.Count(api => api.PreviousHandlerId is not null);
+            changes.CustomApis.Count(api => api.PreviousHandlerId is not null) + ProviderDestructiveCount(changes.Providers);
+        RenderProviders([changes.Desired], changes.Providers);
         if (changes.AssemblyToDelete is not null)
         {
             deletionCount++;
@@ -87,7 +88,8 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
                     $"{Markup.Escape(step.Step.Name)} [bold]Add[/]");
             }
         }
-        var destructiveCount = changes.CustomApis.Count(api => api.PreviousHandlerId is not null);
+        RenderProviders(changes.Desired.Assemblies, changes.Providers);
+        var destructiveCount = changes.CustomApis.Count(api => api.PreviousHandlerId is not null) + ProviderDestructiveCount(changes.Providers);
         if (destructiveCount > 0)
         {
             console.MarkupLine($"[bold red]Destructive operations: {destructiveCount}[/]");
@@ -95,6 +97,48 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         if (upload)
         {
             console.MarkupLine("Assembly and plugin type records are managed by Dataverse during package upload; their IDs are validated before registration writes.");
+        }
+    }
+
+    private static int ProviderDestructiveCount(IReadOnlyList<DataProviderChange> changes) =>
+        changes.Sum(change => change.Handlers.Keys.Count(operation => change.Existing?.Handlers.ContainsKey(operation) == true));
+
+    private void RenderProviders(IReadOnlyList<LocalAssembly> desired, IReadOnlyList<DataProviderChange> changes)
+    {
+        var declarations = DataProviderRegistrationGrouper.Group(desired.SelectMany(assembly => assembly.PluginTypes).ToList());
+        if (declarations.Count == 0 && changes.Count == 0)
+        {
+            return;
+        }
+
+        var tree = new Tree("Data providers");
+        foreach (var provider in declarations)
+        {
+            var change = changes.SingleOrDefault(item => item.Desired?.DataSourceLogicalName == provider.DataSourceLogicalName);
+            var action = change is null ? "Unchanged" : Action(change.Existing?.Id, true);
+            var node = tree.AddNode($"{Markup.Escape(provider.ProviderName)} ({Markup.Escape(provider.DataSourceLogicalName)}) [bold]{action}[/]");
+            if (change is not null)
+            {
+                AddHandlerChanges(node, change);
+            }
+        }
+
+        foreach (var change in changes.Where(change => change.Desired is null))
+        {
+            var node = tree.AddNode($"{Markup.Escape(change.Name)} [bold]Update[/]");
+            AddHandlerChanges(node, change);
+        }
+
+        console.Write(tree);
+
+        static void AddHandlerChanges(IHasTreeNodes parent, DataProviderChange change)
+        {
+            foreach (var (operation, handler) in change.Handlers)
+            {
+                parent.AddNode(handler is null
+                    ? $"{operation} [red]Clear[/]"
+                    : $"{operation} [bold]Set[/] to {Markup.Escape(handler.AssemblyName)} / {Markup.Escape(handler.TypeName)}");
+            }
         }
     }
 

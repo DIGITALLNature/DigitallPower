@@ -296,7 +296,7 @@ resources. Association ownership does not imply ownership of the associated reco
 | Secure/unsecure step configuration | Environment-owned; push neither reads nor reconciles values |
 | Step operational overrides | Preserve enabled state and impersonation; reconcile only declared registration fields |
 | Custom API records | External prerequisite; explicit declarations reassign handlers, including from outside the target; omitted target-owned associations are unlinked, never delete API records |
-| Providers and individual operation handlers | Define ownership per provider/operation before authoritative removal |
+| Providers and operation handlers | A declaration owns the complete handler configuration; clear undeclared operations, but never delete provider/table records |
 | Managed identity records and bindings | Environment-provisioned; push does not create, bind, unbind, transfer, or delete identities |
 | Solution membership | Ensure requested membership; do not implicitly remove other memberships |
 | Provider tables | No deletion from absence without a separately approved schema ownership policy |
@@ -387,8 +387,17 @@ If provisioning remains, preserve explicit JsonConverter backing-provider valida
 base-language handling, metadata compatibility checks, and solution behavior.
 
 Providers can reference types from multiple assemblies. Resolve all replacement types
-before updating those handlers and before deleting old types. Provider/operation ownership
-and omission semantics must be settled independently of table provisioning.
+before updating those handlers and before deleting old types.
+
+A provider declaration owns its complete operation-handler configuration: set declared
+operations, reassign external handlers when necessary, and clear undeclared operations.
+Reject competing assembly-scoped claims to the same operation. Separate deployment targets
+must not independently declare the same provider.
+
+If the provider is omitted entirely, clear only handlers referring to target-owned types
+(including superseded types); preserve external handlers. Never delete provider records or
+data-source tables through omission. Provider name and explicitly supplied description are
+reconciled; table labels and metadata remain external to this core.
 
 ### Managed identities
 
@@ -537,7 +546,7 @@ changes public behavior. This proposal alone does not change the current command
 | D3 | Can specialized provider tables be provisioned independently through a practical supported route? | Provisional existing-table cutoff; post-implementation verification and fallback gate |
 | D4 | Is the initial recovery recognition policy sufficient? | Two-record/one-target-train rule with a provisional target-content guard; verify platform behavior |
 | D5 | Which environment overrides survive authoritative registration reconciliation? | Preserve configuration, enabled state, and impersonation; reconcile only declared fields |
-| D6 | Does omitted provider declaration remove an owned association? | Define ownership before deciding; shared records are not implicitly deleted |
+| D6 | Does omitted provider declaration remove an owned association? | Declared providers own all handler slots; wholly omitted providers clear only target-owned handlers, preserving records and external handlers |
 | D7 | Is managed identity selection artifact-owned or environment-supplied? | Environment-provisioned outside push; no attribute parsing or automatic binding transfer |
 | D8 | What is the verified solution-aware component matrix? | Add supported components; fail actual membership errors |
 | D9 | Do independent directory targets continue after failure? | Yes, with overall failure; stop on cancellation |

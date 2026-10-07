@@ -17,7 +17,8 @@ internal sealed record StandaloneDeploymentChanges(
     IReadOnlyList<RemoteAssembly> ExpectedAssemblies,
     RemoteAssembly? AssemblyToDelete,
     IReadOnlyList<CustomApiChange> CustomApis,
-    StandaloneSolutionChanges? Solution)
+    StandaloneSolutionChanges? Solution,
+    IReadOnlyList<DataProviderChange> Providers)
 {
     internal bool HasChanges
     {
@@ -28,7 +29,7 @@ internal sealed record StandaloneDeploymentChanges(
                 return true;
             }
 
-            return Registrations.HasChanges || CustomApis.Count > 0 || Solution is { HasChanges: true };
+            return Registrations.HasChanges || CustomApis.Count > 0 || Solution is { HasChanges: true } || Providers.Count > 0;
         }
     }
 }

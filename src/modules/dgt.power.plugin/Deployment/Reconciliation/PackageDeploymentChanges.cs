@@ -15,13 +15,19 @@ internal sealed record PackageDeploymentChanges(
     IReadOnlyList<RemoteAssembly> ExpectedAssemblies,
     IReadOnlyList<PackageAssemblyChanges> Assemblies,
     IReadOnlyList<CustomApiChange> CustomApis,
-    PackageSolutionChanges? Solution)
+    PackageSolutionChanges? Solution,
+    IReadOnlyList<DataProviderChange> Providers)
 {
     internal bool HasChanges
     {
         get
         {
             if (Existing is null || UpdateContent)
+            {
+                return true;
+            }
+
+            if (Providers.Count > 0)
             {
                 return true;
             }

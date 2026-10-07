@@ -212,10 +212,11 @@ public sealed class EntityDataProviderRepository(IOrganizationServiceAsync2 serv
         {
             ArgumentNullException.ThrowIfNull(provider);
         }
-        return ApplyCoreAsync(id, provider, handlers, cancellationToken);
+        return ApplyHandlersAsync(id, provider, handlers.ToDictionary(pair => pair.Key, pair => (Guid?)pair.Value), cancellationToken);
     }
 
-    private async Task<Guid> ApplyCoreAsync(Guid? id, LocalDataProvider? provider, IReadOnlyDictionary<DataProviderOperation, Guid> handlers, CancellationToken cancellationToken)
+    internal async Task<Guid> ApplyHandlersAsync(Guid? id, LocalDataProvider? provider,
+        IReadOnlyDictionary<DataProviderOperation, Guid?> handlers, CancellationToken cancellationToken)
     {
         var entity = new EntityDataProvider();
         if (provider is not null)

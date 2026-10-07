@@ -37,11 +37,13 @@ create/attribute-update/removal. Matching IDs and fields
 outside the SDK registration payload, including configuration associations, enabled state,
 and impersonation, are retained.
 
-Unsupported provider declarations fail explicitly. Custom API associations use
+Provider reconciliation requires an existing compatible JsonConverter data-source table;
+requested provider solution membership remains explicitly unsupported until its next slice.
+See [provider ownership](decision-plugin-provider-ownership.md). Custom API associations use
 shared target-wide preparation and application; see
 [Custom API ownership](decision-plugin-custom-api-ownership.md).
 Platform-only steps on deleted types and
-provider references to deleted types also block replacement/cleanup. These guards prevent an incomplete replacement
+remaining provider references to deleted types also block cleanup. These guards prevent an incomplete replacement
 slice from applying an apparently successful partial deployment. The standalone preparation
 entry point accepts an optional solution; the replacement entry points remain unwired to CLI.
 
@@ -100,7 +102,7 @@ binding to a new standalone replacement, and never delete shared identity record
 The diff accepts a destination snapshot and optional replacement-source snapshot. It selects
 step candidates across both for each exact CLR type name, then calculates changes once.
 Any matching old step becomes a write against its existing ID and the destination type.
-Old types and assembly are removed only after step/image writes, Custom API associations,
+Old types and assembly are removed only after step/image writes, Custom API/provider associations,
 and obsolete-step cleanup.
 No separate migration patching is used.
 

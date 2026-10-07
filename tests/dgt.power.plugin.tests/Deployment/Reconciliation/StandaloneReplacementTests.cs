@@ -192,12 +192,14 @@ public class StandaloneReplacementTests
     }
 
     [Test]
-    public async Task Prepare_ProviderReferencesOldType_BlocksUntilProviderPhase()
+    public async Task Apply_OmittedProviderReferencesOldType_ClearsOwnedHandlerBeforeCleanup()
     {
         var (service, _, typeId, _, _) = Seed();
-        service.Create(new Entity("entitydataprovider", Guid.NewGuid()) { ["name"] = "Provider", ["retrieveplugin"] = typeId });
+        var providerId = service.Create(new Entity("entitydataprovider", Guid.NewGuid()) { ["name"] = "Provider", ["retrieveplugin"] = typeId });
 
-        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
+        await Assert.That(service.Retrieve("entitydataprovider", providerId, new ColumnSet(true)).GetAttributeValue<Guid?>("retrieveplugin")).IsNull();
     }
 
     [Test]

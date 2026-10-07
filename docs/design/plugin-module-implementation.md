@@ -246,6 +246,21 @@ table creation, label updates, attribute updates, or publishing in the replaceme
 Resolve all package handler types before writing providers, and update replacement references
 before deleting old types. Apply the agreed operation ownership/omission policy.
 
+The initial provider slice uses flat `DataProviderChange` collections shared by standalone
+and package application. Declared providers own all operation slots: set/reassign declared
+handlers and explicitly clear undeclared handlers. Whole-provider omission clears only
+handlers pointing to owned current/superseded types, leaving external handlers and records.
+Provider lookup by data-source logical name rejects ambiguity; handler references are
+assembly-scoped, supporting the same CLR type name in different package assemblies.
+Provider name and explicitly supplied description are reconciled; no table schema writes occur.
+Missing/incompatible tables fail preparation. Provider writes precede membership and cleanup;
+fresh preparation reuses completed registrations/associations after interruptions.
+
+Provider declarations with a requested solution fail explicitly until provider/table
+membership is implemented; do not silently promise incomplete solution contents.
+The previous CLI provider implementation is unchanged until final cutover. Platform-only
+SDK steps on removed types still block cleanup pending lifecycle verification.
+
 After implementing this slice, verify independent provisioning in a non-production environment:
 
 1. Establish a documented way to create the required specialized data-source table independently

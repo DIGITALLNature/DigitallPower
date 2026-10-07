@@ -33,6 +33,9 @@ recommended reconciliation design, and unresolved product/platform decisions.
   attribute. See [environment identity boundary](decision-plugin-managed-identity-boundary.md).
 - Provisionally deploy providers against existing data-source tables. Verify independent
   provisioning after the provider slice and before cutover; agree a fallback if infeasible.
+- A declared provider owns all operation slots. Whole-provider omission clears only handlers
+  referring to target-owned types and preserves external handlers/records/tables.
+  See [provider ownership](decision-plugin-provider-ownership.md).
 
 ## Component deletion: candidate dependency check
 

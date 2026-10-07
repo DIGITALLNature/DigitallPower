@@ -31,11 +31,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
     private async Task<StandaloneDeploymentChanges> PrepareCoreAsync(LocalAssembly desired, string? solution, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (desired.PluginTypes.Any(type => type.DataProviders.Count > 0))
-        {
-            throw new NotSupportedException("The replacement standalone core does not yet support provider declarations.");
-        }
-
         ValidateCustomApiDeclarations([desired]);
         // Validate the whole local target before remote reads or resolving individual operations.
         RegistrationDiff.Compare(desired.PluginTypes, new RegistrationSnapshot([], new Dictionary<Guid, IReadOnlyList<RemotePluginStep>>(),
@@ -84,8 +79,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
         }
 
-        await EnsureNoProviderReferencesAsync(changes.TypesToDelete.Select(type => type.Id).ToHashSet(), cancellationToken);
-
         var messages = new Dictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage>();
         foreach (var write in changes.StepsToWrite)
         {
@@ -97,9 +90,11 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var customApis = await PrepareCustomApisAsync([desired], [.. snapshot.Types, .. oldSnapshot.Types],
             changes.ExistingTypeIds.ToDictionary(pair => new PluginTypeReference(desired.Name, pair.Key), pair => pair.Value), cancellationToken);
         var membership = await PrepareStandaloneSolutionAsync(desired, existing?.Id, changes, solution, cancellationToken);
+        var providers = await PrepareProvidersAsync([desired], [.. snapshot.Types, .. oldSnapshot.Types],
+            changes.ExistingTypeIds.ToDictionary(pair => new PluginTypeReference(desired.Name, pair.Key), pair => pair.Value), solution, cancellationToken);
         return new StandaloneDeploymentChanges(desired, existing?.Id,
             existing is not null && !string.Equals(desired.ContentHash, existing.ContentHash, StringComparison.OrdinalIgnoreCase),
-            changes, messages, assemblies, superseded, customApis, membership);
+            changes, messages, assemblies, superseded, customApis, membership, providers);
     }
 
     private async Task<RegistrationSnapshot> LoadSnapshotAsync(Guid? assemblyId, CancellationToken cancellationToken)
@@ -148,6 +143,8 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         var resolved = await ApplyRegistrationsAsync(changes.Registrations, changes.Messages, assemblyId, progress, cancellationToken);
         await ApplyCustomApisAsync(changes.CustomApis,
+            resolved.TypeIds.ToDictionary(pair => new PluginTypeReference(changes.Desired.Name, pair.Key), pair => pair.Value), progress, cancellationToken);
+        await ApplyProvidersAsync(changes.Providers,
             resolved.TypeIds.ToDictionary(pair => new PluginTypeReference(changes.Desired.Name, pair.Key), pair => pair.Value), progress, cancellationToken);
         if (changes.Solution is { } solution)
         {
@@ -313,7 +310,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var dependent = providers.FirstOrDefault(provider => provider.Handlers.Values.Any(removedTypeIds.Contains));
         if (dependent is not null)
         {
-            throw new NotSupportedException($"Data provider '{dependent.Name}' references a plugin type scheduled for removal; provider reassignment must be implemented before cleanup.");
+            throw new InvalidOperationException($"Data provider '{dependent.Name}' still references a plugin type scheduled for removal; cleanup stopped.");
         }
     }
 
@@ -337,11 +334,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         ValidateCustomApiDeclarations(desired.Assemblies);
         foreach (var assembly in desired.Assemblies)
         {
-            if (assembly.PluginTypes.Any(type => type.DataProviders.Count > 0))
-            {
-                throw new NotSupportedException("The replacement package core does not yet support provider declarations.");
-            }
-
             RegistrationDiff.Compare(assembly.PluginTypes, new RegistrationSnapshot([], new Dictionary<Guid, IReadOnlyList<RemotePluginStep>>(),
                 new Dictionary<Guid, IReadOnlyList<RemotePluginStepImage>>()));
         }
@@ -400,9 +392,10 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         var customApis = await PrepareCustomApisAsync(desired.Assemblies, ownedTypes, existingTypeIds, cancellationToken);
         var membership = await PreparePackageSolutionAsync(existing?.Id, assemblies, solution, cancellationToken);
+        var providers = await PrepareProvidersAsync(desired.Assemblies, ownedTypes, existingTypeIds, solution, cancellationToken);
         return new PackageDeploymentChanges(desired, name, existing,
             existing is not null && !string.Equals(existing.PackageHash, desired.Package.PackageHash, StringComparison.OrdinalIgnoreCase),
-            remoteAssemblies, assemblies, customApis, membership);
+            remoteAssemblies, assemblies, customApis, membership, providers);
     }
 
     internal Task<Guid> ApplyPackageAsync(PackageDeploymentChanges changes, Action<PluginDeploymentProgress>? progress = null, CancellationToken cancellationToken = default)
@@ -508,6 +501,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var resolvedTypeIds = resolved.SelectMany(assembly => assembly.Registrations.ExistingTypeIds.Select(pair =>
             new KeyValuePair<PluginTypeReference, Guid>(new PluginTypeReference(assembly.Changes.Desired.Name, pair.Key), pair.Value))).ToDictionary();
         await ApplyCustomApisAsync(changes.CustomApis, resolvedTypeIds, progress, cancellationToken);
+        await ApplyProvidersAsync(changes.Providers, resolvedTypeIds, progress, cancellationToken);
         if (changes.Solution is { } solution)
         {
             if (solution.AddPackage)
@@ -572,6 +566,97 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         if (duplicate is not null)
         {
             throw new InvalidOperationException($"Custom API '{duplicate.Key}' is declared by multiple plugin types in the deployment target.");
+        }
+    }
+
+    private async Task<IReadOnlyList<DataProviderChange>> PrepareProvidersAsync(IReadOnlyList<LocalAssembly> desired,
+        IReadOnlyList<RemotePluginType> ownedTypes, Dictionary<PluginTypeReference, Guid> existingTypeIds,
+        string? solutionName, CancellationToken cancellationToken)
+    {
+        var declarations = DataProviderRegistrationGrouper.Group(desired.SelectMany(assembly => assembly.PluginTypes).ToList());
+        if (declarations.Count > 0 && !string.IsNullOrWhiteSpace(solutionName))
+        {
+            throw new NotSupportedException("Provider solution membership is not implemented in the replacement core yet.");
+        }
+
+        var remote = await _providers.ListAsync(cancellationToken);
+        var changes = new List<DataProviderChange>();
+        var declaredSources = declarations.Select(provider => provider.DataSourceLogicalName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        foreach (var provider in declarations)
+        {
+            var candidates = remote.Where(candidate => string.Equals(candidate.DataSourceLogicalName, provider.DataSourceLogicalName, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (candidates.Count > 1)
+            {
+                throw new InvalidOperationException($"Data source '{provider.DataSourceLogicalName}' has multiple providers; reconciliation is ambiguous.");
+            }
+
+            var existing = candidates.SingleOrDefault();
+            var table = await _providers.FindDataSourceAsync(provider.DataSourceLogicalName, cancellationToken) ??
+                throw new InvalidDataSourceException($"Data-source table '{provider.DataSourceLogicalName}' must be provisioned before plugin push.");
+            await _providers.ValidateDataSourceAsync(provider.DataSourceLogicalName, table, cancellationToken);
+            var handlers = new Dictionary<DataProviderOperation, PluginTypeReference?>();
+            foreach (var operation in provider.Handlers.Keys)
+            {
+                var matches = desired.SelectMany(assembly => assembly.PluginTypes
+                        .Where(type => type.DataProviders.Any(registration =>
+                            string.Equals(registration.DataSourceSchemaName, provider.DataSourceSchemaName, StringComparison.OrdinalIgnoreCase) &&
+                            registration.Event == operation))
+                        .Select(type => new PluginTypeReference(assembly.Name, type.TypeName)))
+                    .Distinct().ToList();
+                if (matches.Count != 1)
+                {
+                    throw new AssemblyException($"Provider '{provider.ProviderName}' operation '{operation}' has competing assembly-scoped handlers.");
+                }
+
+                var handler = matches[0];
+                if (!existingTypeIds.TryGetValue(handler, out var id) ||
+                    existing is null || !existing.Handlers.TryGetValue(operation, out var currentId) || currentId != id)
+                {
+                    handlers.Add(operation, handler);
+                }
+            }
+
+            if (existing is not null)
+            {
+                foreach (var operation in existing.Handlers.Keys.Where(operation => !provider.Handlers.ContainsKey(operation)))
+                {
+                    handlers.Add(operation, null);
+                }
+            }
+
+            var metadataChanged = existing is null || existing.Name != provider.ProviderName ||
+                provider.Description is not null && provider.Description != existing.Description;
+            if (metadataChanged || handlers.Count > 0)
+            {
+                changes.Add(new DataProviderChange(provider, existing, handlers));
+            }
+        }
+
+        var ownedIds = ownedTypes.Select(type => type.Id).ToHashSet();
+        foreach (var provider in remote.Where(provider => !declaredSources.Contains(provider.DataSourceLogicalName)))
+        {
+            var handlers = provider.Handlers.Where(pair => ownedIds.Contains(pair.Value))
+                .ToDictionary(pair => pair.Key, _ => (PluginTypeReference?)null);
+            if (handlers.Count > 0)
+            {
+                changes.Add(new DataProviderChange(null, provider, handlers));
+            }
+        }
+
+        return changes;
+    }
+
+    private async Task ApplyProvidersAsync(IReadOnlyList<DataProviderChange> changes,
+        Dictionary<PluginTypeReference, Guid> typeIds, Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
+    {
+        foreach (var change in changes)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var handlers = change.Handlers.ToDictionary(pair => pair.Key,
+                pair => pair.Value is { } handler ? (Guid?)typeIds[handler] : null);
+            await _providers.ApplyHandlersAsync(change.Existing?.Id, change.Desired, handlers, cancellationToken);
+            progress?.Invoke(new PluginDeploymentProgress(change.Existing is null ? PluginDeploymentOperation.Created : PluginDeploymentOperation.Updated,
+                "data provider", change.Name));
         }
     }
 

@@ -19,6 +19,28 @@ namespace dgt.power.plugin.tests.Repositories;
 public class EntityDataProviderRepositoryTests
 {
     [Test]
+    public async Task ApplyHandlers_NullHandler_SendsExplicitClearAndLeavesOtherHandlersUntouched()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        Entity? captured = null;
+        service.AddRequests(new ProviderRequestFake(typeof(UpdateRequest), request =>
+        {
+            captured = ((UpdateRequest)request).Target;
+            return new UpdateResponse();
+        }));
+        var providerId = Guid.NewGuid();
+
+        await new EntityDataProviderRepository(service).ApplyHandlersAsync(providerId, null,
+            new Dictionary<DataProviderOperation, Guid?> { [DataProviderOperation.Retrieve] = null }, CancellationToken.None);
+
+        await Assert.That(captured!.Id).IsEqualTo(providerId);
+        await Assert.That(captured.Attributes.ContainsKey(EntityDataProvider.LogicalNames.RetrievePlugin)).IsTrue();
+        await Assert.That(captured[EntityDataProvider.LogicalNames.RetrievePlugin]).IsNull();
+        await Assert.That(captured.Attributes.ContainsKey(EntityDataProvider.LogicalNames.UpdatePlugin)).IsFalse();
+        await Assert.That(captured.Attributes.ContainsKey(EntityDataProvider.LogicalNames.Name)).IsFalse();
+    }
+
+    [Test]
     [Arguments(0)]
     [Arguments(2)]
     public async Task ResolveJsonConverter_MissingOrAmbiguous_FailsBeforeWrites(int matches)
