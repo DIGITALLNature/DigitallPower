@@ -66,8 +66,8 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             Orders = { new OrderExpression(PluginAssembly.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(entity => entity.ToEntity<PluginAssembly>()).Select(entity =>
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(entity => entity.ToEntity<PluginAssembly>()).Select(entity =>
         {
             var contentHash = entity.PackageId is not null || entity.Content is null ? null : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
             return new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id, contentHash, entity.ManagedIdentityId?.Id);

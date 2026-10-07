@@ -1337,6 +1337,7 @@ DigitallPower/
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
 ├── schemas/                      # JSON schemas for configuration files
+├── docs/                         # Migration guides and developer design proposals
 ├── scripts/                      # Repository maintenance scripts
 ├── Directory.Build.props         # Common MSBuild properties
 ├── global.json                   # Pinned .NET SDK

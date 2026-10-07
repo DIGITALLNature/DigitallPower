@@ -27,8 +27,8 @@ public sealed class SdkMessageProcessingStepImageRepository(IOrganizationService
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(e => e.ToEntity<SdkMessageProcessingStepImage>()).Select(ToRemoteImage).ToList();
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(e => e.ToEntity<SdkMessageProcessingStepImage>()).Select(ToRemoteImage).ToList();
     }
 
     private static RemotePluginStepImage ToRemoteImage(SdkMessageProcessingStepImage image)

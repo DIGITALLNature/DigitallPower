@@ -52,8 +52,8 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(ToRemoteStep).ToList();
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(ToRemoteStep).ToList();
     }
 
     private static RemotePluginStep ToRemoteStep(Entity entity)

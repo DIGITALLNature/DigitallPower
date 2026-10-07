@@ -24,8 +24,8 @@ public sealed class PluginTypeRepository(IOrganizationServiceAsync2 service) : I
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result
             .Select(e => e.ToEntity<PluginType>())
             .Select(t => new RemotePluginType(t.Id, t.TypeName!))
             .ToList();

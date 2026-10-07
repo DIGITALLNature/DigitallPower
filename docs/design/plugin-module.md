@@ -10,13 +10,13 @@ The starting feature baseline is the current CLI surface. The objective is to pr
 useful capabilities while reducing the number of representations, coordination points,
 and implicit policies needed to implement them.
 
-Three directions have been selected:
+Core directions:
 
 - Rewrite the deployment core while selectively retaining or adapting proven implementation
   pieces; do not rewrite the whole module or preserve the existing architecture by default.
 - Reconcile registrations authoritatively within a defined ownership scope.
-- Include a stable step registration key in the attribute contract; remote persistence
-  and lookup remain to be designed.
+- Use conservative composite step matching in the first rewrite. Persisted/generated
+  keys and registration-library changes are deferred for reconsideration.
 
 Other recommendations below are proposals unless explicitly identified as selected.
 Open decisions are collected at the end.
@@ -110,8 +110,8 @@ Current declarative input requires supported `Digitall.Plugins.Registration` att
 on every concrete plugin type. Missing Custom APIs, unresolved messages, incompatible
 provider tables, and incomplete metadata reads fail before deployment writes.
 
-The stable registration-key proposal requires coordinated changes to the registration
-library. This document does not approve a new CLI option or change shared exit-code contracts.
+The first rewrite requires no registration-library change for identity. This document
+does not approve a new CLI option or change shared exit-code contracts.
 
 ## Architecture options
 
@@ -260,23 +260,26 @@ It is not a simplification if preserving the same state requires extra transfer 
 Migration is ordinary reconciliation against an existing step whose destination type changes.
 It may have a distinct progress label, but needs no parallel migration model or pipeline.
 
-### Stable keys
+### First-version matching contract
 
-Selected direction: include a stable registration key in the attribute contract.
+Within a scoped plugin type, match by message, stage, mode, primary entity, and secondary
+entity. Compare message/entity names case-insensitively and normalize unset entity names
+to `none`. Exclude name, execution order, filtering attributes, images, and assembly version.
+Changes to tuple fields or plugin type mean a new registration; matching configuration is
+preserved only when the tuple still identifies the same registration.
 
-The key should identify a logical registration independently of display name, execution
-order, assembly version, and other mutable registration properties. Validate duplicate
-keys in the selected scope before writes.
+Reject duplicate local declarations even when their execution orders differ. Reject multiple
+remote matches rather than assigning an existing configuration arbitrarily. Existing unkeyed
+steps can be reused by an unambiguous composite match.
 
-Open questions include key scope, whether all declarations require keys, remote persistence,
-and how to match existing unkeyed registrations. No persistence mechanism is assumed.
+Persisted keys are deferred, not required for implementation. A generated key from these
+properties would have the same limitations as the tuple: prefixes/hashes cannot distinguish
+duplicates or preserve identity when tuple fields change.
 
-Until stable remote matching is available, use conservative composite matching and reject
-ambiguous candidates. Never arbitrarily select which existing configuration survives.
-
-Without an established stable identity, changes to message/stage/entity generally represent
-new registrations. With an established key, mutable-property changes still require validation
-that Dataverse permits the intended update; a key does not make every update safe.
+Name and Description are possible storage fields but neither is an established identity
+contract. Category and RuntimeIntegrationProperties are explicitly documented for internal
+use only and must not be repurposed. See the
+[Microsoft step reference](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/sdkmessageprocessingstep).
 
 ## Ownership and removal
 
@@ -288,9 +291,9 @@ resources. Association ownership does not imply ownership of the associated reco
 
 | Resource/state | Proposed treatment |
 |----------------|--------------------|
-| Owned plugin types, steps, and images | Converge to declarations; remove absent owned registrations |
+| Owned plugin types, steps, and images | Converge to declarations; own all non-internal steps on selected plugin types and remove absent owned registrations |
 | Secure/unsecure step configuration | Environment-owned; push neither reads nor reconciles values |
-| Step operational overrides, such as enabled state | Explicitly document which fields are preserved versus declared |
+| Step operational overrides | Preserve enabled state and impersonation; reconcile only declared registration fields |
 | Custom API records | External prerequisite; only the owned handler association is reconciled |
 | Providers and individual operation handlers | Define ownership per provider/operation before authoritative removal |
 | Managed identity records | Potentially shared; linking does not authorize deleting an identity |
@@ -329,7 +332,13 @@ Selected direction: recognize unambiguous partially completed replacements and c
 them conservatively. Reject genuinely ambiguous multiple-installation states.
 
 The existing blanket rejection of multiple standalone version trains is an alternative,
-but requires explicit manual-recovery guidance. Detailed recovery recognition remains to be designed.
+but requires explicit manual-recovery guidance.
+
+The first recovery implementation permits at most two standalone records: exactly one in
+the desired major/minor train and one superseded record, with target content matching the
+requested artifact. This hash guard is provisional and does not prove a failed deployment.
+Duplicate/extra trains, target-content mismatch, and ambiguous matching registrations fail.
+Unsupported cross-resource dependencies block cleanup until their owning phase is implemented.
 
 Concurrent deployments and changes between preview and execution need a guard policy.
 At minimum, critical ownership/deletion assumptions must not silently become stale.
@@ -386,9 +395,10 @@ Define exactly what `--solution` guarantees for packages, standalone assemblies,
 providers, and provider-table schemas. Types/images/APIs/identities are not implicitly
 included merely because they participate in deployment.
 
-Recommendation: do not silently weaken requested membership. Fail unsupported required
-membership or prominently report a documented platform limitation. Strict versus explicitly
-reported best-effort behavior remains open.
+Selected direction: establish a verified component-awareness matrix, add documented supported
+components, and fail actual membership errors. Do not introduce a user-selectable best-effort
+mode or infer solution awareness from a table being writable. Verify package/provider support
+before finalizing their guarantees; do not silently skip a promised membership.
 
 ## Directory deployments
 
@@ -402,8 +412,8 @@ conflicts rather than relying on filesystem enumeration order.
 Apply explicit ordering. Prepare each target against current remote state when it is reached;
 do not reuse stale snapshots after prior targets have written.
 
-Define whether failures stop the batch or allow independent later targets. Preserve cancellation
-as a stop condition. Report failed, applied, unchanged, and declined targets separately;
+Selected direction: continue independent later targets after failure, return overall failure,
+and stop on cancellation. Report failed, applied, unchanged, and declined targets separately;
 a partially failed batch must not appear successful.
 
 ## Step configuration
@@ -446,7 +456,7 @@ do not implement another plan/render/apply pipeline inside tests.
 
 | Layer | Required coverage |
 |-------|-------------------|
-| Artifact reading | Registration parsing, key validation, package assets, missing dependencies, fail-closed metadata loading |
+| Artifact reading | Registration parsing, duplicate declaration validation, package assets, missing dependencies, fail-closed metadata loading |
 | Pure reconciliation | Identity/matching, ambiguity, ownership, omission, updates/removals, migrated and already migrated steps |
 | SDK boundary | Exact payloads, complete paging, metadata operations, transactions, package ID resolution |
 | Production orchestration | Preview/approval/apply, cancellation, execution ordering, partial progress, batch outcomes |
@@ -481,8 +491,9 @@ package asset selection, correct SDK payload helpers, fault diagnostics, CLI int
 and tests that establish the desired behavior. Existing tests are evidence, not immutable
 specifications of policies that may deliberately change.
 
-Do not begin by rearranging folders or consolidating repositories. First settle ownership,
-identity persistence, provider scope, and recovery semantics.
+Do not begin by rearranging folders or consolidating repositories. First settle remaining
+ownership, provider scope, and recovery semantics. Identity persistence is not a prerequisite
+for the first rewrite.
 
 Then establish scenario tests around the selected behavioral contract, build unified
 registration reconciliation, introduce the minimal change set, and put sequencing under
@@ -505,14 +516,14 @@ changes public behavior. This proposal alone does not change the current command
 | ID | Question | Proposed direction |
 |----|----------|--------------------|
 | D1 | What establishes target ownership, including shared provider operations and package removals? | Explicit artifact/resource scope; never infer ownership from a matching name alone |
-| D2 | Where is the stable step key persisted, what is its scope, and how are unkeyed steps adopted? | Design persistence first; reject duplicate/ambiguous mappings |
+| D2 | Should persistent keys be revisited later? | Deferred; first rewrite uses unambiguous tuple matching without attribute changes |
 | D3 | Can specialized provider tables be provisioned independently through a practical supported route? | Provisional existing-table cutoff; post-implementation verification and fallback gate |
-| D4 | How are partial upgrades recognized and recovered? | Conservative recovery selected; recognition rules remain open |
-| D5 | Which environment overrides survive authoritative registration reconciliation? | Preserve configuration and explicitly enumerated operational fields |
+| D4 | Is the initial recovery recognition policy sufficient? | Two-record/one-target-train rule with a provisional target-content guard; verify platform behavior |
+| D5 | Which environment overrides survive authoritative registration reconciliation? | Preserve configuration, enabled state, and impersonation; reconcile only declared fields |
 | D6 | Does omitted provider/identity declaration remove an owned association? | Define ownership before deciding; shared records are not implicitly deleted |
 | D7 | Is managed identity selection artifact-owned or environment-supplied? | Reject conflicts and validate tenant compatibility in either design |
-| D8 | Is solution membership strict or explicitly best-effort for unsupported component types? | No silent omission |
-| D9 | Do independent directory targets continue after failure? | Explicit policy and accurate aggregate result; stop on cancellation |
+| D8 | What is the verified solution-aware component matrix? | Add supported components; fail actual membership errors |
+| D9 | Do independent directory targets continue after failure? | Yes, with overall failure; stop on cancellation |
 | D10 | How are concurrent changes or stale previews detected? | Guard critical assumptions; require fresh approval when intent changes |
 | D11 | Does configuration require redesign? | No; retain current rerunnable behavior and secure-create/link transaction |
 | D12 | Which package upload side effects can be previewed, and which request sequences are supported? | Establish with live tests before promising guarantees |

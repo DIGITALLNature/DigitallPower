@@ -11,10 +11,19 @@ recommended reconciliation design, and unresolved product/platform decisions.
   CLI integration, and test code. Avoid a wholesale rewrite or permanent dual architectures.
 - Registration reconciliation is authoritative within a defined ownership scope.
   The ownership mechanism and policies for shared resources still require design.
-- The registration attribute contract should include stable step keys. Key persistence,
-  scope, and adoption of existing unkeyed steps remain unresolved.
+- First-version identity uses scoped composite matching; persisted/generated keys and
+  identity-related registration-library changes are deferred.
+- Own all non-internal steps on selected plugin types. Preserve configuration, enabled
+  state, and impersonation, and reconcile only declared fields.
+- Reject duplicate local tuples and ambiguous remote matches. Tuple changes create
+  new registrations; name/order/attributes/images do not affect matching.
 - Implement conservative recovery for unambiguous partial upgrades.
-- Deliver incremental slices with one final CLI cutover; coordinate registration-library changes externally.
+- Initially allow two standalone records only with one desired major/minor train and
+  matching target content. The hash guard is provisional, not proof of a failed push.
+  Unsupported cross-resource dependencies block cleanup.
+- Deliver incremental slices with one final CLI cutover.
+- Continue independent directory targets after failure, return overall failure, and stop on cancellation.
+- Verify the solution-aware component matrix, add supported components, and fail membership errors.
 - Keep step configuration behavior; combined transactions are not rewrite scope.
 - Provisionally deploy providers against existing data-source tables. Verify independent
   provisioning after the provider slice and before cutover; agree a fallback if infeasible.

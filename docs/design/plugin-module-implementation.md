@@ -14,7 +14,8 @@ Selected scope:
 
 - Replace reconciliation models and lifecycle orchestration; selectively reuse proven code.
 - Authoritative reconciliation within an explicitly defined ownership scope.
-- Stable step keys, coordinated with `DIGITALLNature/DigitallRegistrationPower`.
+- Composite step matching without persisted keys or required registration-library changes
+  in the first rewrite. Revisit generated/persisted identities later.
 - Conservative retry/recovery for unambiguous partially completed upgrades.
 - Keep the step configuration command's current behavior. Do not add combined
   secure/unsecure transactions merely for this rewrite; partial updates can be rerun.
@@ -31,7 +32,7 @@ No dependency changes are assumed.
 | Package | Work | Prerequisites | Completion gate |
 |---------|------|---------------|-----------------|
 | P0 | Behavioral contract and acceptance matrix | None | Ownership, identity scope/adoption, recovery boundaries, omission semantics, and CLI implications agreed |
-| P1 | Stable-key feasibility and registration-library change | P0 identity contract | Supported persistence/matching mechanism established; attribute contract and metadata-reading tests available |
+| P1 | Composite matching and ambiguity safeguards | P0 identity contract | Duplicate declarations rejected; unambiguous existing steps reused; tuple changes do not preserve identity |
 | P2 | Replacement core and standalone create/update | P0, P1 | Production use case prepares/applies changes; previews faithful; repeat push is unchanged |
 | P3 | Standalone replacement and retry/recovery | P2 | Stable step/config associations retained; phase failures and retries covered |
 | P4 | Package deployment | P3 | Package-created IDs resolved; cross-assembly references and package removals safe |
@@ -40,7 +41,7 @@ No dependency changes are assumed.
 | P7 | Batch handling and final presentation | P3-P6 | Conflicts detected, deterministic execution, correct confirmation/cancellation/results |
 | P8 | CLI cutover, removal, documentation, release verification | P7 and all unresolved gates affecting release | One core remains; command tests/docs current; platform-sensitive behavior verified |
 
-P0 and P1 are investigation/design work, not invitations to build speculative infrastructure.
+P0 is contract work; P1 is a bounded matching primitive, not speculative identity infrastructure.
 P5 can proceed after P2 while package integration is completed separately. P6 must not
 ship the existing-table requirement on an unverified assumption.
 
@@ -52,12 +53,13 @@ Specify:
 
 - How a target owns standalone assemblies, package assemblies, types, registrations,
   API associations, and provider operation associations.
-- Which absent declarations remove owned resources and which environment fields survive.
-- Stable-key scope, required/optional keys, duplicate handling, and unkeyed-step adoption.
+- Shared-resource omission/removal policies; step configuration, enabled state, and
+  impersonation are already selected as preserved environment state.
+- Scoped tuple matching, duplicate handling, and unambiguous existing-step reuse.
 - Permitted recovery states, ambiguous states, and cleanup authorization.
 - Identity conflict/tenant validation and whether identity selection remains artifact-based.
-- Strict or explicitly reported best-effort solution membership.
-- Continue/stop behavior for independent batch failures.
+- Verify/document the solution-aware component matrix; membership errors fail deployment.
+- Continue independent batch targets after failure, return overall failure, and stop on cancellation.
 - Guarding critical assumptions changed between preview and execution.
 - Handling removed package assets and standalone/package ownership transitions.
 
@@ -67,24 +69,26 @@ Map each existing test to retained behavior, deliberate change, or implementatio
 Output: agreed contract tables in the proposal and scenario names with expected results.
 Finalize any necessary CLI/attribute changes before depending on them.
 
-## P1: Establish stable keys end to end
+## P1: Composite matching and ambiguity safeguards
 
-Bound the investigation to a supported way to persist and retrieve logical registration
-identity across redeployments and assembly replacement. Establish required privileges,
-solution behavior, naming collisions, and behavior on existing unkeyed steps.
-Do not invent unsupported Dataverse fields or conflate a generated display name with identity.
+Implement matching scoped to one plugin type, using message, stage, mode, primary entity,
+and secondary entity. Normalize casing/unset entities. Exclude name, execution order,
+attributes, images, and assembly version.
 
-Coordinate the external registration-library work:
+Reject duplicate local tuples and multiple matching remote candidates. Unrelated remote
+tuples do not prevent a unique match. Changing a tuple field means a new registration.
+The caller supplies candidates scoped to the desired type, including applicable superseded
+assemblies; recovery candidate selection is P3 work, not a first-match heuristic.
 
-- Define the attribute key and validation contract.
-- Implement and test it in `DigitallRegistrationPower`.
-- Make a released or otherwise agreed consumable dependency available.
-- Update plugin metadata parsing, sample plugins, and required package references.
-- Synchronize lock files if dependency manifests change.
+Use `Reconciliation/PluginStepMatcher` as the first primitive for the replacement core.
+Keep it independent from the currently wired planner until the core is ready for cutover.
 
-Gate: demonstrate stable matching when execution order/display name changes and reject
-duplicate keys. Prove configuration associations do not move to an arbitrary candidate.
-If persistence is infeasible, return to P0 rather than silently substituting name heuristics.
+Gate: unchanged tuples retain existing IDs across ordinary registration-content changes;
+duplicate/ambiguous tuples fail with actionable diagnostics. No Name/Description markers,
+mapping table, or registration-library dependency update is required.
+
+Persisted identity and external registration-library changes are deferred. If revisited,
+establish supported storage and adoption semantics before adding them.
 
 ## P2: Build the smallest complete standalone slice
 
@@ -100,6 +104,13 @@ Implement:
 - One deployment use case with preparation and application entry points.
 - Minimal tree presentation and progress from the same changes.
 - Same-version standalone creation/content update.
+
+The replacement entry point is `Reconciliation/StandalonePluginDeployment`; pure registration
+decisions are held in flat `RegistrationChanges` collections and displayed by
+`Output/StandaloneDeploymentRenderer`. This core is not wired to commands until P8.
+Cross-resource features not yet implemented are explicitly rejected instead of ignored.
+Platform-only stages remain outside declarative step cleanup and block type/assembly deletion
+until their owning association phase is supported.
 
 Test the production use case, not a duplicate test pipeline. Establish zero-write dry-run,
 unchanged repeat deployment, ambiguity rejection, preserved configuration on updates,
@@ -121,6 +132,12 @@ are failed deployments.
 
 Gate: replacement preserves matching step IDs/configuration associations and retry cannot
 create duplicate active registrations or delete still-referenced types.
+
+Selected recovery boundary: at most two same-name standalone records, exactly one in the
+desired major/minor train, with target content matching the requested artifact. The hash
+check is a provisional conservative guard, not proof of a failed push. More/duplicate trains,
+content mismatch, and ambiguous step candidates fail. Identity/provider/API dependencies
+and platform-only steps block cleanup until their relevant phases are implemented.
 
 ## P4: Add package deployment
 
@@ -217,7 +234,7 @@ No environment credentials or live execution are assumed by this plan.
 Release verification must cover:
 
 - Supported SDK reassignment/image payloads and package side effects.
-- Stable-key persistence/adoption and required permissions.
+- Composite matching, duplicate rejection, and safe reuse of existing step IDs.
 - Provider provisioning cutoff or fallback.
 - Retry/recovery after representative partial failures.
 - Complete paging and safe refusal of stale/ambiguous destructive assumptions.
