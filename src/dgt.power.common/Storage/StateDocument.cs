@@ -8,12 +8,12 @@ namespace dgt.power.common.Storage;
 
 internal sealed class StateDocument
 {
-    public int SchemaVersion { get; set; } = 1;
+    public int SchemaVersion { get; init; } = 1;
 
-    public TelemetryState Telemetry { get; set; } = new();
+    public TelemetryState Telemetry { get; init; } = new();
 
-    public UpdateState Updates { get; set; } = new();
+    public UpdateState Updates { get; init; } = new();
 
     [JsonExtensionData]
-    public Dictionary<string, JsonElement>? AdditionalProperties { get; set; }
+    public Dictionary<string, JsonElement>? AdditionalProperties { get; init; }
 }

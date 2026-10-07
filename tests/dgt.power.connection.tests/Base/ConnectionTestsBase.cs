@@ -20,7 +20,7 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
 
     protected ConnectionTestsBase()
     {
-        _directory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"dgtp-tests-{Guid.NewGuid():N}");
+        _directory = Path.Combine(Path.GetTempPath(), $"dgtp-tests-{Guid.NewGuid():N}");
         var home = new DgtpHome(_directory);
         Home = home;
         var store = new ConnectionStore(home);

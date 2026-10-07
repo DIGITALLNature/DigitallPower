@@ -28,7 +28,7 @@ public class CreateConnectionCommandTests
     {
         var existing = new InteractiveConnection
         {
-            Url = "https://existing.crm.dynamics.com",
+            Url = ConnectionTestUrls.ExistingDataverse,
             TenantId = "tenant"
         };
         ConnectionStore.Upsert("prod", existing);
@@ -56,7 +56,7 @@ public class CreateConnectionCommandTests
     {
         ConnectionStore.Upsert("prod", new ClientSecretConnection
         {
-            Url = "https://existing.crm.dynamics.com",
+            Url = ConnectionTestUrls.ExistingDataverse,
             TenantId = "tenant",
             ClientId = "client"
         });
@@ -65,7 +65,7 @@ public class CreateConnectionCommandTests
         var settings = new CreateConnectionSettings
         {
             Name = "prod",
-            Url = "https://replacement.crm.dynamics.com",
+            Url = ConnectionTestUrls.ReplacementDataverse,
             TenantId = "tenant",
             ClientId = "client",
             ClientSecret = "new-secret"
@@ -75,7 +75,7 @@ public class CreateConnectionCommandTests
 
         await Assert.That(SecretStore.ReadSecret("prod", "clientSecret")).IsEqualTo("old-secret");
         await Assert.That(((ClientSecretConnection)ConnectionStore.Find("prod")!).Url)
-            .IsEqualTo("https://existing.crm.dynamics.com");
+            .IsEqualTo(ConnectionTestUrls.ExistingDataverse);
     }
 
     [Test]
@@ -94,14 +94,14 @@ public class CreateConnectionCommandTests
     {
         var result = await RunAsync(new FakeConnectionVerifier(), new CreateConnectionSettings
         {
-            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant", ClientId = "client", ClientSecret = "test-secret",
             NonInteractive = true
         });
 
         await Assert.That(result).IsEqualTo(0);
         await Assert.That(SecretStore.ReadSecret("prod", "clientSecret")).IsEqualTo("test-secret");
-        await Assert.That(File.ReadAllText(Home.ConnectionsPath)).DoesNotContain("test-secret");
+        await Assert.That(await File.ReadAllTextAsync(Home.ConnectionsPath)).DoesNotContain("test-secret");
         await Assert.That(TestConsole.Output).DoesNotContain("test-secret");
     }
 
@@ -113,7 +113,7 @@ public class CreateConnectionCommandTests
     {
         var result = await RunAsync(new FakeConnectionVerifier(), new CreateConnectionSettings
         {
-            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant", ClientId = "client", CertificatePath = "certificate.pfx",
             CertificatePassword = password, NonInteractive = true
         });
@@ -123,7 +123,7 @@ public class CreateConnectionCommandTests
         await Assert.That(ConnectionStore.Find("prod")).IsTypeOf<ClientCertificateConnection>();
         if (!string.IsNullOrEmpty(password))
         {
-            await Assert.That(File.ReadAllText(Home.ConnectionsPath)).DoesNotContain(password);
+            await Assert.That(await File.ReadAllTextAsync(Home.ConnectionsPath)).DoesNotContain(password);
             await Assert.That(TestConsole.Output).DoesNotContain(password);
         }
     }
@@ -165,7 +165,7 @@ public class CreateConnectionCommandTests
     private static CreateConnectionSettings CreateFederatedSettings(string name, bool noVerify = false) => new()
     {
         Name = name,
-        Url = "https://contoso.crm.dynamics.com",
+        Url = ConnectionTestUrls.Dataverse,
         TenantId = "tenant",
         ClientId = "client",
         ServiceConnectionId = "service-connection",

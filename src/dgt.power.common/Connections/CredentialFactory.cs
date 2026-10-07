@@ -135,14 +135,15 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
 
         if (string.IsNullOrWhiteSpace(connection.Thumbprint))
         {
+#pragma warning disable S2302 // "connection" is part of the error message, not a parameter name.
             throw new InvalidOperationException($"Certificate details are missing for connection '{connectionName}'.");
+#pragma warning restore S2302
         }
 
         using var certificateStore = new X509Store(StoreName.My, StoreLocation.CurrentUser);
         certificateStore.Open(OpenFlags.ReadOnly);
         var certificate = certificateStore.Certificates
             .Find(X509FindType.FindByThumbprint, connection.Thumbprint, validOnly: false)
-            .OfType<X509Certificate2>()
             .FirstOrDefault();
         return certificate ?? throw new InvalidOperationException(
             $"Certificate '{connection.Thumbprint}' was not found in the CurrentUser certificate store.");

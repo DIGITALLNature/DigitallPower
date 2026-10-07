@@ -38,9 +38,11 @@ public sealed class DataverseConnectionVerifier(CredentialFactory credentialFact
 
         if (!service.IsReady)
         {
+#pragma warning disable S2302 // "connection" is part of the error message, not a parameter name.
             throw new DataverseConnectionException(
                 $"Dataverse connection failed: {service.LastError}",
                 service.LastException);
+#pragma warning restore S2302
         }
 
         await service.ExecuteAsync(new WhoAmIRequest(), cancellationToken);

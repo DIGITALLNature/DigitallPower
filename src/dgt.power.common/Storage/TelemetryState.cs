@@ -12,6 +12,8 @@ internal sealed class TelemetryState
 
     public string? InstallId { get; set; }
 
+    // Used by System.Text.Json to preserve unrecognized state fields.
+    // ReSharper disable once UnusedMember.Global
     [JsonExtensionData]
     public Dictionary<string, JsonElement>? AdditionalProperties { get; set; }
 }

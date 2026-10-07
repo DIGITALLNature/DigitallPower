@@ -10,7 +10,7 @@ public class CreateConnectionSettingsTests
     [Test]
     public async Task UserConnectionDoesNotRequireTenant()
     {
-        var settings = new CreateConnectionSettings { Name = "dev", Url = "https://contoso.crm.dynamics.com" };
+        var settings = new CreateConnectionSettings { Name = "dev", Url = ConnectionTestUrls.Dataverse };
 
         await Assert.That(settings.Validate().Successful).IsTrue();
     }
@@ -34,7 +34,7 @@ public class CreateConnectionSettingsTests
         var settings = new CreateConnectionSettings
         {
             Name = "dev",
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "contoso.onmicrosoft.com"
         };
 
@@ -47,7 +47,7 @@ public class CreateConnectionSettingsTests
         var settings = new CreateConnectionSettings
         {
             Name = "prod",
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant",
             ClientSecret = "test-secret"
         };
@@ -61,7 +61,7 @@ public class CreateConnectionSettingsTests
         var settings = new CreateConnectionSettings
         {
             Name = "prod",
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             ClientId = "client",
             ClientSecret = "test-secret"
         };
@@ -75,7 +75,7 @@ public class CreateConnectionSettingsTests
         var settings = new CreateConnectionSettings
         {
             Name = "prod",
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant",
             ClientId = "client",
             ClientSecret = "test-secret"
@@ -104,7 +104,7 @@ public class CreateConnectionSettingsTests
     {
         var settings = new CreateConnectionSettings
         {
-            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant", ClientId = "client", ClientSecret = secret
         };
 
@@ -116,7 +116,7 @@ public class CreateConnectionSettingsTests
     {
         var settings = new CreateConnectionSettings
         {
-            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant", ClientId = "client",
             CertificateThumbprint = "thumbprint", CertificatePassword = "password"
         };
@@ -132,7 +132,7 @@ public class CreateConnectionSettingsTests
     {
         var settings = new CreateConnectionSettings
         {
-            Name = "prod", Url = "https://contoso.crm.dynamics.com",
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant", ClientId = "client",
             CertificatePath = "certificate.pfx", CertificatePassword = password
         };

@@ -227,7 +227,7 @@ public class TelemetryConfigTests
 
     private static string CreateTemporaryDirectory()
     {
-        var directory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"dgtp-{Guid.NewGuid():N}");
+        var directory = Path.Combine(Path.GetTempPath(), $"dgtp-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
         return directory;
     }

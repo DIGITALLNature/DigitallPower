@@ -4,6 +4,7 @@
 using System.Text;
 using dgt.power.common.Connections;
 using dgt.power.common.Storage;
+using dgt.power.connection.tests;
 
 namespace dgt.power.connection.tests.Storage;
 
@@ -18,7 +19,7 @@ public class ConnectionStoreTests
             var store = new ConnectionStore(new DgtpHome(directory));
             store.Upsert("Dev", new InteractiveConnection
             {
-                Url = "https://contoso.crm.dynamics.com",
+                Url = ConnectionTestUrls.Dataverse,
                 TenantId = "contoso.onmicrosoft.com"
             });
 
@@ -42,7 +43,7 @@ public class ConnectionStoreTests
             var store = new ConnectionStore(new DgtpHome(directory));
             store.Upsert("Dev", new InteractiveConnection
             {
-                Url = "https://contoso.crm.dynamics.com"
+                Url = ConnectionTestUrls.Dataverse
             });
 
             var reloaded = new ConnectionStore(new DgtpHome(directory));
@@ -64,7 +65,7 @@ public class ConnectionStoreTests
             var store = new ConnectionStore(new DgtpHome(directory));
             var connection = new InteractiveConnection
             {
-                Url = "https://contoso.crm.dynamics.com",
+                Url = ConnectionTestUrls.Dataverse,
                 TenantId = "contoso.onmicrosoft.com"
             };
             store.Upsert("first", connection);
@@ -87,7 +88,7 @@ public class ConnectionStoreTests
             var store = new ConnectionStore(new DgtpHome(directory));
             var connection = new InteractiveConnection
             {
-                Url = "https://contoso.crm.dynamics.com",
+                Url = ConnectionTestUrls.Dataverse,
                 TenantId = "contoso.onmicrosoft.com"
             };
             store.Upsert("first", connection);
@@ -139,7 +140,7 @@ public class ConnectionStoreTests
             store.WriteSecret("prod", "clientSecret", secret);
 
             await Assert.That(store.ReadSecret("prod", "clientSecret")).IsEqualTo(secret);
-            await Assert.That(Encoding.UTF8.GetString(File.ReadAllBytes(System.IO.Path.Combine(directory, "secrets.bin")))
+            await Assert.That(Encoding.UTF8.GetString(await File.ReadAllBytesAsync(Path.Combine(directory, "secrets.bin")))
                 .Contains(secret, StringComparison.Ordinal)).IsFalse();
 
             store.Delete("prod");
@@ -153,7 +154,7 @@ public class ConnectionStoreTests
 
     private static string CreateTemporaryDirectory()
     {
-        var directory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), $"dgtp-{Guid.NewGuid():N}");
+        var directory = Path.Combine(Path.GetTempPath(), $"dgtp-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
         return directory;
     }

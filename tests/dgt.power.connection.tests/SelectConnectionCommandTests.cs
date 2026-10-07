@@ -15,7 +15,7 @@ public class SelectConnectionCommandTests : ConnectionTestsBase<SelectConnection
     {
         ConnectionStore.Upsert("Dev", new InteractiveConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "contoso.onmicrosoft.com"
         });
         ICommand<NamedConnectionSettings> command = new SelectConnectionCommand(ConnectionStore, TestConsole);
@@ -34,7 +34,7 @@ public class SelectConnectionCommandTests : ConnectionTestsBase<SelectConnection
     {
         ConnectionStore.Upsert("Dev", new InteractiveConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "contoso.onmicrosoft.com"
         });
         ICommand<NamedConnectionSettings> command = new SelectConnectionCommand(ConnectionStore, TestConsole);

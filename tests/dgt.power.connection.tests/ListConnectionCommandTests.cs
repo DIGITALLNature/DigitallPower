@@ -16,7 +16,7 @@ public class ListConnectionCommandTests : ConnectionTestsBase<ListConnectionComm
     {
         var definition = new InteractiveConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "contoso.onmicrosoft.com"
         };
         ConnectionStore.Upsert("Dev", definition);

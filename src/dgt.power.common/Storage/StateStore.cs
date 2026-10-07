@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using IOFileAccess = System.IO.FileAccess;
@@ -56,6 +57,10 @@ public sealed class StateStore(DgtpHome home)
         Write(state);
     }
 
+    [SuppressMessage(
+        "ReSharper",
+        "ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract",
+        Justification = "System.Text.Json can deserialize explicit null values.")]
     private StateDocument Read()
     {
         if (!File.Exists(_path))

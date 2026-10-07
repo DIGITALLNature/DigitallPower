@@ -174,10 +174,15 @@ public class CreateConnectionCommand(
         return null;
     }
 
-    private static string? GetSecretKey(CreateConnectionSettings settings) =>
-        settings.ClientSecret is not null ? "clientSecret"
-            : settings.CertificatePath is not null ? "certificatePassword"
-            : null;
+    private static string? GetSecretKey(CreateConnectionSettings settings)
+    {
+        if (settings.ClientSecret is not null)
+        {
+            return "clientSecret";
+        }
+
+        return settings.CertificatePath is not null ? "certificatePassword" : null;
+    }
 
     private void RemoveObsoleteSecret(
         string connectionName,

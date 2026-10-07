@@ -192,7 +192,7 @@ public class CompletionEngineTests
 
         var provider = new FakeDynamicProvider(["dev", "prod", "staging"]);
 
-        var commandLine = "dgtp connection select ";
+        const string commandLine = "dgtp connection select ";
         var result = CompletionEngine.GetCompletions(model, commandLine, commandLine.Length, provider);
 
         await Assert.That(result).Contains("dev");
@@ -208,7 +208,7 @@ public class CompletionEngineTests
 
         var provider = new FakeDynamicProvider(["dev", "prod", "staging"]);
 
-        var commandLine = "dgtp connection select pr";
+        const string commandLine = "dgtp connection select pr";
         var result = CompletionEngine.GetCompletions(model, commandLine, commandLine.Length, provider);
 
         await Assert.That(result).Contains("prod");

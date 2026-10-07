@@ -21,10 +21,10 @@ public class DeleteConnectionCommand(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        return ExecuteCoreAsync(context, settings, cancellationToken);
+        return ExecuteCoreAsync(settings, cancellationToken);
     }
 
-    private async Task<int> ExecuteCoreAsync(CommandContext context, DeleteConnectionSettings settings, CancellationToken cancellationToken)
+    private async Task<int> ExecuteCoreAsync(DeleteConnectionSettings settings, CancellationToken cancellationToken)
     {
         var connections = connectionStore.GetAll();
         if (settings.All)

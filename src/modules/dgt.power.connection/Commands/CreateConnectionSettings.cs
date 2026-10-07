@@ -99,21 +99,32 @@ public class CreateConnectionSettings : ConnectionSettings
 
             if (!string.IsNullOrWhiteSpace(ServiceConnectionName))
             {
-                return Url is null && TenantId is null && ClientId is null && ServiceConnectionId is null
-                    ? ValidationResult.Success()
-                    : ValidationResult.Error(
-                        "--service-connection-name resolves all Azure DevOps service connection details; " +
-                        "do not combine it with --url, --tenant, --client-id or --service-connection-id.");
+                var hasExplicitDetails = Url is not null
+                                         || TenantId is not null
+                                         || ClientId is not null
+                                         || ServiceConnectionId is not null;
+                if (!hasExplicitDetails)
+                {
+                    return ValidationResult.Success();
+                }
+
+                return ValidationResult.Error(
+                    "--service-connection-name resolves all Azure DevOps service connection details; " +
+                    "do not combine it with --url, --tenant, --client-id or --service-connection-id.");
             }
 
-            return !string.IsNullOrWhiteSpace(Url)
-                   && !string.IsNullOrWhiteSpace(TenantId)
-                   && !string.IsNullOrWhiteSpace(ClientId)
-                   && !string.IsNullOrWhiteSpace(ServiceConnectionId)
-                ? ValidationResult.Success()
-                : ValidationResult.Error(
-                    "--azure-devops-federated requires --service-connection-name or --url, --tenant, " +
-                    "--client-id and --service-connection-id.");
+            var hasUrl = !string.IsNullOrWhiteSpace(Url);
+            var hasTenantId = !string.IsNullOrWhiteSpace(TenantId);
+            var hasClientId = !string.IsNullOrWhiteSpace(ClientId);
+            var hasServiceConnectionId = !string.IsNullOrWhiteSpace(ServiceConnectionId);
+            if (hasUrl && hasTenantId && hasClientId && hasServiceConnectionId)
+            {
+                return ValidationResult.Success();
+            }
+
+            return ValidationResult.Error(
+                "--azure-devops-federated requires --service-connection-name or --url, --tenant, " +
+                "--client-id and --service-connection-id.");
         }
 
         if (ServiceConnectionName is not null || ServiceConnectionId is not null)

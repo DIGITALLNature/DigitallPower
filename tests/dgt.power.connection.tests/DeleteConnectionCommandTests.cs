@@ -15,7 +15,7 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
     {
         ConnectionStore.Upsert("Dev", new ClientSecretConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "contoso.onmicrosoft.com",
             ClientId = "client-id"
         });
@@ -42,12 +42,12 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
     {
         ConnectionStore.Upsert("Dev", new InteractiveConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "contoso.onmicrosoft.com"
         });
         ConnectionStore.Upsert("Prod", new InteractiveConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "contoso.onmicrosoft.com"
         }, makeCurrent: false);
         ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(
@@ -72,13 +72,13 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
         var authenticationRecord = CreateAuthenticationRecord("shared-home-account");
         ConnectionStore.Upsert("Dev", new InteractiveConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant-id",
             AuthenticationRecord = authenticationRecord
         });
         ConnectionStore.Upsert("Test", new DeviceCodeConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant-id",
             AuthenticationRecord = authenticationRecord
         }, makeCurrent: false);
@@ -104,7 +104,7 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
     {
         ConnectionStore.Upsert("Dev", new InteractiveConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant-id",
             AuthenticationRecord = CreateAuthenticationRecord("home-account")
         });

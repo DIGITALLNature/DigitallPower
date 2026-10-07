@@ -47,7 +47,7 @@ public class ConnectionStatusCommandTests : ConnectionTestsBase<ConnectionStatus
     {
         ConnectionStore.Upsert("Pipeline", new AzureDevOpsFederatedConnection
         {
-            Url = "https://contoso.crm.dynamics.com",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant",
             ClientId = "client",
             ServiceConnectionId = "service-connection"

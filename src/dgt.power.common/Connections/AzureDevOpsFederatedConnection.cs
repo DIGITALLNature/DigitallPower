@@ -11,5 +11,7 @@ public sealed record AzureDevOpsFederatedConnection : ConnectionDefinition
 
     public required string ServiceConnectionId { get; init; }
 
+    // Persisted as connection metadata through System.Text.Json.
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public string? ServiceConnectionName { get; init; }
 }
