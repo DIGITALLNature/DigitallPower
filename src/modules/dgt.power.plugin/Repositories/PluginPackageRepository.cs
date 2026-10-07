@@ -7,7 +7,6 @@ using dgt.power.plugin.Models;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Query;
-using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.plugin.Repositories;
 

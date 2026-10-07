@@ -4,6 +4,7 @@
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Planning.Comparison;
 using dgt.power.plugin.Models;
+using dgt.power.plugin.Repositories;
 
 namespace dgt.power.plugin.Deployment.Planning.Plans;
 

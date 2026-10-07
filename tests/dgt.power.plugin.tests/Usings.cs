@@ -4,5 +4,3 @@
 global using TUnit.Assertions;
 global using TUnit.Assertions.Extensions;
 global using TUnit.Core;
-global using dgt.power.plugin.Deployment.Planning.Comparison;
-global using dgt.power.plugin.Deployment.Planning.Plans;

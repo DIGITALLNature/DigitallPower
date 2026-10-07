@@ -4,6 +4,7 @@
 using System.Security.Cryptography;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Planning;
+using dgt.power.plugin.Deployment.Planning.Comparison;
 using dgt.power.plugin.Models;
 
 namespace dgt.power.plugin.tests.Deployment.Planning;

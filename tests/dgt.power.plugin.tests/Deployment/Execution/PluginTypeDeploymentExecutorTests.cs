@@ -7,6 +7,8 @@ using dgt.power.plugin.Deployment.Execution;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Planning;
+using dgt.power.plugin.Deployment.Planning.Comparison;
+using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.Models;
 using dgt.power.tests.FakeExecutor;

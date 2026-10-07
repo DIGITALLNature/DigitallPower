@@ -4,7 +4,6 @@
 using dgt.power.plugin.Deployment.Execution;
 using dgt.power.plugin.Deployment.Planning;
 using dgt.power.plugin.Repositories;
-using dgt.power.plugin.tests.Deployment.Planning;
 using Digitall.Dataverse.Testing;
 
 namespace dgt.power.plugin.tests.Deployment.Execution;

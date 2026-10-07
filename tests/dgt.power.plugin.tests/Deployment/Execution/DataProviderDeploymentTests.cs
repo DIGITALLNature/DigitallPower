@@ -6,14 +6,14 @@ using dgt.power.plugin.Deployment.Execution;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Planning;
+using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Models;
-using dgt.power.plugin.tests.Deployment.Planning;
 using dgt.power.plugin.tests.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console.Testing;
 
 namespace dgt.power.plugin.tests.Deployment.Execution;

@@ -4,11 +4,11 @@
 using dgt.power.dataverse;
 using dgt.power.plugin.Commands;
 using dgt.power.plugin.Models;
-using dgt.power.tests.Extensions;
 using dgt.power.tests;
+using dgt.power.tests.Extensions;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.plugin.tests.Commands;
 

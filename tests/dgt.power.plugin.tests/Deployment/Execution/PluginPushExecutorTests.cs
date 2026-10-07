@@ -14,7 +14,6 @@ using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
-using Spectre.Console;
 
 namespace dgt.power.plugin.tests.Deployment.Execution;
 
