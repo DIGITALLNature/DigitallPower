@@ -39,8 +39,14 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
 
         var entity = matches[0];
         var package = entity.ToEntity<PluginPackage>();
+        var version = package.Version;
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            throw new InvalidOperationException($"Plugin package '{name}' does not have a version in Dataverse.");
+        }
+
         var packageHash = package.Package is null ? null : await DownloadPackageHashAsync(entity.Id, cancellationToken);
-        return new RemotePackage(entity.Id, packageHash, package.Managedidentityid?.Id, package.Version);
+        return new RemotePackage(entity.Id, packageHash, version, package.Managedidentityid?.Id);
     }
 
     public async Task<Guid> CreateAsync(string name, string version, string content, CancellationToken cancellationToken = default)

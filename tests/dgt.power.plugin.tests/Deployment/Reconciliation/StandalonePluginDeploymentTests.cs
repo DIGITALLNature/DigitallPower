@@ -59,7 +59,7 @@ public class StandalonePluginDeploymentTests
         using var console = new TestConsole();
 
         var changes = await deployment.PrepareAsync(Assembly(Step()));
-        new StandaloneDeploymentRenderer(console).Render(changes);
+        new DeploymentRenderer(console).Render(changes);
 
         await Assert.That(changes.HasChanges).IsTrue();
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(0);
@@ -151,7 +151,7 @@ public class StandalonePluginDeploymentTests
 
         var changes = await deployment.PrepareAsync(Assembly());
         using var console = new TestConsole();
-        new StandaloneDeploymentRenderer(console).Render(changes);
+        new DeploymentRenderer(console).Render(changes);
 
         await Assert.That(All(service, "sdkmessageprocessingstep")).Count().IsEqualTo(1);
         await Assert.That(console.Output).Contains("Destructive operations: 1");

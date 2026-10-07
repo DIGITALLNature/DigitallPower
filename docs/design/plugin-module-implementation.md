@@ -107,7 +107,7 @@ Implement:
 
 The replacement entry point is `Reconciliation/PluginDeployment`; pure registration
 decisions are held in flat `RegistrationChanges` collections and displayed by
-`Output/StandaloneDeploymentRenderer`. The same lifecycle owner handles standalone and package
+`Output/DeploymentRenderer`. The same lifecycle owner handles standalone and package
 deployment; package-specific behavior is limited to upload and resolution of server-owned
 assembly/type records. This core is not wired to commands until P8.
 Cross-resource features not yet implemented are explicitly rejected instead of ignored.
@@ -160,8 +160,38 @@ The test fake models the documented server ownership of package assemblies/types
 prove live Dataverse upload behavior or failure timing. Verify upload side effects and request
 ordering in Dataverse, especially for removals.
 
+Package acceptance also exercises additive assembly/type uploads, retries after package/step/
+image writes, upload failure before a write, cancellation between registration writes, and
+rejection of changed package content after preparation. Resolve and validate every package
+assembly/type before applying any registrations, including exact assembly versions and retained
+IDs. Fresh preparation must reuse completed writes and avoid uploading unchanged content.
+
+`DeploymentRenderer` renders standalone and package trees from those prepared decisions using
+shared registration presentation. Package assemblies are labeled as server-managed during upload,
+not as direct assembly writes. New types are labeled as created via package upload. Existing
+type IDs and unchanged registrations remain visible; server-managed content changes are not
+represented as independently approved per-assembly updates.
+
 Gate: package execution uses the same core decisions and cleanup rules as standalone
 deployment, with only genuine package-specific resolution behavior.
+
+### Outstanding gates before package cutover
+
+The guarded package subset does not complete P4. Keep these requirements explicit:
+
+- Verify package replacement/removal and cross-assembly type-move semantics in Dataverse;
+  dependency inspection alone does not prove upload ordering or side effects.
+- Wire the prepared package tree into production confirmation/dry-run during P7/P8; the
+  replacement renderer is currently exercised directly, not through the CLI.
+- Concurrent deployment or registration editing against the same target is unsupported.
+  Do not add full registration snapshot re-reads as a substitute for locking. Retain
+  artifact-state checks, post-upload assembly/type resolution, and targeted dependency
+  checks before destructive cleanup. Any stronger concurrency strategy requires a separate
+  platform-supported design.
+- Exercise the association, provider, and solution failure boundaries when P5/P6 add those
+  phases; existing retry tests do not cover unimplemented phases.
+- Harden/reuse artifact reading at final integration so local errors cannot become silent
+  defaults or console-only fallbacks.
 
 ## P5: Add associations and membership
 

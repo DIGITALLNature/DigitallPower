@@ -798,6 +798,9 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 | `--dry-run` | No | Previews the deployment and solution membership plan without writing to Dataverse |
 | `--confirm` | No | Prompts before executing each rendered target plan; ignored by dry-run, non-interactive, and CI execution |
 
+Existing plugin package records must have a version in Dataverse; deployment fails explicitly
+if the version is missing. A package without an attached file is treated as requiring a content upload.
+
 ##### Supported registration attributes
 
 `plugin push` requires registration attributes from `Digitall.Plugins.Registration` 3.0.0 or

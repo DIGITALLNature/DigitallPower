@@ -6,6 +6,7 @@ using System.Text;
 using dgt.power.dataverse;
 using dgt.power.plugin.Deployment.Execution;
 using dgt.power.plugin.Deployment.Local;
+using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Reconciliation;
 using dgt.power.plugin.tests.Repositories;
@@ -14,6 +15,7 @@ using Digitall.Dataverse.Testing;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Spectre.Console.Testing;
 
 namespace dgt.power.plugin.tests.Deployment.Reconciliation;
 
@@ -87,6 +89,35 @@ public class PackageDeploymentTests
     }
 
     [Test]
+    public async Task RenderPackage_NewPackage_ShowsServerOwnedResourcesWithoutWrites()
+    {
+        var image = new LocalPluginStepImage(0, "Pre[Image]", "PreImage", "Target", ["name"]);
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("Shared.Plugin", Step("first[step]") with { Images = [image] })),
+            Assembly("Second", CreateLocalType("Shared.Plugin", Step("second"))));
+        var store = CreateStore();
+        var deployment = new PluginDeployment(new PackageUploadService(store, desired));
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        using var console = new TestConsole();
+        console.Profile.Width = 160;
+
+        new DeploymentRenderer(console).RenderPackage(changes);
+
+        await Assert.That(console.Output).Contains("new_Contoso.Plugins Create");
+        await Assert.That(console.Output).Contains("First v1.0.0.0 Create via package upload");
+        await Assert.That(console.Output).Contains("Second v1.0.0.0 Create via package upload");
+        await Assert.That(console.Output).Contains("Shared.Plugin Create via package upload");
+        await Assert.That(console.Output).Contains("first[step] Create");
+        await Assert.That(console.Output).Contains("Pre[Image] Create");
+        await Assert.That(console.Output).Contains("IDs are validated before registration writes");
+        await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(0);
+        await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(0);
+        await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(0);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
+        await Assert.That(All(store, SdkMessageProcessingStepImage.EntityLogicalName)).Count().IsEqualTo(0);
+    }
+
+    [Test]
     public async Task PrepareAndApply_IdenticalPackage_IsUnchanged()
     {
         var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin")));
@@ -97,6 +128,9 @@ public class PackageDeploymentTests
         var deployment = new PluginDeployment(service);
 
         var changes = await deployment.PreparePackageAsync(desired, "new");
+        using var console = new TestConsole();
+        console.Profile.Width = 160;
+        new DeploymentRenderer(console).RenderPackage(changes);
         var progress = new List<PluginDeploymentProgress>();
         await deployment.ApplyPackageAsync(changes, progress.Add);
 
@@ -104,6 +138,9 @@ public class PackageDeploymentTests
         await Assert.That(progress).Count().IsEqualTo(0);
         await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(console.Output).Contains("new_Contoso.Plugins Unchanged");
+        await Assert.That(console.Output).Contains("First v1.0.0.0 Unchanged");
+        await Assert.That(console.Output).DoesNotContain("package upload");
     }
 
     [Test]
@@ -129,6 +166,67 @@ public class PackageDeploymentTests
         await Assert.That(All(store, PluginType.EntityLogicalName).Single().Id).IsEqualTo(originalType.Id);
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(service.PackageContent(packageId)).IsEquivalentTo(newBytes);
+    }
+
+    [Test]
+    public async Task Apply_UpdatedPackage_ReconcilesStepAndImageWhilePreservingEnvironmentState()
+    {
+        var oldImage = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", ["name"]);
+        var oldStep = Step("old name") with { Images = [oldImage] };
+        var oldDesired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", oldStep)));
+        var newBytes = "updated-package-with-registration-changes"u8.ToArray();
+        var updatedStep = oldStep with
+        {
+            Name = "new name",
+            ExecutionOrder = 200,
+            FilterAttributes = ["telephone1"],
+            Images = [oldImage with { Attributes = ["telephone1"] }]
+        };
+        var desired = Package(Convert.ToBase64String(newBytes),
+            Assembly("First", CreateLocalType("First.Plugin", updatedStep)));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, oldDesired);
+        var packageId = service.SeedPackage("new_Contoso.Plugins", oldDesired, s_initialPackage);
+        service.MaterializeAssemblies(packageId, oldDesired);
+        var deployment = new PluginDeployment(service);
+
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(oldDesired, "new"));
+        var originalStep = All(store, SdkMessageProcessingStep.EntityLogicalName).Single();
+        var originalImage = All(store, SdkMessageProcessingStepImage.EntityLogicalName).Single();
+        var secureConfigId = Guid.NewGuid();
+        var impersonatingUserId = Guid.NewGuid();
+        store.Update(new Entity(SdkMessageProcessingStep.EntityLogicalName, originalStep.Id)
+        {
+            ["configuration"] = "environment configuration",
+            ["sdkmessageprocessingstepsecureconfigid"] = new EntityReference("sdkmessageprocessingstepsecureconfig", secureConfigId),
+            ["statecode"] = new OptionSetValue(1),
+            ["impersonatinguserid"] = new EntityReference("systemuser", impersonatingUserId)
+        });
+
+        var preparedUpdate = await deployment.PreparePackageAsync(desired, "new");
+        using var console = new TestConsole();
+        console.Profile.Width = 160;
+        new DeploymentRenderer(console).RenderPackage(preparedUpdate);
+        await Assert.That(console.Output).Contains("new_Contoso.Plugins Update");
+        await Assert.That(console.Output).Contains("First v1.0.0.0 Managed by package upload");
+        await Assert.That(console.Output).Contains("First.Plugin Unchanged");
+        await Assert.That(console.Output).Contains("new name Update");
+        await Assert.That(console.Output).Contains("PreImage Update");
+        await deployment.ApplyPackageAsync(preparedUpdate);
+
+        var stepAfterUpdate = All(store, SdkMessageProcessingStep.EntityLogicalName).Single();
+        var imageAfterUpdate = All(store, SdkMessageProcessingStepImage.EntityLogicalName).Single();
+        await Assert.That(stepAfterUpdate.Id).IsEqualTo(originalStep.Id);
+        await Assert.That(stepAfterUpdate.GetAttributeValue<string>("name")).IsEqualTo("new name");
+        await Assert.That(stepAfterUpdate.GetAttributeValue<int>("rank")).IsEqualTo(200);
+        await Assert.That(stepAfterUpdate.GetAttributeValue<string>("filteringattributes")).IsEqualTo("telephone1");
+        await Assert.That(stepAfterUpdate.GetAttributeValue<string>("configuration")).IsEqualTo("environment configuration");
+        await Assert.That(stepAfterUpdate.GetAttributeValue<EntityReference>("sdkmessageprocessingstepsecureconfigid").Id).IsEqualTo(secureConfigId);
+        await Assert.That(stepAfterUpdate.GetAttributeValue<OptionSetValue>("statecode").Value).IsEqualTo(1);
+        await Assert.That(stepAfterUpdate.GetAttributeValue<EntityReference>("impersonatinguserid").Id).IsEqualTo(impersonatingUserId);
+        await Assert.That(imageAfterUpdate.Id).IsEqualTo(originalImage.Id);
+        await Assert.That(imageAfterUpdate.GetAttributeValue<string>("attributes")).IsEqualTo("telephone1");
     }
 
     [Test]
@@ -215,12 +313,228 @@ public class PackageDeploymentTests
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
     }
 
+    [Test]
+    public async Task Apply_AdditiveUpload_UsesServerTypesAndRetainsExistingRegistrations()
+    {
+        var original = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("Shared.Plugin", Step("first"))));
+        var desired = Package(Convert.ToBase64String("additive-package"u8),
+            Assembly("First", CreateLocalType("Shared.Plugin", Step("first")), CreateLocalType("Added.Plugin", Step("added"))),
+            Assembly("Second", CreateLocalType("Shared.Plugin", Step("second"))));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired);
+        var packageId = service.SeedPackage("new_Contoso.Plugins", original, s_initialPackage);
+        service.MaterializeAssemblies(packageId, original);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(original, "new"));
+        var originalStepId = All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id;
+
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        await deployment.ApplyPackageAsync(changes);
+
+        await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(2);
+        await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(3);
+        var steps = All(store, SdkMessageProcessingStep.EntityLogicalName);
+        await Assert.That(steps).Count().IsEqualTo(3);
+        await Assert.That(steps.Single(step => step.GetAttributeValue<string>("name") == "first").Id).IsEqualTo(originalStepId);
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+        await Assert.That((await deployment.PreparePackageAsync(desired, "new")).HasChanges).IsFalse();
+    }
+
+    [Test]
+    [Arguments("package", false)]
+    [Arguments("step", false)]
+    [Arguments("step image", false)]
+    [Arguments("package", true)]
+    [Arguments("step", true)]
+    [Arguments("step image", true)]
+    public async Task Apply_InterruptedAfterWrite_FreshPreparationResumesWithoutDuplicateRegistrations(string resource, bool existingPackage)
+    {
+        var image = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", ["name"]);
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("Shared.Plugin", Step("first") with { Images = [image] })),
+            Assembly("Second", CreateLocalType("Shared.Plugin", Step("second") with { Images = [image] })));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired);
+        if (existingPackage)
+        {
+            var id = service.SeedPackage("new_Contoso.Plugins", desired, "older-package"u8.ToArray());
+            service.MaterializeAssemblies(id, desired);
+        }
+
+        var deployment = new PluginDeployment(service);
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+
+        await Assert.That(async () => await deployment.ApplyPackageAsync(changes, progress =>
+        {
+            if (progress.Resource == resource)
+            {
+                throw new InvalidOperationException("Simulated interruption after a successful write.");
+            }
+        })).ThrowsExactly<InvalidOperationException>();
+        var completedStepIds = All(store, SdkMessageProcessingStep.EntityLogicalName).Select(step => step.Id).ToList();
+        var completedImageIds = All(store, SdkMessageProcessingStepImage.EntityLogicalName).Select(imageRecord => imageRecord.Id).ToList();
+
+        var retry = await deployment.PreparePackageAsync(desired, "new");
+        await Assert.That(retry.UpdateContent).IsFalse();
+        await deployment.ApplyPackageAsync(retry);
+
+        var steps = All(store, SdkMessageProcessingStep.EntityLogicalName);
+        var images = All(store, SdkMessageProcessingStepImage.EntityLogicalName);
+        await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(steps).Count().IsEqualTo(2);
+        await Assert.That(images).Count().IsEqualTo(2);
+        await Assert.That(completedStepIds.All(id => steps.Any(step => step.Id == id))).IsTrue();
+        await Assert.That(completedImageIds.All(id => images.Any(imageRecord => imageRecord.Id == id))).IsTrue();
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+        await Assert.That((await deployment.PreparePackageAsync(desired, "new")).HasChanges).IsFalse();
+    }
+
+    [Test]
+    public async Task Apply_CancelledAfterStepWrite_StopsBeforeImagesAndCanResume()
+    {
+        var image = new LocalPluginStepImage(0, "PreImage", "PreImage", "Target", ["name"]);
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("first") with { Images = [image] })));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        using var cancellation = new CancellationTokenSource();
+
+        await Assert.That(async () => await deployment.ApplyPackageAsync(changes, progress =>
+        {
+            if (progress.Resource == "step")
+            {
+                cancellation.Cancel();
+            }
+        }, cancellation.Token)).Throws<OperationCanceledException>();
+
+        var stepId = All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id;
+        await Assert.That(All(store, SdkMessageProcessingStepImage.EntityLogicalName)).Count().IsEqualTo(0);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id).IsEqualTo(stepId);
+        await Assert.That(All(store, SdkMessageProcessingStepImage.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task Apply_UnexpectedServerAssemblyVersion_FailsBeforeRegistrationWrites()
+    {
+        var assembly = Assembly("First", CreateLocalType("First.Plugin", Step("first")));
+        var desired = Package(Convert.ToBase64String(s_initialPackage), assembly);
+        var uploaded = desired with { Assemblies = [assembly with { Version = new Version(9, 0, 0, 0) }] };
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired, uploadedPackage: uploaded);
+        var deployment = new PluginDeployment(service);
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+
+        await Assert.That(async () => await deployment.ApplyPackageAsync(changes)).ThrowsExactly<InvalidOperationException>();
+
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Apply_UploadFailsBeforeWrite_FreshPreparationCanRetry(bool existingPackage)
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("first"))));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired) { FailUpload = true };
+        if (existingPackage)
+        {
+            var id = service.SeedPackage("new_Contoso.Plugins", desired, "older-package"u8.ToArray());
+            service.MaterializeAssemblies(id, desired);
+        }
+
+        var deployment = new PluginDeployment(service);
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        await Assert.That(async () => await deployment.ApplyPackageAsync(changes)).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(service.UploadCount).IsEqualTo(0);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
+
+        service.FailUpload = false;
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
+
+        await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task Apply_PackageContentChangedAfterPreparation_RejectsBeforeUpload()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("first"))));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired);
+        var packageId = service.SeedPackage("new_Contoso.Plugins", desired, "older-package"u8.ToArray());
+        service.MaterializeAssemblies(packageId, desired);
+        var deployment = new PluginDeployment(service);
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        await service.UpdateAsync(new PluginPackage(packageId) { Content = Convert.ToBase64String("concurrent-package"u8) }, CancellationToken.None);
+
+        await Assert.That(async () => await deployment.ApplyPackageAsync(changes)).ThrowsExactly<InvalidOperationException>();
+
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
+        await Assert.That(service.PackageContent(packageId)).IsEquivalentTo("concurrent-package"u8.ToArray());
+    }
+
+    [Test]
+    public async Task Apply_LastAssemblyMissingTypes_RejectsBeforeWritingFirstAssemblyRegistrations()
+    {
+        var first = Assembly("First", CreateLocalType("First.Plugin", Step("first")));
+        var second = Assembly("Second", CreateLocalType("Second.Plugin", Step("second")));
+        var desired = Package(Convert.ToBase64String(s_initialPackage), first, second);
+        var uploaded = desired with { Assemblies = [first, second with { PluginTypes = [] }] };
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired, uploadedPackage: uploaded);
+        var deployment = new PluginDeployment(service);
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+
+        await Assert.That(async () => await deployment.ApplyPackageAsync(changes)).ThrowsExactly<InvalidOperationException>();
+
+        await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(2);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Apply_EnvironmentConfigurationChangedAfterPreview_PreservesNewConfiguration()
+    {
+        var original = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("original"))));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, original);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(original, "new"));
+        var desired = original with { Assemblies = [Assembly("First", CreateLocalType("First.Plugin", Step("desired")))] };
+        var changes = await deployment.PreparePackageAsync(desired, "new");
+        var stepId = All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id;
+        store.Update(new Entity(SdkMessageProcessingStep.EntityLogicalName, stepId)
+        {
+            ["configuration"] = "changed after preview", ["statecode"] = new OptionSetValue(1)
+        });
+
+        await deployment.ApplyPackageAsync(changes);
+
+        var actual = All(store, SdkMessageProcessingStep.EntityLogicalName).Single();
+        await Assert.That(actual.GetAttributeValue<string>("name")).IsEqualTo("desired");
+        await Assert.That(actual.GetAttributeValue<string>("configuration")).IsEqualTo("changed after preview");
+        await Assert.That(actual.GetAttributeValue<OptionSetValue>("statecode").Value).IsEqualTo(1);
+    }
+
     private sealed class PackageUploadService : IOrganizationServiceAsync2
     {
         private readonly FakeOrganizationServiceAsync service;
         private readonly LocalPluginPackage target;
         private readonly bool materializeOnUpload;
         private readonly Dictionary<Guid, byte[]> _packageFiles = [];
+
+        public int UploadCount { get; private set; }
+        public bool FailUpload { get; set; }
 
         public PackageUploadService(FakeOrganizationServiceAsync service, LocalPluginPackage target,
             bool materializeOnUpload = true, LocalPluginPackage? uploadedPackage = null)
@@ -320,7 +634,9 @@ public class PackageDeploymentTests
         public Task<Guid> CreateAsync(Entity entity) => CreateAsync(entity, CancellationToken.None);
         private async Task<Guid> CreatePackageAsync(PluginPackage package, byte[] content, CancellationToken cancellationToken)
         {
+            EnsureUploadAllowed();
             var id = await service.CreateAsync(package, cancellationToken);
+            UploadCount++;
             _packageFiles.Add(id, content);
             if (materializeOnUpload)
             {
@@ -364,7 +680,9 @@ public class PackageDeploymentTests
 
             var fileId = Guid.NewGuid();
             var content = Convert.FromBase64String(package.Content!);
+            EnsureUploadAllowed();
             await service.UpdateAsync(package, cancellationToken);
+            UploadCount++;
             await service.UpdateAsync(new PluginPackage(package.Id) { Attributes = { [PluginPackage.LogicalNames.Package] = fileId } }, cancellationToken);
             _packageFiles[package.Id] = content;
             if (materializeOnUpload)
@@ -374,5 +692,13 @@ public class PackageDeploymentTests
         }
 
         public Task UpdateAsync(Entity entity) => UpdateAsync(entity, CancellationToken.None);
+
+        private void EnsureUploadAllowed()
+        {
+            if (FailUpload)
+            {
+                throw new InvalidOperationException("Simulated upload failure before the package write.");
+            }
+        }
     }
 }

@@ -177,12 +177,14 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var stepIds = registrations.ExistingStepIds.ToDictionary(pair => pair.Key, pair => pair.Value);
         foreach (var type in registrations.TypesToCreate)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             typeIds.Add(type.TypeName, await _types.CreateAsync(assemblyId, type.TypeName, type.Name, cancellationToken));
             Report(PluginDeploymentOperation.Created, "plugin type", type.TypeName);
         }
 
         foreach (var write in registrations.StepsToWrite)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var step = write.Desired;
             var message = messages[(write.TypeName, step)];
             var data = new PluginStepData(step.Name, typeIds[write.TypeName], message.MessageId, message.MessageFilterId, step.Stage, step.Mode, step.ExecutionOrder, step.FilterAttributes);
@@ -200,6 +202,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         foreach (var write in registrations.ImagesToWrite)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var image = write.Desired;
             var stepId = stepIds[(write.TypeName, write.Step)];
             if (write.ExistingId is { } imageId)
@@ -216,12 +219,14 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         foreach (var image in registrations.ImagesToDelete)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             await _images.DeleteAsync(image.Id, cancellationToken);
             Report(PluginDeploymentOperation.Deleted, "step image", image.Name);
         }
 
         foreach (var step in registrations.StepsToDelete)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             await _steps.DeleteAsync(step.Id, cancellationToken);
             Report(PluginDeploymentOperation.Deleted, "step", step.Name);
         }
@@ -229,6 +234,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         await EnsureNoProviderReferencesAsync(registrations.TypesToDelete.Select(type => type.Id).ToHashSet(), cancellationToken);
         foreach (var type in registrations.TypesToDelete)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if ((await _types.GetDependentStepIdsAsync(type.Id, cancellationToken)).Count > 0 ||
                 (await _apis.ListLinkedToPluginTypeAsync(type.Id, cancellationToken)).Count > 0)
             {
@@ -294,7 +300,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             throw new NotSupportedException("The replacement package core does not yet support packages with managed identity associations.");
         }
 
-        if (existing?.Version is not null && !string.Equals(existing.Version, desired.Package.Version, StringComparison.Ordinal))
+        if (existing is not null && !string.Equals(existing.Version, desired.Package.Version, StringComparison.Ordinal))
         {
             throw new InvalidOperationException($"Package '{name}' already exists at immutable version '{existing.Version}', not '{desired.Package.Version}'.");
         }
@@ -334,7 +340,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
                 messages.Add((write.TypeName, step), message ?? throw new UnresolvedPluginStepMessageException(step.Name, step.MessageName, step.PrimaryEntityName));
             }
 
-            assemblies.Add(new PackageAssemblyChanges(assembly, remote, snapshot, registrations, messages));
+            assemblies.Add(new PackageAssemblyChanges(assembly, remote, registrations, messages));
         }
 
         return new PackageDeploymentChanges(desired, name, existing,
@@ -373,6 +379,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Updated, "package", changes.DataverseName));
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         // Upload owns assembly/type creation. Resolve all server records before any registration writes.
         var uploadedAssemblies = await _assemblies.ListByPackageAsync(packageId, cancellationToken);
         var desiredAssemblyNames = changes.Assemblies.Select(assembly => assembly.Desired.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -395,6 +402,13 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
 
             var uploaded = candidates[0];
+            if (uploaded.Version != assembly.Desired.Version)
+            {
+                throw new InvalidOperationException(
+                    $"Package assembly '{assembly.Desired.Name}' has version '{uploaded.Version}', not expected version '{assembly.Desired.Version}'. " +
+                    "No registration writes were applied; prepare a fresh deployment.");
+            }
+
             if (assembly.Existing is not null && uploaded.Id != assembly.Existing.Id)
             {
                 throw new InvalidOperationException($"Package upload replaced assembly '{assembly.Desired.Name}' unexpectedly; prepare a fresh deployment before registration writes.");

@@ -340,10 +340,13 @@ requested artifact. This hash guard is provisional and does not prove a failed d
 Duplicate/extra trains, target-content mismatch, and ambiguous matching registrations fail.
 Unsupported cross-resource dependencies block cleanup until their owning phase is implemented.
 
-Concurrent deployments and changes between preview and execution need a guard policy.
-At minimum, critical ownership/deletion assumptions must not silently become stale.
-Unexpected server state should fail with a request to prepare a fresh preview, not silently
-expand approved scope. Exactly how to detect conflicts remains open.
+Concurrent deployments or registration editing against the same target are unsupported.
+Do not repeatedly reload full registration snapshots as a substitute for locking: they add
+remote reads but cannot guarantee consistency. Retain artifact-state checks, validate
+server-created assembly/type records after package upload, and check dependencies immediately
+before destructive cleanup. Unexpected artifact/server-owned state must not silently expand
+approved scope. Stronger concurrency protection requires a separately designed, platform-supported
+strategy; preview is intended changes, not a concurrency guarantee.
 
 ## Resource-specific policies
 

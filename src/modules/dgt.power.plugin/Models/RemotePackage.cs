@@ -9,6 +9,6 @@ namespace dgt.power.plugin.Models;
 /// </summary>
 /// <param name="Id">Plugin package record id.</param>
 /// <param name="PackageHash">SHA-256 hash of the package file stored in Dataverse.</param>
-/// <param name="ManagedIdentityId">Linked managed identity id, if one is assigned.</param>
 /// <param name="Version">Immutable package version stored in Dataverse.</param>
-public sealed record RemotePackage(Guid Id, string? PackageHash, Guid? ManagedIdentityId = null, string? Version = null);
+/// <param name="ManagedIdentityId">Linked managed identity id, if one is assigned.</param>
+public sealed record RemotePackage(Guid Id, string? PackageHash, string Version, Guid? ManagedIdentityId = null);

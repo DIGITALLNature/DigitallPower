@@ -77,7 +77,7 @@ public class StandaloneReplacementTests
         var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(Desired());
         using var console = new TestConsole();
-        new StandaloneDeploymentRenderer(console).Render(changes);
+        new DeploymentRenderer(console).Render(changes);
         var progress = new List<PluginDeploymentProgress>();
 
         var targetId = await deployment.ApplyAsync(changes, progress.Add);

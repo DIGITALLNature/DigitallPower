@@ -91,11 +91,10 @@ public class PluginComparisonTests
     public async Task ComparePackage_IdenticalContentRegardlessOfVersion_ReturnsUnchanged(string localVersion, string remoteVersion)
     {
         var local = Package("MyPackage", localVersion, "YmFzZTY0");
-        var remote = new RemotePackage(Guid.NewGuid(), ContentHash(local.Content));
+        var remote = new RemotePackage(Guid.NewGuid(), ContentHash(local.Content), remoteVersion);
 
         var comparison = new PackageComparison(local, remote);
 
-        _ = remoteVersion; // Dataverse package versions are immutable and do not affect deployment.
         await Assert.That(comparison.RequiresUpdate).IsFalse();
         await Assert.That(comparison.Remote).IsEqualTo(remote);
     }
@@ -104,7 +103,7 @@ public class PluginComparisonTests
     public async Task ComparePackage_DifferentContent_ReturnsUpdate()
     {
         var local = Package("MyPackage", "1.0.0", "bmV3LWNvbnRlbnQ=");
-        var remote = new RemotePackage(Guid.NewGuid(), ContentHash("b2xkLWNvbnRlbnQ="));
+        var remote = new RemotePackage(Guid.NewGuid(), ContentHash("b2xkLWNvbnRlbnQ="), "1.0.0");
 
         var comparison = new PackageComparison(local, remote);
 
@@ -116,7 +115,7 @@ public class PluginComparisonTests
     public async Task ComparePackage_MatchingFileHash_ReturnsUnchanged()
     {
         var local = Package("MyPackage", "1.0.0", "YmFzZTY0");
-        var remote = new RemotePackage(Guid.NewGuid(), ContentHash(local.Content));
+        var remote = new RemotePackage(Guid.NewGuid(), ContentHash(local.Content), "1.0.0");
 
         var comparison = new PackageComparison(local, remote);
 

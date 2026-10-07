@@ -55,6 +55,32 @@ public class PluginPackageRepositoryTests
         await Assert.That(result).IsNotNull();
         await Assert.That(result!.Id).IsEqualTo(id);
         await Assert.That(result.PackageHash).IsEqualTo(Convert.ToHexString(SHA256.HashData(packageFile)));
+        await Assert.That(result.Version).IsEqualTo("1.0.0");
+    }
+
+    [Test]
+    public async Task FindByNameAsync_MissingVersion_FailsExplicitly()
+    {
+        var service = CreateService();
+        service.Create(new PluginPackage(Guid.NewGuid()) { Name = "new_MyPackage" });
+        var repository = new PluginPackageRepository(service);
+
+        await Assert.That(async () => await repository.FindByNameAsync("new_MyPackage"))
+            .ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task FindByNameAsync_MissingPackageFile_ReturnsNullHashAndRequiredVersion()
+    {
+        var service = CreateService();
+        service.Create(new PluginPackage(Guid.NewGuid()) { Name = "new_MyPackage", Version = "1.0.0" });
+        var repository = new PluginPackageRepository(service);
+
+        var result = await repository.FindByNameAsync("new_MyPackage");
+
+        await Assert.That(result).IsNotNull();
+        await Assert.That(result!.Version).IsEqualTo("1.0.0");
+        await Assert.That(result.PackageHash).IsNull();
     }
 
     [Test]

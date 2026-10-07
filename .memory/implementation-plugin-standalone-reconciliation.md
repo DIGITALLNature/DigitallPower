@@ -15,8 +15,10 @@ matching.
 
 `RegistrationChanges` contains flat create/write/delete collections. A write with a null
 existing ID is a create. Its `HasChanges` derives from those same collections.
-`StandaloneDeploymentRenderer` groups desired state and changes into a tree; it does not
+`DeploymentRenderer` groups desired state and changes into standalone/package trees; it does not
 compute registration comparisons or maintain a separate change-detection rule.
+Both trees share registration presentation. Package assembly changes are labeled as managed
+by upload rather than direct assembly writes; new package types are created via upload.
 
 Step references used for message resolution and execution IDs include both CLR type name
 and the desired step. Structurally identical step values can occur in different types:
@@ -50,10 +52,23 @@ version changes, package identity associations, undeclared server assemblies/typ
 step, or image removal before upload. Package upload is expected to create/update its owned
 assembly/type records; missing or unexpected records fail without standalone fallback. Tests
 use a dedicated fake for those server-owned side effects, which is not live Dataverse verification.
+Fetched package versions are required strings because Dataverse versions retain NuGet SemVer;
+package-file hashes remain nullable when the package record has no attached file.
+Package resolution validates all assemblies/types, including exact assembly versions and
+retained IDs, before registration writes. Additive uploads and fresh-preparation retries reuse
+server-owned records and completed registrations without re-uploading identical content.
+Cancellation is checked explicitly between registration writes in the shared applier.
 `RetrieveDependenciesForDelete` remains a candidate for broader component-deletion checks,
 not a proven guard for server-managed package updates.
 
-Full registration stale-state checks remain prerequisites for cutover.
+Registration snapshots are read during preparation, not reloaded during application.
+Repeated full snapshots add remote reads without guaranteeing consistency, so they are not
+used as a substitute for locking. Concurrent deployment or registration editing against the
+same target is unsupported. Retain artifact-state checks, post-upload assembly/type resolution,
+and targeted dependency checks immediately before destructive cleanup. Stronger concurrency
+protection would require a separate platform-supported design.
+CLI integration of package tree presentation and platform-verified removal/type-move behavior are also outstanding;
+the guarded package subset must not be treated as completion of all package acceptance gates.
 Preparation/application separation is not a transaction or concurrency guarantee.
 
 ## Replacement and recovery policy

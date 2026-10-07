@@ -84,7 +84,11 @@ public class PluginDeploymentPlannerTests
         var packageId = Guid.NewGuid();
         var identityId = Guid.NewGuid();
         const string clientId = "12345678-1234-1234-1234-123456789abc";
-        service.Create(new PluginPackage(packageId) { Name = "contoso_Contoso.Plugins", Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, identityId) });
+        service.Create(new PluginPackage(packageId)
+        {
+            Name = "contoso_Contoso.Plugins", Version = "1.0.0",
+            Managedidentityid = new EntityReference(ManagedIdentity.EntityLogicalName, identityId)
+        });
         service.Create(new ManagedIdentity(identityId) { ApplicationId = Guid.Parse(clientId) });
         var package = new LocalPluginPackage(new LocalPackage("Contoso.Plugins", "1.0.0", string.Empty, string.Empty), [
             new LocalAssembly

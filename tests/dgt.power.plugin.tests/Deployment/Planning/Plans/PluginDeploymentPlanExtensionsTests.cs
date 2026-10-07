@@ -33,7 +33,7 @@ public class PluginDeploymentPlanExtensionsTests
             new PluginTypeDeployment([], []) { DataProviders = [provider] }, new OutdatedAssemblyDeployment([]), false, null, null);
         var package = new LocalPackage("Package", "1.0.0", string.Empty, "hash");
         var packagePlan = new PackageDeploymentPlan(new LocalPluginPackage(package, []), "dgt_Package",
-            new PackageComparison(package, new RemotePackage(Guid.NewGuid(), "hash")), [], false, null, null)
+            new PackageComparison(package, new RemotePackage(Guid.NewGuid(), "hash", package.Version)), [], false, null, null)
         {
             DataProviders = [provider]
         };

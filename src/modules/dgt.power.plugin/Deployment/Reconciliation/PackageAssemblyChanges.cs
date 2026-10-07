@@ -10,6 +10,5 @@ namespace dgt.power.plugin.Deployment.Reconciliation;
 internal sealed record PackageAssemblyChanges(
     LocalAssembly Desired,
     RemoteAssembly? Existing,
-    RegistrationSnapshot Snapshot,
     RegistrationChanges Registrations,
     IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> Messages);
