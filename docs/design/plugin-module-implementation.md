@@ -219,8 +219,16 @@ new step IDs, writes membership after associations, and stops before cleanup on 
 failure. Matched/migrated steps keep existing memberships. Unrelated memberships are untouched.
 Microsoft documents that assemblies and steps must be added separately; this slice does not
 implicitly add types, images, APIs, or identities.
-Package/provider membership and their platform verification remain pending; this does not
-complete P5 or wire the CLI.
+Package solution membership now prepares missing package/step additions across all assemblies.
+The package component type is resolved from the environment; missing or ambiguous definitions
+fail before upload. Step additions use assembly-scoped handler references and resolved step IDs,
+including identical CLR type/step declarations in different assemblies. Membership-only changes
+do not upload unchanged content. Completed memberships are skipped on fresh-preparation retries,
+and failures/cancellation propagate before cleanup. Package-owned assemblies, types, images,
+APIs, and identities are not implicitly added.
+Provider membership and package/provider solution transport verification remain pending;
+this does not complete P5 or wire the CLI. Fake membership writes establish request behavior
+and retry decisions, not managed-solution export/import behavior.
 
 Ensure requested solution membership without removing unrelated memberships.
 Preview unsupported membership explicitly or fail according to the agreed policy.

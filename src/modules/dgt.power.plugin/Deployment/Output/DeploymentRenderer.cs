@@ -70,6 +70,23 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
 
         AddCustomApis(tree, changes.Desired.Assemblies, changes.CustomApis);
         console.Write(tree);
+        if (changes.Solution is { } solution)
+        {
+            console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solution.UniqueName)}[/]");
+            if (!solution.HasChanges)
+            {
+                console.MarkupLine("No membership additions needed.");
+            }
+            if (solution.AddPackage)
+            {
+                console.MarkupLine($"Package {Markup.Escape(changes.DataverseName)} [bold]Add[/]");
+            }
+            foreach (var step in solution.Steps)
+            {
+                console.MarkupLine($"Step {Markup.Escape(step.Handler.AssemblyName)} / {Markup.Escape(step.Handler.TypeName)} / " +
+                    $"{Markup.Escape(step.Step.Name)} [bold]Add[/]");
+            }
+        }
         var destructiveCount = changes.CustomApis.Count(api => api.PreviousHandlerId is not null);
         if (destructiveCount > 0)
         {

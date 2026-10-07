@@ -894,6 +894,9 @@ listed below the deployment tree, including in dry-run output. Plugin types, ima
 and managed identities are not added implicitly. When every managed component is already present,
 the same section confirms that no membership additions are needed. An unknown solution fails
 planning with `MissingSolutionException` before any Dataverse writes occur.
+Package membership requires an unambiguous solution component definition for `pluginpackage`
+in the target environment; missing or duplicate definitions fail planning rather than skipping
+the requested membership.
 
 ##### Updates and upgrades
 

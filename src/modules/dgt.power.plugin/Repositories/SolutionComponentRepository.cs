@@ -21,8 +21,13 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
             Criteria = new FilterExpression { Conditions = { new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName, ConditionOperator.Equal, entityLogicalName) } }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.FirstOrDefault()?.ToEntity<SolutionComponentDefinition>().SolutionComponentType;
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        if (result.Count > 1)
+        {
+            throw new InvalidOperationException($"Entity '{entityLogicalName}' has multiple solution component definitions; membership cannot be resolved unambiguously.");
+        }
+
+        return result.SingleOrDefault()?.ToEntity<SolutionComponentDefinition>().SolutionComponentType;
     }
 
     public async Task<IReadOnlySet<Guid>> ListComponentIdsAsync(string solutionUniqueName, int componentType, CancellationToken cancellationToken = default)

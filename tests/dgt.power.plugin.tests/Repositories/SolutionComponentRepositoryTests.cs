@@ -46,6 +46,29 @@ public class SolutionComponentRepositoryTests
     }
 
     [Test]
+    public async Task GetComponentTypeAsync_DuplicateDefinitions_RejectsAmbiguity()
+    {
+        var service = CreateService();
+        service.Create(new SolutionComponentDefinition { PrimaryEntityName = PluginPackage.EntityLogicalName, SolutionComponentType = 10119 });
+        service.Create(new SolutionComponentDefinition { PrimaryEntityName = PluginPackage.EntityLogicalName, SolutionComponentType = 10120 });
+
+        await Assert.That(async () => await new SolutionComponentRepository(service).GetComponentTypeAsync(PluginPackage.EntityLogicalName))
+            .ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task GetComponentTypeAsync_DefinitionsAcrossPages_RejectsAmbiguity()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        await Assert.That(async () => await new SolutionComponentRepository(service).GetComponentTypeAsync(PluginPackage.EntityLogicalName))
+            .ThrowsExactly<InvalidOperationException>();
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, (string?)null, 5000), (2, "next-page", 5000)]);
+    }
+
+    [Test]
     public async Task AddToSolutionAsync_DoesNotThrow()
     {
         var service = CreateService();

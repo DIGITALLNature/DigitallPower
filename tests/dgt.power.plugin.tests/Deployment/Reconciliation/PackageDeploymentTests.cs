@@ -58,6 +58,219 @@ public class PackageDeploymentTests
     private static IReadOnlyList<Entity> All(FakeOrganizationServiceAsync service, string entityName) =>
         service.RetrieveMultiple(new QueryExpression(entityName) { ColumnSet = new ColumnSet(true) }).Entities;
 
+    private static SolutionMembershipExecutor SeedSolution(FakeOrganizationServiceAsync store)
+    {
+        var membership = new SolutionMembershipExecutor();
+        store.AddRequests(membership);
+        store.Create(new Solution { UniqueName = "target" });
+        store.Create(new SolutionComponentDefinition { PrimaryEntityName = PluginPackage.EntityLogicalName, SolutionComponentType = 10119 });
+        return membership;
+    }
+
+    [Test]
+    public async Task PrepareAndRender_PackageSolution_ShowsScopedAdditionsWithoutWrites()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("Shared.Plugin", Step("same"))),
+            Assembly("Second", CreateLocalType("Shared.Plugin", Step("same"))));
+        var store = CreateStore();
+        var membership = SeedSolution(store);
+        var service = new PackageUploadService(store, desired);
+        var changes = await new PluginDeployment(service).PreparePackageAsync(desired, "new", "target");
+        using var console = new TestConsole();
+
+        new DeploymentRenderer(console).RenderPackage(changes);
+
+        await Assert.That(console.Output).Contains("Solution membership: target");
+        await Assert.That(console.Output).Contains("Package new_Contoso.Plugins Add");
+        await Assert.That(console.Output).Contains("Step First / Shared.Plugin / same Add");
+        await Assert.That(console.Output).Contains("Step Second / Shared.Plugin / same Add");
+        await Assert.That(membership.Requests).IsEmpty();
+        await Assert.That(service.UploadCount).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Apply_PackageSolution_AddsOnlyPackageAndScopedStepsAndIsIdempotent()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("Shared.Plugin", Step("same"))),
+            Assembly("Second", CreateLocalType("Shared.Plugin", Step("same"))));
+        var store = CreateStore();
+        var membership = SeedSolution(store);
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+
+        var id = await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", "target"));
+
+        await Assert.That(membership.Requests.Select(request => request.ComponentType)).IsEquivalentTo([10119, 92, 92]);
+        await Assert.That(membership.Requests.Single(request => request.ComponentType == 10119).ComponentId).IsEqualTo(id);
+        await Assert.That(membership.Requests.Where(request => request.ComponentType == 92).Select(request => request.ComponentId))
+            .IsEquivalentTo(All(store, SdkMessageProcessingStep.EntityLogicalName).Select(step => step.Id));
+        await Assert.That(membership.Requests.All(request => !request.AddRequiredComponents)).IsTrue();
+        var repeated = await deployment.PreparePackageAsync(desired, "new", "target");
+        await Assert.That(repeated.HasChanges).IsFalse();
+        using var console = new TestConsole();
+        new DeploymentRenderer(console).RenderPackage(repeated);
+        await Assert.That(console.Output).Contains("No membership additions needed.");
+        await deployment.ApplyPackageAsync(repeated);
+        await Assert.That(membership.Requests).Count().IsEqualTo(3);
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task Apply_PackageMembershipOnly_PreservesOtherMembershipsAndSkipsUpload()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("first"))));
+        var store = CreateStore();
+        var membership = SeedSolution(store);
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+        var packageId = await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
+        var otherSolution = store.Create(new Solution { UniqueName = "other" });
+        var otherMembership = store.Create(new SolutionComponent
+        {
+            Attributes =
+            {
+                ["objectid"] = packageId, ["solutionid"] = new EntityReference(Solution.EntityLogicalName, otherSolution),
+                ["componenttype"] = new OptionSetValue(10119)
+            }
+        });
+        var changes = await deployment.PreparePackageAsync(desired, "new", "target");
+
+        await Assert.That(changes.UpdateContent).IsFalse();
+        await Assert.That(changes.Assemblies.All(assembly => !assembly.Registrations.HasChanges)).IsTrue();
+        await Assert.That(changes.HasChanges).IsTrue();
+        await deployment.ApplyPackageAsync(changes);
+
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+        await Assert.That(membership.Requests).Count().IsEqualTo(2);
+        await Assert.That(All(store, SolutionComponent.EntityLogicalName).Any(component => component.Id == otherMembership)).IsTrue();
+        await Assert.That((await deployment.PreparePackageAsync(desired, "new", "target")).HasChanges).IsFalse();
+    }
+
+    [Test]
+    public async Task Prepare_PackageSolutionWithoutComponentDefinition_FailsBeforeUpload()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin")));
+        var store = CreateStore();
+        store.Create(new Solution { UniqueName = "target" });
+        var service = new PackageUploadService(store, desired);
+
+        await Assert.That(async () => await new PluginDeployment(service).PreparePackageAsync(desired, "new", "target")).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(service.UploadCount).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Apply_PackageAlreadyInSolution_AddsOnlyMissingStepMembership()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("first"), Step("second") with { Stage = 40 })));
+        var store = CreateStore();
+        var membership = SeedSolution(store);
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", "target"));
+        var secondStep = All(store, SdkMessageProcessingStep.EntityLogicalName).Single(step => step.GetAttributeValue<string>("name") == "second");
+        var missingMembership = All(store, SolutionComponent.EntityLogicalName).Single(component => component.GetAttributeValue<Guid>("objectid") == secondStep.Id);
+        store.Delete(SolutionComponent.EntityLogicalName, missingMembership.Id);
+
+        var changes = await deployment.PreparePackageAsync(desired, "new", "target");
+        await Assert.That(changes.Solution!.AddPackage).IsFalse();
+        await Assert.That(changes.Solution.Steps).Count().IsEqualTo(1);
+        await deployment.ApplyPackageAsync(changes);
+
+        await Assert.That(membership.Requests).Count().IsEqualTo(4);
+        await Assert.That(membership.Requests.Last().ComponentId).IsEqualTo(secondStep.Id);
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task Prepare_PackageMissingSolution_FailsBeforeUpload()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin")));
+        var store = CreateStore();
+        SeedSolution(store);
+        var service = new PackageUploadService(store, desired);
+
+        await Assert.That(async () => await new PluginDeployment(service).PreparePackageAsync(desired, "new", "missing")).ThrowsExactly<MissingSolutionException>();
+        await Assert.That(service.UploadCount).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Apply_PackageMembershipFailure_FreshPreparationRetriesWithoutUploadOrDuplicateRegistrations()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("first"))));
+        var store = CreateStore();
+        var membership = SeedSolution(store);
+        membership.FailWrites = true;
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+
+        await Assert.That(async () => await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", "target"))).ThrowsExactly<InvalidOperationException>();
+
+        var stepId = All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id;
+        membership.FailWrites = false;
+        var retry = await deployment.PreparePackageAsync(desired, "new", "target");
+        await deployment.ApplyPackageAsync(retry);
+
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id).IsEqualTo(stepId);
+        await Assert.That(membership.Requests).Count().IsEqualTo(2);
+        await Assert.That((await deployment.PreparePackageAsync(desired, "new", "target")).HasChanges).IsFalse();
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Apply_InterruptedAfterPackageMembership_RetryAddsOnlyMissingSteps(bool cancel)
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin", Step("first"))));
+        var store = CreateStore();
+        var membership = SeedSolution(store);
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+        using var cancellation = new CancellationTokenSource();
+
+        async Task Apply()
+        {
+            await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", "target"), progress =>
+            {
+                if (progress.Resource != "solution membership")
+                {
+                    return;
+                }
+                if (cancel)
+                {
+                    cancellation.Cancel();
+                }
+                else
+                {
+                    throw new InvalidOperationException("Interrupted after membership write.");
+                }
+            }, cancellation.Token);
+        }
+
+        if (cancel)
+        {
+            await Assert.That(Apply).Throws<OperationCanceledException>();
+        }
+        else
+        {
+            await Assert.That(Apply).ThrowsExactly<InvalidOperationException>();
+        }
+        await Assert.That(membership.Requests).Count().IsEqualTo(1);
+        var retry = await deployment.PreparePackageAsync(desired, "new", "target");
+        await Assert.That(retry.Solution!.AddPackage).IsFalse();
+        await Assert.That(retry.Solution.Steps).Count().IsEqualTo(1);
+        await deployment.ApplyPackageAsync(retry);
+
+        await Assert.That(membership.Requests).Count().IsEqualTo(2);
+        await Assert.That(service.UploadCount).IsEqualTo(1);
+    }
+
     [Test]
     [Arguments(false)]
     [Arguments(true)]

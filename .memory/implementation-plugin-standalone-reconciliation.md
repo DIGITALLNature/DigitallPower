@@ -78,8 +78,16 @@ Flat additions reference desired steps by CLR type and declaration; `ResolvedReg
 returns actual type/step IDs from shared registration application. Membership writes occur
 after Custom API associations and before cleanup. Failure leaves superseded types/assemblies
 available for recovery; fresh preparation skips successful membership writes. Existing and
-unrelated memberships are never removed. Package/provider membership remains a separate
-implementation and platform-verification gate.
+unrelated memberships are never removed.
+
+Package solution membership adds the package and declared steps, not package-owned assemblies.
+`PackageSolutionChanges` stores the environment-resolved package component type and scoped step
+additions. Missing/ambiguous definitions fail before upload. Actual step IDs are captured from
+the shared applier across all assemblies before membership writes, so equal declarations in
+different assemblies remain distinct. Membership-only application reuses unchanged content,
+and fresh preparation skips completed additions after failure/cancellation. Component-definition
+and membership reads collect all pages. Provider membership and package/provider solution
+transport still require implementation/verification; test fakes do not prove live transport.
 
 Managed identity provisioning and binding are outside push in both pipelines. Local declarations,
 identity repositories, plan flags, and identity write/render phases are removed; there is no

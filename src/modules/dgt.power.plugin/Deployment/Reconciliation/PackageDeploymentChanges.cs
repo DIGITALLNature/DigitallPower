@@ -14,7 +14,19 @@ internal sealed record PackageDeploymentChanges(
     bool UpdateContent,
     IReadOnlyList<RemoteAssembly> ExpectedAssemblies,
     IReadOnlyList<PackageAssemblyChanges> Assemblies,
-    IReadOnlyList<CustomApiChange> CustomApis)
+    IReadOnlyList<CustomApiChange> CustomApis,
+    PackageSolutionChanges? Solution)
 {
-    internal bool HasChanges => Existing is null || UpdateContent || Assemblies.Any(assembly => assembly.Registrations.HasChanges) || CustomApis.Count > 0;
+    internal bool HasChanges
+    {
+        get
+        {
+            if (Existing is null || UpdateContent)
+            {
+                return true;
+            }
+
+            return Assemblies.Any(assembly => assembly.Registrations.HasChanges) || CustomApis.Count > 0 || Solution is { HasChanges: true };
+        }
+    }
 }
