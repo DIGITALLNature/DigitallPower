@@ -15,7 +15,7 @@ internal sealed record RegistrationChanges(
     IReadOnlyList<ImageWrite> ImagesToWrite,
     IReadOnlyList<RemotePluginStepImage> ImagesToDelete,
     IReadOnlyDictionary<string, Guid> ExistingTypeIds,
-    IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), Guid> ExistingStepIds)
+    IReadOnlyDictionary<PluginStepReference, Guid> ExistingStepIds)
 {
     internal bool HasChanges =>
         TypesToCreate.Count + TypesToDelete.Count + StepsToWrite.Count + StepsToDelete.Count + ImagesToWrite.Count + ImagesToDelete.Count > 0;

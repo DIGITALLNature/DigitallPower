@@ -399,6 +399,13 @@ If the provider is omitted entirely, clear only handlers referring to target-own
 data-source tables through omission. Provider name and explicitly supplied description are
 reconciled; table labels and metadata remain external to this core.
 
+With a requested solution, add only missing declared provider records. Data-source table schema
+and rows are externally provisioned prerequisites and remain outside membership, just as Custom
+API records/parameters/response properties are not pulled into the solution. Resolve the provider
+component type from the environment, failing preparation if absent or ambiguous, without automatic
+dependency inclusion. Whole-provider omission never adds/removes memberships. Apply membership after
+associations and before cleanup; live solution transport still requires verification.
+
 ### Managed identities
 
 Managed identity provisioning and binding are outside push. Do not parse or recognize

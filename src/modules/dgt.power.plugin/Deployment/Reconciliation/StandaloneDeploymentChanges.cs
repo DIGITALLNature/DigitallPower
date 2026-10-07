@@ -13,7 +13,7 @@ internal sealed record StandaloneDeploymentChanges(
     Guid? ExistingAssemblyId,
     bool UpdateContent,
     RegistrationChanges Registrations,
-    IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> Messages,
+    IReadOnlyDictionary<PluginStepReference, ResolvedSdkMessage> Messages,
     IReadOnlyList<RemoteAssembly> ExpectedAssemblies,
     RemoteAssembly? AssemblyToDelete,
     IReadOnlyList<CustomApiChange> CustomApis,

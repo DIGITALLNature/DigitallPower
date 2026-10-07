@@ -5,7 +5,8 @@ using dgt.power.plugin.Deployment.Planning.Plans;
 
 namespace dgt.power.plugin.Deployment.Reconciliation;
 
-internal sealed record StandaloneSolutionChanges(string UniqueName, bool AddAssembly, IReadOnlyList<StepMembershipAddition> Steps)
+internal sealed record StandaloneSolutionChanges(string UniqueName, bool AddAssembly, IReadOnlyList<StepMembershipAddition> Steps,
+    ProviderSolutionChanges? Providers = null)
 {
-    internal bool HasChanges => AddAssembly || Steps.Count > 0;
+    internal bool HasChanges => AddAssembly || Steps.Count > 0 || Providers is { HasChanges: true };
 }

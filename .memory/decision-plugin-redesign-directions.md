@@ -35,6 +35,8 @@ recommended reconciliation design, and unresolved product/platform decisions.
   provisioning after the provider slice and before cutover; agree a fallback if infeasible.
 - A declared provider owns all operation slots. Whole-provider omission clears only handlers
   referring to target-owned types and preserves external handlers/records/tables.
+  Requested solution membership includes declared provider records only, never externally
+  provisioned data-source table schema/rows.
   See [provider ownership](decision-plugin-provider-ownership.md).
 
 ## Component deletion: candidate dependency check

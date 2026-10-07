@@ -38,7 +38,7 @@ outside the SDK registration payload, including configuration associations, enab
 and impersonation, are retained.
 
 Provider reconciliation requires an existing compatible JsonConverter data-source table;
-requested provider solution membership remains explicitly unsupported until its next slice.
+requested provider solution membership adds only missing provider records, not external table schema/rows.
 See [provider ownership](decision-plugin-provider-ownership.md). Custom API associations use
 shared target-wide preparation and application; see
 [Custom API ownership](decision-plugin-custom-api-ownership.md).
@@ -88,7 +88,12 @@ additions. Missing/ambiguous definitions fail before upload. Actual step IDs are
 the shared applier across all assemblies before membership writes, so equal declarations in
 different assemblies remain distinct. Membership-only application reuses unchanged content,
 and fresh preparation skips completed additions after failure/cancellation. Component-definition
-and membership reads collect all pages. Provider membership and package/provider solution
+and membership reads collect all pages. Provider memberships resolve environment component types
+and provider IDs, including unchanged provider records without forced writes. External table
+schema/rows remain outside solution membership. Missing or
+ambiguous provider component definitions fail preparation. Membership applies after associations
+and before cleanup; partial retries skip completed provider additions.
+Package/provider solution
 transport still require implementation/verification; test fakes do not prove live transport.
 
 Managed identity provisioning and binding are outside push in both pipelines. Local declarations,

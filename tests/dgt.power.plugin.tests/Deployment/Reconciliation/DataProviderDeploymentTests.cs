@@ -149,13 +149,13 @@ public class DataProviderDeploymentTests
     }
 
     [Test]
-    public async Task Prepare_ProviderWithRequestedSolution_RejectsUntilMembershipIsSupported()
+    public async Task Prepare_ProviderWithRequestedSolution_MissingComponentDefinitionFailsBeforeWrites()
     {
         var service = Service();
         service.Create(new Solution { UniqueName = "target" });
 
         await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired(DataProviderOperation.Retrieve), "target"))
-            .ThrowsExactly<NotSupportedException>();
+            .ThrowsExactly<InvalidOperationException>();
         await Assert.That(All(service, PluginType.EntityLogicalName)).IsEmpty();
     }
 

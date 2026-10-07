@@ -30,7 +30,7 @@ internal static class RegistrationDiff
         var imageWrites = new List<ImageWrite>();
         var deleteImages = new List<RemotePluginStepImage>();
         var typeIds = new Dictionary<string, Guid>(StringComparer.Ordinal);
-        var stepIds = new Dictionary<(string TypeName, LocalPluginStep Step), Guid>();
+        var stepIds = new Dictionary<PluginStepReference, Guid>();
         var remoteTypes = snapshot.Types.ToDictionary(type => type.TypeName, StringComparer.Ordinal);
         var oldTypes = (superseded?.Types ?? []).ToDictionary(type => type.TypeName, StringComparer.Ordinal);
 
@@ -59,7 +59,7 @@ internal static class RegistrationDiff
                 var existing = matches.GetValueOrDefault(step);
                 if (existing is not null)
                 {
-                    stepIds.Add((type.TypeName, step), existing.Id);
+                    stepIds.Add(new PluginStepReference(type.TypeName, step), existing.Id);
                 }
 
                 var requiresReassignment = existing is not null && !destinationStepIds.Contains(existing.Id);

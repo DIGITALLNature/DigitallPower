@@ -9,7 +9,8 @@ internal sealed record PackageSolutionChanges(
     string UniqueName,
     int PackageComponentType,
     bool AddPackage,
-    IReadOnlyList<PackageStepMembershipAddition> Steps)
+    IReadOnlyList<PackageStepMembershipAddition> Steps,
+    ProviderSolutionChanges? Providers = null)
 {
-    internal bool HasChanges => AddPackage || Steps.Count > 0;
+    internal bool HasChanges => AddPackage || Steps.Count > 0 || Providers is { HasChanges: true };
 }

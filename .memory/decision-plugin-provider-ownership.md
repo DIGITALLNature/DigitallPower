@@ -30,8 +30,24 @@ Resolve all destination types before provider writes, and write associations bef
 A failure retains superseded types for fresh-preparation recovery. Before deleting types,
 check for remaining provider references rather than assume earlier writes removed every dependency.
 
-Provider declarations with a solution request currently fail explicitly pending provider/table
-membership implementation. Existing-table provisioning feasibility, actual SDK clearing/
+## Solution membership
+
+Declared providers with a solution request add only missing provider record memberships.
+The data-source table is an externally provisioned prerequisite: never pull its schema or rows
+into the target solution. This matches Custom API records/parameters/response properties,
+whose lifecycle and membership are external despite push reconciling handler associations.
+Resolve the provider component type from the environment and fail preparation if
+absent/ambiguous; never silently omit provider membership. AddRequiredComponents remains false.
+Only declarations drive membership; omission never adds/removes provider/table membership.
+
+Flat `ProviderSolutionChanges` is part of standalone/package solution decisions.
+Preparation results use `PreparedProviders` rather than a tuple. New provider
+IDs come from association application; unchanged providers use their prepared ID without a
+forced rewrite. Membership-only changes count as work but do not trigger artifact uploads.
+Apply after provider writes and before cleanup. Fresh preparation skips completed provider
+memberships after failure/cancellation.
+
+Existing-table provisioning feasibility, actual SDK clearing/
 reassignment, platform-created step cleanup, and managed-solution transport require independent
 Dataverse verification before CLI cutover. Request fakes establish payload/order/retry behavior,
 not those platform guarantees.

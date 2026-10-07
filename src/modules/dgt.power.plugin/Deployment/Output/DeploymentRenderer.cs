@@ -27,6 +27,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         if (changes.Solution is { } solution)
         {
             console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solution.UniqueName)}[/]");
+            RenderProviderMembership(solution.Providers);
             if (!solution.HasChanges)
             {
                 console.MarkupLine("No membership additions needed.");
@@ -74,6 +75,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         if (changes.Solution is { } solution)
         {
             console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solution.UniqueName)}[/]");
+            RenderProviderMembership(solution.Providers);
             if (!solution.HasChanges)
             {
                 console.MarkupLine("No membership additions needed.");
@@ -97,6 +99,18 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         if (upload)
         {
             console.MarkupLine("Assembly and plugin type records are managed by Dataverse during package upload; their IDs are validated before registration writes.");
+        }
+    }
+
+    private void RenderProviderMembership(ProviderSolutionChanges? changes)
+    {
+        if (changes is null)
+        {
+            return;
+        }
+        foreach (var addition in changes.Additions)
+        {
+            console.MarkupLine($"Data provider {Markup.Escape(addition.DataSourceLogicalName)} [bold]Add[/]");
         }
     }
 

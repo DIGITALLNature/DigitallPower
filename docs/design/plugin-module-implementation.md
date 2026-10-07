@@ -226,7 +226,7 @@ including identical CLR type/step declarations in different assemblies. Membersh
 do not upload unchanged content. Completed memberships are skipped on fresh-preparation retries,
 and failures/cancellation propagate before cleanup. Package-owned assemblies, types, images,
 APIs, and identities are not implicitly added.
-Provider membership and package/provider solution transport verification remain pending;
+Package/provider solution transport verification remains pending;
 this does not complete P5 or wire the CLI. Fake membership writes establish request behavior
 and retry decisions, not managed-solution export/import behavior.
 
@@ -256,8 +256,16 @@ Provider name and explicitly supplied description are reconciled; no table schem
 Missing/incompatible tables fail preparation. Provider writes precede membership and cleanup;
 fresh preparation reuses completed registrations/associations after interruptions.
 
-Provider declarations with a requested solution fail explicitly until provider/table
-membership is implemented; do not silently promise incomplete solution contents.
+Provider solution membership shares flat `ProviderSolutionChanges` across standalone/package
+solution decisions. Add only missing declared provider records, never omitted providers or
+externally provisioned data-source table schema/rows. This follows the same external-resource
+boundary as Custom API records, parameters, and response properties. Resolve the provider component
+type from the environment; absent/ambiguous definitions fail preparation before deployment
+writes. `AddRequiredComponents` is false; no automatic dependency inclusion is requested.
+New provider IDs come from application; unchanged providers retain prepared IDs without forced
+updates. Preview additions from these decisions, apply after associations and before cleanup,
+and skip completed provider memberships on fresh-preparation retries.
+Membership-only changes do not upload artifacts. Whole-provider omission leaves memberships intact.
 The previous CLI provider implementation is unchanged until final cutover. Platform-only
 SDK steps on removed types still block cleanup pending lifecycle verification.
 

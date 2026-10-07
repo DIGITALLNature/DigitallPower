@@ -11,4 +11,4 @@ internal sealed record PackageAssemblyChanges(
     LocalAssembly Desired,
     RemoteAssembly? Existing,
     RegistrationChanges Registrations,
-    IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> Messages);
+    IReadOnlyDictionary<PluginStepReference, ResolvedSdkMessage> Messages);

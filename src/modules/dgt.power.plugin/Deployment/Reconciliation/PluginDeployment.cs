@@ -79,12 +79,12 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
         }
 
-        var messages = new Dictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage>();
+        var messages = new Dictionary<PluginStepReference, ResolvedSdkMessage>();
         foreach (var write in changes.StepsToWrite)
         {
             var step = write.Desired;
             var message = await _messages.ResolveAsync(step.MessageName, NormalizeEntity(step.PrimaryEntityName), NormalizeEntity(step.SecondaryEntityName), cancellationToken);
-            messages.Add((write.TypeName, step), message ?? throw new UnresolvedPluginStepMessageException(step.Name, step.MessageName, step.PrimaryEntityName));
+            messages.Add(new PluginStepReference(write.TypeName, step), message ?? throw new UnresolvedPluginStepMessageException(step.Name, step.MessageName, step.PrimaryEntityName));
         }
 
         var customApis = await PrepareCustomApisAsync([desired], [.. snapshot.Types, .. oldSnapshot.Types],
@@ -92,9 +92,13 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var membership = await PrepareStandaloneSolutionAsync(desired, existing?.Id, changes, solution, cancellationToken);
         var providers = await PrepareProvidersAsync([desired], [.. snapshot.Types, .. oldSnapshot.Types],
             changes.ExistingTypeIds.ToDictionary(pair => new PluginTypeReference(desired.Name, pair.Key), pair => pair.Value), solution, cancellationToken);
+        if (membership is not null)
+        {
+            membership = membership with { Providers = providers.Solution };
+        }
         return new StandaloneDeploymentChanges(desired, existing?.Id,
             existing is not null && !string.Equals(desired.ContentHash, existing.ContentHash, StringComparison.OrdinalIgnoreCase),
-            changes, messages, assemblies, superseded, customApis, membership, providers);
+            changes, messages, assemblies, superseded, customApis, membership, providers.Changes);
     }
 
     private async Task<RegistrationSnapshot> LoadSnapshotAsync(Guid? assemblyId, CancellationToken cancellationToken)
@@ -144,10 +148,11 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var resolved = await ApplyRegistrationsAsync(changes.Registrations, changes.Messages, assemblyId, progress, cancellationToken);
         await ApplyCustomApisAsync(changes.CustomApis,
             resolved.TypeIds.ToDictionary(pair => new PluginTypeReference(changes.Desired.Name, pair.Key), pair => pair.Value), progress, cancellationToken);
-        await ApplyProvidersAsync(changes.Providers,
+        var providerIds = await ApplyProvidersAsync(changes.Providers,
             resolved.TypeIds.ToDictionary(pair => new PluginTypeReference(changes.Desired.Name, pair.Key), pair => pair.Value), progress, cancellationToken);
         if (changes.Solution is { } solution)
         {
+            await ApplyProviderMembershipAsync(solution.Providers, solution.UniqueName, providerIds, progress, cancellationToken);
             if (solution.AddAssembly)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -159,7 +164,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await _solutions.AddToSolutionAsync(ISdkMessageProcessingStepRepository.ComponentType,
-                    resolved.StepIds[(step.TypeName, step.Step)], solution.UniqueName, cancellationToken);
+                    resolved.StepIds[new PluginStepReference(step.TypeName, step.Step)], solution.UniqueName, cancellationToken);
                 Report(PluginDeploymentOperation.Added, "solution membership", step.Step.Name);
             }
         }
@@ -183,7 +188,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
     }
 
     private async Task<ResolvedRegistrations> ApplyRegistrationsAsync(RegistrationChanges registrations,
-        IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> messages,
+        IReadOnlyDictionary<PluginStepReference, ResolvedSdkMessage> messages,
         Guid assemblyId, Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
     {
         var typeIds = registrations.ExistingTypeIds.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
@@ -199,7 +204,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var step = write.Desired;
-            var message = messages[(write.TypeName, step)];
+            var message = messages[new PluginStepReference(write.TypeName, step)];
             var data = new PluginStepData(step.Name, typeIds[write.TypeName], message.MessageId, message.MessageFilterId, step.Stage, step.Mode, step.ExecutionOrder, step.FilterAttributes);
             if (write.ExistingId is { } stepId)
             {
@@ -208,7 +213,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
             else
             {
-                stepIds.Add((write.TypeName, step), await _steps.CreateAsync(data, cancellationToken));
+                stepIds.Add(new PluginStepReference(write.TypeName, step), await _steps.CreateAsync(data, cancellationToken));
                 Report(PluginDeploymentOperation.Created, "step", step.Name);
             }
         }
@@ -217,7 +222,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var image = write.Desired;
-            var stepId = stepIds[(write.TypeName, write.Step)];
+            var stepId = stepIds[new PluginStepReference(write.TypeName, write.Step)];
             if (write.ExistingId is { } imageId)
             {
                 await _images.UpdateAsync(imageId, stepId, image.Attributes, cancellationToken);
@@ -289,7 +294,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         {
             foreach (var step in type.Steps)
             {
-                if (!registrations.ExistingStepIds.TryGetValue((type.TypeName, step), out var id) || !steps.Contains(id))
+                if (!registrations.ExistingStepIds.TryGetValue(new PluginStepReference(type.TypeName, step), out var id) || !steps.Contains(id))
                 {
                     additions.Add(new StepMembershipAddition(type.TypeName, step));
                 }
@@ -375,12 +380,12 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
                 throw new NotSupportedException("Package registration removal requires verification of server-side upload/dependency behavior before it can be applied.");
             }
 
-            var messages = new Dictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage>();
+            var messages = new Dictionary<PluginStepReference, ResolvedSdkMessage>();
             foreach (var write in registrations.StepsToWrite)
             {
                 var step = write.Desired;
                 var message = await _messages.ResolveAsync(step.MessageName, NormalizeEntity(step.PrimaryEntityName), NormalizeEntity(step.SecondaryEntityName), cancellationToken);
-                messages.Add((write.TypeName, step), message ?? throw new UnresolvedPluginStepMessageException(step.Name, step.MessageName, step.PrimaryEntityName));
+                messages.Add(new PluginStepReference(write.TypeName, step), message ?? throw new UnresolvedPluginStepMessageException(step.Name, step.MessageName, step.PrimaryEntityName));
             }
 
             assemblies.Add(new PackageAssemblyChanges(assembly, remote, registrations, messages));
@@ -393,9 +398,13 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var customApis = await PrepareCustomApisAsync(desired.Assemblies, ownedTypes, existingTypeIds, cancellationToken);
         var membership = await PreparePackageSolutionAsync(existing?.Id, assemblies, solution, cancellationToken);
         var providers = await PrepareProvidersAsync(desired.Assemblies, ownedTypes, existingTypeIds, solution, cancellationToken);
+        if (membership is not null)
+        {
+            membership = membership with { Providers = providers.Solution };
+        }
         return new PackageDeploymentChanges(desired, name, existing,
             existing is not null && !string.Equals(existing.PackageHash, desired.Package.PackageHash, StringComparison.OrdinalIgnoreCase),
-            remoteAssemblies, assemblies, customApis, membership, providers);
+            remoteAssemblies, assemblies, customApis, membership, providers.Changes);
     }
 
     internal Task<Guid> ApplyPackageAsync(PackageDeploymentChanges changes, Action<PluginDeploymentProgress>? progress = null, CancellationToken cancellationToken = default)
@@ -441,7 +450,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             throw new InvalidOperationException("Package upload produced an unexpected set of owned assemblies; no registration writes were applied.");
         }
 
-        var resolved = new List<(Guid AssemblyId, PackageAssemblyChanges Changes, RegistrationChanges Registrations)>();
+        var resolved = new List<ResolvedPackageAssembly>();
         foreach (var assembly in changes.Assemblies)
         {
             var candidates = uploadedAssemblies.Where(candidate => string.Equals(candidate.Name, assembly.Desired.Name, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -485,25 +494,26 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
                 ids.Add(type.TypeName, serverType.Id);
             }
 
-            resolved.Add((uploaded.Id, assembly, assembly.Registrations with { TypesToCreate = [], ExistingTypeIds = ids }));
+            resolved.Add(new ResolvedPackageAssembly(uploaded.Id, assembly, assembly.Registrations with { TypesToCreate = [], ExistingTypeIds = ids }));
         }
 
-        var stepIds = new Dictionary<(PluginTypeReference Handler, LocalPluginStep Step), Guid>();
+        var stepIds = new Dictionary<PackagePluginStepReference, Guid>();
         foreach (var assembly in resolved)
         {
             var registrations = await ApplyRegistrationsAsync(assembly.Registrations, assembly.Changes.Messages, assembly.AssemblyId, progress, cancellationToken);
             foreach (var (step, id) in registrations.StepIds)
             {
-                stepIds.Add((new PluginTypeReference(assembly.Changes.Desired.Name, step.TypeName), step.Step), id);
+                stepIds.Add(new PackagePluginStepReference(new PluginTypeReference(assembly.Changes.Desired.Name, step.TypeName), step.Step), id);
             }
         }
 
         var resolvedTypeIds = resolved.SelectMany(assembly => assembly.Registrations.ExistingTypeIds.Select(pair =>
             new KeyValuePair<PluginTypeReference, Guid>(new PluginTypeReference(assembly.Changes.Desired.Name, pair.Key), pair.Value))).ToDictionary();
         await ApplyCustomApisAsync(changes.CustomApis, resolvedTypeIds, progress, cancellationToken);
-        await ApplyProvidersAsync(changes.Providers, resolvedTypeIds, progress, cancellationToken);
+        var providerIds = await ApplyProvidersAsync(changes.Providers, resolvedTypeIds, progress, cancellationToken);
         if (changes.Solution is { } solution)
         {
+            await ApplyProviderMembershipAsync(solution.Providers, solution.UniqueName, providerIds, progress, cancellationToken);
             if (solution.AddPackage)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -515,7 +525,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await _solutions.AddToSolutionAsync(ISdkMessageProcessingStepRepository.ComponentType,
-                    stepIds[(step.Handler, step.Step)], solution.UniqueName, cancellationToken);
+                    stepIds[new PackagePluginStepReference(step.Handler, step.Step)], solution.UniqueName, cancellationToken);
                 progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Added, "solution membership", step.Step.Name));
             }
         }
@@ -546,7 +556,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             {
                 foreach (var step in type.Steps)
                 {
-                    if (!assembly.Registrations.ExistingStepIds.TryGetValue((type.TypeName, step), out var id) || !steps.Contains(id))
+                    if (!assembly.Registrations.ExistingStepIds.TryGetValue(new PluginStepReference(type.TypeName, step), out var id) || !steps.Contains(id))
                     {
                         additions.Add(new PackageStepMembershipAddition(new PluginTypeReference(assembly.Desired.Name, type.TypeName), step));
                     }
@@ -569,14 +579,19 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         }
     }
 
-    private async Task<IReadOnlyList<DataProviderChange>> PrepareProvidersAsync(IReadOnlyList<LocalAssembly> desired,
+    private async Task<PreparedProviders> PrepareProvidersAsync(IReadOnlyList<LocalAssembly> desired,
         IReadOnlyList<RemotePluginType> ownedTypes, Dictionary<PluginTypeReference, Guid> existingTypeIds,
         string? solutionName, CancellationToken cancellationToken)
     {
         var declarations = DataProviderRegistrationGrouper.Group(desired.SelectMany(assembly => assembly.PluginTypes).ToList());
+        int? componentType = null;
+        IReadOnlySet<Guid> providerMembers = new HashSet<Guid>();
+        var additions = new List<ProviderMembershipAddition>();
         if (declarations.Count > 0 && !string.IsNullOrWhiteSpace(solutionName))
         {
-            throw new NotSupportedException("Provider solution membership is not implemented in the replacement core yet.");
+            componentType = await _solutions.GetComponentTypeAsync(dgt.power.dataverse.EntityDataProvider.EntityLogicalName, cancellationToken) ??
+                throw new InvalidOperationException($"The target environment does not define a solution component type for entitydataprovider; membership in '{solutionName}' cannot be prepared.");
+            providerMembers = await _solutions.ListComponentIdsAsync(solutionName, componentType.Value, cancellationToken);
         }
 
         var remote = await _providers.ListAsync(cancellationToken);
@@ -594,6 +609,10 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             var table = await _providers.FindDataSourceAsync(provider.DataSourceLogicalName, cancellationToken) ??
                 throw new InvalidDataSourceException($"Data-source table '{provider.DataSourceLogicalName}' must be provisioned before plugin push.");
             await _providers.ValidateDataSourceAsync(provider.DataSourceLogicalName, table, cancellationToken);
+            if (componentType is not null && (existing is null || !providerMembers.Contains(existing.Id)))
+            {
+                additions.Add(new ProviderMembershipAddition(provider.DataSourceLogicalName, existing?.Id));
+            }
             var handlers = new Dictionary<DataProviderOperation, PluginTypeReference?>();
             foreach (var operation in provider.Handlers.Keys)
             {
@@ -643,20 +662,42 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
         }
 
-        return changes;
+        return new PreparedProviders(changes, componentType is { } type ? new ProviderSolutionChanges(type, additions) : null);
     }
 
-    private async Task ApplyProvidersAsync(IReadOnlyList<DataProviderChange> changes,
+    private async Task<Dictionary<string, Guid>> ApplyProvidersAsync(IReadOnlyList<DataProviderChange> changes,
         Dictionary<PluginTypeReference, Guid> typeIds, Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
     {
+        var ids = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
         foreach (var change in changes)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var handlers = change.Handlers.ToDictionary(pair => pair.Key,
                 pair => pair.Value is { } handler ? (Guid?)typeIds[handler] : null);
-            await _providers.ApplyHandlersAsync(change.Existing?.Id, change.Desired, handlers, cancellationToken);
+            var id = await _providers.ApplyHandlersAsync(change.Existing?.Id, change.Desired, handlers, cancellationToken);
+            if (change.Desired is { } desired)
+            {
+                ids.Add(desired.DataSourceLogicalName, id);
+            }
             progress?.Invoke(new PluginDeploymentProgress(change.Existing is null ? PluginDeploymentOperation.Created : PluginDeploymentOperation.Updated,
                 "data provider", change.Name));
+        }
+        return ids;
+    }
+
+    private async Task ApplyProviderMembershipAsync(ProviderSolutionChanges? changes, string solutionName,
+        Dictionary<string, Guid> providerIds, Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
+    {
+        if (changes is null)
+        {
+            return;
+        }
+        foreach (var addition in changes.Additions)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var id = addition.ExistingProviderId ?? providerIds[addition.DataSourceLogicalName];
+            await _solutions.AddToSolutionAsync(changes.ComponentType, id, solutionName, cancellationToken);
+            progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Added, "data provider membership", addition.DataSourceLogicalName));
         }
     }
 

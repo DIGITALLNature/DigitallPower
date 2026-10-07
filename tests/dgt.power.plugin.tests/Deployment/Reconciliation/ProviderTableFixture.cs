@@ -14,6 +14,7 @@ internal static class ProviderTableFixture
     internal static void Seed(FakeOrganizationServiceAsync service, bool missing = false, bool incompatible = false)
     {
         var backingId = service.Create(new EntityDataProvider { Name = "JsonConverter" });
+        var tableId = Guid.NewGuid();
         service.AddRequests(new ProviderRequestFake(typeof(RetrieveMetadataChangesRequest), _ =>
         {
             var metadata = new EntityMetadataCollection();
@@ -21,7 +22,7 @@ internal static class ProviderTableFixture
             {
                 metadata.Add(new EntityMetadata
                 {
-                    MetadataId = Guid.NewGuid(), LogicalName = "dgt_source", SchemaName = "dgt_Source",
+                    MetadataId = tableId, LogicalName = "dgt_source", SchemaName = "dgt_Source",
                     DataProviderId = incompatible ? Guid.NewGuid() : backingId,
                     OwnershipType = OwnershipTypes.OrganizationOwned
                 });
