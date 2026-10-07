@@ -22,6 +22,8 @@ internal static class TelemetryConfig
         ExecutionEnvironment.IsTruthy(Environment.GetEnvironmentVariable(OptOutEnvVar))
         || ExecutionEnvironment.IsTruthy(Environment.GetEnvironmentVariable(DoNotTrackEnvVar));
 
+    public static bool IsEnabled(StateStore stateStore) => !IsOptedOut && stateStore.TelemetryEnabled;
+
     /// <summary>
     /// True when running on a known CI/CD build agent.
     /// </summary>

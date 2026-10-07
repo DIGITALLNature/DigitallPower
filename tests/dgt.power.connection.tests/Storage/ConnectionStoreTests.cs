@@ -103,19 +103,19 @@ public class ConnectionStoreTests
     }
 
     [Test]
-    public async Task StateStore_PersistsInstallIdAndNoticeStateAcrossInstances()
+    public async Task StateStore_PersistsInstallIdAcrossInstances()
     {
         var directory = CreateTemporaryDirectory();
         try
         {
             var home = new DgtpHome(directory);
             var first = new StateStore(home);
-            var installId = first.GetOrCreateTelemetryInstallId();
-            first.MarkTelemetryNoticeShown();
+            var installId = first.GetOrCreateTelemetryInstallId(out var created);
+            await Assert.That(created).IsTrue();
 
             var second = new StateStore(new DgtpHome(directory));
-            await Assert.That(second.GetOrCreateTelemetryInstallId()).IsEqualTo(installId);
-            await Assert.That(second.TelemetryNoticeShown).IsTrue();
+            await Assert.That(second.GetOrCreateTelemetryInstallId(out var createdAgain)).IsEqualTo(installId);
+            await Assert.That(createdAgain).IsFalse();
         }
         finally
         {

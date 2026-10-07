@@ -2,48 +2,57 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using IOFileAccess = System.IO.FileAccess;
 
 namespace dgt.power.common.Storage;
 
 public sealed class StateStore(DgtpHome home)
 {
-    private static readonly JsonSerializerOptions s_jsonOptions = new() { WriteIndented = true };
+    private static readonly JsonSerializerOptions s_jsonOptions = new()
+    {
+        WriteIndented = true,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    };
     private static readonly TimeSpan s_lockTimeout = TimeSpan.FromSeconds(10);
     private readonly string _path = home.StatePath;
     private readonly string _lockPath = Path.Combine(home.Path, "state.lock");
 
-    public string GetOrCreateTelemetryInstallId()
+    public bool TelemetryEnabled => Read().Telemetry.Enabled;
+
+    public void SetTelemetryEnabled(bool enabled)
     {
         using var fileLock = AcquireLock();
         var state = Read();
-        if (Guid.TryParse(state.TelemetryInstallId, out _))
+        state.Telemetry.Enabled = enabled;
+        Write(state);
+    }
+
+    public string GetOrCreateTelemetryInstallId() => GetOrCreateTelemetryInstallId(out _);
+
+    public string GetOrCreateTelemetryInstallId(out bool created)
+    {
+        using var fileLock = AcquireLock();
+        var state = Read();
+        if (state.Telemetry.InstallId is not null)
         {
-            return state.TelemetryInstallId;
+            created = false;
+            return state.Telemetry.InstallId;
         }
 
-        state.TelemetryInstallId = Guid.NewGuid().ToString("D");
+        state.Telemetry.InstallId = Guid.NewGuid().ToString("D");
         Write(state);
-        return state.TelemetryInstallId;
+        created = true;
+        return state.Telemetry.InstallId;
     }
 
-    public bool TelemetryNoticeShown => Read().TelemetryNoticeShownOn is not null;
-
-    public void MarkTelemetryNoticeShown()
-    {
-        using var fileLock = AcquireLock();
-        var state = Read();
-        state.TelemetryNoticeShownOn ??= DateTimeOffset.UtcNow;
-        Write(state);
-    }
-
-    public DateTime LastVersionCheckOn => Read().LastVersionCheckOn?.DateTime ?? DateTime.MinValue;
+    public DateTime LastVersionCheckOn => Read().Updates.LastCheckOn?.DateTime ?? DateTime.MinValue;
 
     public void SetLastVersionCheckOn(DateTime value)
     {
         using var fileLock = AcquireLock();
         var state = Read();
-        state.LastVersionCheckOn = value;
+        state.Updates.LastCheckOn = value;
         Write(state);
     }
 
@@ -55,8 +64,44 @@ public sealed class StateStore(DgtpHome home)
         }
 
         using var stream = File.OpenRead(_path);
-        return JsonSerializer.Deserialize<StateDocument>(stream, s_jsonOptions)
+        var document = JsonNode.Parse(stream) as JsonObject
+            ?? throw new InvalidDataException($"State file '{_path}' must contain a JSON object.");
+        if (!document.ContainsKey("schemaVersion"))
+        {
+            MigrateLegacyDocument(document);
+        }
+
+        if (document["schemaVersion"] is not JsonValue version
+            || !version.TryGetValue<int>(out var schemaVersion)
+            || schemaVersion != 1)
+        {
+            throw new InvalidDataException($"State file '{_path}' has an unsupported schema version.");
+        }
+
+        var state = document.Deserialize<StateDocument>(s_jsonOptions)
             ?? throw new InvalidDataException($"State file '{_path}' is empty or invalid.");
+        if (state.Telemetry is null || state.Updates is null
+            || (state.Telemetry.InstallId is not null && !Guid.TryParseExact(state.Telemetry.InstallId, "D", out _)))
+        {
+            throw new InvalidDataException($"State file '{_path}' contains invalid telemetry or update state.");
+        }
+
+        return state;
+    }
+
+    private static void MigrateLegacyDocument(JsonObject document)
+    {
+        if (document.ContainsKey("telemetry") || document.ContainsKey("updates"))
+        {
+            throw new InvalidDataException("Nested application state must declare a schemaVersion.");
+        }
+
+        document["schemaVersion"] = 1;
+        document.Remove("TelemetryInstallId", out var installId);
+        document.Remove("LastVersionCheckOn", out var lastCheckOn);
+        document.Remove("TelemetryNoticeShownOn");
+        document["telemetry"] = new JsonObject { ["enabled"] = true, ["installId"] = installId };
+        document["updates"] = new JsonObject { ["lastCheckOn"] = lastCheckOn };
     }
 
     private void Write(StateDocument state)
@@ -104,14 +149,5 @@ public sealed class StateStore(DgtpHome home)
                 throw new IOException($"Timed out waiting for state-store lock '{_lockPath}'.", exception);
             }
         }
-    }
-
-    private sealed class StateDocument
-    {
-        public string? TelemetryInstallId { get; set; }
-
-        public DateTimeOffset? TelemetryNoticeShownOn { get; set; }
-
-        public DateTimeOffset? LastVersionCheckOn { get; set; }
     }
 }

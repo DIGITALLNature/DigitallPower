@@ -14,6 +14,31 @@
 
 No 2.x isolated-storage migration is performed. Recreate stored connections after upgrading.
 
+## State compatibility boundaries
+
+The stable home path prevents application major-version changes from selecting a new state
+directory; it does not by itself guarantee compatibility of the JSON format.
+`StateStore` uses `schemaVersion: 1`, nested `telemetry.enabled` / `telemetry.installId`, and
+`updates.lastCheckOn` with camelCase JSON property names. The format is described by
+`schemas/state/v1/schema.json`. Missing preferences default to telemetry enabled.
+Environment opt-outs and parsed `--no-telemetry` override the saved preference.
+
+Telemetry initializes through `TelemetryInterceptor` after settings parsing, not during bootstrap.
+Help, version output, shell completion, and opt-out invocations therefore do not initialize an ID
+or show a notice. The locked get-or-create operation reports whether it created the installation
+ID; that result is the notice marker, with no separate first-run or notice timestamp.
+Retain existing IDs when disabling telemetry. The marker is persisted before displaying the
+notice, so a crash between persistence and display can skip the notice rather than repeat it.
+
+State mutations acquire `state.lock`, reload, and replace a flushed temporary file. Invalid JSON
+raises an error instead of silently resetting state. Unsupported schema versions are rejected
+before mutation. Extension data at the root and in both nested objects preserves unknown fields
+for additive evolution. Incompatible changes require an explicit schema migration.
+Unversioned flat JSON maps the prior installation ID and update-check timestamp into the nested
+format on write, drops the obsolete notice timestamp, and retains unrelated extension data.
+No 2.x isolated-storage data is imported. Binaries predating this compatibility contract cannot
+be made safe retroactively; do not use them to write the new state format.
+
 ## Design rationale and storage boundaries
 
 The home directory is independent of assembly identity, version, and installation path.

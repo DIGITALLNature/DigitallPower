@@ -269,6 +269,10 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
   than assembly-scoped isolated storage. The redesign intentionally does not import data from 2.x;
   users recreate named connections. See `implementation-typed-connection-storage.md` and
   `research-isolated-storage-major-version-scoping.md`.
+- Application state uses an independent schema version and nested telemetry/update sections;
+  unsupported versions fail without rewriting, and unknown fields survive mutations. Installation
+  ID creation is the one-time notice marker; opt-out/help/completion do not initialize telemetry.
+  See the state compatibility boundaries in `implementation-typed-connection-storage.md`.
 
 ## Memory Files Index
 

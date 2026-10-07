@@ -54,6 +54,8 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Repository Layout](#-repository-layout)
 - [Build & Test](#%EF%B8%8F-build--test)
 - [Requirements](#-requirements)
+- [Telemetry](#-telemetry)
+  - [Persistent application state](#persistent-application-state)
 - [Community & Contributions](#%EF%B8%8F-community-and-contributions)
 - [License](#-license)
 
@@ -1365,7 +1367,26 @@ Since crashes outside of a command's lifecycle (startup failures, unobserved tas
 
 ### First-run notice
 
-On first use, the CLI displays a one-time notice informing you about telemetry collection and how to opt out. This notice is shown only once per installation.
+On the first command invocation with telemetry enabled, the CLI creates an anonymous installation
+ID and displays a one-time notice explaining collection and opt-out. Invocations with
+`--no-telemetry` or an environment opt-out do not create this ID or display the notice. Help,
+version output, and shell completion do not initialize telemetry.
+
+The installation ID is retained across tool upgrades, including major releases, so the notice
+does not repeat. Disabling and re-enabling telemetry does not reset it. Using a new application
+home causes the notice to appear again on the next telemetry-enabled command.
+
+### Persistent application state
+
+The anonymous installation ID, telemetry preference, and last update-check date are stored in
+`state.json` alongside `connections.json` in the per-user application data directory.
+Set `DGTP_HOME` to override this location. The directory is shared across tool versions.
+On Windows, the default is `%LOCALAPPDATA%\dgtp`; on Linux, it is `$XDG_DATA_HOME/dgtp`
+or `~/.local/share/dgtp`. Other platforms use the local application data directory's `dgtp` folder.
+
+To change the saved telemetry preference, set `telemetry.enabled` to `false` or `true` in
+`state.json` while dgtp is not running, leaving the other fields unchanged. It defaults to `true`.
+Environment opt-outs and `--no-telemetry` always take precedence over this preference.
 
 ## ❤️ Community and Contributions
 

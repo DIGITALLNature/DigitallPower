@@ -25,6 +25,24 @@ public class TracerTests
     }
 
     [Test]
+    public async Task EnableTelemetry_ActivatesTracerWithInstallationIdAfterInitialization()
+    {
+        var activities = new List<Activity>();
+        using var listener = CreateListener(started: activities);
+        var tracer = new Tracer();
+        var action = new FakeAction();
+        tracer.Start(action);
+        tracer.End(action, true);
+        await Assert.That(activities).IsEmpty();
+
+        tracer.EnableTelemetry("initialized-id");
+        tracer.Start(action);
+        await Assert.That(activities).Count().IsEqualTo(1);
+        await Assert.That(activities[0].GetTagItem("dgtp.install_id") as string).IsEqualTo("initialized-id");
+        tracer.End(action, true);
+    }
+
+    [Test]
     public async Task Start_CreatesActivity_WhenTelemetryEnabled()
     {
         var activities = new List<Activity>();

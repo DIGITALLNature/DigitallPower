@@ -11,6 +11,38 @@ namespace dgt.power.cli.tests;
 public class TelemetryConfigTests
 {
     [Test]
+    [Arguments(true, null, true)]
+    [Arguments(false, null, false)]
+    [Arguments(true, "DGTP_TELEMETRY_OPTOUT", false)]
+    [Arguments(true, "DO_NOT_TRACK", false)]
+    [Arguments(false, "DO_NOT_TRACK", false)]
+    public async Task IsEnabled_RespectsSavedPreferenceAndEnvironment(bool savedEnabled, string? optOutVariable, bool expected)
+    {
+        var original = SaveOptOutVariables();
+        var directory = CreateTemporaryDirectory();
+        ClearOptOutVariables();
+        try
+        {
+            if (optOutVariable is not null)
+            {
+                Environment.SetEnvironmentVariable(optOutVariable, "true");
+            }
+
+            var home = new DgtpHome(directory);
+            var store = new StateStore(home);
+            store.SetTelemetryEnabled(savedEnabled);
+            await Assert.That(TelemetryConfig.IsEnabled(store)).IsEqualTo(expected);
+            var state = System.Text.Json.Nodes.JsonNode.Parse(await File.ReadAllTextAsync(home.StatePath))!;
+            await Assert.That(state["telemetry"]!["installId"]).IsNull();
+        }
+        finally
+        {
+            RestoreOptOutVariables(original);
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Test]
     public async Task IsOptedOut_ReturnsFalse_WhenEnvVarNotSet()
     {
         var original = SaveOptOutVariables();

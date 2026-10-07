@@ -59,8 +59,7 @@ registrations.AddSingleton<VersionCheckInterceptor>();
 registrations.AddSingleton<DeprecationInterceptor>();
 
 // Telemetry setup
-var telemetryEnabled = !TelemetryConfig.IsOptedOut;
-string? installId = null;
+var tracer = new Tracer(console: appConsole);
 TracerProvider? tracerProvider = null;
 void FlushAndDisposeTelemetryProvider()
 {
@@ -74,10 +73,18 @@ void FlushAndDisposeTelemetryProvider()
     provider.Dispose();
 }
 
-if (telemetryEnabled)
+void InitializeTelemetry()
 {
-    TelemetryNotice.ShowIfFirstRun(stateStore, appConsole);
-    installId = TelemetryConfig.GetOrCreateInstallId(stateStore);
+    if (!TelemetryConfig.IsEnabled(stateStore))
+    {
+        return;
+    }
+
+    var installId = stateStore.GetOrCreateTelemetryInstallId(out var created);
+    if (created)
+    {
+        TelemetryNotice.Show(appConsole);
+    }
 
     var connectionString = Environment.GetEnvironmentVariable("DGTP_TELEMETRY_CONNECTION_STRING")
         ?? EmbeddedTelemetryConfig.ConnectionString;
@@ -90,9 +97,10 @@ if (telemetryEnabled)
             .AddAzureMonitorTraceExporter(o => o.ConnectionString = connectionString)
             .Build();
     }
+
+    tracer.EnableTelemetry(installId);
 }
 
-var tracer = new Tracer(telemetryEnabled, installId, appConsole);
 registrations.AddSingleton<ITracer>(tracer);
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
@@ -155,7 +163,7 @@ app.Configure(config =>
     var deprecationInterceptor = serviceProvider.GetRequiredService<DeprecationInterceptor>();
     config.SetInterceptor(new CompositeInterceptor(
         new ConnectionSettingsInterceptor(connectionInvocationContext),
-        new TelemetryInterceptor(),
+        new TelemetryInterceptor(InitializeTelemetry),
         versionCheckInterceptor,
         deprecationInterceptor));
     CommandTree.Register(config);

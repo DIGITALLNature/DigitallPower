@@ -1,23 +1,20 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common.Storage;
 using Spectre.Console;
 
 namespace dgt.power.Telemetry;
 
 /// <summary>
-/// Shows a one-time telemetry notice on first invocation.
+/// Renders the telemetry notice when an installation ID is first created.
 /// </summary>
 internal static class TelemetryNotice
 {
     /// <summary>
-    /// Displays the telemetry notice if it hasn't been shown before.
+    /// Displays the telemetry notice.
     /// </summary>
-    public static void ShowIfFirstRun(StateStore stateStore, IAnsiConsole console)
+    public static void Show(IAnsiConsole console)
     {
-        if (stateStore.TelemetryNoticeShown) return;
-
         var panel = new Panel(
             "[grey]DIGITALL Power CLI collects anonymous usage data to improve the tool.\n" +
             "No personal data is collected. Only command name, duration, success/failure,\n" +
@@ -33,7 +30,5 @@ internal static class TelemetryNotice
 
         console.Write(panel);
         console.WriteLine();
-
-        stateStore.MarkTelemetryNoticeShown();
     }
 }
