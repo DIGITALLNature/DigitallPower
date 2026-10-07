@@ -20,21 +20,27 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
         var query = new QueryExpression(PluginPackage.EntityLogicalName)
         {
             NoLock = true,
-            ColumnSet = new ColumnSet(PluginPackage.LogicalNames.PluginPackageId, PluginPackage.LogicalNames.Package, PluginPackage.LogicalNames.Managedidentityid),
+            ColumnSet = new ColumnSet(PluginPackage.LogicalNames.PluginPackageId, PluginPackage.LogicalNames.Package,
+                PluginPackage.LogicalNames.Managedidentityid, PluginPackage.LogicalNames.Version),
             Criteria = new FilterExpression { Conditions = { new ConditionExpression(PluginPackage.LogicalNames.Name, ConditionOperator.Equal, name) } },
             Orders = { new OrderExpression(PluginPackage.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        var entity = result.Entities.FirstOrDefault();
-        if (entity is null)
+        var matches = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        if (matches.Count == 0)
         {
             return null;
         }
 
+        if (matches.Count > 1)
+        {
+            throw new InvalidOperationException($"Multiple plugin packages are named '{name}'; package deployment is ambiguous.");
+        }
+
+        var entity = matches[0];
         var package = entity.ToEntity<PluginPackage>();
         var packageHash = package.Package is null ? null : await DownloadPackageHashAsync(entity.Id, cancellationToken);
-        return new RemotePackage(entity.Id, packageHash, package.Managedidentityid?.Id);
+        return new RemotePackage(entity.Id, packageHash, package.Managedidentityid?.Id, package.Version);
     }
 
     public async Task<Guid> CreateAsync(string name, string version, string content, CancellationToken cancellationToken = default)

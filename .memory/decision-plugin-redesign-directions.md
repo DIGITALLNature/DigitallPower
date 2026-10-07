@@ -28,6 +28,16 @@ recommended reconciliation design, and unresolved product/platform decisions.
 - Provisionally deploy providers against existing data-source tables. Verify independent
   provisioning after the provider slice and before cutover; agree a fallback if infeasible.
 
+## Component deletion: candidate dependency check
+
+Consider `RetrieveDependenciesForDelete` when revisiting component deletion, particularly
+package asset/type removal. The standalone replacement core already uses this request for
+type cleanup; assess whether that mechanism can cover the remaining component kinds.
+This is an investigation candidate, not an approved implementation change. Verify supported
+component types and whether its results adequately predict dependencies affected by
+server-managed package updates. It does not by itself establish package-upload deletion
+semantics or protect against dependencies changing between inspection and deletion.
+
 ## Boundaries
 
 The document is a proposal, not an implementation-ready specification. Snapshot/change-set/

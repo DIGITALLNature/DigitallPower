@@ -80,6 +80,23 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
         return assemblies.Where(assembly => assembly.PackageId is null).ToList();
     }
 
+    internal async Task<IReadOnlyList<RemoteAssembly>> ListByPackageAsync(Guid packageId, CancellationToken cancellationToken)
+    {
+        var query = new QueryExpression(PluginAssembly.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(PluginAssembly.LogicalNames.Name, PluginAssembly.LogicalNames.Version,
+                PluginAssembly.LogicalNames.PackageId, PluginAssembly.LogicalNames.ManagedIdentityId),
+            Criteria = new FilterExpression
+            {
+                Conditions = { new ConditionExpression(PluginAssembly.LogicalNames.PackageId, ConditionOperator.Equal, packageId) }
+            }
+        };
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(entity => entity.ToEntity<PluginAssembly>())
+            .Select(entity => new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId!.Id,
+                ManagedIdentityId: entity.ManagedIdentityId?.Id)).ToList();
+    }
+
     public async Task<IReadOnlyList<RemoteAssembly>> ListOutdatedAsync(string name, Guid excludeId, CancellationToken cancellationToken = default)
     {
         var query = new QueryExpression(PluginAssembly.EntityLogicalName)

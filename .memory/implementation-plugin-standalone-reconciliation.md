@@ -6,10 +6,12 @@ and executors. Keep that distinction explicit until the final cutover.
 
 ## Responsibilities and representation
 
-`StandalonePluginDeployment.PrepareAsync` validates local declarations, loads a scoped
-registration snapshot, runs `RegistrationDiff`, and resolves messages for intended step
-writes. Preparation performs no deployment writes. `ApplyAsync` consumes those prepared
-decisions without re-running matching.
+`PluginDeployment.PrepareAsync` validates local declarations, loads a scoped registration
+snapshot, runs `RegistrationDiff`, and resolves messages for intended step writes.
+`PreparePackageAsync` and `ApplyPackageAsync` use the same registration applier, adding only
+package upload plus resolution of server-created assembly/type IDs. Preparation performs no
+deployment writes; application consumes prepared registration decisions without re-running
+matching.
 
 `RegistrationChanges` contains flat create/write/delete collections. A write with a null
 existing ID is a create. Its `HasChanges` derives from those same collections.
@@ -43,6 +45,14 @@ Assembly state is checked again before application. Before deleting types, depen
 steps, API links, and provider references are checked; before deleting the old assembly,
 remaining types are checked. Preparation verifies that dependent step IDs are represented
 in the joined snapshot rather than trusting an incomplete join.
+Package reconciliation supports new, changed, and unchanged content while rejecting immutable
+version changes, package identity associations, undeclared server assemblies/types, and asset,
+step, or image removal before upload. Package upload is expected to create/update its owned
+assembly/type records; missing or unexpected records fail without standalone fallback. Tests
+use a dedicated fake for those server-owned side effects, which is not live Dataverse verification.
+`RetrieveDependenciesForDelete` remains a candidate for broader component-deletion checks,
+not a proven guard for server-managed package updates.
+
 Full registration stale-state checks remain prerequisites for cutover.
 Preparation/application separation is not a transaction or concurrency guarantee.
 

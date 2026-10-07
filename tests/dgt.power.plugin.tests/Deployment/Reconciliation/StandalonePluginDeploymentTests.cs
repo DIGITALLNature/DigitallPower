@@ -55,7 +55,7 @@ public class StandalonePluginDeploymentTests
     public async Task PrepareAndRender_NewAssembly_PerformNoWrites()
     {
         var service = Service();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         using var console = new TestConsole();
 
         var changes = await deployment.PrepareAsync(Assembly(Step()));
@@ -73,7 +73,7 @@ public class StandalonePluginDeploymentTests
     public async Task Apply_NewAssembly_CreatesRegistrationsAndReportsActualWrites()
     {
         var service = Service();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(Assembly(Step()));
         var progress = new List<PluginDeploymentProgress>();
 
@@ -93,7 +93,7 @@ public class StandalonePluginDeploymentTests
         var service = Service();
         var desired = Assembly(Step());
         SeedAssembly(service, desired);
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
 
         var repeated = await deployment.PrepareAsync(desired);
@@ -112,7 +112,7 @@ public class StandalonePluginDeploymentTests
         var step = Step();
         var desired = Assembly(step);
         SeedAssembly(service, desired);
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
         var existing = All(service, "sdkmessageprocessingstep").Single();
         var imageId = All(service, "sdkmessageprocessingstepimage").Single().Id;
@@ -146,7 +146,7 @@ public class StandalonePluginDeploymentTests
         var service = Service();
         var desired = Assembly(Step());
         SeedAssembly(service, desired);
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
 
         var changes = await deployment.PrepareAsync(Assembly());
@@ -163,7 +163,7 @@ public class StandalonePluginDeploymentTests
     public async Task Prepare_UnresolvedMessage_FailsBeforeWrites()
     {
         var service = Service();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
 
         await Assert.That(async () => await deployment.PrepareAsync(Assembly(Step() with { MessageName = "missing" })))
             .ThrowsExactly<UnresolvedPluginStepMessageException>();
@@ -174,7 +174,7 @@ public class StandalonePluginDeploymentTests
     public async Task Apply_Cancelled_DoesNotWrite()
     {
         var service = Service();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(Assembly(Step()));
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
@@ -189,7 +189,7 @@ public class StandalonePluginDeploymentTests
         var service = Service();
         var desired = Assembly(Step());
         SeedAssembly(service, desired);
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
 
         var changes = await deployment.PrepareAsync(desired with { Version = new Version(2, 0, 0, 0) });
         await Assert.That(changes.ExistingAssemblyId).IsNull();
@@ -204,7 +204,7 @@ public class StandalonePluginDeploymentTests
         var step = Step();
         var desired = Assembly(step);
         desired = desired with { PluginTypes = [desired.PluginTypes[0], desired.PluginTypes[0] with { TypeName = "Other", Name = "Other" }] };
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
 
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
 
@@ -227,7 +227,7 @@ public class StandalonePluginDeploymentTests
             Version = new Version(1, 0, 1, 0), Content = "bmV3",
             ContentHash = Convert.ToHexString(SHA256.HashData("new"u8))
         };
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(desired);
 
         var id = await deployment.ApplyAsync(changes);
@@ -243,7 +243,7 @@ public class StandalonePluginDeploymentTests
         var service = Service();
         var desired = Assembly(Step());
         SeedAssembly(service, desired);
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
         var original = All(service, "sdkmessageprocessingstep").Single();
         var duplicate = new Entity(original.LogicalName, Guid.NewGuid());
@@ -264,7 +264,7 @@ public class StandalonePluginDeploymentTests
         var service = Service();
         var desired = Assembly(Step());
         SeedAssembly(service, desired);
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
 
         var changes = await deployment.PrepareAsync(desired with { PluginTypes = [] });
@@ -280,7 +280,7 @@ public class StandalonePluginDeploymentTests
         var desired = Assembly();
         desired = desired with { PluginTypes = [desired.PluginTypes[0] with { CustomApi = "my_api" }] };
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(desired)).ThrowsExactly<NotSupportedException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(desired)).ThrowsExactly<NotSupportedException>();
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(0);
     }
 }

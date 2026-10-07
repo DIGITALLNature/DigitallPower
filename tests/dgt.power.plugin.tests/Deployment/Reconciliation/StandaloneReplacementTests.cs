@@ -74,7 +74,7 @@ public class StandaloneReplacementTests
     {
         var (service, oldAssembly, oldType, stepId, imageId) = Seed();
         var environmentState = service.Retrieve("sdkmessageprocessingstep", stepId, new ColumnSet(true));
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(Desired());
         using var console = new TestConsole();
         new StandaloneDeploymentRenderer(console).Render(changes);
@@ -109,7 +109,7 @@ public class StandaloneReplacementTests
     {
         var (service, oldAssembly, _, stepId, imageId) = Seed();
         var desired = Desired();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(desired);
 
         await Assert.That(async () => await deployment.ApplyAsync(changes, progress =>
@@ -139,7 +139,7 @@ public class StandaloneReplacementTests
         var (service, _, _, _, _) = Seed();
         SeedAssembly(service, "2.0.0.0", "b3RoZXI=");
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(2);
     }
 
@@ -156,7 +156,7 @@ public class StandaloneReplacementTests
         SeedAssembly(service, first, "bmV3");
         SeedAssembly(service, second, "bmV3");
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
     }
 
     [Test]
@@ -175,7 +175,7 @@ public class StandaloneReplacementTests
         duplicate["eventhandler"] = new EntityReference("plugintype", typeId);
         service.Create(duplicate);
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidPluginStepException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidPluginStepException>();
     }
 
     [Test]
@@ -187,7 +187,7 @@ public class StandaloneReplacementTests
         var (service, _, _, stepId, _) = Seed();
         service.Update(new Entity("sdkmessageprocessingstep", stepId) { ["stage"] = new OptionSetValue(stage) });
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(1);
     }
 
@@ -197,14 +197,14 @@ public class StandaloneReplacementTests
         var (service, _, typeId, _, _) = Seed();
         service.Create(new Entity("entitydataprovider", Guid.NewGuid()) { ["name"] = "Provider", ["retrieveplugin"] = typeId });
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
     }
 
     [Test]
     public async Task Apply_ArtifactChangedSincePreparation_RequiresFreshPreview()
     {
         var (service, oldAssembly, _, _, _) = Seed();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(Desired());
         service.Update(new PluginAssembly(oldAssembly) { Content = "Y2hhbmdlZA==" });
 
@@ -219,7 +219,7 @@ public class StandaloneReplacementTests
         SeedAssembly(service, "2.0.0.0", "bmV3");
         SeedAssembly(service, "3.0.0.0", "bmV3");
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
     }
 
     [Test]
@@ -228,14 +228,14 @@ public class StandaloneReplacementTests
         var (service, oldAssembly, _, _, _) = Seed();
         service.Update(new PluginAssembly(oldAssembly) { ManagedIdentityId = new EntityReference("managedidentity", Guid.NewGuid()) });
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
     }
 
     [Test]
     public async Task Apply_CancellationAfterTypeCreation_FreshPreparationRecovers()
     {
         var (service, oldAssembly, _, stepId, _) = Seed();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var desired = Desired();
         var changes = await deployment.PrepareAsync(desired);
         using var cancellation = new CancellationTokenSource();
@@ -260,7 +260,7 @@ public class StandaloneReplacementTests
     public async Task Apply_NewDependencyAfterPreparation_StopsBeforeOldTypeAndAssemblyDeletion()
     {
         var (service, oldAssembly, oldType, stepId, _) = Seed();
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(Desired());
         var message = All(service, "sdkmessage").Single();
         service.Create(new Entity("sdkmessageprocessingstep", Guid.NewGuid())
@@ -289,7 +289,7 @@ public class StandaloneReplacementTests
             ["stage"] = new OptionSetValue(20), ["mode"] = new OptionSetValue(0), ["rank"] = 100
         });
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<InvalidOperationException>();
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(1);
     }
 
@@ -300,7 +300,7 @@ public class StandaloneReplacementTests
         var desired = Desired();
         var type = desired.PluginTypes[0];
         desired = desired with { PluginTypes = [type with { Steps = [type.Steps[0] with { Stage = 40 }] }] };
-        var deployment = new StandalonePluginDeployment(service);
+        var deployment = new PluginDeployment(service);
 
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
 
@@ -316,6 +316,6 @@ public class StandaloneReplacementTests
         var (service, _, typeId, _, _) = Seed();
         service.Create(new CustomAPI(Guid.NewGuid()) { UniqueName = "my_api", PluginTypeId = new EntityReference("plugintype", typeId) });
 
-        await Assert.That(async () => await new StandalonePluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
+        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
     }
 }

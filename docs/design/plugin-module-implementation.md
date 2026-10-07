@@ -105,9 +105,11 @@ Implement:
 - Minimal tree presentation and progress from the same changes.
 - Same-version standalone creation/content update.
 
-The replacement entry point is `Reconciliation/StandalonePluginDeployment`; pure registration
+The replacement entry point is `Reconciliation/PluginDeployment`; pure registration
 decisions are held in flat `RegistrationChanges` collections and displayed by
-`Output/StandaloneDeploymentRenderer`. This core is not wired to commands until P8.
+`Output/StandaloneDeploymentRenderer`. The same lifecycle owner handles standalone and package
+deployment; package-specific behavior is limited to upload and resolution of server-owned
+assembly/type records. This core is not wired to commands until P8.
 Cross-resource features not yet implemented are explicitly rejected instead of ignored.
 Platform-only stages remain outside declarative step cleanup and block type/assembly deletion
 until their owning association phase is supported.
@@ -145,10 +147,18 @@ Retain content-based package comparison and supported asset selection.
 Resolve server-created assembly/type IDs after upload without silently changing approved intent.
 Use assembly-scoped logical type references instead of package-wide type-name identity.
 
-Cover new/updated/unchanged packages, assembly replacement/removal, duplicate type names
-across assemblies, and moves between assemblies where supported.
-Verify upload side effects and supported request ordering in Dataverse; classify any
-server-driven effects that cannot be faithfully predicted.
+The current slice covers new, updated, and unchanged packages. It requires the exact expected
+server-owned assembly/type set after upload and never falls back to standalone assembly creation.
+Duplicate type names in different assemblies remain assembly-scoped. Package version changes,
+managed-identity associations, assembly/type removals, and moves between assemblies fail before
+upload until their behavior is supported. Step/image removals are also rejected pending
+verification that package upload leaves those records available for explicit cleanup.
+`RetrieveDependenciesForDelete` is a candidate for
+future component-deletion checks, not yet validated as a complete package-update safeguard.
+
+The test fake models the documented server ownership of package assemblies/types; it does not
+prove live Dataverse upload behavior or failure timing. Verify upload side effects and request
+ordering in Dataverse, especially for removals.
 
 Gate: package execution uses the same core decisions and cleanup rules as standalone
 deployment, with only genuine package-specific resolution behavior.

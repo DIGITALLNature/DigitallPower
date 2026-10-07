@@ -10,7 +10,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.plugin.Deployment.Reconciliation;
 
-internal sealed class StandalonePluginDeployment(IOrganizationServiceAsync2 service)
+internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 {
     private readonly PluginAssemblyRepository _assemblies = new(service);
     private readonly PluginTypeRepository _types = new(service);
@@ -19,6 +19,7 @@ internal sealed class StandalonePluginDeployment(IOrganizationServiceAsync2 serv
     private readonly SdkMessageRepository _messages = new(service);
     private readonly CustomApiRepository _apis = new(service);
     private readonly EntityDataProviderRepository _providers = new(service);
+    private readonly PluginPackageRepository _packages = new(service);
 
     internal Task<StandaloneDeploymentChanges> PrepareAsync(LocalAssembly desired, CancellationToken cancellationToken = default)
     {
@@ -149,7 +150,29 @@ internal sealed class StandalonePluginDeployment(IOrganizationServiceAsync2 serv
             Report(PluginDeploymentOperation.Updated, "assembly", changes.Desired.Identity);
         }
 
-        var registrations = changes.Registrations;
+        await ApplyRegistrationsAsync(changes.Registrations, changes.Messages, assemblyId, progress, cancellationToken);
+
+        if (changes.AssemblyToDelete is { } oldAssembly)
+        {
+            if ((await _types.ListByAssemblyAsync(oldAssembly.Id, cancellationToken)).Count > 0)
+            {
+                throw new InvalidOperationException($"Superseded assembly '{oldAssembly.Identity}' still has plugin types; cleanup stopped.");
+            }
+
+            await _assemblies.DeleteAsync(oldAssembly.Id, cancellationToken);
+            Report(PluginDeploymentOperation.Deleted, "assembly", oldAssembly.Identity);
+        }
+
+        return assemblyId;
+
+        void Report(PluginDeploymentOperation operation, string resource, string name) =>
+            progress?.Invoke(new PluginDeploymentProgress(operation, resource, name));
+    }
+
+    private async Task ApplyRegistrationsAsync(RegistrationChanges registrations,
+        IReadOnlyDictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage> messages,
+        Guid assemblyId, Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
+    {
         var typeIds = registrations.ExistingTypeIds.ToDictionary(pair => pair.Key, pair => pair.Value, StringComparer.Ordinal);
         var stepIds = registrations.ExistingStepIds.ToDictionary(pair => pair.Key, pair => pair.Value);
         foreach (var type in registrations.TypesToCreate)
@@ -161,7 +184,7 @@ internal sealed class StandalonePluginDeployment(IOrganizationServiceAsync2 serv
         foreach (var write in registrations.StepsToWrite)
         {
             var step = write.Desired;
-            var message = changes.Messages[(write.TypeName, step)];
+            var message = messages[(write.TypeName, step)];
             var data = new PluginStepData(step.Name, typeIds[write.TypeName], message.MessageId, message.MessageFilterId, step.Stage, step.Mode, step.ExecutionOrder, step.FilterAttributes);
             if (write.ExistingId is { } stepId)
             {
@@ -209,25 +232,12 @@ internal sealed class StandalonePluginDeployment(IOrganizationServiceAsync2 serv
             if ((await _types.GetDependentStepIdsAsync(type.Id, cancellationToken)).Count > 0 ||
                 (await _apis.ListLinkedToPluginTypeAsync(type.Id, cancellationToken)).Count > 0)
             {
-                throw new InvalidOperationException($"Plugin type '{type.TypeName}' still has dependent registrations; cleanup stopped.");
+                throw new InvalidOperationException($"Plugin type '{type.TypeName}' still has dependent SDK steps; cleanup stopped.");
             }
 
             await _types.DeleteAsync(type.Id, cancellationToken);
             Report(PluginDeploymentOperation.Deleted, "plugin type", type.TypeName);
         }
-
-        if (changes.AssemblyToDelete is { } oldAssembly)
-        {
-            if ((await _types.ListByAssemblyAsync(oldAssembly.Id, cancellationToken)).Count > 0)
-            {
-                throw new InvalidOperationException($"Superseded assembly '{oldAssembly.Identity}' still has plugin types; cleanup stopped.");
-            }
-
-            await _assemblies.DeleteAsync(oldAssembly.Id, cancellationToken);
-            Report(PluginDeploymentOperation.Deleted, "assembly", oldAssembly.Identity);
-        }
-
-        return assemblyId;
 
         void Report(PluginDeploymentOperation operation, string resource, string name) =>
             progress?.Invoke(new PluginDeploymentProgress(operation, resource, name));
@@ -249,5 +259,175 @@ internal sealed class StandalonePluginDeployment(IOrganizationServiceAsync2 serv
         {
             throw new NotSupportedException($"Data provider '{dependent.Name}' references a plugin type scheduled for removal; provider reassignment must be implemented before cleanup.");
         }
+    }
+
+    internal Task<PackageDeploymentChanges> PreparePackageAsync(LocalPluginPackage desired, string publisherPrefix, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(desired);
+        ArgumentException.ThrowIfNullOrWhiteSpace(publisherPrefix);
+        return PreparePackageCoreAsync(desired, publisherPrefix, cancellationToken);
+    }
+
+    private async Task<PackageDeploymentChanges> PreparePackageCoreAsync(LocalPluginPackage desired, string publisherPrefix, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (desired.Assemblies.Select(assembly => assembly.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count() != desired.Assemblies.Count)
+        {
+            throw new AssemblyException("Plugin assembly names must be unique within the package.");
+        }
+
+        foreach (var assembly in desired.Assemblies)
+        {
+            if (assembly.ManagedIdentityClientId is not null || assembly.PluginTypes.Any(type => type.CustomApi.Length > 0 || type.DataProviders.Count > 0))
+            {
+                throw new NotSupportedException("The replacement package core does not yet support identity, Custom API, or provider declarations.");
+            }
+
+            RegistrationDiff.Compare(assembly.PluginTypes, new RegistrationSnapshot([], new Dictionary<Guid, IReadOnlyList<RemotePluginStep>>(),
+                new Dictionary<Guid, IReadOnlyList<RemotePluginStepImage>>()));
+        }
+
+        var name = $"{publisherPrefix}_{desired.Package.Name}";
+        var existing = await _packages.FindByNameAsync(name, cancellationToken);
+        if (existing?.ManagedIdentityId is not null)
+        {
+            throw new NotSupportedException("The replacement package core does not yet support packages with managed identity associations.");
+        }
+
+        if (existing?.Version is not null && !string.Equals(existing.Version, desired.Package.Version, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException($"Package '{name}' already exists at immutable version '{existing.Version}', not '{desired.Package.Version}'.");
+        }
+
+        var remoteAssemblies = existing is null ? [] : await _assemblies.ListByPackageAsync(existing.Id, cancellationToken);
+        if (remoteAssemblies.GroupBy(assembly => assembly.Name, StringComparer.OrdinalIgnoreCase).Any(group => group.Count() > 1))
+        {
+            throw new InvalidOperationException($"Package '{name}' has multiple same-name assemblies; deployment is ambiguous.");
+        }
+
+        var declaredNames = desired.Assemblies.Select(assembly => assembly.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (remoteAssemblies.Any(assembly => !declaredNames.Contains(assembly.Name)))
+        {
+            throw new NotSupportedException("Package assembly removal requires verification of server-side upload/dependency behavior before it can be applied.");
+        }
+
+        var assemblies = new List<PackageAssemblyChanges>();
+        foreach (var assembly in desired.Assemblies)
+        {
+            var remote = remoteAssemblies.SingleOrDefault(candidate => string.Equals(candidate.Name, assembly.Name, StringComparison.OrdinalIgnoreCase));
+            var snapshot = await LoadSnapshotAsync(remote?.Id, cancellationToken);
+            var registrations = RegistrationDiff.Compare(assembly.PluginTypes, snapshot);
+            if (registrations.TypesToDelete.Count > 0)
+            {
+                throw new NotSupportedException("Package type removal requires verification of server-side upload/dependency behavior before it can be applied.");
+            }
+            if (registrations.StepsToDelete.Count > 0 || registrations.ImagesToDelete.Count > 0)
+            {
+                throw new NotSupportedException("Package registration removal requires verification of server-side upload/dependency behavior before it can be applied.");
+            }
+
+            var messages = new Dictionary<(string TypeName, LocalPluginStep Step), ResolvedSdkMessage>();
+            foreach (var write in registrations.StepsToWrite)
+            {
+                var step = write.Desired;
+                var message = await _messages.ResolveAsync(step.MessageName, NormalizeEntity(step.PrimaryEntityName), NormalizeEntity(step.SecondaryEntityName), cancellationToken);
+                messages.Add((write.TypeName, step), message ?? throw new UnresolvedPluginStepMessageException(step.Name, step.MessageName, step.PrimaryEntityName));
+            }
+
+            assemblies.Add(new PackageAssemblyChanges(assembly, remote, snapshot, registrations, messages));
+        }
+
+        return new PackageDeploymentChanges(desired, name, existing,
+            existing is not null && !string.Equals(existing.PackageHash, desired.Package.PackageHash, StringComparison.OrdinalIgnoreCase), remoteAssemblies, assemblies);
+    }
+
+    internal Task<Guid> ApplyPackageAsync(PackageDeploymentChanges changes, Action<PluginDeploymentProgress>? progress = null, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(changes);
+        return ApplyPackageCoreAsync(changes, progress, cancellationToken);
+    }
+
+    private async Task<Guid> ApplyPackageCoreAsync(PackageDeploymentChanges changes, Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var current = await _packages.FindByNameAsync(changes.DataverseName, cancellationToken);
+        if (current != changes.Existing)
+        {
+            throw new InvalidOperationException("Package state changed after preparation; prepare a fresh deployment before applying.");
+        }
+
+        var beforeUpload = current is null ? [] : await _assemblies.ListByPackageAsync(current.Id, cancellationToken);
+        if (!beforeUpload.OrderBy(assembly => assembly.Id).SequenceEqual(changes.ExpectedAssemblies.OrderBy(assembly => assembly.Id)))
+        {
+            throw new InvalidOperationException("Package assembly state changed after preparation; prepare a fresh deployment before applying.");
+        }
+
+        var packageId = current?.Id ?? await _packages.CreateAsync(changes.DataverseName, changes.Desired.Package.Version, changes.Desired.Package.Content, cancellationToken);
+        if (current is null)
+        {
+            progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Created, "package", changes.DataverseName));
+        }
+        else if (changes.UpdateContent)
+        {
+            await _packages.UpdateContentAsync(packageId, changes.Desired.Package.Content, cancellationToken);
+            progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Updated, "package", changes.DataverseName));
+        }
+
+        // Upload owns assembly/type creation. Resolve all server records before any registration writes.
+        var uploadedAssemblies = await _assemblies.ListByPackageAsync(packageId, cancellationToken);
+        var desiredAssemblyNames = changes.Assemblies.Select(assembly => assembly.Desired.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        if (uploadedAssemblies.Count != desiredAssemblyNames.Count ||
+            uploadedAssemblies.Any(assembly => !desiredAssemblyNames.Contains(assembly.Name)) ||
+            uploadedAssemblies.Select(assembly => assembly.Name).Distinct(StringComparer.OrdinalIgnoreCase).Count() != uploadedAssemblies.Count)
+        {
+            throw new InvalidOperationException("Package upload produced an unexpected set of owned assemblies; no registration writes were applied.");
+        }
+
+        var resolved = new List<(Guid AssemblyId, PackageAssemblyChanges Changes, RegistrationChanges Registrations)>();
+        foreach (var assembly in changes.Assemblies)
+        {
+            var candidates = uploadedAssemblies.Where(candidate => string.Equals(candidate.Name, assembly.Desired.Name, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (candidates.Count != 1)
+            {
+                throw new InvalidOperationException(
+                    $"Package upload did not resolve exactly one owned assembly '{assembly.Desired.Name}'. " +
+                    "Prepare a fresh deployment; no standalone fallback will be created.");
+            }
+
+            var uploaded = candidates[0];
+            if (assembly.Existing is not null && uploaded.Id != assembly.Existing.Id)
+            {
+                throw new InvalidOperationException($"Package upload replaced assembly '{assembly.Desired.Name}' unexpectedly; prepare a fresh deployment before registration writes.");
+            }
+
+            var serverTypes = await _types.ListByAssemblyAsync(uploaded.Id, cancellationToken);
+            if (serverTypes.Count != assembly.Desired.PluginTypes.Count ||
+                serverTypes.Select(type => type.TypeName).Distinct(StringComparer.Ordinal).Count() != serverTypes.Count)
+            {
+                throw new InvalidOperationException($"Package assembly '{assembly.Desired.Name}' has unexpected plugin types after upload.");
+            }
+
+            var ids = new Dictionary<string, Guid>(StringComparer.Ordinal);
+            foreach (var type in assembly.Desired.PluginTypes)
+            {
+                var serverType = serverTypes.SingleOrDefault(candidate => candidate.TypeName == type.TypeName) ??
+                    throw new InvalidOperationException($"Package upload did not register plugin type '{type.TypeName}' in assembly '{assembly.Desired.Name}'.");
+                if (assembly.Registrations.ExistingTypeIds.TryGetValue(type.TypeName, out var expectedId) && serverType.Id != expectedId)
+                {
+                    throw new InvalidOperationException($"Package upload replaced plugin type '{type.TypeName}' unexpectedly; prepare a fresh deployment.");
+                }
+
+                ids.Add(type.TypeName, serverType.Id);
+            }
+
+            resolved.Add((uploaded.Id, assembly, assembly.Registrations with { TypesToCreate = [], ExistingTypeIds = ids }));
+        }
+
+        foreach (var assembly in resolved)
+        {
+            await ApplyRegistrationsAsync(assembly.Registrations, assembly.Changes.Messages, assembly.AssemblyId, progress, cancellationToken);
+        }
+
+        return packageId;
     }
 }
