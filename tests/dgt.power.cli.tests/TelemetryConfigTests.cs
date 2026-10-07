@@ -1,22 +1,61 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.IO.IsolatedStorage;
 using dgt.power.common;
+using dgt.power.common.Storage;
 using dgt.power.Telemetry;
 
 namespace dgt.power.cli.tests;
 
-[NotInParallel(nameof(TelemetryConfigTests))]
+[NotInParallel("CiEnvironmentVariables")]
 public class TelemetryConfigTests
 {
     [Test]
+    [Arguments(true, null, true)]
+    [Arguments(false, null, false)]
+    [Arguments(true, "DGTP_TELEMETRY_OPTOUT", false)]
+    [Arguments(true, "DO_NOT_TRACK", false)]
+    [Arguments(false, "DO_NOT_TRACK", false)]
+    public async Task IsEnabled_RespectsSavedPreferenceAndEnvironment(bool savedEnabled, string? optOutVariable, bool expected)
+    {
+        var original = SaveOptOutVariables();
+        var directory = CreateTemporaryDirectory();
+        ClearOptOutVariables();
+        try
+        {
+            if (optOutVariable is not null)
+            {
+                Environment.SetEnvironmentVariable(optOutVariable, "true");
+            }
+
+            var home = new DgtpHome(directory);
+            var store = new StateStore(home);
+            store.SetTelemetryEnabled(savedEnabled);
+            await Assert.That(TelemetryConfig.IsEnabled(store)).IsEqualTo(expected);
+            var state = System.Text.Json.Nodes.JsonNode.Parse(await File.ReadAllTextAsync(home.StatePath))!;
+            await Assert.That(state["telemetry"]!["installId"]).IsNull();
+        }
+        finally
+        {
+            RestoreOptOutVariables(original);
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Test]
     public async Task IsOptedOut_ReturnsFalse_WhenEnvVarNotSet()
     {
-        // Ensure env var is not set
-        Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", null);
+        var original = SaveOptOutVariables();
+        ClearOptOutVariables();
 
-        await Assert.That(TelemetryConfig.IsOptedOut).IsFalse();
+        try
+        {
+            await Assert.That(TelemetryConfig.IsOptedOut).IsFalse();
+        }
+        finally
+        {
+            RestoreOptOutVariables(original);
+        }
     }
 
     [Test]
@@ -25,14 +64,16 @@ public class TelemetryConfigTests
     [Arguments("yes")]
     public async Task IsOptedOut_ReturnsTrue_WhenEnvVarSet(string value)
     {
-        Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", value);
+        var original = SaveOptOutVariables();
+        ClearOptOutVariables();
+        Environment.SetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT", value);
         try
         {
             await Assert.That(TelemetryConfig.IsOptedOut).IsTrue();
         }
         finally
         {
-            Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", null);
+            RestoreOptOutVariables(original);
         }
     }
 
@@ -43,14 +84,51 @@ public class TelemetryConfigTests
     [Arguments("")]
     public async Task IsOptedOut_ReturnsFalse_WhenEnvVarSetToNonOptOutValue(string value)
     {
-        Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", value);
+        var original = SaveOptOutVariables();
+        ClearOptOutVariables();
+        Environment.SetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT", value);
         try
         {
             await Assert.That(TelemetryConfig.IsOptedOut).IsFalse();
         }
         finally
         {
-            Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", null);
+            RestoreOptOutVariables(original);
+        }
+    }
+
+    [Test]
+    [Arguments("1")]
+    [Arguments("true")]
+    [Arguments("yes")]
+    public async Task IsOptedOut_ReturnsTrue_WhenDoNotTrackIsSet(string value)
+    {
+        var original = SaveOptOutVariables();
+        ClearOptOutVariables();
+        Environment.SetEnvironmentVariable("DO_NOT_TRACK", value);
+        try
+        {
+            await Assert.That(TelemetryConfig.IsOptedOut).IsTrue();
+        }
+        finally
+        {
+            RestoreOptOutVariables(original);
+        }
+    }
+
+    [Test]
+    public async Task IsOptedOut_ReturnsFalse_WhenLegacyVariableIsSet()
+    {
+        var original = SaveOptOutVariables();
+        ClearOptOutVariables();
+        Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", "true");
+        try
+        {
+            await Assert.That(TelemetryConfig.IsOptedOut).IsFalse();
+        }
+        finally
+        {
+            RestoreOptOutVariables(original);
         }
     }
 
@@ -114,57 +192,66 @@ public class TelemetryConfigTests
     }
 
     [Test]
-    public async Task GetOrCreateInstallId_CreatesNewGuid_WhenFileDoesNotExist()
+    public async Task GetOrCreateInstallId_CreatesNewGuid_WhenStateHasNoId()
     {
-        using var store = IsolatedStorageFile.GetUserStoreForApplication();
-        const string testFile = "telemetry-install-id";
-
-        // Ensure clean state
-        if (store.FileExists(testFile))
-        {
-            store.DeleteFile(testFile);
-        }
-
+        var directory = CreateTemporaryDirectory();
         try
         {
-            var id = TelemetryConfig.GetOrCreateInstallId(store);
+            var id = TelemetryConfig.GetOrCreateInstallId(new StateStore(new DgtpHome(directory)));
 
             await Assert.That(Guid.TryParse(id, out _)).IsTrue();
         }
         finally
         {
-            if (store.FileExists(testFile))
-            {
-                store.DeleteFile(testFile);
-            }
+            Directory.Delete(directory, recursive: true);
         }
     }
 
     [Test]
     public async Task GetOrCreateInstallId_ReturnsSameId_OnSubsequentCalls()
     {
-        using var store = IsolatedStorageFile.GetUserStoreForApplication();
-        const string testFile = "telemetry-install-id";
-
-        // Ensure clean state
-        if (store.FileExists(testFile))
-        {
-            store.DeleteFile(testFile);
-        }
-
+        var directory = CreateTemporaryDirectory();
         try
         {
-            var id1 = TelemetryConfig.GetOrCreateInstallId(store);
-            var id2 = TelemetryConfig.GetOrCreateInstallId(store);
+            var stateStore = new StateStore(new DgtpHome(directory));
+            var id1 = TelemetryConfig.GetOrCreateInstallId(stateStore);
+            var id2 = TelemetryConfig.GetOrCreateInstallId(stateStore);
 
             await Assert.That(id1).IsEqualTo(id2);
         }
         finally
         {
-            if (store.FileExists(testFile))
-            {
-                store.DeleteFile(testFile);
-            }
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    private static string CreateTemporaryDirectory()
+    {
+        var directory = Path.Combine(Path.GetTempPath(), $"dgtp-{Guid.NewGuid():N}");
+        Directory.CreateDirectory(directory);
+        return directory;
+    }
+
+    private static void ClearOptOutVariables()
+    {
+        Environment.SetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT", null);
+        Environment.SetEnvironmentVariable("DO_NOT_TRACK", null);
+        Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", null);
+    }
+
+    private static Dictionary<string, string?> SaveOptOutVariables() =>
+        new(StringComparer.Ordinal)
+        {
+            ["DGTP_TELEMETRY_OPTOUT"] = Environment.GetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT"),
+            ["DO_NOT_TRACK"] = Environment.GetEnvironmentVariable("DO_NOT_TRACK"),
+            ["DGT_TELEMETRY_OPTOUT"] = Environment.GetEnvironmentVariable("DGT_TELEMETRY_OPTOUT")
+        };
+
+    private static void RestoreOptOutVariables(IReadOnlyDictionary<string, string?> values)
+    {
+        foreach (var (name, value) in values)
+        {
+            Environment.SetEnvironmentVariable(name, value);
         }
     }
 }

@@ -11,6 +11,9 @@ How we systematically cleaned up Roslyn CA and SonarQube S-rule warnings in this
 
 ## What Was Fixed
 
+The table records historical cleanup examples. Profile/identity and combined push types mentioned
+below have since been removed; use the patterns rather than treating those paths as current APIs.
+
 | Category | Action |
 |----------|--------|
 | `S3902` — `Assembly.GetExecutingAssembly()` | Replaced with `typeof(ContainingClass).Assembly` everywhere |

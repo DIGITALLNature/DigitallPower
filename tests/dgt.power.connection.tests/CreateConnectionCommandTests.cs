@@ -1,202 +1,190 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.ServiceModel;
+using dgt.power.common.Connections;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
-using dgt.power.tests.Extensions;
-using dgt.power.common.Exceptions;
-using dgt.power.common.Logic;
-using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk;
+using Spectre.Console.Cli;
 
 namespace dgt.power.connection.tests;
 
-[NotInParallel("Serial_Connection_Tests")]
-public class CreateConnectionCommandTests : ConnectionTestsBase<CreateConnectionCommand, CreateConnectionSettings>
+public class CreateConnectionCommandTests
+    : ConnectionTestsBase<CreateConnectionCommand, CreateConnectionSettings>
 {
-    private const string ConnectionString = @"AuthType=OAuth;
-  Username=jsmith@contoso.onmicrosoft.com;
-  Password=passcode;
-  Url=https://contosotest.crm.dynamics.com;
-  AppId=51f81489-12ee-4a9e-aaae-a2591f45987d;
-  RedirectUri=app://58145B91-0C36-4500-8554-080854F2AC97;
-  LoginPrompt=Auto";
-
     [Test]
-    public async Task ShouldSaveCreatedConnectionAsCurrent()
+    public async Task SavesConnectionAfterSuccessfulVerification()
     {
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            ConnectionString = ConnectionString
-        };
+        var verifier = new FakeConnectionVerifier();
+        var result = await RunAsync(verifier, CreateFederatedSettings("pipeline"));
 
-        await GetContext().Execute(settings).Succeed();
-
-        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
-        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.ConnectionString);
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(ConnectionStore.Find("pipeline")).IsTypeOf<AzureDevOpsFederatedConnection>();
+        await Assert.That(ConnectionStore.Current).IsEqualTo("pipeline");
+        await Assert.That(verifier.WasCalled).IsTrue();
     }
 
     [Test]
-    public async Task ShouldCreateTokenIdentity_WhenUrlIsProvided()
+    public async Task FailedVerificationPreservesExistingConnectionAndSelection()
     {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
+        var existing = new InteractiveConnection
         {
-            Name = "TOKEN",
-            Url = "https://contoso.crm.dynamics.com",
-            NoVerify = true
+            Url = ConnectionTestUrls.ExistingDataverse,
+            TenantId = "tenant"
         };
-#pragma warning restore S1075
+        ConnectionStore.Upsert("prod", existing);
+        ConnectionStore.Upsert("other", new DeviceCodeConnection
+        {
+            Url = "https://other.crm.dynamics.com",
+            TenantId = "tenant"
+        }, makeCurrent: false);
+        var verifier = new FakeConnectionVerifier(new InvalidOperationException("verification failed"));
 
-        await GetContext().Execute(settings).Succeed();
+        var exception = await RunExpectingVerificationFailureAsync(
+            verifier,
+            CreateFederatedSettings("prod"));
 
-        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
-        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.Url);
-        await Assert.That(ProfileManager.CurrentIdentity is TokenIdentity).IsTrue();
+        await Assert.That(exception.Message).IsEqualTo("verification failed");
+        var saved = ConnectionStore.Find("prod");
+        await Assert.That(saved).IsTypeOf<InteractiveConnection>();
+        await Assert.That(((InteractiveConnection)saved!).Url).IsEqualTo(existing.Url);
+        await Assert.That(ConnectionStore.Current).IsEqualTo("prod");
+        await Assert.That(verifier.WasCalled).IsTrue();
     }
 
     [Test]
-    public async Task ShouldSkipConnectionCheck()
+    public async Task FailedVerificationRestoresPreviouslyStoredSecret()
     {
+        ConnectionStore.Upsert("prod", new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.ExistingDataverse,
+            TenantId = "tenant",
+            ClientId = "client"
+        });
+        SecretStore.WriteSecret("prod", "clientSecret", "old-secret");
+        var verifier = new FakeConnectionVerifier(new InvalidOperationException("verification failed"));
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
-            ConnectionString = ConnectionString,
-            NoVerify = true
+            Name = "prod",
+            Url = ConnectionTestUrls.ReplacementDataverse,
+            TenantId = "tenant",
+            ClientId = "client",
+            ClientSecret = "new-secret"
         };
 
-        var context = GetBuilder()
-            .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
-            .Build();
+        await RunExpectingVerificationFailureAsync(verifier, settings);
 
-        await context.Execute(settings).Succeed();
-
-        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
-        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.ConnectionString);
+        await Assert.That(SecretStore.ReadSecret("prod", "clientSecret")).IsEqualTo("old-secret");
+        await Assert.That(((ClientSecretConnection)ConnectionStore.Find("prod")!).Url)
+            .IsEqualTo(ConnectionTestUrls.ExistingDataverse);
     }
 
     [Test]
-    public async Task ShouldFailOnInvalidConnection()
+    public async Task NoVerifySkipsDataverseVerification()
     {
-        var settings = new CreateConnectionSettings
-        {
-            Name = "test",
-            ConnectionString = ConnectionString
-        };
+        var verifier = new FakeConnectionVerifier();
+        var result = await RunAsync(verifier, CreateFederatedSettings("pipeline", noVerify: true));
 
-        var context = GetBuilder()
-            .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
-            .Build();
-
-        await Assert.That(() => context.Execute(settings)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(verifier.WasCalled).IsFalse();
+        await Assert.That(ConnectionStore.Find("pipeline")).IsTypeOf<AzureDevOpsFederatedConnection>();
     }
 
     [Test]
-    public async Task ShouldNotPersistIdentity_WhenConnectionCheckFails()
+    public async Task SavesClientSecretWithoutPromptingOrLeakingValue()
     {
-        var settings = new CreateConnectionSettings
+        var result = await RunAsync(new FakeConnectionVerifier(), new CreateConnectionSettings
         {
-            Name = "BROKEN",
-            ConnectionString = ConnectionString
-        };
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant", ClientId = "client", ClientSecret = "test-secret",
+            NonInteractive = true
+        });
 
-        var context = GetBuilder()
-            .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
-            .Build();
-
-        await Assert.That(() => context.Execute(settings)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
-
-        await Assert.That(GetIdentities().Contains(settings.Name)).IsFalse();
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(SecretStore.ReadSecret("prod", "clientSecret")).IsEqualTo("test-secret");
+        await Assert.That(await File.ReadAllTextAsync(Home.ConnectionsPath)).DoesNotContain("test-secret");
+        await Assert.That(TestConsole.Output).DoesNotContain("test-secret");
     }
 
     [Test]
-    public async Task ShouldNotChangeCurrentIdentity_WhenNewIdentityCreationFails()
+    [Arguments(null)]
+    [Arguments("")]
+    [Arguments("pfx-password")]
+    public async Task SavesCertificatePasswordWithoutPrompting(string? password)
     {
-        var existingSettings = new CreateConnectionSettings
+        var result = await RunAsync(new FakeConnectionVerifier(), new CreateConnectionSettings
         {
-            Name = "GOOD",
-            ConnectionString = ConnectionString
-        };
-        await GetContext().Execute(existingSettings).Succeed();
-        await Assert.That(GetIdentities().Current).IsEqualTo(existingSettings.Name);
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant", ClientId = "client", CertificatePath = "certificate.pfx",
+            CertificatePassword = password, NonInteractive = true
+        });
 
-        var brokenSettings = new CreateConnectionSettings
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(SecretStore.ReadSecret("prod", "certificatePassword")).IsEqualTo(password ?? "");
+        await Assert.That(ConnectionStore.Find("prod")).IsTypeOf<ClientCertificateConnection>();
+        if (!string.IsNullOrEmpty(password))
         {
-            Name = "BROKEN",
-            ConnectionString = ConnectionString
-        };
-        var context = GetBuilder()
-            .WithExecutionMock<WhoAmIRequest>(_ => throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault()))
-            .Build();
-
-        await Assert.That(() => context.Execute(brokenSettings)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
-
-        await Assert.That(GetIdentities().Current).IsEqualTo(existingSettings.Name);
-        await Assert.That(GetIdentities().Contains(brokenSettings.Name)).IsFalse();
+            await Assert.That(await File.ReadAllTextAsync(Home.ConnectionsPath)).DoesNotContain(password);
+            await Assert.That(TestConsole.Output).DoesNotContain(password);
+        }
     }
 
-    [Test]
-    public async Task ShouldCreateAzureDevOpsFederatedIdentity_WhenFederatedOptionsProvided()
+    private async Task<int> RunAsync(
+        FakeConnectionVerifier verifier,
+        CreateConnectionSettings settings)
     {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "FEDERATED",
-            Url = "https://contoso.crm.dynamics.com",
-            AzureDevOpsFederated = true,
-            TenantId = "11111111-1111-1111-1111-111111111111",
-            ApplicationId = "22222222-2222-2222-2222-222222222222",
-            ServiceConnectionId = "33333333-3333-3333-3333-333333333333",
-            NoVerify = true
-        };
-#pragma warning restore S1075
+        ICommand<CreateConnectionSettings> command = new CreateConnectionCommand(
+            ConnectionStore,
+            SecretStore,
+            new CredentialFactory(SecretStore, TestConsole),
+            verifier,
+            new ConnectionInvocationContext(),
+            TestConsole);
 
-        await GetContext().Execute(settings).Succeed();
-
-        await Assert.That(GetIdentities().Current).IsEqualTo(settings.Name);
-        await Assert.That(GetIdentities().CurrentConnectionString).IsEqualTo(settings.Url);
-        await Assert.That(ProfileManager.CurrentIdentity is AzureDevOpsFederatedIdentity).IsTrue();
-
-        var identity = (AzureDevOpsFederatedIdentity)ProfileManager.CurrentIdentity!;
-        await Assert.That(identity.TenantId).IsEqualTo(settings.TenantId);
-        await Assert.That(identity.ClientId).IsEqualTo(settings.ApplicationId);
-        await Assert.That(identity.ServiceConnectionId).IsEqualTo(settings.ServiceConnectionId);
+        return await command.ExecuteAsync(
+            new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "create", null),
+            settings,
+            CancellationToken.None);
     }
 
-    [Test]
-    public async Task ShouldThrowServiceConnectionResolutionException_WhenServiceConnectionNameUsedWithoutPipelineEnvironment()
+    private async Task<InvalidOperationException> RunExpectingVerificationFailureAsync(
+        FakeConnectionVerifier verifier,
+        CreateConnectionSettings settings)
     {
-        var settings = new CreateConnectionSettings
-        {
-            Name = "FEDERATED_BY_NAME",
-            AzureDevOpsFederated = true,
-            ServiceConnectionName = "MyPowerPlatformConnection",
-            NoVerify = true
-        };
-
-        // Ensure determinism regardless of whether this test happens to run inside an actual
-        // Azure Pipelines job (where these variables could otherwise be present).
-        var originalAccessToken = Environment.GetEnvironmentVariable("SYSTEM_ACCESSTOKEN");
-        var originalCollectionUri = Environment.GetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI");
-        var originalTeamProjectId = Environment.GetEnvironmentVariable("SYSTEM_TEAMPROJECTID");
         try
         {
-            Environment.SetEnvironmentVariable("SYSTEM_ACCESSTOKEN", null);
-            Environment.SetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", null);
-            Environment.SetEnvironmentVariable("SYSTEM_TEAMPROJECTID", null);
-
-            await Assert.That(() => GetContext().Execute(settings))
-                .ThrowsExactly<ServiceConnectionResolutionException>();
+            await RunAsync(verifier, settings);
         }
-        finally
+        catch (InvalidOperationException exception)
         {
-            Environment.SetEnvironmentVariable("SYSTEM_ACCESSTOKEN", originalAccessToken);
-            Environment.SetEnvironmentVariable("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", originalCollectionUri);
-            Environment.SetEnvironmentVariable("SYSTEM_TEAMPROJECTID", originalTeamProjectId);
+            return exception;
         }
 
-        await Assert.That(GetIdentities().Contains(settings.Name)).IsFalse();
+        throw new InvalidOperationException("Expected Dataverse verification to fail.");
+    }
+
+    private static CreateConnectionSettings CreateFederatedSettings(string name, bool noVerify = false) => new()
+    {
+        Name = name,
+        Url = ConnectionTestUrls.Dataverse,
+        TenantId = "tenant",
+        ClientId = "client",
+        ServiceConnectionId = "service-connection",
+        AzureDevOpsFederated = true,
+        NoVerify = noVerify
+    };
+
+    private sealed class FakeConnectionVerifier(Exception? failure = null) : IConnectionVerifier
+    {
+        public bool WasCalled { get; private set; }
+
+        public Task VerifyAsync(
+            string connectionName,
+            ConnectionDefinition connection,
+            bool allowUnencryptedStorage,
+            CancellationToken cancellationToken)
+        {
+            WasCalled = true;
+            return failure is null ? Task.CompletedTask : Task.FromException(failure);
+        }
     }
 }

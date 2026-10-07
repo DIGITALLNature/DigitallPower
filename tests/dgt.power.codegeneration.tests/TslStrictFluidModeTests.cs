@@ -35,7 +35,7 @@ public class TslStrictFluidModeTests : CodeGenerationTestsBase
     [Test]
     public async Task ShouldGenerateArtifactsWhenStrictFluidValidationModeIsEnabled()
     {
-        using var _ = new EnvironmentVariableScope("DGT_POWER_TSL_STRICT_MODE", "true");
+        using var _ = new EnvironmentVariableScope("DGTP_TSL_STRICT_MODE", "true");
 
         var args = new CodeGenerationVerb
         {

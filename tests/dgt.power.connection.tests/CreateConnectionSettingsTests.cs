@@ -8,185 +8,135 @@ namespace dgt.power.connection.tests;
 public class CreateConnectionSettingsTests
 {
     [Test]
-    public async Task ShouldBeValid_WhenOnlyUrlProvided()
+    public async Task UserConnectionDoesNotRequireTenant()
     {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings { Name = "TEST", Url = "https://contoso.crm.dynamics.com" };
-#pragma warning restore S1075
+        var settings = new CreateConnectionSettings { Name = "dev", Url = ConnectionTestUrls.Dataverse };
 
         await Assert.That(settings.Validate().Successful).IsTrue();
     }
 
     [Test]
-    public async Task ShouldBeValid_WhenOnlyConnectionStringProvided()
-    {
-        var settings = new CreateConnectionSettings { Name = "TEST", ConnectionString = "AuthType=OAuth;Url=https://contoso.crm.dynamics.com" };
-
-        await Assert.That(settings.Validate().Successful).IsTrue();
-    }
-
-    [Test]
-    public async Task ShouldBeValid_WhenFederatedOptionsFullyProvided()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            Url = "https://contoso.crm.dynamics.com",
-            AzureDevOpsFederated = true,
-            TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsTrue();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenNeitherUrlNorConnectionStringProvided()
-    {
-        var settings = new CreateConnectionSettings { Name = "TEST" };
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenBothUrlAndConnectionStringProvided()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            Url = "https://contoso.crm.dynamics.com",
-            ConnectionString = "AuthType=OAuth;Url=https://contoso.crm.dynamics.com"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenFederatedAndConnectionStringBothProvided()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            Url = "https://contoso.crm.dynamics.com",
-            ConnectionString = "AuthType=OAuth;Url=https://contoso.crm.dynamics.com",
-            TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenFederatedWithoutUrl()
+    public async Task UserConnectionRejectsWhitespaceUrl()
     {
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
+            Name = "dev",
+            Url = " ",
+            TenantId = "contoso.onmicrosoft.com"
         };
 
         await Assert.That(settings.Validate().Successful).IsFalse();
     }
 
     [Test]
-    public async Task ShouldFail_WhenFederatedMissingRequiredOptions()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            Url = "https://contoso.crm.dynamics.com"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenFederatedOptionsProvidedWithoutFlag()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            Url = "https://contoso.crm.dynamics.com",
-            TenantId = "tenant"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldBeValid_WhenServiceConnectionNameOnlyProvided()
+    public async Task UserConnectionAcceptsOptionalTenant()
     {
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            ServiceConnectionName = "MyPowerPlatformConnection"
+            Name = "dev",
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "contoso.onmicrosoft.com"
         };
 
         await Assert.That(settings.Validate().Successful).IsTrue();
     }
 
     [Test]
-    public async Task ShouldFail_WhenServiceConnectionNameAndUrlBothProvided()
-    {
-#pragma warning disable S1075
-        var settings = new CreateConnectionSettings
-        {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            ServiceConnectionName = "MyPowerPlatformConnection",
-            Url = "https://contoso.crm.dynamics.com"
-        };
-#pragma warning restore S1075
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
-    }
-
-    [Test]
-    public async Task ShouldFail_WhenServiceConnectionNameAndExplicitIdsBothProvided()
+    public async Task ClientSecretRequiresClientId()
     {
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
-            AzureDevOpsFederated = true,
-            ServiceConnectionName = "MyPowerPlatformConnection",
+            Name = "prod",
+            Url = ConnectionTestUrls.Dataverse,
             TenantId = "tenant",
-            ApplicationId = "app",
-            ServiceConnectionId = "sc"
+            ClientSecret = "test-secret"
         };
 
         await Assert.That(settings.Validate().Successful).IsFalse();
     }
 
     [Test]
-    public async Task ShouldFail_WhenServiceConnectionNameProvidedWithoutFederatedFlag()
+    public async Task ClientSecretRequiresTenant()
     {
-#pragma warning disable S1075
         var settings = new CreateConnectionSettings
         {
-            Name = "TEST",
-            ServiceConnectionName = "MyPowerPlatformConnection",
-            Url = "https://contoso.crm.dynamics.com"
+            Name = "prod",
+            Url = ConnectionTestUrls.Dataverse,
+            ClientId = "client",
+            ClientSecret = "test-secret"
         };
-#pragma warning restore S1075
 
         await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
+    public async Task ClientSecretAcceptsTenantAndClientId()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod",
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant",
+            ClientId = "client",
+            ClientSecret = "test-secret"
+        };
+
+        await Assert.That(settings.Validate().Successful).IsTrue();
+    }
+
+    [Test]
+    public async Task FederatedConnectionAcceptsServiceConnectionName()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "pipeline",
+            AzureDevOpsFederated = true,
+            ServiceConnectionName = "Power Platform"
+        };
+
+        await Assert.That(settings.Validate().Successful).IsTrue();
+    }
+
+    [Test]
+    [Arguments("")]
+    [Arguments(" ")]
+    public async Task ClientSecretRejectsEmptyValue(string secret)
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant", ClientId = "client", ClientSecret = secret
+        };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
+    public async Task CertificatePasswordRequiresFile()
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant", ClientId = "client",
+            CertificateThumbprint = "thumbprint", CertificatePassword = "password"
+        };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
+    [Arguments(null)]
+    [Arguments("")]
+    [Arguments("password")]
+    public async Task CertificateFileAcceptsOptionalPassword(string? password)
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant", ClientId = "client",
+            CertificatePath = "certificate.pfx", CertificatePassword = password
+        };
+
+        await Assert.That(settings.Validate().Successful).IsTrue();
     }
 }

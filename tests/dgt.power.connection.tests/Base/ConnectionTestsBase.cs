@@ -1,9 +1,9 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.IO.IsolatedStorage;
-using dgt.power.common;
-using dgt.power.common.Logic;
+using System.Text.Json;
+using dgt.power.common.Connections;
+using dgt.power.common.Storage;
 using dgt.power.tests;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console.Cli;
@@ -16,35 +16,57 @@ public class ConnectionTestsBase<TCommand, TCommandSettings> : CommandTestsBase<
 {
     private readonly TestServiceCollection _services;
     private readonly ServiceProvider _serviceProvider;
-    private readonly IsolatedStorageFile _storage;
-
-    public string IdentityFileName { get; } = $"{Guid.NewGuid():N}.dat";
+    private readonly string _directory;
 
     protected ConnectionTestsBase()
     {
+        _directory = Path.Combine(Path.GetTempPath(), $"dgtp-tests-{Guid.NewGuid():N}");
+        var home = new DgtpHome(_directory);
+        Home = home;
+        var store = new ConnectionStore(home);
+        var secretStore = new TestSecretStore();
+        var userTokenCache = new TestUserTokenCache();
         _services = new TestServiceCollection();
-        _services.AddSingleton<IsolatedStorageFile>(_ => IsolatedStorageFile.GetUserStoreForAssembly());
-        _services.AddTransient<IProfileManager, ProfileManager>(provider =>
-            new ProfileManager(provider.GetRequiredService<IsolatedStorageFile>(), IdentityFileName));
+        _services.AddSingleton<IConnectionStore>(store);
+        _services.AddSingleton<ISecretStore>(secretStore);
+        _services.AddSingleton<IUserTokenCache>(userTokenCache);
+        _services.AddSingleton(new ConnectionInvocationContext());
         _serviceProvider = _services.BuildServiceProvider();
-        _storage = _serviceProvider.GetRequiredService<IsolatedStorageFile>();
-        ProfileManager.Purge();
+        ConnectionStore = store;
+        SecretStore = secretStore;
+        UserTokenCache = userTokenCache;
     }
 
-    protected override CommandTestContextBuilder<TCommand, TCommandSettings> GetBuilder()
+    protected override CommandTestContextBuilder<TCommand, TCommandSettings> GetBuilder() =>
+        base.GetBuilder().WithServiceCollection(_services);
+
+    protected IConnectionStore ConnectionStore { get; }
+
+    protected DgtpHome Home { get; }
+
+    protected TestSecretStore SecretStore { get; }
+
+    protected TestUserTokenCache UserTokenCache { get; }
+
+    protected static JsonElement CreateAuthenticationRecord(string homeAccountId)
     {
-        return base.GetBuilder().WithServiceCollection(_services);
+        var json = JsonSerializer.Serialize(new
+        {
+            version = "1.0",
+            username = "user@contoso.com",
+            authority = "https://login.microsoftonline.com/tenant-id",
+            homeAccountId,
+            tenantId = "tenant-id",
+            clientId = "client-id"
+        });
+        using var document = JsonDocument.Parse(json);
+        return document.RootElement.Clone();
     }
-
-    protected IProfileManager ProfileManager => _serviceProvider.GetRequiredService<IProfileManager>();
-
-    protected IIdentities GetIdentities() => ProfileManager.LoadIdentities();
 
     public override void Dispose()
     {
-        _storage.Remove();
-        _storage.Dispose();
         _serviceProvider.Dispose();
+        Directory.Delete(_directory, recursive: true);
         base.Dispose();
         GC.SuppressFinalize(this);
     }

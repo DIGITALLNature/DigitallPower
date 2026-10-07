@@ -13,8 +13,8 @@ namespace dgt.power.codegeneration.Templates;
 internal static class TslTemplateOptionsFactory
 {
     internal const int DefaultTemplateMaxSteps = 20_000;
-    internal const string StrictModeEnvironmentVariable = "DGT_POWER_TSL_STRICT_MODE";
-    internal const string MaxStepsEnvironmentVariable = "DGT_POWER_TSL_MAX_STEPS";
+    internal const string StrictModeEnvironmentVariable = "DGTP_TSL_STRICT_MODE";
+    internal const string MaxStepsEnvironmentVariable = "DGTP_TSL_MAX_STEPS";
 
     public static TemplateOptions Create() =>
         Create(

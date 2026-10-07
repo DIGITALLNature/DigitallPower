@@ -27,7 +27,7 @@ and module are removed after both resource-specific replacements are available.
 ### Module-local dependency injection convention
 Dependency injection (`Microsoft.Extensions.DependencyInjection`, wired in the `dgt.power` host's
 `Program.cs`) is reserved for components that are used **across modules** (e.g. `IConnector`,
-`IXrmConnection`, telemetry). Components that are local to a single module - repositories, planners,
+`IDataverseConnection`, telemetry). Components that are local to a single module - repositories, planners,
 executors, migrators - are constructed directly via `new` inside the command's `InvokeAsync`, not
 registered in the global `IServiceCollection`. This keeps module-local wiring visible at the call site
 and avoids growing the global container with types no other module needs.

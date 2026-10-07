@@ -10,7 +10,6 @@ using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Extensions.Configuration;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -25,11 +24,11 @@ public sealed class OutlookTemplateImport(
     ITracer tracer,
     IOrganizationService connection,
     IConfigResolver configResolver,
-    IConfiguration configuration,
+    TimeProvider timeProvider,
     IAnsiConsole console)
     : BaseImport(tracer, connection, configResolver, console)
 {
-    private readonly int _sleepTime = configuration.GetValue<int>("pollrate");
+    private static readonly TimeSpan s_savedQueryUpdateDelay = TimeSpan.FromSeconds(5);
 
     protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken)
     {
@@ -137,9 +136,9 @@ public sealed class OutlookTemplateImport(
                 {
                     IsDefault = false
                 }, cancellationToken) && result;
-                await Task.Delay(_sleepTime, cancellationToken);
+                await Task.Delay(s_savedQueryUpdateDelay, timeProvider, cancellationToken);
                 result = await orgAsync.TryDeleteAsync(SavedQuery.EntityLogicalName, savedQuery.Id, cancellationToken) && result;
-                await Task.Delay(_sleepTime, cancellationToken);
+                await Task.Delay(s_savedQueryUpdateDelay, timeProvider, cancellationToken);
                 result = await orgAsync.TryCreateAsync(new SavedQuery
                 {
                     FetchXml = update,

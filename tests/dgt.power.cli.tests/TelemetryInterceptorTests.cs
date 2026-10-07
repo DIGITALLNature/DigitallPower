@@ -27,25 +27,29 @@ public class TelemetryInterceptorTests
     [Test]
     public async Task Intercept_SetsSuppression_WhenNoTelemetryIsTrue()
     {
-        var interceptor = new TelemetryInterceptor();
+        var initialized = false;
+        var interceptor = new TelemetryInterceptor(() => initialized = true);
         var settings = new TestSettings { NoTelemetry = true };
         var context = CreateCommandContext();
 
         interceptor.Intercept(context, settings);
 
         await Assert.That(Tracer.SuppressForInvocation).IsTrue();
+        await Assert.That(initialized).IsFalse();
     }
 
     [Test]
     public async Task Intercept_DoesNotSetSuppression_WhenNoTelemetryIsFalse()
     {
-        var interceptor = new TelemetryInterceptor();
+        var initialized = false;
+        var interceptor = new TelemetryInterceptor(() => initialized = true);
         var settings = new TestSettings { NoTelemetry = false };
         var context = CreateCommandContext();
 
         interceptor.Intercept(context, settings);
 
         await Assert.That(Tracer.SuppressForInvocation).IsFalse();
+        await Assert.That(initialized).IsTrue();
     }
 
     [Test]

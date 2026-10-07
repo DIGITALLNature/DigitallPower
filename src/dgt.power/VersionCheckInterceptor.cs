@@ -3,10 +3,8 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO.IsolatedStorage;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using dgt.power.Telemetry;
+using dgt.power.common.Storage;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
 using Spectre.Console;
@@ -15,12 +13,11 @@ using Spectre.Console.Cli;
 namespace dgt.power;
 
 public class VersionCheckInterceptor(
-    IsolatedStorageFile isolatedStorageFile,
+    StateStore stateStore,
     PackageMetadataResource packageMetadataClient,
     IAnsiConsole console)
     : ICommandInterceptor
 {
-    private const string FileName = "last-updated.json";
     private const int CheckBarrierInDays = 3;
 
     public void Intercept(CommandContext context, CommandSettings settings)
@@ -31,15 +28,12 @@ public class VersionCheckInterceptor(
             return;
         }
 
-        var localPackageData = isolatedStorageFile.FileExists(FileName) ? ReadOrCreateLastUpdateCheck() : new LastUpdateCheck();
-
         var today = DateTime.Today;
-        var daysSinceLastCheck = (today - localPackageData.LastUpdateCheckOn.Date).TotalDays;
+        var daysSinceLastCheck = (today - stateStore.LastVersionCheckOn.Date).TotalDays;
         if (daysSinceLastCheck > CheckBarrierInDays)
         {
             CheckForNewVersion();
-            localPackageData.LastUpdateCheckOn = today;
-            WriteLastUpdateCheck(localPackageData);
+            stateStore.SetLastVersionCheckOn(today);
         }
     }
 
@@ -66,30 +60,9 @@ public class VersionCheckInterceptor(
         }
     }
 
-    private void WriteLastUpdateCheck(LastUpdateCheck lastUpdate)
-    {
-        using var storageStream = isolatedStorageFile.OpenFile(FileName, FileMode.Create);
-        var bytes = JsonSerializer.SerializeToUtf8Bytes(lastUpdate);
-        storageStream.Write(bytes, 0, bytes.Length);
-    }
-
-    private LastUpdateCheck ReadOrCreateLastUpdateCheck()
-    {
-        using var storageStream = isolatedStorageFile.OpenFile(FileName, FileMode.Open);
-        using var memoryStream = new MemoryStream();
-        storageStream.CopyTo(memoryStream);
-        return JsonSerializer.Deserialize<LastUpdateCheck>(memoryStream.ToArray()) ?? new LastUpdateCheck();
-    }
-
     [SuppressMessage(
         "Usage",
         "VSTHRD002:Avoid problematic synchronous waits",
         Justification = "Spectre's ICommandInterceptor is synchronous. Version check runs once in CLI startup and has no async hook.")]
     private static T RunSynchronously<T>(Task<T> task) => task.ConfigureAwait(false).GetAwaiter().GetResult();
-
-    private sealed class LastUpdateCheck
-    {
-        [JsonPropertyName("update-last-checked-on")]
-        public DateTime LastUpdateCheckOn { get; set; } = DateTime.MinValue;
-    }
 }

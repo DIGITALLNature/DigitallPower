@@ -2,14 +2,14 @@
 
 ## Overview
 
-**DigitallPower** — CLI tooling for Dataverse/Power Platform operations (export, import, plugin and webresource deployment, maintenance, code generation, analysis, profiling).
+**DigitallPower** — CLI tooling for Dataverse/Power Platform operations (export, import, plugin and webresource deployment, maintenance, code generation, analysis, connection management).
 
 ## Architecture
 
 - **Framework:** .NET 10, C# latest, nullable enabled, implicit usings
 - **CLI Host:** `dgt.power` (entry point, Spectre.Console command tree)
 - **Common Layer:** `dgt.power.common` (shared abstractions, extensions, fixtures, `ExecutionEnvironment`)
-- **Modules:** `dgt.power.{analyzer, codegeneration, export, import, maintenance, plugin, profile,
+- **Modules:** `dgt.power.{analyzer, codegeneration, connection, export, import, maintenance, plugin, solution,
   webresource}`. Plugin and webresource deployment use independent resource-specific modules;
   the combined `push` module was removed in 3.x. Major-version migration guides are in
   [`docs/migrations/`](../docs/migrations/).
@@ -22,8 +22,8 @@
 
 ```
 src/
-├── dgt.power/                  CLI host, telemetry, profile commands
-├── dgt.power.common/           IConnector, IXrmConnection, PowerLogic<T>, ExecutionEnvironment
+├── dgt.power/                  CLI host, telemetry, connection commands
+├── dgt.power.common/           IConnector, IDataverseConnection, PowerLogic<T>, ExecutionEnvironment
 ├── dgt.power.dataverse/        Generated entity classes (DataContext, Solution, Workflow, etc.)
 ├── dgt.power.dto/              Shared DTOs for config/export/import shapes
 └── modules/
@@ -34,7 +34,6 @@ src/
     ├── dgt.power.import/       Entity data import with conflict resolution
     ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
     ├── dgt.power.plugin/       Resource-oriented `plugin push` + `plugin step config set`
-    ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     ├── dgt.power.solution/     `dgtp solution version|lint|copy-components` - single/multi-solution operations: version increment (formerly `maintenance solution-version`), configuration-driven Dataverse quality gates (formerly dgt.power.linter), and copying solution components between solutions with managed/active-layer-aware filtering, per-component execution progress, and `--apps skip|strip|allow` model-driven app handling
     └── dgt.power.webresource/  Dedicated webresource deployment
 ```
@@ -42,7 +41,7 @@ src/
 ## Key Conventions
 
 ### Async Pattern
-- All `IConnector`/`IXrmConnection` methods are async (return `Task`)
+- All `IConnector`/`IDataverseConnection` methods are async (return `Task`)
 - All async methods carry `Async` suffix (S4261) — enforced by analyzers
 - Tests are exempt from `Async` suffix via `tests/.editorconfig`
 - Async methods with parameter validation use the split pattern: public method validates, calls private `*CoreAsync` implementation
@@ -86,6 +85,9 @@ src/
 - `src/dgt.power/CommandTree.cs` (`CommandTree.Register`) is the single command-tree registration
   source used by both `Program.Configure` and `tests/dgt.power.cli.tests`. Register command changes
   there, and cover their paths/settings in the CLI tests.
+- CI environment tests in `ExecutionEnvironmentTests` and `TelemetryConfigTests` share the
+  `CiEnvironmentVariables` exclusion key to protect process-wide variable mutations while
+  unrelated tests remain parallel. See `guide-cli-ci-environment-test-isolation.md`.
 
 ### Plugin custom data provider registrations
 - `plugin push` reads the required `(dataSourceSchemaName, eventRegistration, providerName)`
@@ -127,6 +129,16 @@ src/
   `Extensions/Dataverse/RoutingRuleItem.MsdynRouteto.cs` partial: routing import/export still uses it.
   Its setters follow generated `SetAttributeValue` behavior without property-notification hooks.
 
+### Dependency ownership
+- Direct package references declare API usage; repeated references do not duplicate
+  runtime packages. Common security overrides flow through project references,
+  but private build-tool packages do not.
+- Module test dependencies can upgrade runtime packages relative to the CLI.
+  Check resolved graphs, not just manifest versions, when consolidating references.
+  Dependency policy and alignment should be reviewed as a dedicated solution-wide
+  change rather than piecemeal feature cleanup.
+  See [dependency ownership notes](research-dependency-ownership.md).
+
 ## Key Decisions
 
 | Decision | File | Summary |
@@ -137,12 +149,15 @@ src/
 | Package as record class | `decision-package-record-refactor.md` | init-only props, equality scoped to Name+Version+Content |
 | Post-TSL architecture priorities | `decision-post-tsl-architecture-wave.md` | VSTHRD200/002, S1067/S3358, debt-baseline for S1135/S125 |
 | Remove sync Invoke from PowerLogic | `decision-remove-sync-invoke.md` | InvokeAsync is now the single abstract entry point; Task.FromResult interim pattern |
-| Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh`; `profile` is deprecated alias |
+| Version-stable connection and state storage | `implementation-typed-connection-storage.md` | Typed `connections.json`, OS-protected secrets/token cache, stable `DGTP_HOME`, certificate key/password boundaries, token-check semantics, account-scoped cleanup, and no migration from 2.x |
+| Keep certificate authentication | `decision-keep-certificate-auth.md` | Retain certificate auth as an available option; document that automated coverage is not end-to-end auth validation |
+| Persistent MSAL cache account removal | `research-persistent-msal-token-cache-removal.md` | Match Azure.Identity's actual `.nocae` cache name, platform storage settings, protected-first/fallback behavior, and remove accounts individually |
+| Non-interactive auth for coding agents | `decision-non-interactive-auth-for-agents.md` | `--non-interactive`/`DGTP_NON_INTERACTIVE`, exit code 2, `dgtp connection status` + `dgtp connection refresh` |
 | Error telemetry anonymization | `decision-error-telemetry-anonymization.md` | Automated crash reporting recorded as OTel exception events; GUID/home-path/org-URL redaction and single-owner provider lifecycle |
 | Runtime error diagnostics | `decision-runtime-error-diagnostics.md` | CLI-host/plugin failures show contextual messages and Dataverse fault codes in all builds; stack traces and arbitrary fault payloads are omitted |
 | Generic command deprecation | `decision-generic-command-deprecation.md` | `[DeprecatedCommand]` attribute on `CommandSettings` + single `DeprecationInterceptor`, replacing fragile argv-position detection |
-| Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand`/`CreateProfileCommand` now `Save()` only after a successful connectivity check, not before |
-| Major-version migration guides | `decision-major-version-migration-guides.md` | Document every user-affecting breaking change for each major release in `docs/migrations/<from>-to-<to>.md`; use a generic README link to the directory |
+| Persist-after-verify for connection commands | `guide-persist-after-verify-connection-commands.md` | `CreateConnectionCommand` stages secrets, verifies the candidate connection, then persists metadata with rollback on failure |
+| Major-version migration guides | `decision-major-version-migration-guides.md` | Document user-affecting breaks in `docs/migrations/<from>-to-<to>.md`; the 2.x-to-3.x guide covers profile removal, typed connection recreation, configuration replacements, and deployment changes |
 | Resource-oriented CLI redesign (`plugin push`) | `decision-resource-oriented-cli-redesign.md` | Independent `dgtp plugin push` and `dgtp webresource push` modules replaced the combined 2.x `push`; module-local repos/executors are constructed via `new`, not registered in global DI |
 | `dgt.power.plugin` namespace layout | `implementation-plugin-push-outdated-assembly-migration.md` | `Local` and `Remote` state / `Planning.Comparison` state models / `Planning.Deployment` executable plan models / `Repositories` / `Execution` / `Output` / `Commands` / `Base` |
 | Plugin deployment plan pipeline | `decision-plugin-deployment-plan-pipeline.md` | `PluginDeploymentPlanner` creates one typed, validated plan; `PluginPlanRenderer` visualizes it; `PluginPushExecutor` applies it without repeating reconciliation decisions |
@@ -151,7 +166,7 @@ src/
 | Plugin registration v3 cutoff | `decision-plugin-registration-v3-cutoff.md` | `plugin push` requires `Digitall.Plugins.Registration` 3.0.0+ for the three-argument provider contract; historical namespaces require dgtp 2.x or migration |
 | Webresource publish strategy | `research-webresource-push-v2-review.md` | Publish each changed resource separately after all individual creates/updates and membership changes; defer publish batching until deployment writes can be batched coherently |
 | TSL Jest test harness | `decision-tsl-jest-test-harness.md` | Generated fixtures from .NET + dedicated Jest project invoked by `pnpm test` in CI (Option A) |
-| Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | `AzureDevOpsFederatedIdentity` + `AzurePipelinesConnector` wrapping `Azure.Identity.AzurePipelinesCredential`; `--azure-devops-federated`/`--tenant`/`--application-id`/`--service-connection-id`; Managed Identity (agent-assigned) explicitly out of scope |
+| Azure DevOps Workload Identity Federation connections | `decision-azure-devops-workload-identity-federation.md` | Azure Pipelines WIF via `Azure.Identity.AzurePipelinesCredential`; current code persists a typed connection definition |
 | Resource-oriented CLI restructuring | `decision-resource-oriented-cli-restructuring.md` | `dgtp <resource> <verb> <target>` shape (mirrors colleague's `dgt.power.plugin`); `dgt.power.solution` is the current module name for the ported linter surface; `analyze`/`maintenance` remain out of scope for this Phase 1; single-solution positional arg replaces `--solutions` list; Sarif.Sdk replaces hand-rolled SARIF POCOs |
 | ILintRule default severity contract | `decision-ilint-rule-default-severity-contract.md` | Retain `ILintRule.DefaultSeverity` as public metadata exposed through `LintRuleCatalog.All`; use a narrow Qodana suppression rather than breaking the interface |
 
@@ -162,7 +177,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **Centralized options:** `TslTemplateOptionsFactory` provides canonical `TemplateOptions` profile
 - **Compile gates:** TSL templates validated at build-time via TypeScript 6 compiler
 - **CI mode:** `ExecutionEnvironment.IsCi` controls strict validation fallback
-- **Env controls:** `DGT_POWER_TSL_STRICT_MODE`, `DGT_POWER_TSL_MAX_STEPS`
+- **Env controls:** `DGTP_TSL_STRICT_MODE`, `DGTP_TSL_MAX_STEPS`
 
 ### Codegeneration Config Resolution
 
@@ -220,16 +235,13 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 
 ### Key caveats
 - `DotnetSuggestHandler` must run as the FIRST statement in `Program.cs`, before any I/O, telemetry or network calls
-- `Program.cs` currently maintains an inline command registration function alongside `CommandTree`; new
-  commands must be added to both until registration is centralized, otherwise the CLI executable and
-  command-tree tests can diverge.
 - `AnsiConsoleOutput(TextWriter)` constructor — no static `.Create()` method
 - `IHelpProvider.Write(model, null)` receives `ICommandModel` (not `ICommandInfo`)
 - `ICommand<T>.ExecuteAsync(context, settings, ct)` is an explicit interface impl — tests must cast via `(ICommand<T>)command`
 
 
 
-- **`--insecure` / `--security-protocol`** removed as breaking changes. Existing profile JSON still deserializes (nullable + `JsonIgnoreCondition.WhenWritingDefault`).
+- **`--insecure` / `--security-protocol`** removed as breaking changes; legacy profile storage is not imported by typed connections.
 - **`FormXmlControlData.ControlId`** uses `{ get; set; }` in `GetHashCode()` — suppressed. Candidate for `record class`.
 - **Schema URLs in README point to the `beta` branch** — must be updated to `main` before merging to main. Search README for `raw.githubusercontent.com/.*/beta/` and replace with `.*/main/`.
 - **TSL `Light` runtime guardrails** depend on env-driven validation; invalid max-step overrides fail fast.
@@ -253,21 +265,33 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 - **`SolutionComponent.ComponentType`/`RootComponentBehavior` are `OptionSetValue?` (a nullable-annotated reference type), not `int?`.** `.HasValue` does not compile on them, and `component.ComponentType is not { } type` binds `type` as `OptionSetValue`, not the underlying int — always chain through `.Value` first (`component.ComponentType?.Value is not { } type`). See `implementation-solution-copy-components.md` for the full write-up; this applies to any future code touching `solutioncomponent` rows.
 - **`solution copy-components` raw mode preserves only complete vs. non-complete table behavior** (`IncludeAsShellOnly` maps to non-complete); managed-state and active-layer `IN` queries batch 500 IDs and page each batch before classification. See `implementation-solution-copy-components.md`.
 - **`AddSolutionComponentRequest.DoNotIncludeSubcomponents = true` is only accepted for Entity roots (type 1)**; model-driven apps (type 80) cannot be added without Dataverse's expansion. `solution copy-components --apps skip|strip|allow` (default `skip`) controls this (app-bound AppSetting/AppModuleComponent rows follow the app, matched by `solutioncomponentdefinition` name - componenttypes >10000 differ per environment); `strip` removes platform-added subcomponents afterwards and is unverified against a real environment. See `implementation-solution-copy-components.md`.
+- Connections, telemetry identity and version-check state now use stable per-user storage rather
+  than assembly-scoped isolated storage. The redesign intentionally does not import data from 2.x;
+  users recreate named connections. See `implementation-typed-connection-storage.md` and
+  `research-isolated-storage-major-version-scoping.md`.
+- Application state uses an independent schema version and nested telemetry/update sections;
+  unsupported versions fail without rewriting, and unknown fields survive mutations. Installation
+  ID creation is the one-time notice marker; opt-out/help/completion do not initialize telemetry.
+  See the state compatibility boundaries in `implementation-typed-connection-storage.md`.
 
 ## Memory Files Index
 
 | File | Type | Content |
 |------|------|---------|
+| `research-dependency-ownership.md` | research | Direct versus transitive dependencies, private build tools, test/runtime version differences, and cleanup boundaries |
 | `decision-config-v2-redesign.md` | decision | V2 CodeGenerationConfig: typed hierarchy, Requests unification, strategy pattern, generator architecture |
 | `decision-async-suffix-s4261.md` | decision | Async suffix convention; test exemption rationale |
 | `decision-remove-insecure-protocol.md` | decision | Why CLI options removed; backward-compat handling |
 | `decision-package-record-refactor.md` | decision | Historical dgtp 2.x push-module package record design; equality semantics |
 | `decision-post-tsl-architecture-wave.md` | decision | Priority order for remaining quality findings |
-| `decision-non-interactive-auth-for-agents.md` | decision | Non-interactive auth: exit code 2, `DGTP_NON_INTERACTIVE`, `dgtp profile auth-check` |
+| `implementation-typed-connection-storage.md` | implementation | Typed connection definitions, stable home/state files, storage boundaries and design rationale, global connection override variables, no legacy migration, verification limitations |
+| `decision-keep-certificate-auth.md` | decision | Keep certificate-based authentication available; preserve the end-to-end validation caveat |
+| `guide-cli-ci-environment-test-isolation.md` | guide | Shared TUnit exclusion key for process-wide CI environment variables and race diagnosis |
+| `decision-non-interactive-auth-for-agents.md` | decision | Non-interactive auth: exit code 2, `DGTP_NON_INTERACTIVE`, `dgtp connection status` and `refresh` |
 | `guide-static-analysis-cleanup.md` | guide | Systematic approach for CA/Sonar cleanup |
 | `guide-sonar-rules-applied.md` | guide | Fix patterns for S3902, S3971, S2930, S3900, S4261 |
 | `guide-code-quality-patterns.md` | guide | Anti-patterns with canonical fixes (DI downcasts, GetHashCode, covariant arrays) |
-| `guide-connection-command-test-pattern.md` | guide | Connection command tests: reuse the same `ProfileManager` instance, save after seeding, and use `TokenIdentity` plus fake `IXrmConnection` for MSAL branches |
+| `guide-connection-command-test-pattern.md` | guide | Connection command tests: temporary `DgtpHome`, file-backed `ConnectionStore`, fake secret store, and fake auth connections |
 | `guide-qodana-telemetry-and-doc-analyzer-fixes.md` | guide | Patterns for analyzer-safe telemetry provider disposal, XML docs for inaccessible types, regex naming cleanup, and test-hygiene warnings |
 | `guide-review-feedback-triage.md` | guide | Assess automated review comments against current HEAD and trace plugin deployment claims through parsing, planning, execution, and tests |
 | `implementation-centralized-ci-environment-detection.md` | implementation | ExecutionEnvironment in common; reused by telemetry + codegen |
@@ -294,6 +318,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `guide-webresource-solution-lazy-add.md` | guide | `webresource push`: add resources to solutions only when not already a member; reuse one pre-fetch for upsert and obsolete checks |
 | `implementation-webresource-module-plan.md` | implementation | Historical extraction plan for `webresource push`, including behavior carried forward from dgtp 2.x |
 | `research-servicepointmanager-dotnet8.md` | research | ServicePointManager no-op; Dataverse.Client has no HttpClient hook |
+| `research-isolated-storage-major-version-scoping.md` | research | Historical assembly-major isolated-storage scoping and the stable app-data replacement now used by connections/state |
 | `research-tsl-fluid-hardening.md` | research | Fluid.Core stability assessment and hardening strategy |
 | `research-v2-typescript-config-design-gaps.md` | research | Current V2 TS caveats after redesign: no `TypingPath`, no per-entity filters, string-based `forms.filter` |
 | `research-form-language-localization.md` | research | Metadata `Label` LCID resolution vs. OOB record data (`systemform.name`) being session-UI-language dependent, not per-request; `FormViewModel.LanguageCode` gap fix; known limitation + warning for form name/config.Forms matching |
@@ -303,7 +328,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `guide-linter-rule-implementation-pitfalls.md` | guide | `EntityFilters.Entity` excludes `Attributes` (always-empty cache trap); never paper over a broken cache with a doomed-to-fail fallback call; lint rule tests must assert on findings, not just the command's exit code |
 | `decision-error-telemetry-anonymization.md` | decision | Crash reporting via OTel exception events; anonymization scope (GUIDs, home-dir paths, org/tenant URLs) and known limitations |
 | `decision-generic-command-deprecation.md` | decision | `[DeprecatedCommand]` attribute + `DeprecationInterceptor`: how to deprecate any command/branch, and why argv-position detection was replaced |
-| `guide-persist-after-verify-connection-commands.md` | guide | `CreateConnectionCommand`/`CreateProfileCommand`: why `Save()` must run after connectivity check, not before; test pattern with Transient `IProfileManager` |
+| `guide-persist-after-verify-connection-commands.md` | guide | `CreateConnectionCommand`: stage secrets, verify before persistence, and roll back metadata/secrets on failure |
 | `implementation-175-ts-mock-form-improvements.md` | implementation | Issue #175 plan: factory function, relaxed server mock types, no-$select fix, type re-exports, SubGrid helper, languageId option |
 | `decision-azure-devops-workload-identity-federation.md` | decision | WIF/OIDC connections via `AzurePipelinesCredential`; CLI surface, architecture, why not `pac`/hand-rolled OIDC, CI REST-lookup pattern, self-constructed `SYSTEM_OIDCREQUESTURI` (no task dependency, verified live), Managed Identity out-of-scope split |
 | `implementation-linter-phase-2-fail-gate-baseline.md` | implementation | Phase 2 linter: `--fail-on`/`--baseline`/`--update-baseline`/`--sarif-output`, `LintFinding.BaselineKey`, `Reporting/SarifWriter` |

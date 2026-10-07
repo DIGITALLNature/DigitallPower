@@ -44,7 +44,7 @@ internal static class DotnetSuggestHandler
 
         var commandLine = args.Length > 1 ? args[1].Trim('"') : string.Empty;
         var completions = CompletionEngine.GetCompletions(model, commandLine, directive.Position,
-            new ProfileNamesProvider());
+            new ConnectionNamesProvider());
 
         foreach (var completion in completions)
             Console.WriteLine(completion);

@@ -7,6 +7,8 @@ Findings from a thorough static analysis pass (Roslyn CA + SonarQube S-rules) in
 ## Anti-Pattern: Interface-Downcast in DI
 
 ### Problem
+Historical example from the removed profile service layer:
+
 ```csharp
 // Registers interface, immediately casts to concrete — DI theater
 protected ProfileManager ProfileManager => (ProfileManager)_serviceProvider.GetRequiredService<IProfileManager>();

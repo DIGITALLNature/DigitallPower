@@ -5,7 +5,7 @@ namespace dgt.power.Completion;
 
 /// <summary>
 /// Provides dynamic completions for positional arguments of specific commands.
-/// Implementations read live data (e.g., profile names from IsolatedStorage)
+/// Implementations read live data (e.g., connection names from the stable connection store)
 /// and are only invoked on leaf commands that have no matching subcommand completions.
 /// </summary>
 internal interface IDynamicCompletionProvider

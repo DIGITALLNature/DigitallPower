@@ -1,5 +1,10 @@
 # Decision: Azure DevOps Workload Identity Federation (OIDC) Connections
 
+> **Implementation note:** The original identity/profile-based implementation described below
+> has been replaced by the typed connection backend in `implementation-typed-connection-storage.md`. Current
+> code stores `AzureDevOpsFederatedConnection` records and obtains tokens through
+> `AzurePipelinesCredentialFactory`; there is no profile branch or identity registry.
+
 ## Context
 
 Azure DevOps Power Platform service connections can be configured with **Workload Identity
