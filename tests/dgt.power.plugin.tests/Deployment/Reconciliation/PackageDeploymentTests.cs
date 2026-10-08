@@ -763,7 +763,11 @@ public class PackageDeploymentTests
         var changes = await deployment.PreparePackageAsync(removal, "new");
         await Assert.That(changes.DestructiveCount).IsEqualTo(2);
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(1);
-        await deployment.ApplyPackageAsync(changes);
+        var progress = new List<PluginDeploymentProgress>();
+        await deployment.ApplyPackageAsync(changes, progress.Add);
+
+        await Assert.That(progress.Any(item => item.Resource == "step" && item.Operation == PluginDeploymentOperation.Deleted)).IsTrue();
+        await Assert.That(progress.Any(item => item.Resource == "plugin type")).IsFalse();
         await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
     }

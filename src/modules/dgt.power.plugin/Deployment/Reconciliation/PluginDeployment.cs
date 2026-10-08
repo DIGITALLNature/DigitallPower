@@ -559,7 +559,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             if (api.Handler is null)
             {
                 unlinkedApiIds.Add(api.Id);
-                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Updated, "Custom API", api.Name));
+                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Unlinked, "Custom API", api.Name));
             }
         }
 
@@ -798,13 +798,13 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             if (change.Handler is { } handler)
             {
                 await _apis.LinkPluginTypeAsync(change.Id, typeIds[handler], cancellationToken);
+                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Linked, "Custom API", change.Name));
             }
             else
             {
                 await _apis.UnlinkPluginTypeAsync(change.Id, cancellationToken);
+                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Unlinked, "Custom API", change.Name));
             }
-
-            progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Updated, "Custom API", change.Name));
         }
     }
 }
