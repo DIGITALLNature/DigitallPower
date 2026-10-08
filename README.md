@@ -1154,6 +1154,36 @@ dependencies and .NET SDK before an agent session; OpenSpec commands continue to
 `pnpm exec openspec`. The setup workflow must be present on the default branch, and cloud-agent
 access must be enabled by the repository or organization administrator.
 
+### Graphify Code-Only Pilot
+
+The pilot pins Graphify in [`graphify-version.txt`](graphify-version.txt) and builds a fresh C# code
+graph locally, in GitHub Copilot cloud-agent setup, and in a GitHub Actions smoke check. The graph,
+manifest, and cache stay under ignored `graphify-out/`; they are regenerated from the current
+checkout and are not committed. Code extraction uses local AST parsing only. Documentation, images,
+and semantic LLM extraction are out of scope.
+
+For a local clone, install the pinned CLI and create the initial graph:
+
+```bash
+uv tool install graphifyy==0.9.80
+graphify vscode install
+graphify extract . --code-only
+```
+
+`graphify vscode install` adds the local VS Code skill and refreshes the project Copilot instructions.
+The same tracked instructions guide GitHub Web agents. `pnpm install` activates Husky hooks:
+Graphify refreshes after commits and branch switches, while post-merge and post-rewrite hooks refresh
+after pulls and rebases. These are best-effort; if a refresh is skipped, run `sh scripts/graphify-refresh.sh`.
+Cloud-agent setup builds the graph for each current checkout, and the GitHub Actions smoke workflow
+checks that code-only extraction and a representative plugin path succeed without committing output.
+
+Use Graphify for cross-module navigation and verify conclusions against source and tests. The measured
+results and retention criteria are in [the evaluation note](docs/architecture/graphify-pilot-evaluation.md).
+
+The separate DigitallPower pilot override in `.github/copilot-instructions.md` preserves code-only
+mode when the Graphify-owned section is refreshed. `graphify copilot install` targets Copilot CLI
+and is not needed for VS Code or GitHub Web.
+
 To produce a local NuGet package of the tool:
 
 ```bash
