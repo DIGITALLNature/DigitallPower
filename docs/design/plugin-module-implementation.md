@@ -154,9 +154,18 @@ Use assembly-scoped logical type references instead of package-wide type-name id
 The current slice covers new, updated, and unchanged packages. It requires the exact expected
 server-owned assembly/type set after upload and never falls back to standalone assembly creation.
 Duplicate type names in different assemblies remain assembly-scoped. Package version changes,
-assembly/type removals and moves between assemblies fail before
+assembly removals and moves between assemblies fail before
 upload until their behavior is supported. Step/image removals are supported: they are
-deleted after upload and registration writes by the shared cleanup, on retained types only.
+deleted after upload and registration writes by the shared cleanup. Plugin type removal is
+counted as destructive. Dataverse rejects (fault 0x80040265, verified live) an upload that
+removes a type with registered steps, so apply runs a pre-upload phase that unlinks Custom APIs
+and deletes the steps of removed types; Dataverse then removes the type itself during upload.
+Package prepare adds no validation of its own for removed types: platform-managed steps (Custom
+API) disappear with their link, and anything else (unknown dependents, provider references) is
+left to Dataverse to reject. If the upload fails after this phase, a retry re-plans the same
+removal. Unlinks
+render nested under their (deleted or retained) plugin type. Behavior for removed types without
+steps or with a linked Custom API remains unverified live.
 `RetrieveDependenciesForDelete` is a candidate for
 future component-deletion checks, not yet validated as a complete package-update safeguard.
 

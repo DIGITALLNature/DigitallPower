@@ -14,7 +14,7 @@ namespace dgt.power.plugin.tests.Deployment.Reconciliation;
 internal sealed class PackageUploadService : IOrganizationServiceAsync2
 {
     private readonly FakeOrganizationServiceAsync service;
-    private readonly LocalPluginPackage target;
+    private LocalPluginPackage target;
     private readonly bool materializeOnUpload;
     private readonly Dictionary<Guid, byte[]> _packageFiles = [];
 
@@ -33,6 +33,8 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
     }
 
     public byte[] PackageContent(Guid packageId) => _packageFiles[packageId];
+
+    public void RetargetUpload(LocalPluginPackage package) => target = package;
 
     public Guid SeedPackage(string name, LocalPluginPackage package, byte[] bytes)
     {
@@ -81,8 +83,26 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
                 {
                     Conditions = { new ConditionExpression(PluginType.LogicalNames.PluginAssemblyId, ConditionOperator.Equal, assemblyId) }
                 }
-            }).Entities.Select(entity => entity.GetAttributeValue<string>(PluginType.LogicalNames.TypeName)).ToHashSet(StringComparer.Ordinal);
-            foreach (var pluginType in assembly.PluginTypes.Where(pluginType => !existingTypes.Contains(pluginType.TypeName)))
+            }).Entities.ToDictionary(entity => entity.GetAttributeValue<string>(PluginType.LogicalNames.TypeName), entity => entity.Id, StringComparer.Ordinal);
+            var declaredTypes = assembly.PluginTypes.Select(pluginType => pluginType.TypeName).ToHashSet(StringComparer.Ordinal);
+            foreach (var (typeName, typeId) in existingTypes.Where(pair => !declaredTypes.Contains(pair.Key)))
+            {
+                var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+                {
+                    Criteria = new FilterExpression
+                    {
+                        Conditions = { new ConditionExpression(SdkMessageProcessingStep.LogicalNames.EventHandler, ConditionOperator.Equal, typeId) }
+                    }
+                }).Entities;
+                if (steps.Count > 0)
+                {
+                    throw new InvalidOperationException($"Unable to delete '{typeName}' plugintype due to {steps.Count} step(s) registered on it.");
+                }
+
+                service.Delete(PluginType.EntityLogicalName, typeId);
+            }
+
+            foreach (var pluginType in assembly.PluginTypes.Where(pluginType => !existingTypes.ContainsKey(pluginType.TypeName)))
             {
                 service.Create(new PluginType
                 {

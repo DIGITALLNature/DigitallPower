@@ -209,11 +209,16 @@ public class CustomApiDeploymentTests
         var apiId = service.Create(new CustomAPI { UniqueName = "new_Api" });
         var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
+        var removal = await deployment.PrepareAsync(Desired() with { PluginTypes = [] });
+        using var console = new TestConsole();
+        console.Profile.Width = 160;
+        new DeploymentRenderer(console).Render(removal);
 
-        await deployment.ApplyAsync(await deployment.PrepareAsync(Desired() with { PluginTypes = [] }));
+        await deployment.ApplyAsync(removal);
 
+        await Assert.That(console.Output).Contains("└── Custom API");
+        await Assert.That(console.Output).DoesNotContain("\nCustom API");
         await Assert.That(ReadApi(service, apiId).PluginTypeId).IsNull();
-        await Assert.That(All(service, PluginType.EntityLogicalName)).IsEmpty();
     }
 
     [Test]

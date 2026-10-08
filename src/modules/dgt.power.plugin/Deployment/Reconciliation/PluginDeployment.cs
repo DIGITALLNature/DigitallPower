@@ -62,21 +62,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var snapshot = await LoadSnapshotAsync(existing?.Id, cancellationToken);
         var oldSnapshot = await LoadSnapshotAsync(superseded?.Id, cancellationToken);
         var changes = RegistrationDiff.Compare(desired.PluginTypes, snapshot, oldSnapshot);
-        foreach (var type in changes.TypesToDelete)
-        {
-            var owner = snapshot.StepsByType.ContainsKey(type.Id) ? snapshot : oldSnapshot;
-            if (owner.StepsByType[type.Id].Any(step => !LocalPluginStepValidator.IsDeclarativeStage(step.Stage)))
-            {
-                throw new NotSupportedException($"Plugin type '{type.TypeName}' has platform-only steps; its owning association phase must be implemented before cleanup.");
-            }
-
-            var knownStepIds = owner.StepsByType[type.Id].Select(step => step.Id).ToHashSet();
-            var dependentStepIds = await _types.GetDependentStepIdsAsync(type.Id, cancellationToken);
-            if (dependentStepIds.Any(id => !knownStepIds.Contains(id)))
-            {
-                throw new InvalidOperationException($"Plugin type '{type.TypeName}' has step dependencies missing from the registration snapshot; cleanup cannot be prepared safely.");
-            }
-        }
+        await ValidateRemovedTypesAsync(changes, [snapshot, oldSnapshot], cancellationToken);
 
         var messages = new Dictionary<PluginStepReference, ResolvedSdkMessage>();
         foreach (var write in changes.StepsToWrite)
@@ -98,6 +84,25 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         return new StandaloneDeploymentChanges(desired, existing?.Id,
             existing is not null && !string.Equals(desired.ContentHash, existing.ContentHash, StringComparison.OrdinalIgnoreCase),
             changes, messages, assemblies, superseded, customApis, membership, providers.Changes);
+    }
+
+    private async Task ValidateRemovedTypesAsync(RegistrationChanges changes, IReadOnlyList<RegistrationSnapshot> snapshots, CancellationToken cancellationToken)
+    {
+        foreach (var type in changes.TypesToDelete)
+        {
+            var owner = snapshots.First(snapshot => snapshot.StepsByType.ContainsKey(type.Id));
+            if (owner.StepsByType[type.Id].Any(step => !LocalPluginStepValidator.IsDeclarativeStage(step.Stage)))
+            {
+                throw new NotSupportedException($"Plugin type '{type.TypeName}' has platform-only steps; its owning association phase must be implemented before cleanup.");
+            }
+
+            var knownStepIds = owner.StepsByType[type.Id].Select(step => step.Id).ToHashSet();
+            var dependentStepIds = await _types.GetDependentStepIdsAsync(type.Id, cancellationToken);
+            if (dependentStepIds.Any(id => !knownStepIds.Contains(id)))
+            {
+                throw new InvalidOperationException($"Plugin type '{type.TypeName}' has step dependencies missing from the registration snapshot; cleanup cannot be prepared safely.");
+            }
+        }
     }
 
     private async Task<RegistrationSnapshot> LoadSnapshotAsync(Guid? assemblyId, CancellationToken cancellationToken)
@@ -370,10 +375,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             var snapshot = await LoadSnapshotAsync(remote?.Id, cancellationToken);
             ownedTypes.AddRange(snapshot.Types);
             var registrations = RegistrationDiff.Compare(assembly.PluginTypes, snapshot);
-            if (registrations.TypesToDelete.Count > 0)
-            {
-                throw new NotSupportedException("Package type removal requires verification of server-side upload/dependency behavior before it can be applied.");
-            }
             var messages = new Dictionary<PluginStepReference, ResolvedSdkMessage>();
             foreach (var write in registrations.StepsToWrite)
             {
@@ -422,6 +423,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             throw new InvalidOperationException("Package assembly state changed after preparation; prepare a fresh deployment before applying.");
         }
 
+        var released = await ReleaseRemovedTypesAsync(changes, progress, cancellationToken);
         var packageId = current?.Id ?? await _packages.CreateAsync(changes.DataverseName, changes.Desired.Package.Version, changes.Desired.Package.Content, cancellationToken);
         if (current is null)
         {
@@ -488,7 +490,14 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
                 ids.Add(type.TypeName, serverType.Id);
             }
 
-            resolved.Add(new ResolvedPackageAssembly(uploaded.Id, assembly, assembly.Registrations with { TypesToCreate = [], ExistingTypeIds = ids }));
+            // Dataverse deletes removed types itself during upload, once their steps and API links are gone.
+            resolved.Add(new ResolvedPackageAssembly(uploaded.Id, assembly, assembly.Registrations with
+            {
+                TypesToCreate = [],
+                TypesToDelete = [],
+                StepsToDelete = [.. assembly.Registrations.StepsToDelete.Where(step => !released.StepIds.Contains(step.Id))],
+                ExistingTypeIds = ids
+            }));
         }
 
         var stepIds = new Dictionary<PackagePluginStepReference, Guid>();
@@ -503,7 +512,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         var resolvedTypeIds = resolved.SelectMany(assembly => assembly.Registrations.ExistingTypeIds.Select(pair =>
             new KeyValuePair<PluginTypeReference, Guid>(new PluginTypeReference(assembly.Changes.Desired.Name, pair.Key), pair.Value))).ToDictionary();
-        await ApplyCustomApisAsync(changes.CustomApis, resolvedTypeIds, progress, cancellationToken);
+        await ApplyCustomApisAsync([.. changes.CustomApis.Where(api => !released.UnlinkedApiIds.Contains(api.Id))], resolvedTypeIds, progress, cancellationToken);
         var providerIds = await ApplyProvidersAsync(changes.Providers, resolvedTypeIds, progress, cancellationToken);
         if (changes.Solution is { } solution)
         {
@@ -529,6 +538,54 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         }
 
         return packageId;
+    }
+
+    // Dataverse rejects a package upload that removes a plugin type with registered steps, so declared steps and
+    // API links of removed types are cleared before the upload. Validation of anything else is left to Dataverse.
+    private async Task<ReleasedTypeDependencies> ReleaseRemovedTypesAsync(PackageDeploymentChanges changes,
+        Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
+    {
+        var removedTypeIds = changes.Assemblies.SelectMany(assembly => assembly.Registrations.TypesToDelete).Select(type => type.Id).ToHashSet();
+        if (removedTypeIds.Count == 0)
+        {
+            return ReleasedTypeDependencies.None;
+        }
+
+        var unlinkedApiIds = new HashSet<Guid>();
+        foreach (var api in changes.CustomApis.Where(api => api.PreviousHandlerId is { } previous && removedTypeIds.Contains(previous)))
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await _apis.UnlinkPluginTypeAsync(api.Id, cancellationToken);
+            if (api.Handler is null)
+            {
+                unlinkedApiIds.Add(api.Id);
+                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Updated, "Custom API", api.Name));
+            }
+        }
+
+        var stepIds = new HashSet<Guid>();
+        foreach (var assembly in changes.Assemblies)
+        {
+            var planned = assembly.Registrations.StepsToDelete.ToDictionary(step => step.Id);
+            foreach (var type in assembly.Registrations.TypesToDelete)
+            {
+                foreach (var step in await _steps.ListByPluginTypeAsync(type.Id, cancellationToken))
+                {
+                    // Platform-managed steps (e.g. Custom API) go away with their link; anything else is left to Dataverse to reject.
+                    if (!planned.TryGetValue(step.Id, out var plannedStep))
+                    {
+                        continue;
+                    }
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await _steps.DeleteAsync(step.Id, cancellationToken);
+                    stepIds.Add(step.Id);
+                    progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Deleted, "step", plannedStep.Name));
+                }
+            }
+        }
+
+        return new ReleasedTypeDependencies(stepIds, unlinkedApiIds);
     }
 
     private async Task<PackageSolutionChanges?> PreparePackageSolutionAsync(Guid? packageId,

@@ -731,6 +731,44 @@ public class PackageDeploymentTests
     }
 
     [Test]
+    public async Task Prepare_PackageTypeRemoval_PlansTypeDeletionAsDestructive()
+    {
+        var desired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin"), CreateLocalType("First.Removed")));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, desired);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
+        var removal = desired with { Assemblies = [Assembly("First", CreateLocalType("First.Plugin"))] };
+
+        var changes = await deployment.PreparePackageAsync(removal, "new");
+
+        await Assert.That(changes.HasChanges).IsTrue();
+        await Assert.That(changes.DestructiveCount).IsEqualTo(1);
+        await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(2);
+    }
+
+    [Test]
+    public async Task Apply_PackageTypeRemoval_DeletesStepsBeforeUploadSoServerCanRemoveType()
+    {
+        var oldDesired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin"), CreateLocalType("First.Removed", Step("registered"))));
+        var removal = Package(Convert.ToBase64String("smaller-package"u8),
+            Assembly("First", CreateLocalType("First.Plugin")));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, oldDesired);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(oldDesired, "new"));
+        service.RetargetUpload(removal);
+        var changes = await deployment.PreparePackageAsync(removal, "new");
+        await Assert.That(changes.DestructiveCount).IsEqualTo(2);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(1);
+        await deployment.ApplyPackageAsync(changes);
+        await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
+    }
+
+    [Test]
     public async Task Apply_PackageStepRemoval_PreparesAndDeletesStepKeepingType()
     {
         var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin", Step("registered"))));
