@@ -60,8 +60,8 @@ public class DataProviderDeploymentTests
         new DeploymentRenderer(console).Render(changes);
 
         await Assert.That(console.Output).Contains("Data providers");
-        await Assert.That(console.Output).Contains("Provider (dgt_source) Create");
-        await Assert.That(console.Output).Contains("Retrieve Set to Plugins / Plugin");
+        await Assert.That(console.Output).Contains("Provider (dgt_source) + Create");
+        await Assert.That(console.Output).Contains("Retrieve -> Plugins / Plugin");
         await Assert.That(All(service, EntityDataProvider.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(service, PluginType.EntityLogicalName)).IsEmpty();
     }

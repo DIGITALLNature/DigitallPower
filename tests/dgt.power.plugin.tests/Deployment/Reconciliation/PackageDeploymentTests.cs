@@ -83,8 +83,8 @@ public class PackageDeploymentTests
         using var console = new TestConsole();
         new DeploymentRenderer(console).RenderPackage(changes);
 
-        await Assert.That(console.Output).Contains("Retrieve Set to First / Shared.Plugin");
-        await Assert.That(console.Output).Contains("RetrieveMultiple Set to Second / Shared.Plugin");
+        await Assert.That(console.Output).Contains("Retrieve -> First / Shared.Plugin");
+        await Assert.That(console.Output).Contains("RetrieveMultiple -> Second / Shared.Plugin");
         await Assert.That(service.UploadCount).IsEqualTo(0);
         await deployment.ApplyPackageAsync(changes);
 
@@ -172,9 +172,8 @@ public class PackageDeploymentTests
         new DeploymentRenderer(console).RenderPackage(changes);
 
         await Assert.That(console.Output).Contains("Solution membership: target");
-        await Assert.That(console.Output).Contains("Package new_Contoso.Plugins Add");
-        await Assert.That(console.Output).Contains("Step First / Shared.Plugin / same Add");
-        await Assert.That(console.Output).Contains("Step Second / Shared.Plugin / same Add");
+        await Assert.That(console.Output).Contains("Package new_Contoso.Plugins + Add");
+        await Assert.That(console.Output).Contains("Step same + Add");
         await Assert.That(membership.Requests).IsEmpty();
         await Assert.That(service.UploadCount).IsEqualTo(0);
     }
@@ -201,7 +200,7 @@ public class PackageDeploymentTests
         await Assert.That(repeated.HasChanges).IsFalse();
         using var console = new TestConsole();
         new DeploymentRenderer(console).RenderPackage(repeated);
-        await Assert.That(console.Output).Contains("No membership additions needed.");
+        await Assert.That(console.Output).Contains("All components are already in the solution");
         await deployment.ApplyPackageAsync(repeated);
         await Assert.That(membership.Requests).Count().IsEqualTo(3);
         await Assert.That(service.UploadCount).IsEqualTo(1);
@@ -328,7 +327,7 @@ public class PackageDeploymentTests
         {
             await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", "target"), progress =>
             {
-                if (progress.Resource != "solution membership")
+                if (progress.Operation != PluginDeploymentOperation.AddedToSolution)
                 {
                     return;
                 }
@@ -553,13 +552,13 @@ public class PackageDeploymentTests
 
         new DeploymentRenderer(console).RenderPackage(changes);
 
-        await Assert.That(console.Output).Contains("new_Contoso.Plugins Create");
-        await Assert.That(console.Output).Contains("First v1.0.0.0 Create via package upload");
-        await Assert.That(console.Output).Contains("Second v1.0.0.0 Create via package upload");
-        await Assert.That(console.Output).Contains("Shared.Plugin Create via package upload");
-        await Assert.That(console.Output).Contains("first[step] Create");
-        await Assert.That(console.Output).Contains("Pre[Image] Create");
-        await Assert.That(console.Output).Contains("IDs are validated before registration writes");
+        await Assert.That(console.Output).Contains("new_Contoso.Plugins + Create");
+        await Assert.That(console.Output).Contains("First v1.0.0.0");
+        await Assert.That(console.Output).Contains("Second v1.0.0.0");
+        await Assert.That(console.Output).Contains("Shared.Plugin");
+        await Assert.That(console.Output).DoesNotContain("package upload");
+        await Assert.That(console.Output).Contains("first[step] + Create");
+        await Assert.That(console.Output).Contains("Pre[Image] + Create");
         await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(0);
         await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(0);
         await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(0);
@@ -588,8 +587,8 @@ public class PackageDeploymentTests
         await Assert.That(progress).Count().IsEqualTo(0);
         await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
-        await Assert.That(console.Output).Contains("new_Contoso.Plugins Unchanged");
-        await Assert.That(console.Output).Contains("First v1.0.0.0 Unchanged");
+        await Assert.That(console.Output).Contains("new_Contoso.Plugins = Unchanged");
+        await Assert.That(console.Output).Contains("First v1.0.0.0");
         await Assert.That(console.Output).DoesNotContain("package upload");
     }
 
@@ -658,11 +657,12 @@ public class PackageDeploymentTests
         using var console = new TestConsole();
         console.Profile.Width = 160;
         new DeploymentRenderer(console).RenderPackage(preparedUpdate);
-        await Assert.That(console.Output).Contains("new_Contoso.Plugins Update");
-        await Assert.That(console.Output).Contains("First v1.0.0.0 Managed by package upload");
-        await Assert.That(console.Output).Contains("First.Plugin Unchanged");
-        await Assert.That(console.Output).Contains("new name Update");
-        await Assert.That(console.Output).Contains("PreImage Update");
+        await Assert.That(console.Output).Contains("new_Contoso.Plugins ~ Update");
+        await Assert.That(console.Output).Contains("First v1.0.0.0");
+        await Assert.That(console.Output).DoesNotContain("package upload");
+        await Assert.That(console.Output).Contains("First.Plugin");
+        await Assert.That(console.Output).Contains("new name ~ Update");
+        await Assert.That(console.Output).Contains("PreImage ~ Update");
         await deployment.ApplyPackageAsync(preparedUpdate);
 
         var stepAfterUpdate = All(store, SdkMessageProcessingStep.EntityLogicalName).Single();

@@ -63,8 +63,8 @@ public class StandalonePluginDeploymentTests
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(0);
         await Assert.That(All(service, "plugintype")).Count().IsEqualTo(0);
         await Assert.That(All(service, "sdkmessageprocessingstep")).Count().IsEqualTo(0);
-        await Assert.That(console.Output).Contains("Plugins v1.0.0.0 Create");
-        await Assert.That(console.Output).Contains("PreImage Create");
+        await Assert.That(console.Output).Contains("Plugins v1.0.0.0 + Create");
+        await Assert.That(console.Output).Contains("PreImage + Create");
     }
 
     [Test]

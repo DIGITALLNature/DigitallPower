@@ -71,6 +71,7 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
         var prepared = await PrepareAsync(target, options, cancellationToken);
         if (!prepared.HasChanges)
         {
+            console.MarkupLine(DeploymentRenderer.UpToDate($"{Markup.Escape(target.DisplayName)} is up to date"));
             return new TargetResult(target.FilePath, TargetOutcome.Unchanged);
         }
 
@@ -84,26 +85,37 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
             return new TargetResult(target.FilePath, TargetOutcome.Declined);
         }
 
-        await prepared.Apply(ReportProgress, cancellationToken);
+        // Progress lines are written through the same console and scroll above the spinner.
+        await console.Status().StartAsync($"Applying changes to {Markup.Escape(target.DisplayName)}",
+            async _ => await prepared.Apply(ReportProgress, cancellationToken));
+        console.MarkupLine(DeploymentRenderer.UpToDate($"{Markup.Escape(target.DisplayName)} deployed"));
         return new TargetResult(target.FilePath, TargetOutcome.Applied);
     }
 
     private async Task<PreparedTarget> PrepareAsync(LocalDeploymentTarget target, BatchOptions options, CancellationToken cancellationToken)
     {
+        var status = $"Processing {Markup.Escape(target.DisplayName)}";
         if (target.Package is { } package)
         {
-            var changes = await deployment.PreparePackageAsync(package, options.PublisherPrefix!, options.Solution, cancellationToken);
+            var changes = await console.Status().StartAsync(status,
+                _ => deployment.PreparePackageAsync(package, options.PublisherPrefix!, options.Solution, cancellationToken));
             _renderer.RenderPackage(changes);
             return new PreparedTarget(changes.HasChanges, (progress, token) => deployment.ApplyPackageAsync(changes, progress, token));
         }
 
-        var standalone = await deployment.PrepareAsync(target.Assembly!, options.Solution, cancellationToken);
+        var standalone = await console.Status().StartAsync(status,
+            _ => deployment.PrepareAsync(target.Assembly!, options.Solution, cancellationToken));
         _renderer.Render(standalone);
         return new PreparedTarget(standalone.HasChanges, (progress, token) => deployment.ApplyAsync(standalone, progress, token));
     }
 
-    private void ReportProgress(PluginDeploymentProgress progress) =>
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {progress.Resource} {progress.Name}");
+    private void ReportProgress(PluginDeploymentProgress progress)
+    {
+        var text = progress.Operation == PluginDeploymentOperation.AddedToSolution
+            ? $"Added {progress.Resource} {progress.Name} to solution"
+            : $"{progress.Operation} {progress.Resource} {progress.Name}";
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[green]{Emoji.Known.CheckMark}[/] {text}");
+    }
 
     private void RenderSummary(List<TargetResult> results)
     {

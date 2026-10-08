@@ -89,7 +89,7 @@ public class CustomApiDeploymentTests
         await Assert.That(repeated.HasChanges).IsFalse();
         using var repeatedConsole = new TestConsole();
         new DeploymentRenderer(repeatedConsole).Render(repeated);
-        await Assert.That(repeatedConsole.Output).Contains("new_Api Unchanged");
+        await Assert.That(repeatedConsole.Output).Contains("new_Api").And.Contains("= Unchanged");
     }
 
     [Test]

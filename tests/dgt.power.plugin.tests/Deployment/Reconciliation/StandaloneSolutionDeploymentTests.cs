@@ -53,8 +53,8 @@ public class StandaloneSolutionDeploymentTests
         new DeploymentRenderer(console).Render(changes);
 
         await Assert.That(console.Output).Contains("Solution membership: target");
-        await Assert.That(console.Output).Contains("Assembly Plugins v1.0.0.0 Add");
-        await Assert.That(console.Output).Contains("Step Plugin / step Add");
+        await Assert.That(console.Output).Contains("Assembly Plugins v1.0.0.0 + Add");
+        await Assert.That(console.Output).Contains("Step step + Add");
         await Assert.That(membership.Requests).IsEmpty();
         await Assert.That(All(service, PluginAssembly.EntityLogicalName)).IsEmpty();
     }
@@ -86,7 +86,7 @@ public class StandaloneSolutionDeploymentTests
         await Assert.That(repeated.HasChanges).IsFalse();
         using var console = new TestConsole();
         new DeploymentRenderer(console).Render(repeated);
-        await Assert.That(console.Output).Contains("No membership additions needed.");
+        await Assert.That(console.Output).Contains("All components are already in the solution");
         await deployment.ApplyAsync(repeated);
         await Assert.That(membership.Requests).Count().IsEqualTo(2);
     }
@@ -188,7 +188,7 @@ public class StandaloneSolutionDeploymentTests
 
         await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(Desired(), "target"), progress =>
         {
-            if (progress.Resource == "solution membership")
+            if (progress.Operation == PluginDeploymentOperation.AddedToSolution)
             {
                 cancellation.Cancel();
             }

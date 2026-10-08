@@ -3,6 +3,7 @@
 
 using dgt.power.dataverse;
 using dgt.power.plugin.Deployment.Batch;
+using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Reconciliation;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
@@ -52,6 +53,32 @@ public class DeploymentBatchRunnerTests
         await Assert.That(first.Success && second.Success).IsTrue();
         await Assert.That(Count(store, PluginType.EntityLogicalName)).IsEqualTo(1);
     }
+
+    [Test]
+    public async Task Run_ChangedThenUnchanged_ReportsDeployedThenUpToDate()
+    {
+        var store = Store("A");
+        using var console = new TestConsole();
+        var runner = new DeploymentBatchRunner(new PluginDeployment(store), console);
+
+        await runner.RunAsync([Target("A")], Default);
+        await Assert.That(console.Output).Contains("A.dll deployed").And.DoesNotContain("up to date");
+
+        await runner.RunAsync([Target("A")], Default);
+        await Assert.That(console.Output).Contains("A.dll is up to date");
+    }
+
+    [Test]
+    [Arguments("Create", "[green]+ Create[/]")]
+    [Arguments("Add", "[green]+ Add[/]")]
+    [Arguments("Update", "[yellow]~ Update[/]")]
+    [Arguments("Set", "[yellow]~ Set[/]")]
+    [Arguments("Delete", "[red]- Delete[/]")]
+    [Arguments("Unlink", "[red]- Unlink[/]")]
+    [Arguments("Clear", "[red]- Clear[/]")]
+    [Arguments("Unchanged", "[dim]= Unchanged[/]")]
+    public async Task Tag_Action_MapsToMarkerAndColor(string action, string expected) =>
+        await Assert.That(DeploymentRenderer.Tag(action)).IsEqualTo(expected);
 
     [Test]
     public async Task Run_DryRun_PreviewsWithoutWriting()

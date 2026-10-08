@@ -69,7 +69,7 @@ public class ProviderSolutionMembershipTests
         new DeploymentRenderer(console).Render(changes);
 
         await Assert.That(console.Output.Contains("Data-source table")).IsFalse();
-        await Assert.That(console.Output).Contains("Data provider dgt_source Add");
+        await Assert.That(console.Output).Contains("Data provider dgt_source + Add");
         await Assert.That(membership.Requests).IsEmpty();
         await deployment.ApplyAsync(changes);
 
@@ -107,7 +107,7 @@ public class ProviderSolutionMembershipTests
         var progress = new List<PluginDeploymentProgress>();
         await deployment.ApplyAsync(changes, progress.Add);
 
-        await Assert.That(progress.Any(item => item.Resource == "data provider")).IsFalse();
+        await Assert.That(progress.Any(item => item.Resource == "data provider" && item.Operation != PluginDeploymentOperation.AddedToSolution)).IsFalse();
         await Assert.That(All(store, SolutionComponent.EntityLogicalName).Any(entity => entity.Id == unrelated)).IsTrue();
     }
 
@@ -120,7 +120,7 @@ public class ProviderSolutionMembershipTests
 
         await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(Desired(), "target"), progress =>
         {
-            if (progress.Resource == "data provider membership")
+            if (progress is { Operation: PluginDeploymentOperation.AddedToSolution, Resource: "data provider" })
             {
                 cancellation.Cancel();
             }
@@ -243,7 +243,7 @@ public class ProviderSolutionMembershipTests
         var changes = await deployment.PreparePackageAsync(desired, "dgt", "target");
         using var console = new TestConsole();
         new DeploymentRenderer(console).RenderPackage(changes);
-        await Assert.That(console.Output).Contains("Data provider dgt_source Add");
+        await Assert.That(console.Output).Contains("Data provider dgt_source + Add");
         membership.FailWrites = true;
 
         await Assert.That(async () => await deployment.ApplyPackageAsync(changes)).ThrowsExactly<InvalidOperationException>();
@@ -274,7 +274,7 @@ public class ProviderSolutionMembershipTests
 
         await Assert.That(async () => await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "dgt", "target"), progress =>
         {
-            if (progress.Resource == "data provider membership")
+            if (progress is { Operation: PluginDeploymentOperation.AddedToSolution, Resource: "data provider" })
             {
                 cancellation.Cancel();
             }

@@ -156,7 +156,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await _solutions.AddToSolutionAsync(IPluginAssemblyRepository.ComponentType, assemblyId, solution.UniqueName, cancellationToken);
-                Report(PluginDeploymentOperation.Added, "solution membership", changes.Desired.Identity);
+                Report(PluginDeploymentOperation.AddedToSolution, "assembly", changes.Desired.Identity);
             }
 
             foreach (var step in solution.Steps)
@@ -164,7 +164,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
                 cancellationToken.ThrowIfCancellationRequested();
                 await _solutions.AddToSolutionAsync(ISdkMessageProcessingStepRepository.ComponentType,
                     resolved.StepIds[new PluginStepReference(step.TypeName, step.Step)], solution.UniqueName, cancellationToken);
-                Report(PluginDeploymentOperation.Added, "solution membership", step.Step.Name);
+                Report(PluginDeploymentOperation.AddedToSolution, "step", step.Step.Name);
             }
         }
         await CleanupRegistrationsAsync(changes.Registrations, progress, cancellationToken);
@@ -517,7 +517,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 await _solutions.AddToSolutionAsync(solution.PackageComponentType, packageId, solution.UniqueName, cancellationToken);
-                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Added, "solution membership", changes.DataverseName));
+                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.AddedToSolution, "package", changes.DataverseName));
             }
 
             foreach (var step in solution.Steps)
@@ -525,7 +525,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
                 cancellationToken.ThrowIfCancellationRequested();
                 await _solutions.AddToSolutionAsync(ISdkMessageProcessingStepRepository.ComponentType,
                     stepIds[new PackagePluginStepReference(step.Handler, step.Step)], solution.UniqueName, cancellationToken);
-                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Added, "solution membership", step.Step.Name));
+                progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.AddedToSolution, "step", step.Step.Name));
             }
         }
         foreach (var assembly in resolved)
@@ -696,7 +696,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             cancellationToken.ThrowIfCancellationRequested();
             var id = addition.ExistingProviderId ?? providerIds[addition.DataSourceLogicalName];
             await _solutions.AddToSolutionAsync(changes.ComponentType, id, solutionName, cancellationToken);
-            progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.Added, "data provider membership", addition.DataSourceLogicalName));
+            progress?.Invoke(new PluginDeploymentProgress(PluginDeploymentOperation.AddedToSolution, "data provider", addition.DataSourceLogicalName));
         }
     }
 

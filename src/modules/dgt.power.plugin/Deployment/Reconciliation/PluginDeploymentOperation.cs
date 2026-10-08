@@ -8,7 +8,7 @@ public enum PluginDeploymentOperation
     Created,
     Updated,
     Deleted,
-    Added,
+    AddedToSolution,
     Linked,
     Unlinked,
     Migrated
