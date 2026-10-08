@@ -305,9 +305,13 @@ competing deployments; failed batches cannot produce success-shaped results.
 
 ### P7 implementation notes (unwired until P8)
 
-- `<Target>` is a file, a directory (top-level only) or a glob pattern resolved with
-  `Microsoft.Extensions.FileSystemGlobbing` (`DeploymentTargetResolver`). A glob matching nothing
-  is an error; an empty directory remains a warning. Globs select parallel build outputs such as
+- `<Target>` is a file, a directory (top-level only) or a glob pattern. `ArtifactPathResolver`
+  (using `Microsoft.Extensions.FileSystemGlobbing`) owns what counts as an artifact (`.dll`,
+  `.nupkg`) and applies it uniformly to every pattern kind. Its contract is "at least one artifact
+  or `ArtifactPathException`": an unsupported file, a missing path and a directory or glob without
+  artifacts all throw with a specific message, and `PluginPushCommand` reports it and fails the
+  run. Whether the artifacts contain plugins is the reader's concern, and the command decides
+  what an empty plugin set means. Globs select parallel build outputs such as
   `artifacts/**/bin/Release/*.nupkg`.
 - `DeploymentTargetReader` reads every artifact before any Dataverse access and classifies each
   as plugin, not-a-plugin or failure. `PluginAssemblyPrefilter` first checks the PE metadata
@@ -316,7 +320,14 @@ competing deployments; failed batches cannot produce success-shaped results.
   Assemblies that pass are fully reflected: no `IPlugin` types means skipped, while invalid
   registrations, corrupt packages and unloadable assemblies reject the batch. A too-broad glob
   that pulls in SDK-referencing helper libraries with unresolvable dependencies is the user's
-  to narrow. Whether an empty result fails by default is still open (see P8).
+  to narrow.
+- Empty-result policy (owned by `PluginPushCommand`, which resolves, reads and validates before
+  invoking the runner): a path/glob selecting no artifacts, unreadable artifacts and matched files
+  without any plugin always fail; there is deliberately no opt-out flag. A broad glob that finds
+  no plugins is a pipeline misconfiguration to narrow, and an opt-out can be added later without
+  breaking anyone, while loosening or tightening a shipped default cannot. `--allow-empty` was
+  considered and dropped for lack of a convincing use case. `TargetReadResult.Skipped`
+  is kept for a future global `--verbose` (see `todo.md`).
 - `BatchPreflight` rejects the whole batch when two targets declare the same assembly name,
   package name, data provider or Custom API (case-insensitive). No heuristics: a package and its
   constituent DLL conflict like any other duplicate and the user narrows the glob.

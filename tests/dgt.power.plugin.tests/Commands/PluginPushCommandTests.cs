@@ -2,21 +2,50 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Commands;
-using dgt.power.plugin.Exceptions;
+using dgt.power.tests;
 
 namespace dgt.power.plugin.tests.Commands;
 
-public class PluginPushCommandTests
+public sealed class PluginPushCommandTests : CommandTestsBase<PluginPushCommand, PluginPushSettings>
 {
-    [Test]
-    public async Task ShouldContinueAfterTargetFailure_ExpectedValidationFailure_ReturnsTrue()
+    private readonly string _root = Directory.CreateTempSubdirectory("dgtp-push-").FullName;
+
+    public override void Dispose()
     {
-        await Assert.That(PluginPushCommand.ShouldContinueAfterTargetFailure(new MissingCustomApiException("new_MissingApi"))).IsTrue();
+        Directory.Delete(_root, recursive: true);
+        base.Dispose();
+    }
+
+    private bool Run(string target) => GetContext().Execute(new PluginPushSettings { Target = target });
+
+    [Test]
+    public async Task Execute_GlobMatchingNothing_Fails()
+    {
+        await Assert.That(Run(Path.Combine(_root, "**", "*.nupkg"))).IsFalse();
     }
 
     [Test]
-    public async Task ShouldContinueAfterTargetFailure_Cancellation_ReturnsFalse()
+    public async Task Execute_MissingPath_Fails()
     {
-        await Assert.That(PluginPushCommand.ShouldContinueAfterTargetFailure(new OperationCanceledException())).IsFalse();
+        await Assert.That(Run(Path.Combine(_root, "missing.dll"))).IsFalse();
+    }
+
+    [Test]
+    public async Task Execute_FilesWithoutPlugins_FailsWithCount()
+    {
+        File.WriteAllBytes(Path.Combine(_root, "native.dll"), "MZ not managed"u8.ToArray());
+        File.Copy(typeof(object).Assembly.Location, Path.Combine(_root, "runtime.dll"));
+
+        await Assert.That(Run(_root)).IsFalse();
+        await Assert.That(TestConsole.Output).Contains("2 file(s) matched").And.Contains("Narrow the target");
+    }
+
+    [Test]
+    public async Task Execute_UnreadablePackage_FailsBeforeAnyWrite()
+    {
+        File.WriteAllBytes(Path.Combine(_root, "broken.nupkg"), "not a zip"u8.ToArray());
+
+        await Assert.That(Run(_root)).IsFalse();
+        await Assert.That(TestConsole.Output).Contains("Nothing was deployed");
     }
 }

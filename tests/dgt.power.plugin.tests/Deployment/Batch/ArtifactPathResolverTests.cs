@@ -5,7 +5,7 @@ using dgt.power.plugin.Deployment.Batch;
 
 namespace dgt.power.plugin.tests.Deployment.Batch;
 
-public sealed class DeploymentTargetResolverTests : IDisposable
+public sealed class ArtifactPathResolverTests : IDisposable
 {
     private readonly string _root = Directory.CreateTempSubdirectory("dgtp-resolver-").FullName;
 
@@ -24,7 +24,7 @@ public sealed class DeploymentTargetResolverTests : IDisposable
     {
         var file = Touch("a.dll");
 
-        await Assert.That(DeploymentTargetResolver.Resolve(file)).IsEquivalentTo([file]);
+        await Assert.That(ArtifactPathResolver.Resolve(file)).IsEquivalentTo([file]);
     }
 
     [Test]
@@ -32,13 +32,13 @@ public sealed class DeploymentTargetResolverTests : IDisposable
     {
         var file = Touch("a.txt");
 
-        await Assert.That(() => DeploymentTargetResolver.Resolve(file)).Throws<DeploymentTargetException>();
+        await Assert.That(() => ArtifactPathResolver.Resolve(file)).Throws<ArtifactPathException>();
     }
 
     [Test]
     public async Task Resolve_MissingPath_Throws()
     {
-        await Assert.That(() => DeploymentTargetResolver.Resolve(Path.Combine(_root, "missing"))).Throws<DeploymentTargetException>();
+        await Assert.That(() => ArtifactPathResolver.Resolve(Path.Combine(_root, "missing"))).Throws<ArtifactPathException>();
     }
 
     [Test]
@@ -49,7 +49,7 @@ public sealed class DeploymentTargetResolverTests : IDisposable
         Touch("c.pdb");
         Touch(Path.Combine("sub", "nested.dll"));
 
-        var resolved = DeploymentTargetResolver.Resolve(_root);
+        var resolved = ArtifactPathResolver.Resolve(_root);
 
         await Assert.That(resolved).IsEquivalentTo([a, b]);
         await Assert.That(resolved[0]).IsEqualTo(a);
@@ -63,7 +63,7 @@ public sealed class DeploymentTargetResolverTests : IDisposable
         Touch(Path.Combine("artifacts", "two", "bin", "Debug", "two.nupkg"));
         Touch(Path.Combine("artifacts", "two", "bin", "Release", "two.dll"));
 
-        var resolved = DeploymentTargetResolver.Resolve(Path.Combine(_root, "artifacts", "**", "bin", "Release", "*.nupkg"));
+        var resolved = ArtifactPathResolver.Resolve(Path.Combine(_root, "artifacts", "**", "bin", "Release", "*.nupkg"));
 
         await Assert.That(resolved).IsEquivalentTo([one, two]);
     }
@@ -73,7 +73,7 @@ public sealed class DeploymentTargetResolverTests : IDisposable
     {
         var file = Touch(Path.Combine("x", "plugin.dll"));
 
-        var resolved = DeploymentTargetResolver.Resolve(_root.Replace('\\', '/') + "/*/plugin.dll");
+        var resolved = ArtifactPathResolver.Resolve(_root.Replace('\\', '/') + "/*/plugin.dll");
 
         await Assert.That(resolved).IsEquivalentTo([file]);
     }
@@ -83,12 +83,20 @@ public sealed class DeploymentTargetResolverTests : IDisposable
     {
         Touch("a.dll");
 
-        await Assert.That(() => DeploymentTargetResolver.Resolve(Path.Combine(_root, "**", "*.nupkg"))).Throws<DeploymentTargetException>();
+        await Assert.That(() => ArtifactPathResolver.Resolve(Path.Combine(_root, "**", "*.nupkg"))).Throws<ArtifactPathException>();
     }
 
     [Test]
     public async Task Resolve_GlobWithMissingRoot_Throws()
     {
-        await Assert.That(() => DeploymentTargetResolver.Resolve(Path.Combine(_root, "nope", "*.dll"))).Throws<DeploymentTargetException>();
+        await Assert.That(() => ArtifactPathResolver.Resolve(Path.Combine(_root, "nope", "*.dll"))).Throws<ArtifactPathException>();
+    }
+
+    [Test]
+    public async Task Resolve_DirectoryWithoutArtifacts_Throws()
+    {
+        Touch("notes.txt");
+
+        await Assert.That(() => ArtifactPathResolver.Resolve(_root)).Throws<ArtifactPathException>();
     }
 }

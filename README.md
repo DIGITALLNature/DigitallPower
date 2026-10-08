@@ -777,9 +777,16 @@ Commands for deploying Dataverse plugin assemblies and packages.
 
 #### `push` — Deploy plugin assemblies/packages
 
-Registers a single plugin assembly (`.dll`), a plugin package (`.nupkg`), or every `.dll`/`.nupkg`
-found directly in a directory (mixed content in one directory is supported; each file is processed
-independently).
+Registers a single plugin assembly (`.dll`), a plugin package (`.nupkg`), every `.dll`/`.nupkg`
+found directly in a directory, or every file matched by a glob pattern (for example
+`bin/release/**/*.nupkg`, quote it to prevent shell expansion). DLLs without plugins, such as
+dependencies, are ignored. Targets are processed one after another; a failing target does not stop
+the others but fails the command.
+
+The whole batch is validated before anything is written: unreadable artifacts, a missing
+`--publisher-prefix` for packages, and two targets declaring the same assembly, package, data
+provider or Custom API reject the batch. Narrow the target to resolve a conflict. A path or glob
+that matches no files, or matched files that contain no plugins, fails the command.
 
 ##### Usage
 
@@ -787,6 +794,7 @@ independently).
 dgtp plugin push ./bin/Release/MyPlugin.dll --solution mysolution
 dgtp plugin push ./bin/Release/MyPlugin.1.0.0.nupkg --publisher-prefix contoso --solution mysolution
 dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
+dgtp plugin push "./src/**/bin/Release/*.nupkg" --publisher-prefix contoso
 ```
 
 ##### Options

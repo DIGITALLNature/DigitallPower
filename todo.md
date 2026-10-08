@@ -79,3 +79,14 @@ state change silently covers only the first page.
 
 Adopt the reusable paging helper from the plugin push rewrite once it is merged, and add a test with
 more than one page of results.
+
+---
+
+## Global `--verbose` flag
+
+Add a global `--verbose` option (shared settings base, tracer behavior and every module) for
+optional diagnostic detail. First intended consumer: `plugin push`, which already tracks
+assemblies skipped by the batch reader (`TargetReadResult.Skipped`) and could list them, plus the
+reason, when verbose output is requested. Default output stays quiet.
+
+Deliberately out of scope for the plugin rewrite: it changes shared settings and every module.

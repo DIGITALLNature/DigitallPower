@@ -7,40 +7,39 @@ using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 namespace dgt.power.plugin.Deployment.Batch;
 
 /// <summary>
-/// Resolves the push target argument (file, directory or glob pattern) to a sorted, distinct list of
-/// full artifact paths. Directories are scanned top-level only; use a glob pattern to select deeper paths.
+/// Resolves a path pattern (file, directory or glob) to the sorted, distinct full paths of the plugin
+/// artifacts (.dll, .nupkg) it selects. Directories are scanned top-level only; use a glob pattern to
+/// select deeper paths. Every kind of pattern is filtered the same way, and the result is never empty:
+/// a pattern that selects no artifact throws <see cref="ArtifactPathException"/>.
 /// </summary>
-internal static class DeploymentTargetResolver
+internal static class ArtifactPathResolver
 {
     private static readonly char[] GlobCharacters = ['*', '?', '[', '{'];
 
-    internal static IReadOnlyList<string> Resolve(string target)
+    internal static IReadOnlyList<string> Resolve(string pattern)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(target);
-        if (File.Exists(target))
+        ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
+        if (File.Exists(pattern))
         {
-            if (!IsArtifact(target))
-            {
-                throw new DeploymentTargetException($"Unsupported file '{target}' - expected a .dll or .nupkg file");
-            }
-
-            return [Path.GetFullPath(target)];
+            return IsArtifact(pattern)
+                ? [Path.GetFullPath(pattern)]
+                : throw new ArtifactPathException($"Unsupported file '{pattern}' - expected a .dll or .nupkg file");
         }
 
-        if (Directory.Exists(target))
+        if (Directory.Exists(pattern))
         {
-            return Normalize(Directory.EnumerateFiles(target, "*", SearchOption.TopDirectoryOnly).Where(IsArtifact));
+            return RequireArtifacts(Directory.EnumerateFiles(pattern, "*", SearchOption.TopDirectoryOnly).Where(IsArtifact), pattern);
         }
 
-        if (target.IndexOfAny(GlobCharacters) < 0)
+        if (pattern.IndexOfAny(GlobCharacters) < 0)
         {
-            throw new DeploymentTargetException($"Path '{target}' not found");
+            throw new ArtifactPathException($"Path '{pattern}' not found");
         }
 
-        var split = SplitPattern(target);
+        var split = SplitPattern(pattern);
         if (!Directory.Exists(split.Root))
         {
-            throw new DeploymentTargetException($"Directory '{split.Root}' of pattern '{target}' not found");
+            throw new ArtifactPathException($"Directory '{split.Root}' of pattern '{pattern}' not found");
         }
 
         var matcher = new Matcher(StringComparison.OrdinalIgnoreCase);
@@ -48,13 +47,13 @@ internal static class DeploymentTargetResolver
         var matches = matcher.Execute(new DirectoryInfoWrapper(new DirectoryInfo(split.Root))).Files
             .Select(file => Path.GetFullPath(Path.Combine(split.Root, file.Path)))
             .Where(IsArtifact);
-        var resolved = Normalize(matches);
-        if (resolved.Count == 0)
-        {
-            throw new DeploymentTargetException($"Pattern '{target}' matched no .dll or .nupkg files");
-        }
+        return RequireArtifacts(matches, pattern);
+    }
 
-        return resolved;
+    private static IReadOnlyList<string> RequireArtifacts(IEnumerable<string> paths, string pattern)
+    {
+        var artifacts = Normalize(paths);
+        return artifacts.Count > 0 ? artifacts : throw new ArtifactPathException($"'{pattern}' contains or matches no .dll or .nupkg files");
     }
 
     // The root is the longest leading directory without wildcards; the remainder is matched relative to it.

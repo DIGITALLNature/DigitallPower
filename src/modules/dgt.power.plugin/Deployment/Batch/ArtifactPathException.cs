@@ -7,19 +7,19 @@ namespace dgt.power.plugin.Deployment.Batch;
 
 /// <summary>Thrown when a push target argument cannot be resolved to local artifacts.</summary>
 [Serializable]
-public sealed class DeploymentTargetException : AbstractPowerException
+public sealed class ArtifactPathException : AbstractPowerException
 {
-    public DeploymentTargetException(string message)
+    public ArtifactPathException(string message)
         : base(message)
     {
     }
 
-    public DeploymentTargetException()
+    public ArtifactPathException()
         : this(string.Empty)
     {
     }
 
-    public DeploymentTargetException(string message, Exception innerException)
+    public ArtifactPathException(string message, Exception innerException)
         : base(message, innerException)
     {
     }
