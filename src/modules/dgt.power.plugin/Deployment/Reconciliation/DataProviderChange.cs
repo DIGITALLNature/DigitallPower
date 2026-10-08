@@ -11,4 +11,6 @@ internal sealed record DataProviderChange(
     IReadOnlyDictionary<DataProviderOperation, PluginTypeReference?> Handlers)
 {
     internal string Name => Desired?.ProviderName ?? Existing!.Name;
+
+    internal int DestructiveCount => Handlers.Keys.Count(operation => Existing?.Handlers.ContainsKey(operation) == true);
 }

@@ -303,6 +303,25 @@ Earlier slices must keep previews accurate, but need not finalize their layout.
 Gate: directory containing a package and its constituent DLL cannot accidentally perform
 competing deployments; failed batches cannot produce success-shaped results.
 
+### P7 implementation notes (unwired until P8)
+
+- `<Target>` is a file, a directory (top-level only) or a glob pattern resolved with
+  `Microsoft.Extensions.FileSystemGlobbing` (`DeploymentTargetResolver`). A glob matching nothing
+  is an error; an empty directory remains a warning. Globs select parallel build outputs such as
+  `artifacts/**/bin/Release/*.nupkg`.
+- `DeploymentTargetReader` reads every artifact before any Dataverse access. Any unreadable
+  artifact rejects the batch (it could hide a conflict); assemblies without plugin types are
+  skipped. Directories containing arbitrary DLLs should be narrowed with a glob.
+- `BatchPreflight` rejects the whole batch when two targets declare the same assembly name,
+  package name, data provider or Custom API (case-insensitive). No heuristics: a package and its
+  constituent DLL conflict like any other duplicate and the user narrows the glob.
+- `DeploymentBatchRunner` orders targets by path, prepares each target only after the previous
+  one applied, and reports Applied/Unchanged/Declined/DryRun/Failed. A failing target does not stop
+  independent targets but makes the batch unsuccessful; cancellation stops the batch, prints the
+  summary and propagates `OperationCanceledException`.
+- Precedence: dry-run never writes; prompts only with `--confirm` and neither `--non-interactive`
+  nor a CI agent; destructive counts are always rendered (`DestructiveCount` on the change records).
+
 ## P8: Cutover and remove superseded implementation
 
 Wire `CommandTree`/commands to the replacement use case once all selected capabilities work.

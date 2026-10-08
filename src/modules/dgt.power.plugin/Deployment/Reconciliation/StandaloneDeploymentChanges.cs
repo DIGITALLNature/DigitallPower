@@ -20,6 +20,9 @@ internal sealed record StandaloneDeploymentChanges(
     StandaloneSolutionChanges? Solution,
     IReadOnlyList<DataProviderChange> Providers)
 {
+    internal int DestructiveCount => Registrations.DestructiveCount + CustomApis.Count(api => api.PreviousHandlerId is not null) +
+        Providers.Sum(provider => provider.DestructiveCount) + (AssemblyToDelete is null ? 0 : 1);
+
     internal bool HasChanges
     {
         get

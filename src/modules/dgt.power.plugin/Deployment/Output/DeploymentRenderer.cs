@@ -41,16 +41,10 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
                 console.MarkupLine($"Step {Markup.Escape(step.TypeName)} / {Markup.Escape(step.Step.Name)} [bold]Add[/]");
             }
         }
-        var deletionCount = registrations.ImagesToDelete.Count + registrations.StepsToDelete.Count + registrations.TypesToDelete.Count +
-            changes.CustomApis.Count(api => api.PreviousHandlerId is not null) + ProviderDestructiveCount(changes.Providers);
         RenderProviders([changes.Desired], changes.Providers);
-        if (changes.AssemblyToDelete is not null)
+        if (changes.DestructiveCount > 0)
         {
-            deletionCount++;
-        }
-        if (deletionCount > 0)
-        {
-            console.MarkupLine($"[bold red]Destructive operations: {deletionCount}[/]");
+            console.MarkupLine($"[bold red]Destructive operations: {changes.DestructiveCount}[/]");
         }
     }
 
@@ -91,7 +85,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
             }
         }
         RenderProviders(changes.Desired.Assemblies, changes.Providers);
-        var destructiveCount = changes.CustomApis.Count(api => api.PreviousHandlerId is not null) + ProviderDestructiveCount(changes.Providers);
+        var destructiveCount = changes.DestructiveCount;
         if (destructiveCount > 0)
         {
             console.MarkupLine($"[bold red]Destructive operations: {destructiveCount}[/]");
@@ -113,9 +107,6 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
             console.MarkupLine($"Data provider {Markup.Escape(addition.DataSourceLogicalName)} [bold]Add[/]");
         }
     }
-
-    private static int ProviderDestructiveCount(IReadOnlyList<DataProviderChange> changes) =>
-        changes.Sum(change => change.Handlers.Keys.Count(operation => change.Existing?.Handlers.ContainsKey(operation) == true));
 
     private void RenderProviders(IReadOnlyList<LocalAssembly> desired, IReadOnlyList<DataProviderChange> changes)
     {

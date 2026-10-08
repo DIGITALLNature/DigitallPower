@@ -663,6 +663,7 @@
       "dgt.power.plugin": {
         "type": "Project",
         "dependencies": {
+          "Microsoft.Extensions.FileSystemGlobbing": "[10.0.12, )",
           "NuGet.Packaging": "[7.9.0, )",
           "System.Reflection.MetadataLoadContext": "[10.0.12, )",
           "dgt.power.common": "[3.0.0-beta.7, )"

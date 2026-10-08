@@ -17,6 +17,8 @@ internal sealed record RegistrationChanges(
     IReadOnlyDictionary<string, Guid> ExistingTypeIds,
     IReadOnlyDictionary<PluginStepReference, Guid> ExistingStepIds)
 {
+    internal int DestructiveCount => ImagesToDelete.Count + StepsToDelete.Count + TypesToDelete.Count;
+
     internal bool HasChanges =>
         TypesToCreate.Count + TypesToDelete.Count + StepsToWrite.Count + StepsToDelete.Count + ImagesToWrite.Count + ImagesToDelete.Count > 0;
 }
