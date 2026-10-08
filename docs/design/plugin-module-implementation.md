@@ -112,7 +112,7 @@ The replacement entry point is `Reconciliation/PluginDeployment`; pure registrat
 decisions are held in flat `RegistrationChanges` collections and displayed by
 `Output/DeploymentRenderer`. The same lifecycle owner handles standalone and package
 deployment; package-specific behavior is limited to upload and resolution of server-owned
-assembly/type records. This core is not wired to commands until P8.
+assembly/type records. plugin push uses this core since P8.
 Cross-resource features not yet implemented are explicitly rejected instead of ignored.
 Platform-only stages remain outside declarative step cleanup and block type/assembly deletion
 until their lifecycle is verified.
@@ -303,7 +303,7 @@ Earlier slices must keep previews accurate, but need not finalize their layout.
 Gate: directory containing a package and its constituent DLL cannot accidentally perform
 competing deployments; failed batches cannot produce success-shaped results.
 
-### P7 implementation notes (unwired until P8)
+### P7 implementation notes
 
 - `<Target>` is a file, a directory (top-level only) or a glob pattern. `ArtifactPathResolver`
   (using `Microsoft.Extensions.FileSystemGlobbing`) owns what counts as an artifact (`.dll`,

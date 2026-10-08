@@ -7,7 +7,7 @@ namespace dgt.power.plugin.Repositories;
 
 /// <summary>
 /// Thin CRUD access to <c>plugintype</c> records. Contains no create/unchanged decision logic -
-/// see <see cref="dgt.power.plugin.Deployment.Planning.PluginRegistrationComparer"/> for that.
+/// see <see cref="dgt.power.plugin.Deployment.Reconciliation.PluginDeployment"/> for that.
 /// </summary>
 public interface IPluginTypeRepository
 {

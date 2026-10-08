@@ -4,9 +4,7 @@
 using System.Globalization;
 using dgt.power.common.Extensions;
 using dgt.power.plugin.Commands;
-using dgt.power.plugin.Deployment.Execution;
 using dgt.power.plugin.Deployment.Output;
-using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Reconciliation;
 using Spectre.Console;
 

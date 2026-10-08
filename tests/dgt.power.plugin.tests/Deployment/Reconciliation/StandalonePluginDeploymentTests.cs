@@ -3,10 +3,8 @@
 
 using System.Security.Cryptography;
 using dgt.power.dataverse;
-using dgt.power.plugin.Deployment.Execution;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
-using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Reconciliation;
 using dgt.power.plugin.Exceptions;
 using dgt.power.tests.FakeExecutor;
