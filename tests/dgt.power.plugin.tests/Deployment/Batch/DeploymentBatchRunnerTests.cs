@@ -81,6 +81,19 @@ public class DeploymentBatchRunnerTests
         await Assert.That(DeploymentRenderer.Tag(action)).IsEqualTo(expected);
 
     [Test]
+    [Arguments("Applied", "green")]
+    [Arguments("Unchanged", "green")]
+    [Arguments("DryRun", "yellow")]
+    [Arguments("Declined", "yellow")]
+    [Arguments("Failed", "red")]
+    public async Task OutcomeColor_Outcome_MapsToColor(string outcome, string expected) =>
+        await Assert.That(DeploymentBatchRunner.OutcomeColor(Enum.Parse<TargetOutcome>(outcome))).IsEqualTo(expected);
+
+    [Test]
+    public async Task Run_FailedAndDeclinedOutcomes_ShareCrossIcon() =>
+        await Assert.That(DeploymentBatchRunner.OutcomeIcon(TargetOutcome.Failed)).IsEqualTo(DeploymentBatchRunner.OutcomeIcon(TargetOutcome.Declined));
+
+    [Test]
     public async Task Run_DryRun_PreviewsWithoutWriting()
     {
         var store = Store("A");
@@ -90,7 +103,7 @@ public class DeploymentBatchRunnerTests
 
         await Assert.That(result.Targets.Single().Outcome).IsEqualTo(TargetOutcome.DryRun);
         await Assert.That(Count(store, PluginType.EntityLogicalName)).IsEqualTo(0);
-        await Assert.That(console.Output).Contains("A.dll");
+        await Assert.That(console.Output).Contains("A.dll").And.Contains("Dry run for A.dll: no changes were applied");
     }
 
     [Test]
@@ -99,6 +112,7 @@ public class DeploymentBatchRunnerTests
         var store = Store("A", "B");
         using var console = new TestConsole();
         console.Interactive();
+        console.Profile.Width = 160;
         console.Input.PushTextWithEnter("n");
         console.Input.PushTextWithEnter("y");
 
@@ -107,6 +121,7 @@ public class DeploymentBatchRunnerTests
         await Assert.That(result.Targets.Select(target => target.Outcome)).IsEquivalentTo([TargetOutcome.Declined, TargetOutcome.Applied]);
         await Assert.That(Count(store, PluginType.EntityLogicalName)).IsEqualTo(1);
         await Assert.That(result.Success).IsTrue();
+        await Assert.That(console.Output).Contains("Deployment of A.dll declined: no changes were applied").And.Contains("Execution:");
     }
 
     [Test]

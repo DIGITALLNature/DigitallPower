@@ -196,6 +196,10 @@ The guarded package subset does not complete P4. Keep these requirements explici
   phases; existing retry tests do not cover unimplemented phases.
 - Harden/reuse artifact reading at final integration so local errors cannot become silent
   defaults or console-only fallbacks.
+- Verify live whether Dataverse creates `plugintype` records itself when a standalone assembly
+  is uploaded. The standalone path currently creates them explicitly (as PRT does); if the
+  platform already discovers them, that creation is redundant and the standalone and package
+  paths could share more of their registration handling.
 
 ## P5: Add associations and membership
 
@@ -346,7 +350,10 @@ competing deployments; failed batches cannot produce success-shaped results.
   (`Processing <target>`) and apply (`Applying changes to <target>`); progress lines are written
   through the same console and scroll above the spinner. Membership progress uses
   `AddedToSolution` (`Added <resource> <name> to solution`). No CI-specific output switches.
-
+  Sections (plan tree, `Solution membership:`, `Execution:`, result) are separated by blank lines.
+  Every target ends with one result line led by an icon: green ✔ Applied/Unchanged, yellow ℹ dry
+  run, yellow ❌ declined, red ❌ failed. The summary table uses the same icon and colour. A target
+  without changes returns Unchanged even with `--dry-run`; DryRun means changes were held back.
 ## P8: Cutover and remove superseded implementation
 
 Wire `CommandTree`/commands to the replacement use case once all selected capabilities work.

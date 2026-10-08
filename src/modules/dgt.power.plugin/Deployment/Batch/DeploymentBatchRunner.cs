@@ -44,6 +44,11 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
         var results = new List<TargetResult>();
         foreach (var target in ordered)
         {
+            if (results.Count > 0)
+            {
+                console.WriteLine();
+            }
+
             try
             {
                 results.Add(await ProcessAsync(target, options, cancellationToken));
@@ -56,7 +61,7 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
             }
             catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
             {
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target.DisplayName}': {e.DiagnosticMessage()}[/]");
+                WriteResult(TargetOutcome.Failed, Markup.Escape($"Failed processing '{target.DisplayName}': {e.DiagnosticMessage()}"));
                 results.Add(new TargetResult(target.FilePath, TargetOutcome.Failed, e.DiagnosticMessage()));
             }
         }
@@ -71,24 +76,36 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
         var prepared = await PrepareAsync(target, options, cancellationToken);
         if (!prepared.HasChanges)
         {
-            console.MarkupLine(DeploymentRenderer.UpToDate($"{Markup.Escape(target.DisplayName)} is up to date"));
+            console.WriteLine();
+            WriteResult(TargetOutcome.Unchanged, $"{Markup.Escape(target.DisplayName)} is up to date");
             return new TargetResult(target.FilePath, TargetOutcome.Unchanged);
         }
 
         if (options.DryRun)
         {
+            console.WriteLine();
+            WriteResult(TargetOutcome.DryRun, $"Dry run for {Markup.Escape(target.DisplayName)}: no changes were applied");
             return new TargetResult(target.FilePath, TargetOutcome.DryRun);
         }
 
-        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, options.IsCiAgent) && !PluginPushConfirmation.Confirm(console, target.DisplayName))
+        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, options.IsCiAgent))
         {
-            return new TargetResult(target.FilePath, TargetOutcome.Declined);
+            console.WriteLine();
+            if (!PluginPushConfirmation.Confirm(console, target.DisplayName))
+            {
+                console.WriteLine();
+                WriteResult(TargetOutcome.Declined, $"Deployment of {Markup.Escape(target.DisplayName)} declined: no changes were applied");
+                return new TargetResult(target.FilePath, TargetOutcome.Declined);
+            }
         }
 
         // Progress lines are written through the same console and scroll above the spinner.
+        console.WriteLine();
+        console.MarkupLine("[bold]Execution:[/]");
         await console.Status().StartAsync($"Applying changes to {Markup.Escape(target.DisplayName)}",
             async _ => await prepared.Apply(ReportProgress, cancellationToken));
-        console.MarkupLine(DeploymentRenderer.UpToDate($"{Markup.Escape(target.DisplayName)} deployed"));
+        console.WriteLine();
+        WriteResult(TargetOutcome.Applied, $"{Markup.Escape(target.DisplayName)} deployed");
         return new TargetResult(target.FilePath, TargetOutcome.Applied);
     }
 
@@ -127,16 +144,29 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
         var table = new Table().AddColumn("Target").AddColumn("Result").AddColumn("Details");
         foreach (var result in results)
         {
-            var color = result.Outcome switch
-            {
-                TargetOutcome.Failed => "red",
-                TargetOutcome.Declined => "yellow",
-                TargetOutcome.Applied => "green",
-                _ => "grey"
-            };
-            table.AddRow(Markup.Escape(Path.GetFileName(result.FilePath)), $"[{color}]{result.Outcome}[/]", Markup.Escape(result.Message ?? string.Empty));
+            var color = OutcomeColor(result.Outcome);
+            table.AddRow(Markup.Escape(Path.GetFileName(result.FilePath)), $"[{color}]{OutcomeIcon(result.Outcome)} {result.Outcome}[/]", Markup.Escape(result.Message ?? string.Empty));
         }
 
+        console.WriteLine();
         console.Write(table);
     }
+
+    private void WriteResult(TargetOutcome outcome, string markupText) =>
+        console.MarkupLine($"[{OutcomeColor(outcome)}]{OutcomeIcon(outcome)}[/] {markupText}");
+
+    // Green: desired state reached; yellow: nothing applied by choice; red: error.
+    internal static string OutcomeColor(TargetOutcome outcome) => outcome switch
+    {
+        TargetOutcome.Applied or TargetOutcome.Unchanged => "green",
+        TargetOutcome.Failed => "red",
+        _ => "yellow"
+    };
+
+    internal static string OutcomeIcon(TargetOutcome outcome) => outcome switch
+    {
+        TargetOutcome.Applied or TargetOutcome.Unchanged => Emoji.Known.CheckMark,
+        TargetOutcome.DryRun => Emoji.Known.Information,
+        _ => Emoji.Known.CrossMark
+    };
 }

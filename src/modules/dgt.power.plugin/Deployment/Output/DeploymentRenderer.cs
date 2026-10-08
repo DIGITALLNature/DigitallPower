@@ -58,7 +58,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         console.Write(tree);
         if (changes.Solution is { } solution)
         {
-            console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solution.UniqueName)}[/]");
+            RenderMembershipHeading(solution.UniqueName);
             RenderProviderMembership(solution.Providers);
             if (!solution.HasChanges)
             {
@@ -76,6 +76,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         RenderProviders([changes.Desired], changes.Providers);
         if (changes.DestructiveCount > 0)
         {
+            console.WriteLine();
             console.MarkupLine($"[bold red]Destructive operations: {changes.DestructiveCount}[/]");
         }
     }
@@ -94,7 +95,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         console.Write(tree);
         if (changes.Solution is { } solution)
         {
-            console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solution.UniqueName)}[/]");
+            RenderMembershipHeading(solution.UniqueName);
             RenderProviderMembership(solution.Providers);
             if (!solution.HasChanges)
             {
@@ -113,8 +114,15 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         var destructiveCount = changes.DestructiveCount;
         if (destructiveCount > 0)
         {
+            console.WriteLine();
             console.MarkupLine($"[bold red]Destructive operations: {destructiveCount}[/]");
         }
+    }
+
+    private void RenderMembershipHeading(string solutionName)
+    {
+        console.WriteLine();
+        console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solutionName)}[/]");
     }
 
     private void RenderProviderMembership(ProviderSolutionChanges? changes)
@@ -155,6 +163,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
             AddHandlerChanges(node, change);
         }
 
+        console.WriteLine();
         console.Write(tree);
 
         static void AddHandlerChanges(IHasTreeNodes parent, DataProviderChange change)
