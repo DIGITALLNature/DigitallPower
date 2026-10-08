@@ -4,6 +4,7 @@
         "@commitlint/config-conventional": "^21.2.3",
         "@droidsolutions-oss/semantic-release-nuget": "^2.1.0",
         "@droidsolutions-oss/semantic-release-update-file": "^1.4.0",
+        "@fission-ai/openspec": "^1.14.1",
         "@semantic-release/changelog": "github:semantic-release/changelog",
         "@semantic-release/git": "github:semantic-release/git",
         "husky": "^9.1.7",
@@ -69,6 +70,7 @@
     },
     "scripts": {
         "prepare": "husky install",
+        "openspec:update": "pnpm exec openspec update && node scripts/normalize-openspec-commands.mjs",
         "test:tsl-jest": "pnpm --dir tests/dgt.power.codegeneration.tests/Fixtures/TslJest test"
     },
     "packageManager": "pnpm@11.15.1+sha512.81350b07e53c9538a02f1f2303b4290fa2d7be04e56e2a970c4cc4b417dc761de196edabd49d55c7dc9580db81007c44143e4e3d7e462b3000d23c255122d065",

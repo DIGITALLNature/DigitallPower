@@ -1,0 +1,49 @@
+name: Graphify Code-Only Smoke Check
+
+on:
+  push:
+    branches: [beta]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".graphifyignore"
+      - "graphify-version.txt"
+      - ".github/workflows/graphify-code-only.yml"
+  pull_request:
+    branches: [main, beta]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - ".graphifyignore"
+      - "graphify-version.txt"
+      - ".github/workflows/graphify-code-only.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-code-graph:
+    name: Build code-only Graphify index
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: graphify-version.txt
+
+      - name: Install pinned Graphify
+        run: uv tool install "graphifyy==$(cat graphify-version.txt)"
+
+      - name: Add uv tools to PATH
+        run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Generate code-only graph in runner temp
+        run: graphify extract . --code-only --out "$RUNNER_TEMP/digitallpower-graphify"
+
+      - name: Verify representative code path
+        run: graphify path PluginPushCommand PluginDeploymentPlanner --graph "$RUNNER_TEMP/digitallpower-graphify/graphify-out/graph.json"

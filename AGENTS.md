@@ -285,92 +285,35 @@ rtk git add . && rtk git commit -m "msg" && rtk git push
 
 ---
 
-## Knowledge Persistence (.memory/)
+## Spec-Driven Changes (OpenSpec)
 
-Agents **must** persist valuable findings, decisions, and context in the `.memory/` directory so that knowledge survives across sessions and is available to other agents and developers.
+OpenSpec is the source of truth for current, user-relevant capability requirements and significant change proposals. The repository-local CLI is installed with pnpm; always run it as `pnpm exec openspec ...`, never assume a global installation.
 
-> ⚠️ **This is not optional.** Skipping `.memory/` updates is a failure to complete the task.
-> Future agents and developers depend on this knowledge. Treat it with the same discipline as code.
+### When a proposal is required
 
-### Core Principle: Timeless, Not Transient
+Create and review an OpenSpec change for:
 
-**`.memory/` is a durable knowledge base — not a sprint log, not a branch diary.**
+- Public CLI/API behavior or compatibility changes
+- Configuration format or JSON schema changes
+- Architecture or module-boundary changes
+- Behavior changes that cross capabilities or affect multiple modules
 
-It records **why** decisions were made, **what** patterns apply, and **which** caveats exist in the codebase. This knowledge remains correct regardless of which branch, PR, or release is currently active.
+Do not create a proposal for a localized bug fix, test-only or documentation-only change, or behavior-preserving refactor. Keep the process proportional to the change.
 
-**The merge test:** Before writing anything into `.memory/`, ask: _"Would this still be accurate and useful after the branch is merged?"_ If the answer is no, it does not belong in `.memory/`.
+### Workflow
 
-### Explicitly Forbidden in .memory/
+1. Read the relevant main specs with `pnpm exec openspec list --specs` and inspect the implementation, tests, schemas, and README that define current behavior.
+2. For unclear or broad work, explore first. Otherwise create a proposal with `/opsx-propose`; include scope, affected capabilities, design constraints, and test/validation tasks.
+3. Review the proposal before implementation. Implement only after the user authorizes the work, using `/opsx-apply` where available.
+4. Update the main specs to match the implemented behavior, run focused tests and `pnpm exec openspec validate --all`, then archive the completed change with `/opsx-archive`.
+5. Refresh generated Copilot instructions with `pnpm run openspec:update` so OpenSpec CLI examples continue to use the repository-local pnpm installation.
 
-❌ **Commit hashes** — stale the moment history is amended
-❌ **Branch names as content** (e.g. "Implemented on branch `chore-analysis`") — irrelevant after merge
-❌ **"Next Steps" for a PR or merge** — use the PR description for that
-❌ **Sprint / task progress tracking** — use session tools or a task tracker
-❌ **"Status: Implemented / In Progress"** headers tied to a branch — state facts about the *codebase*, not the *git graph*
+### Where knowledge belongs
 
-### Rules
+- `openspec/specs/` describes current requirements and externally observable behavior. Keep specs concise, organized by capability, and grounded in code, tests, schemas, and README.
+- `openspec/changes/` contains active proposals. Archived changes are history, not a substitute for current specs.
+- `docs/architecture/decisions/` records only durable rationale that is not apparent from current behavior. Update its index when adding an ADR.
+- Put implementation details and narrow caveats beside the relevant code or tests. Do not create session logs, duplicate API reference material, or migrate old notes solely to preserve them.
+- The README remains the user-facing guide. Update it when public behavior, configuration, project structure, or build/test workflows change.
 
-1. **Read first — always.** Read `.memory/summary.md` at the start of every task to understand current architecture, key decisions, and known caveats. Do not start work without it.
-
-2. **Write at the end — always.** After any non-trivial investigation, design decision, or fix:
-   - Create or update the relevant `.memory/<type>-<title>.md` file.
-   - Update `.memory/summary.md` to reflect the new architectural state.
-
-3. **Co-stage `.memory/` with code.** Changes to `.memory/` MUST be committed together with the code change that triggered them — either in the same commit or as an immediate follow-up in the same PR. Never let `.memory/` lag behind the code.
-
-4. **Filename convention:** `.memory/<type>-<title>.md`
-   - `<type>` is one of: `research`, `guide`, `decision`, `implementation`
-   - `<title>` is a short kebab-case descriptor
-
-5. **Exception:** `.memory/summary.md` does not follow the naming convention — it is the index file.
-
-6. **`summary.md` describes the codebase, not the branch.** It must always reflect:
-   - Architecture overview (modules, frameworks, key patterns)
-   - Key decisions (with links to decision files)
-   - Known caveats and technical debt (timeless observations)
-   - Memory files index
-
-7. **Prune stale information.** When caveats are resolved or decisions are superseded, update or remove them. `summary.md` must stay current and accurate — not grow into a historical archive.
-
-### Mandatory Write Triggers
-
-These situations **require** a `.memory/` update — no exceptions:
-
-| Situation | What to write |
-|-----------|--------------|
-| Architecture or design decision made | `decision-<title>.md` + update `summary.md` |
-| Non-obvious API behavior discovered | `research-<title>.md` + add caveat to `summary.md` |
-| Recurring anti-pattern found and fixed | `guide-<title>.md` + add to `summary.md` index |
-| Implementation spec agreed upon | `implementation-<title>.md` + update `summary.md` |
-
-### Types
-
-| Type | Purpose |
-|------|---------|
-| `research` | Investigation results, API behavior findings, library evaluations |
-| `guide` | How-to instructions, reusable patterns, and recurring anti-pattern fixes |
-| `decision` | Architecture/design decisions with rationale and alternatives considered |
-| `implementation` | Implementation plans, technical specs, or post-implementation notes |
-
-### When to Write
-
-- After discovering non-obvious behavior or caveats
-- After making a design/architecture decision
-- When findings would save a future agent significant research time
-
-### When NOT to Write
-
-- Trivial or self-evident facts already in the code
-- Temporary debugging notes (use session memory instead)
-- Information already covered in `README.md` or code comments
-- Sprint/workflow state that belongs in a PR description or ticket
-
-### Example Filenames
-
-```
-.memory/summary.md
-.memory/research-fetchxml-paging-behavior.md
-.memory/decision-tunit-over-xunit.md
-.memory/guide-bulk-operation-patterns.md
-.memory/implementation-audit-export-logic.md
-```
+Do not add a knowledge file after every non-trivial edit. Persist information only when one of these canonical sources would otherwise be missing a durable requirement, decision, or actionable constraint.

@@ -52,6 +52,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Solution Architecture](#-solution-architecture)
 - [Repository Layout](#-repository-layout)
 - [Build & Test](#%EF%B8%8F-build--test)
+- [Spec-Driven Development](#spec-driven-development)
 - [Requirements](#-requirements)
 - [Community & Contributions](#%EF%B8%8F-community-and-contributions)
 - [License](#-license)
@@ -1093,6 +1094,8 @@ Key design principles:
 
 ## 📁 Repository Layout
 
+The working specifications and active change proposals live in `openspec/`; concise records of durable architectural rationale live in `docs/architecture/decisions/`.
+
 ```
 DigitallPower/
 ├── src/
@@ -1113,6 +1116,7 @@ DigitallPower/
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
 ├── schemas/                      # JSON schemas for configuration files
+├── scripts/                      # Repository maintenance scripts
 ├── Directory.Build.props         # Common MSBuild properties
 ├── global.json                   # Pinned .NET SDK
 └── DigitallPower.sln             # Solution file
@@ -1121,12 +1125,64 @@ DigitallPower/
 ## 🛠️ Build & Test
 
 ```bash
-pnpm install                 # Install JS tooling dependencies (includes TypeScript compiler for TSL gates)
+pnpm install                 # Install JS tooling, TypeScript compiler, and local OpenSpec CLI
 dotnet restore                # Restore dependencies (uses lock files)
 dotnet build                  # Build the solution
 dotnet test                   # Run all tests
 dotnet test --filter "Name~Foo"   # Run a subset of tests
+pnpm exec openspec validate --specs  # Validate current OpenSpec specifications
 ```
+
+## Spec-Driven Development
+
+Use [OpenSpec](https://github.com/Fission-AI/OpenSpec) for significant changes to public CLI/API
+behavior, configuration and schemas, architecture, module boundaries, or behavior spanning
+capabilities. Start with `/opsx-propose`; after review, implement with `/opsx-apply`, update the
+main specs, validate them, and archive the completed change. Small fixes, test-only changes, and
+behavior-preserving refactors do not require a proposal. The CLI is installed locally with pnpm
+and is run as `pnpm exec openspec`.
+
+Current requirements live in [`openspec/specs/`](openspec/specs/). Durable design rationale lives in
+[`docs/architecture/decisions/`](docs/architecture/decisions/). The README remains the user-facing
+command and configuration reference; implementation details belong beside their code and tests.
+Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
+CLI examples after OpenSpec updates them.
+
+GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
+[`openspec/config.yaml`](openspec/config.yaml). Its setup workflow installs the locked pnpm
+dependencies and .NET SDK before an agent session; OpenSpec commands continue to use
+`pnpm exec openspec`. The setup workflow must be present on the default branch, and cloud-agent
+access must be enabled by the repository or organization administrator.
+
+### Graphify Code-Only Pilot
+
+The pilot pins Graphify in [`graphify-version.txt`](graphify-version.txt) and builds a fresh C# code
+graph locally, in GitHub Copilot cloud-agent setup, and in a GitHub Actions smoke check. The graph,
+manifest, and cache stay under ignored `graphify-out/`; they are regenerated from the current
+checkout and are not committed. Code extraction uses local AST parsing only. Documentation, images,
+and semantic LLM extraction are out of scope.
+
+For a local clone, install the pinned CLI and create the initial graph:
+
+```bash
+uv tool install graphifyy==0.9.80
+graphify vscode install
+graphify extract . --code-only
+```
+
+`graphify vscode install` adds the local VS Code skill and refreshes the project Copilot instructions.
+The same tracked instructions guide GitHub Web agents. `pnpm install` activates Husky hooks:
+Graphify refreshes after commits and branch switches, while post-merge and post-rewrite hooks refresh
+after pulls and rebases. These are best-effort; if a refresh is skipped, run `sh scripts/graphify-refresh.sh`.
+Cloud-agent setup builds the graph for each current checkout, and the GitHub Actions smoke workflow
+checks that code-only extraction and a representative plugin path succeed without committing output.
+
+Use Graphify for cross-module navigation and verify conclusions against source and tests. The measured
+results and retention criteria are in [the evaluation note](docs/architecture/graphify-pilot-evaluation.md).
+
+The separate DigitallPower pilot override in `.github/copilot-instructions.md` preserves code-only
+mode when the Graphify-owned section is refreshed. `graphify copilot install` targets Copilot CLI
+and is not needed for VS Code or GitHub Web.
 
 To produce a local NuGet package of the tool:
 
@@ -1172,7 +1228,7 @@ DigitallPower collects anonymous usage telemetry to help improve the tool. Telem
 | Dataverse organization URLs (`https://contoso.crm4.dynamics.com/...`) | `[dataverse-org-url-redacted]` |
 | Entra ID tenant URLs (`https://contoso.onmicrosoft.com/...`) | `[entra-tenant-url-redacted]` |
 
-This anonymization is implemented in `TelemetryAnonymizer` and covered by unit tests for both Unix and Windows path formats. It is a best-effort, regex-based approach — see `.memory/decision-error-telemetry-anonymization.md` for its exact scope and known limitations.
+This anonymization is implemented in `TelemetryAnonymizer` and covered by unit tests for both Unix and Windows path formats. It is a best-effort, regex-based approach; it does not detect arbitrary free-form personal information.
 
 CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and currently recognizes `TF_BUILD`, `BUILD_BUILDURI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, and `CI`.
 
