@@ -76,7 +76,6 @@ public class DeploymentBatchRunnerTests
     [Arguments("Delete", "[red]- Delete[/]")]
     [Arguments("Unlink", "[red]- Unlink[/]")]
     [Arguments("Clear", "[red]- Clear[/]")]
-    [Arguments("Unchanged", "[dim]= Unchanged[/]")]
     public async Task Tag_Action_MapsToMarkerAndColor(string action, string expected) =>
         await Assert.That(DeploymentRenderer.Tag(action)).IsEqualTo(expected);
 

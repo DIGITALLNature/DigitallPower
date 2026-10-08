@@ -22,11 +22,6 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
     /// <summary>Marks an action with a trailing, colored marker so it stands out without altering the tree layout.</summary>
     internal static string Tag(string action)
     {
-        if (action == Unchanged)
-        {
-            return $"[dim]= {action}[/]";
-        }
-
         if (action is Create or Add or Link)
         {
             return $"[green]+ {action}[/]";
@@ -40,6 +35,9 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         return $"[yellow]~ {action}[/]";
     }
 
+    // Unchanged nodes carry no marker; <paramref name="text"/> must already be markup-escaped.
+    private static string Label(string text, string action) => action == Unchanged ? text : $"{text} {Tag(action)}";
+
     internal static string UpToDate(string text) => $"[green]{Emoji.Known.CheckMark}[/] {text}";
 
     internal void Render(StandaloneDeploymentChanges changes)
@@ -47,7 +45,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         ArgumentNullException.ThrowIfNull(changes);
         var registrations = changes.Registrations;
         var artifactAction = Action(changes.ExistingAssemblyId, changes.UpdateContent);
-        var tree = new Tree($"{Emoji.Known.PuzzlePiece} {Markup.Escape(changes.Desired.Identity)} {Tag(artifactAction)}");
+        var tree = new Tree(Label($"{Emoji.Known.PuzzlePiece} {Markup.Escape(changes.Desired.Identity)}", artifactAction));
         var renderedUnlinks = new HashSet<Guid>();
         AddRegistrations(tree, changes.Desired, registrations, changes.CustomApis, renderedUnlinks);
         AddCustomApiUnlinks(tree, changes.CustomApis, renderedUnlinks);
@@ -85,7 +83,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
     internal void RenderPackage(PackageDeploymentChanges changes)
     {
         ArgumentNullException.ThrowIfNull(changes);
-        var tree = new Tree($"{Emoji.Known.Package} {Markup.Escape(changes.DataverseName)} {Tag(Action(changes.Existing?.Id, changes.UpdateContent))}");
+        var tree = new Tree(Label($"{Emoji.Known.Package} {Markup.Escape(changes.DataverseName)}", Action(changes.Existing?.Id, changes.UpdateContent)));
         var renderedUnlinks = new HashSet<Guid>();
         foreach (var assembly in changes.Assemblies)
         {
@@ -152,7 +150,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         {
             var change = changes.SingleOrDefault(item => item.Desired?.DataSourceLogicalName == provider.DataSourceLogicalName);
             var action = change is null ? Unchanged : Action(change.Existing?.Id, true);
-            var node = tree.AddNode($"{Markup.Escape(provider.ProviderName)} ({Markup.Escape(provider.DataSourceLogicalName)}) {Tag(action)}");
+            var node = tree.AddNode(Label($"{Markup.Escape(provider.ProviderName)} ({Markup.Escape(provider.DataSourceLogicalName)})", action));
             if (change is not null)
             {
                 AddHandlerChanges(node, change);
@@ -217,7 +215,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
             action = change.PreviousHandlerId is null ? Link : $"Reassign from {change.PreviousHandlerId}";
         }
 
-        typeNode.AddNode($"Custom API {Markup.Escape(type.CustomApi)} {Tag(action)}");
+        typeNode.AddNode(Label($"Custom API {Markup.Escape(type.CustomApi)}", action));
     }
 
     private static void AddRegistrations(IHasTreeNodes parent, LocalAssembly desired, RegistrationChanges registrations,
@@ -226,8 +224,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         var renderedDeletes = new HashSet<Guid>();
         foreach (var type in desired.PluginTypes)
         {
-            var typeLabel = $"{Markup.Escape(type.TypeName)} {Tag(registrations.TypesToCreate.Contains(type) ? Create : Unchanged)}";
-            var typeNode = parent.AddNode(typeLabel);
+            var typeNode = parent.AddNode(Label(Markup.Escape(type.TypeName), registrations.TypesToCreate.Contains(type) ? Create : Unchanged));
             AddCustomApi(typeNode, desired, type, customApis);
             AddCustomApiUnlinks(typeNode, registrations.ExistingTypeIds.TryGetValue(type.TypeName, out var retainedTypeId) ? retainedTypeId : null,
                 customApis, renderedUnlinks);
@@ -235,12 +232,12 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
             {
                 var write = registrations.StepsToWrite.SingleOrDefault(item => item.TypeName == type.TypeName && item.Desired == step);
                 var action = write is null ? Unchanged : Action(write.ExistingId, true);
-                var stepNode = typeNode.AddNode($"{Markup.Escape(step.Name)} {Tag(action)}");
+                var stepNode = typeNode.AddNode(Label(Markup.Escape(step.Name), action));
                 foreach (var image in step.Images)
                 {
                     var imageWrite = registrations.ImagesToWrite.SingleOrDefault(item => item.TypeName == type.TypeName && item.Step == step && item.Desired == image);
                     var imageAction = imageWrite is null ? Unchanged : Action(imageWrite.ExistingId, true);
-                    stepNode.AddNode($"{Markup.Escape(image.Name)} {Tag(imageAction)}");
+                    stepNode.AddNode(Label(Markup.Escape(image.Name), imageAction));
                 }
 
                 if (registrations.ExistingStepIds.TryGetValue(new PluginStepReference(type.TypeName, step), out var stepId))

@@ -587,7 +587,7 @@ public class PackageDeploymentTests
         await Assert.That(progress).Count().IsEqualTo(0);
         await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
-        await Assert.That(console.Output).Contains("new_Contoso.Plugins = Unchanged");
+        await Assert.That(console.Output).Contains("new_Contoso.Plugins").And.DoesNotContain("Unchanged");
         await Assert.That(console.Output).Contains("First v1.0.0.0");
         await Assert.That(console.Output).DoesNotContain("package upload");
     }
@@ -749,7 +749,7 @@ public class PackageDeploymentTests
         using var console = new TestConsole();
         console.Profile.Width = 160;
         new DeploymentRenderer(console).RenderPackage(changes);
-        await Assert.That(console.Output).Contains("First.Plugin = Unchanged");
+        await Assert.That(console.Output).Contains("First.Plugin").And.DoesNotContain("Unchanged");
         await Assert.That(console.Output).Contains("Plugin type First.Removed - Delete");
     }
 

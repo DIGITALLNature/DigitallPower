@@ -352,11 +352,12 @@ competing deployments; failed batches cannot produce success-shaped results.
   nor a CI agent; destructive counts are always rendered (`DestructiveCount` on the change records).
 - Output conventions (`DeploymentRenderer`, `DeploymentBatchRunner`): tree roots carry 📦 (package)
   or 🧩 (assembly, also for package children); every action is a trailing, colored `marker + word`
-  tag (`+` green create/add/link, `~` yellow update/set, `-` red delete/unlink/clear, `=` dim
-  unchanged) built by one `Tag` helper over string constants (no action enum, the change records do
-  not carry actions). Package plugin types are tagged by outcome (create/unchanged/delete) like
-  standalone ones even though Dataverse performs the write during upload; only package assembly
-  nodes carry no tag. Status lines lead with ✔ (`UpToDate`). A status spinner covers prepare
+  tag (`+` green create/add/link, `~` yellow update/set, `-` red delete/unlink/clear) built by one
+  `Tag` helper over string constants (no action enum, the change records do not carry actions).
+  Unchanged nodes carry no tag and use the normal color (dim text was hard to read). Plugin types only ever
+  show create or delete (the tool compares nothing else on them), also in packages even though
+  Dataverse performs the write during upload; package assembly nodes carry no tag. Status lines
+  lead with ✔ (`UpToDate`). A status spinner covers prepare
   (`Processing <target>`) and apply (`Applying changes to <target>`); progress lines are written
   through the same console and scroll above the spinner. Membership progress uses
   `AddedToSolution` (`Added <resource> <name> to solution`). No CI-specific output switches.
