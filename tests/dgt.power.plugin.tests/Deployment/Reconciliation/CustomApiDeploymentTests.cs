@@ -61,6 +61,11 @@ public class CustomApiDeploymentTests
         await Assert.That(All(service, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(0);
         await Assert.That(console.Output).Contains("new_Api");
         await Assert.That(console.Output).Contains("Link");
+        var lines = console.Output.Split('\n');
+        var apiIndex = Array.FindIndex(lines, line => line.Contains("Custom API new_Api"));
+        await Assert.That(apiIndex).IsGreaterThan(0);
+        await Assert.That(lines[apiIndex - 1]).Contains("Plugin ").And.DoesNotContain("Custom API");
+        await Assert.That(lines[apiIndex]).Contains("└── Custom API new_Api").And.DoesNotContain("->");
     }
 
     [Test]

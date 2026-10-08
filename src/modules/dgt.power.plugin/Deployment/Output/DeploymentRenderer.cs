@@ -48,8 +48,8 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         var registrations = changes.Registrations;
         var artifactAction = Action(changes.ExistingAssemblyId, changes.UpdateContent);
         var tree = new Tree($"{Emoji.Known.PuzzlePiece} {Markup.Escape(changes.Desired.Identity)} {Tag(artifactAction)}");
-        AddRegistrations(tree, changes.Desired, registrations, packageUpload: false);
-        AddCustomApis(tree, [changes.Desired], changes.CustomApis);
+        AddRegistrations(tree, changes.Desired, registrations, changes.CustomApis, packageUpload: false);
+        AddCustomApiUnlinks(tree, changes.CustomApis);
         if (changes.AssemblyToDelete is { } oldAssembly)
         {
             tree.AddNode($"{Emoji.Known.PuzzlePiece} Superseded assembly {Markup.Escape(oldAssembly.Identity)} {Tag(Delete)}");
@@ -88,10 +88,10 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         foreach (var assembly in changes.Assemblies)
         {
             var node = tree.AddNode($"{Emoji.Known.PuzzlePiece} {Markup.Escape(assembly.Desired.Identity)}");
-            AddRegistrations(node, assembly.Desired, assembly.Registrations, packageUpload: true);
+            AddRegistrations(node, assembly.Desired, assembly.Registrations, changes.CustomApis, packageUpload: true);
         }
 
-        AddCustomApis(tree, changes.Desired.Assemblies, changes.CustomApis);
+        AddCustomApiUnlinks(tree, changes.CustomApis);
         console.Write(tree);
         if (changes.Solution is { } solution)
         {
@@ -177,32 +177,34 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         }
     }
 
-    private static void AddCustomApis(IHasTreeNodes parent, IReadOnlyList<LocalAssembly> desired, IReadOnlyList<CustomApiChange> changes)
+    private static void AddCustomApiUnlinks(IHasTreeNodes parent, IReadOnlyList<CustomApiChange> changes)
     {
-        foreach (var assembly in desired)
-        {
-            foreach (var type in assembly.PluginTypes.Where(type => type.CustomApi.Length > 0))
-            {
-                var handler = new PluginTypeReference(assembly.Name, type.TypeName);
-                var change = changes.SingleOrDefault(api => api.Handler == handler);
-                var action = Unchanged;
-                if (change is not null)
-                {
-                    action = change.PreviousHandlerId is null ? Link : $"Reassign from {change.PreviousHandlerId}";
-                }
-
-                parent.AddNode($"Custom API {Markup.Escape(type.CustomApi)} -> " +
-                    $"{Markup.Escape(assembly.Name)} / {Markup.Escape(type.TypeName)} {Tag(action)}");
-            }
-        }
-
         foreach (var change in changes.Where(api => api.Handler is null))
         {
             parent.AddNode($"Custom API {Markup.Escape(change.Name)} {Tag(Unlink)}");
         }
     }
 
-    private static void AddRegistrations(IHasTreeNodes parent, LocalAssembly desired, RegistrationChanges registrations, bool packageUpload)
+    private static void AddCustomApi(IHasTreeNodes typeNode, LocalAssembly assembly, LocalPluginType type, IReadOnlyList<CustomApiChange> changes)
+    {
+        if (type.CustomApi.Length == 0)
+        {
+            return;
+        }
+
+        var handler = new PluginTypeReference(assembly.Name, type.TypeName);
+        var change = changes.SingleOrDefault(api => api.Handler == handler);
+        var action = Unchanged;
+        if (change is not null)
+        {
+            action = change.PreviousHandlerId is null ? Link : $"Reassign from {change.PreviousHandlerId}";
+        }
+
+        typeNode.AddNode($"Custom API {Markup.Escape(type.CustomApi)} {Tag(action)}");
+    }
+
+    private static void AddRegistrations(IHasTreeNodes parent, LocalAssembly desired, RegistrationChanges registrations,
+        IReadOnlyList<CustomApiChange> customApis, bool packageUpload)
     {
         foreach (var type in desired.PluginTypes)
         {
@@ -214,6 +216,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
             }
 
             var typeNode = parent.AddNode(typeLabel);
+            AddCustomApi(typeNode, desired, type, customApis);
             foreach (var step in type.Steps)
             {
                 var write = registrations.StepsToWrite.SingleOrDefault(item => item.TypeName == type.TypeName && item.Desired == step);
