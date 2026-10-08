@@ -155,8 +155,8 @@ The current slice covers new, updated, and unchanged packages. It requires the e
 server-owned assembly/type set after upload and never falls back to standalone assembly creation.
 Duplicate type names in different assemblies remain assembly-scoped. Package version changes,
 assembly/type removals and moves between assemblies fail before
-upload until their behavior is supported. Step/image removals are also rejected pending
-verification that package upload leaves those records available for explicit cleanup.
+upload until their behavior is supported. Step/image removals are supported: they are
+deleted after upload and registration writes by the shared cleanup, on retained types only.
 `RetrieveDependenciesForDelete` is a candidate for
 future component-deletion checks, not yet validated as a complete package-update safeguard.
 

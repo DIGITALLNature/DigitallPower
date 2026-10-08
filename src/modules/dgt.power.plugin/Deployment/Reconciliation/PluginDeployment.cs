@@ -374,11 +374,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             {
                 throw new NotSupportedException("Package type removal requires verification of server-side upload/dependency behavior before it can be applied.");
             }
-            if (registrations.StepsToDelete.Count > 0 || registrations.ImagesToDelete.Count > 0)
-            {
-                throw new NotSupportedException("Package registration removal requires verification of server-side upload/dependency behavior before it can be applied.");
-            }
-
             var messages = new Dictionary<PluginStepReference, ResolvedSdkMessage>();
             foreach (var write in registrations.StepsToWrite)
             {

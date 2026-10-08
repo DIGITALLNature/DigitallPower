@@ -731,7 +731,7 @@ public class PackageDeploymentTests
     }
 
     [Test]
-    public async Task Prepare_PackageStepRemoval_FailsBeforeUpload()
+    public async Task Apply_PackageStepRemoval_PreparesAndDeletesStepKeepingType()
     {
         var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin", Step("registered"))));
         var store = CreateStore();
@@ -740,9 +740,15 @@ public class PackageDeploymentTests
         await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
         var removal = desired with { Assemblies = [Assembly("First", CreateLocalType("First.Plugin"))] };
 
-        await Assert.That(async () => await deployment.PreparePackageAsync(removal, "new")).ThrowsExactly<NotSupportedException>();
+        var changes = await deployment.PreparePackageAsync(removal, "new");
 
+        await Assert.That(changes.HasChanges).IsTrue();
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(1);
+
+        await deployment.ApplyPackageAsync(changes);
+
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
+        await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(1);
     }
 
     [Test]
