@@ -790,6 +790,10 @@ public class PackageDeploymentTests
         var changes = await deployment.PreparePackageAsync(removal, "new");
 
         await Assert.That(changes.HasChanges).IsTrue();
+        using var console = new TestConsole();
+        console.Profile.Width = 160;
+        new DeploymentRenderer(console).RenderPackage(changes);
+        await Assert.That(console.Output).Contains("        └── Step registered - Delete");
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(1);
 
         await deployment.ApplyPackageAsync(changes);

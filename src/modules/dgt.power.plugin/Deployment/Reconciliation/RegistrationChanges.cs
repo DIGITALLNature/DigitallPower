@@ -16,6 +16,11 @@ internal sealed record RegistrationChanges(
     IReadOnlyDictionary<string, Guid> ExistingTypeIds,
     IReadOnlyDictionary<PluginStepReference, Guid> ExistingStepIds)
 {
+    // Placement hints for the preview tree: deleted step id -> owning type name, deleted image id -> owning step id.
+    internal IReadOnlyDictionary<Guid, string> DeletedStepTypeNames { get; init; } = new Dictionary<Guid, string>();
+
+    internal IReadOnlyDictionary<Guid, Guid> DeletedImageStepIds { get; init; } = new Dictionary<Guid, Guid>();
+
     internal int DestructiveCount => ImagesToDelete.Count + StepsToDelete.Count + TypesToDelete.Count;
 
     internal bool HasChanges =>

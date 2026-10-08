@@ -29,6 +29,8 @@ internal static class RegistrationDiff
         var deleteSteps = new List<RemotePluginStep>();
         var imageWrites = new List<ImageWrite>();
         var deleteImages = new List<RemotePluginStepImage>();
+        var stepOwners = new Dictionary<Guid, string>();
+        var imageOwners = new Dictionary<Guid, Guid>();
         var typeIds = new Dictionary<string, Guid>(StringComparer.Ordinal);
         var stepIds = new Dictionary<PluginStepReference, Guid>();
         var remoteTypes = snapshot.Types.ToDictionary(type => type.TypeName, StringComparer.Ordinal);
@@ -75,11 +77,15 @@ internal static class RegistrationDiff
                 {
                     images = destinationStepIds.Contains(existing.Id) ? snapshot.ImagesByStep[existing.Id] : superseded!.ImagesByStep[existing.Id];
                 }
-                CompareImages(type.TypeName, step, images, imageWrites, deleteImages);
+                CompareImages(type.TypeName, step, existing?.Id, images, imageWrites, deleteImages, imageOwners);
             }
 
             var matchedIds = matches.Values.Select(step => step.Id).ToHashSet();
-            deleteSteps.AddRange(remoteSteps.Where(step => !matchedIds.Contains(step.Id)));
+            foreach (var step in remoteSteps.Where(step => !matchedIds.Contains(step.Id)))
+            {
+                deleteSteps.Add(step);
+                stepOwners[step.Id] = type.TypeName;
+            }
         }
 
         var desiredNames = desired.Select(type => type.TypeName).ToHashSet(StringComparer.Ordinal);
@@ -88,13 +94,21 @@ internal static class RegistrationDiff
         foreach (var removedType in deleteTypes.Where(type => !desiredNames.Contains(type.TypeName)))
         {
             var owner = snapshot.StepsByType.ContainsKey(removedType.Id) ? snapshot : superseded!;
-            deleteSteps.AddRange(owner.StepsByType[removedType.Id].Where(step => LocalPluginStepValidator.IsDeclarativeStage(step.Stage)));
+            foreach (var step in owner.StepsByType[removedType.Id].Where(step => LocalPluginStepValidator.IsDeclarativeStage(step.Stage)))
+            {
+                deleteSteps.Add(step);
+                stepOwners[step.Id] = removedType.TypeName;
+            }
         }
-        return new RegistrationChanges(createTypes, deleteTypes, stepWrites, deleteSteps, imageWrites, deleteImages, typeIds, stepIds);
+        return new RegistrationChanges(createTypes, deleteTypes, stepWrites, deleteSteps, imageWrites, deleteImages, typeIds, stepIds)
+        {
+            DeletedStepTypeNames = stepOwners,
+            DeletedImageStepIds = imageOwners
+        };
     }
 
-    private static void CompareImages(string typeName, LocalPluginStep step, IReadOnlyList<RemotePluginStepImage> remote,
-        List<ImageWrite> writes, List<RemotePluginStepImage> deletions)
+    private static void CompareImages(string typeName, LocalPluginStep step, Guid? stepId, IReadOnlyList<RemotePluginStepImage> remote,
+        List<ImageWrite> writes, List<RemotePluginStepImage> deletions, Dictionary<Guid, Guid> imageOwners)
     {
         var declaredKeys = new HashSet<(string Name, int Type)>();
         var remoteByKey = remote.GroupBy(image => (image.Name, image.ImageType)).ToDictionary(group => group.Key, group => group.ToList());
@@ -126,6 +140,13 @@ internal static class RegistrationDiff
         }
 
         deletions.AddRange(remote.Where(image => !retainedIds.Contains(image.Id)));
+        if (stepId is { } owner)
+        {
+            foreach (var image in remote.Where(image => !retainedIds.Contains(image.Id)))
+            {
+                imageOwners[image.Id] = owner;
+            }
+        }
     }
 
     private static bool AttributesEqual(IReadOnlyList<string>? left, IReadOnlyList<string>? right) =>

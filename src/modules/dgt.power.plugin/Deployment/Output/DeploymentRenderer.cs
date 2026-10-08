@@ -223,6 +223,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
     private static void AddRegistrations(IHasTreeNodes parent, LocalAssembly desired, RegistrationChanges registrations,
         IReadOnlyList<CustomApiChange> customApis, ISet<Guid> renderedUnlinks)
     {
+        var renderedDeletes = new HashSet<Guid>();
         foreach (var type in desired.PluginTypes)
         {
             var typeLabel = $"{Markup.Escape(type.TypeName)} {Tag(registrations.TypesToCreate.Contains(type) ? Create : Unchanged)}";
@@ -241,23 +242,43 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
                     var imageAction = imageWrite is null ? Unchanged : Action(imageWrite.ExistingId, true);
                     stepNode.AddNode($"{Markup.Escape(image.Name)} {Tag(imageAction)}");
                 }
+
+                if (registrations.ExistingStepIds.TryGetValue(new PluginStepReference(type.TypeName, step), out var stepId))
+                {
+                    foreach (var image in registrations.ImagesToDelete.Where(image => registrations.DeletedImageStepIds.GetValueOrDefault(image.Id) == stepId))
+                    {
+                        stepNode.AddNode($"Step image {Markup.Escape(image.Name)} {Tag(Delete)}");
+                        renderedDeletes.Add(image.Id);
+                    }
+                }
             }
-        }
 
-        foreach (var image in registrations.ImagesToDelete)
-        {
-            parent.AddNode($"Step image {Markup.Escape(image.Name)} {Tag(Delete)}");
-        }
-
-        foreach (var step in registrations.StepsToDelete)
-        {
-            parent.AddNode($"Step {Markup.Escape(step.Name)} {Tag(Delete)}");
+            foreach (var step in registrations.StepsToDelete.Where(step => registrations.DeletedStepTypeNames.GetValueOrDefault(step.Id) == type.TypeName))
+            {
+                typeNode.AddNode($"Step {Markup.Escape(step.Name)} {Tag(Delete)}");
+                renderedDeletes.Add(step.Id);
+            }
         }
 
         foreach (var type in registrations.TypesToDelete)
         {
             var deletedNode = parent.AddNode($"Plugin type {Markup.Escape(type.TypeName)} {Tag(Delete)}");
             AddCustomApiUnlinks(deletedNode, type.Id, customApis, renderedUnlinks);
+            foreach (var step in registrations.StepsToDelete.Where(step => registrations.DeletedStepTypeNames.GetValueOrDefault(step.Id) == type.TypeName))
+            {
+                deletedNode.AddNode($"Step {Markup.Escape(step.Name)} {Tag(Delete)}");
+                renderedDeletes.Add(step.Id);
+            }
+        }
+
+        foreach (var image in registrations.ImagesToDelete.Where(image => !renderedDeletes.Contains(image.Id)))
+        {
+            parent.AddNode($"Step image {Markup.Escape(image.Name)} {Tag(Delete)}");
+        }
+
+        foreach (var step in registrations.StepsToDelete.Where(step => !renderedDeletes.Contains(step.Id)))
+        {
+            parent.AddNode($"Step {Markup.Escape(step.Name)} {Tag(Delete)}");
         }
     }
 
