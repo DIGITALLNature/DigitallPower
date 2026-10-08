@@ -52,6 +52,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Solution Architecture](#-solution-architecture)
 - [Repository Layout](#-repository-layout)
 - [Build & Test](#%EF%B8%8F-build--test)
+- [Spec-Driven Development](#spec-driven-development)
 - [Requirements](#-requirements)
 - [Community & Contributions](#%EF%B8%8F-community-and-contributions)
 - [License](#-license)
@@ -1093,6 +1094,8 @@ Key design principles:
 
 ## 📁 Repository Layout
 
+The working specifications and active change proposals live in `openspec/`; concise records of durable architectural rationale live in `docs/architecture/decisions/`.
+
 ```
 DigitallPower/
 ├── src/
@@ -1113,6 +1116,7 @@ DigitallPower/
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
 ├── schemas/                      # JSON schemas for configuration files
+├── scripts/                      # Repository maintenance scripts
 ├── Directory.Build.props         # Common MSBuild properties
 ├── global.json                   # Pinned .NET SDK
 └── DigitallPower.sln             # Solution file
@@ -1121,12 +1125,34 @@ DigitallPower/
 ## 🛠️ Build & Test
 
 ```bash
-pnpm install                 # Install JS tooling dependencies (includes TypeScript compiler for TSL gates)
+pnpm install                 # Install JS tooling, TypeScript compiler, and local OpenSpec CLI
 dotnet restore                # Restore dependencies (uses lock files)
 dotnet build                  # Build the solution
 dotnet test                   # Run all tests
 dotnet test --filter "Name~Foo"   # Run a subset of tests
+pnpm exec openspec validate --specs  # Validate current OpenSpec specifications
 ```
+
+## Spec-Driven Development
+
+Use [OpenSpec](https://github.com/Fission-AI/OpenSpec) for significant changes to public CLI/API
+behavior, configuration and schemas, architecture, module boundaries, or behavior spanning
+capabilities. Start with `/opsx-propose`; after review, implement with `/opsx-apply`, update the
+main specs, validate them, and archive the completed change. Small fixes, test-only changes, and
+behavior-preserving refactors do not require a proposal. The CLI is installed locally with pnpm
+and is run as `pnpm exec openspec`.
+
+Current requirements live in [`openspec/specs/`](openspec/specs/). Durable design rationale lives in
+[`docs/architecture/decisions/`](docs/architecture/decisions/). The README remains the user-facing
+command and configuration reference; implementation details belong beside their code and tests.
+Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
+CLI examples after OpenSpec updates them.
+
+GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
+[`openspec/config.yaml`](openspec/config.yaml). Its setup workflow installs the locked pnpm
+dependencies and .NET SDK before an agent session; OpenSpec commands continue to use
+`pnpm exec openspec`. The setup workflow must be present on the default branch, and cloud-agent
+access must be enabled by the repository or organization administrator.
 
 To produce a local NuGet package of the tool:
 
@@ -1172,7 +1198,7 @@ DigitallPower collects anonymous usage telemetry to help improve the tool. Telem
 | Dataverse organization URLs (`https://contoso.crm4.dynamics.com/...`) | `[dataverse-org-url-redacted]` |
 | Entra ID tenant URLs (`https://contoso.onmicrosoft.com/...`) | `[entra-tenant-url-redacted]` |
 
-This anonymization is implemented in `TelemetryAnonymizer` and covered by unit tests for both Unix and Windows path formats. It is a best-effort, regex-based approach — see `.memory/decision-error-telemetry-anonymization.md` for its exact scope and known limitations.
+This anonymization is implemented in `TelemetryAnonymizer` and covered by unit tests for both Unix and Windows path formats. It is a best-effort, regex-based approach; it does not detect arbitrary free-form personal information.
 
 CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and currently recognizes `TF_BUILD`, `BUILD_BUILDURI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, and `CI`.
 

@@ -1,0 +1,44 @@
+schema: spec-driven
+
+context: |
+  DigitallPower is a .NET 10 CLI for Dataverse and Power Platform operations. The CLI host is
+  src/dgt.power; shared infrastructure lives in src/dgt.power.common; feature modules live under
+  src/modules; tests use TUnit under tests/.
+
+  Main specs describe current, user-relevant behavior and stable cross-module contracts. Ground
+  them in the implementation, tests, schemas, and README. Do not turn them into implementation
+  logs or duplicate API reference documentation. Keep decision rationale in concise ADRs under
+  docs/architecture/decisions. Put local implementation details beside the relevant code or tests.
+
+  Use the repository-local CLI via `pnpm exec openspec`; do not assume a global installation.
+  Create a change proposal for public CLI/API or configuration behavior, schema changes, module or
+  architecture changes, and work spanning capabilities. Trivial fixes, test-only changes, and
+  behavior-preserving refactors do not need a proposal.
+
+  Language: English
+  All artifacts must be written in English.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+githubCopilot:
+  cloudAgent: true
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
