@@ -309,9 +309,14 @@ competing deployments; failed batches cannot produce success-shaped results.
   `Microsoft.Extensions.FileSystemGlobbing` (`DeploymentTargetResolver`). A glob matching nothing
   is an error; an empty directory remains a warning. Globs select parallel build outputs such as
   `artifacts/**/bin/Release/*.nupkg`.
-- `DeploymentTargetReader` reads every artifact before any Dataverse access. Any unreadable
-  artifact rejects the batch (it could hide a conflict); assemblies without plugin types are
-  skipped. Directories containing arbitrary DLLs should be narrowed with a glob.
+- `DeploymentTargetReader` reads every artifact before any Dataverse access and classifies each
+  as plugin, not-a-plugin or failure. `PluginAssemblyPrefilter` first checks the PE metadata
+  (no type loading, no reference resolution) for a `Microsoft.Xrm.Sdk` assembly reference; DLLs
+  without it, including native DLLs, are skipped silently because they cannot declare plugins.
+  Assemblies that pass are fully reflected: no `IPlugin` types means skipped, while invalid
+  registrations, corrupt packages and unloadable assemblies reject the batch. A too-broad glob
+  that pulls in SDK-referencing helper libraries with unresolvable dependencies is the user's
+  to narrow. Whether an empty result fails by default is still open (see P8).
 - `BatchPreflight` rejects the whole batch when two targets declare the same assembly name,
   package name, data provider or Custom API (case-insensitive). No heuristics: a package and its
   constituent DLL conflict like any other duplicate and the user narrows the glob.

@@ -47,6 +47,12 @@ internal sealed class DeploymentTargetReader(IAnsiConsole console)
             return;
         }
 
+        if (!PluginAssemblyPrefilter.CanContainPlugins(path))
+        {
+            skipped.Add(path);
+            return;
+        }
+
         using var loadContext = MetadataLoadContextFactory.Create(Path.GetDirectoryName(path)!);
         var assembly = new AssemblyReflectionReader(console).Read(path, loadContext);
         if (assembly is null)
