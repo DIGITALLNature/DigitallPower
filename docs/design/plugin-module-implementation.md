@@ -153,9 +153,10 @@ Use assembly-scoped logical type references instead of package-wide type-name id
 
 The current slice covers new, updated, and unchanged packages. It requires the exact expected
 server-owned assembly/type set after upload and never falls back to standalone assembly creation.
-Duplicate type names in different assemblies remain assembly-scoped. Package version changes,
-assembly removals and moves between assemblies fail before
-upload until their behavior is supported. Step/image removals are supported: they are
+Duplicate type names in different assemblies remain assembly-scoped. Package version changes
+are not pre-validated: Dataverse rejects them at upload (documented platform rule), and the tool
+does not duplicate platform validation. Assembly removals and moves between assemblies fail before
+upload until their behavior is verified live. Step/image removals are supported: they are
 deleted after upload and registration writes by the shared cleanup. Plugin type removal is
 counted as destructive. Dataverse rejects (fault 0x80040265, verified live) an upload that
 removes a type with registered steps, so apply runs a pre-upload phase that unlinks Custom APIs

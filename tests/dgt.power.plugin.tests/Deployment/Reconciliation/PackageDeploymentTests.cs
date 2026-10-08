@@ -696,7 +696,7 @@ public class PackageDeploymentTests
     }
 
     [Test]
-    public async Task Prepare_ExistingPackageAtDifferentImmutableVersion_FailsBeforeWrites()
+    public async Task Prepare_ExistingPackageAtDifferentVersion_LeavesValidationToDataverse()
     {
         var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin")));
         var store = CreateStore();
@@ -707,9 +707,10 @@ public class PackageDeploymentTests
         }, s_initialPackage);
         var deployment = new PluginDeployment(service);
 
-        await Assert.That(async () => await deployment.PreparePackageAsync(desired, "new")).ThrowsExactly<InvalidOperationException>();
+        var changes = await deployment.PreparePackageAsync(desired, "new");
 
-        await Assert.That(All(store, PluginPackage.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(changes.Existing).IsNotNull();
+        await Assert.That(service.UploadCount).IsEqualTo(0);
         await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(0);
     }
 

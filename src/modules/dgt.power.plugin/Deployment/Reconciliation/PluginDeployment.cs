@@ -349,10 +349,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
 
         var name = $"{publisherPrefix}_{desired.Package.Name}";
         var existing = await _packages.FindByNameAsync(name, cancellationToken);
-        if (existing is not null && !string.Equals(existing.Version, desired.Package.Version, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException($"Package '{name}' already exists at immutable version '{existing.Version}', not '{desired.Package.Version}'.");
-        }
 
         var remoteAssemblies = existing is null ? [] : await _assemblies.ListByPackageAsync(existing.Id, cancellationToken);
         if (remoteAssemblies.GroupBy(assembly => assembly.Name, StringComparer.OrdinalIgnoreCase).Any(group => group.Count() > 1))
