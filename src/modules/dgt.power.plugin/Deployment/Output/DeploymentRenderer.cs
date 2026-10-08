@@ -49,7 +49,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         var artifactAction = Action(changes.ExistingAssemblyId, changes.UpdateContent);
         var tree = new Tree($"{Emoji.Known.PuzzlePiece} {Markup.Escape(changes.Desired.Identity)} {Tag(artifactAction)}");
         var renderedUnlinks = new HashSet<Guid>();
-        AddRegistrations(tree, changes.Desired, registrations, changes.CustomApis, renderedUnlinks, packageUpload: false);
+        AddRegistrations(tree, changes.Desired, registrations, changes.CustomApis, renderedUnlinks);
         AddCustomApiUnlinks(tree, changes.CustomApis, renderedUnlinks);
         if (changes.AssemblyToDelete is { } oldAssembly)
         {
@@ -90,7 +90,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         foreach (var assembly in changes.Assemblies)
         {
             var node = tree.AddNode($"{Emoji.Known.PuzzlePiece} {Markup.Escape(assembly.Desired.Identity)}");
-            AddRegistrations(node, assembly.Desired, assembly.Registrations, changes.CustomApis, renderedUnlinks, packageUpload: true);
+            AddRegistrations(node, assembly.Desired, assembly.Registrations, changes.CustomApis, renderedUnlinks);
         }
 
         AddCustomApiUnlinks(tree, changes.CustomApis, renderedUnlinks);
@@ -221,17 +221,11 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
     }
 
     private static void AddRegistrations(IHasTreeNodes parent, LocalAssembly desired, RegistrationChanges registrations,
-        IReadOnlyList<CustomApiChange> customApis, ISet<Guid> renderedUnlinks, bool packageUpload)
+        IReadOnlyList<CustomApiChange> customApis, ISet<Guid> renderedUnlinks)
     {
         foreach (var type in desired.PluginTypes)
         {
-            // Plugin types inside a package are created by the platform during upload, so they carry no action.
-            var typeLabel = Markup.Escape(type.TypeName);
-            if (!packageUpload)
-            {
-                typeLabel += $" {Tag(registrations.TypesToCreate.Contains(type) ? Create : Unchanged)}";
-            }
-
+            var typeLabel = $"{Markup.Escape(type.TypeName)} {Tag(registrations.TypesToCreate.Contains(type) ? Create : Unchanged)}";
             var typeNode = parent.AddNode(typeLabel);
             AddCustomApi(typeNode, desired, type, customApis);
             AddCustomApiUnlinks(typeNode, registrations.ExistingTypeIds.TryGetValue(type.TypeName, out var retainedTypeId) ? retainedTypeId : null,

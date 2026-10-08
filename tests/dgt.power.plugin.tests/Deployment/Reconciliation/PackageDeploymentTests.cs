@@ -746,6 +746,11 @@ public class PackageDeploymentTests
         await Assert.That(changes.HasChanges).IsTrue();
         await Assert.That(changes.DestructiveCount).IsEqualTo(1);
         await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(2);
+        using var console = new TestConsole();
+        console.Profile.Width = 160;
+        new DeploymentRenderer(console).RenderPackage(changes);
+        await Assert.That(console.Output).Contains("First.Plugin = Unchanged");
+        await Assert.That(console.Output).Contains("Plugin type First.Removed - Delete");
     }
 
     [Test]

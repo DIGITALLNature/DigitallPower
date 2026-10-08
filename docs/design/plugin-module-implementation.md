@@ -354,8 +354,9 @@ competing deployments; failed batches cannot produce success-shaped results.
   or 🧩 (assembly, also for package children); every action is a trailing, colored `marker + word`
   tag (`+` green create/add/link, `~` yellow update/set, `-` red delete/unlink/clear, `=` dim
   unchanged) built by one `Tag` helper over string constants (no action enum, the change records do
-  not carry actions). Nodes the tool does not write itself (package assemblies and their plugin types,
-  which Dataverse creates during upload) carry no tag. Status lines lead with ✔ (`UpToDate`). A status spinner covers prepare
+  not carry actions). Package plugin types are tagged by outcome (create/unchanged/delete) like
+  standalone ones even though Dataverse performs the write during upload; only package assembly
+  nodes carry no tag. Status lines lead with ✔ (`UpToDate`). A status spinner covers prepare
   (`Processing <target>`) and apply (`Applying changes to <target>`); progress lines are written
   through the same console and scroll above the spinner. Membership progress uses
   `AddedToSolution` (`Added <resource> <name> to solution`). No CI-specific output switches.
