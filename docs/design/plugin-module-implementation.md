@@ -166,8 +166,8 @@ Package prepare adds no validation of its own for removed types: platform-manage
 API) disappear with their link, and anything else (unknown dependents, provider references) is
 left to Dataverse to reject. If the upload fails after this phase, a retry re-plans the same
 removal. Unlinks
-render nested under their (deleted or retained) plugin type. Behavior for removed types without
-steps or with a linked Custom API remains unverified live.
+render nested under their (deleted or retained) plugin type. Removing a type without steps works
+(verified live); a type with a linked Custom API is handled by the same unlink before upload.
 Standalone assemblies cannot drop a plugin type in place: deleting the type record fails with
 0x8004418B after the content update, and a managed import of an unchanged assembly identity is
 not documented to remove it. Prepare therefore rejects the removal with a hint to raise the
