@@ -47,14 +47,17 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         var artifactAction = Action(changes.ExistingAssemblyId, changes.UpdateContent);
         var tree = new Tree(Label($"{Emoji.Known.PuzzlePiece} {Markup.Escape(changes.Desired.Identity)}", artifactAction));
         var renderedUnlinks = new HashSet<Guid>();
-        AddRegistrations(tree, changes.Desired, registrations, changes.CustomApis, renderedUnlinks);
+        var oldTree = changes.AssemblyToDelete is { } oldAssembly
+            ? new Tree(Label($"{Emoji.Known.PuzzlePiece} {Markup.Escape(oldAssembly.Identity)}", Delete))
+            : null;
+        AddRegistrations(tree, changes.Desired, registrations, changes.CustomApis, renderedUnlinks, oldTree);
         AddCustomApiUnlinks(tree, changes.CustomApis, renderedUnlinks);
-        if (changes.AssemblyToDelete is { } oldAssembly)
-        {
-            tree.AddNode($"{Emoji.Known.PuzzlePiece} Superseded assembly {Markup.Escape(oldAssembly.Identity)} {Tag(Delete)}");
-        }
 
         console.Write(tree);
+        if (oldTree is not null)
+        {
+            console.Write(oldTree);
+        }
         if (changes.Solution is { } solution)
         {
             RenderMembershipHeading(solution.UniqueName);
@@ -219,7 +222,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
     }
 
     private static void AddRegistrations(IHasTreeNodes parent, LocalAssembly desired, RegistrationChanges registrations,
-        IReadOnlyList<CustomApiChange> customApis, ISet<Guid> renderedUnlinks)
+        IReadOnlyList<CustomApiChange> customApis, ISet<Guid> renderedUnlinks, IHasTreeNodes? deletedTypesParent = null)
     {
         var renderedDeletes = new HashSet<Guid>();
         foreach (var type in desired.PluginTypes)
@@ -259,7 +262,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
 
         foreach (var type in registrations.TypesToDelete)
         {
-            var deletedNode = parent.AddNode($"Plugin type {Markup.Escape(type.TypeName)} {Tag(Delete)}");
+            var deletedNode = (deletedTypesParent ?? parent).AddNode($"Plugin type {Markup.Escape(type.TypeName)} {Tag(Delete)}");
             AddCustomApiUnlinks(deletedNode, type.Id, customApis, renderedUnlinks);
             foreach (var step in registrations.StepsToDelete.Where(step => registrations.DeletedStepTypeNames.GetValueOrDefault(step.Id) == type.TypeName))
             {

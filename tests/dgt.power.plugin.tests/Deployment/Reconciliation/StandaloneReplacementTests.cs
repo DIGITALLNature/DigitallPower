@@ -92,7 +92,9 @@ public class StandaloneReplacementTests
         await Assert.That(All(service, "sdkmessageprocessingstepimage").Single().Id).IsEqualTo(imageId);
         await Assert.That(All(service, "pluginassembly").Single().Id).IsEqualTo(targetId);
         await Assert.That(targetId).IsNotEqualTo(oldAssembly);
-        await Assert.That(console.Output).Contains("Superseded assembly Plugins v1.0.0.0");
+        await Assert.That(console.Output).Contains("Plugins v1.0.0.0 - Delete");
+        await Assert.That(console.Output).DoesNotContain("Superseded");
+        await Assert.That(console.Output).Contains("\n🧩 Plugins v1.0.0.0");
         await Assert.That(progress.FindIndex(item => item.Resource == "step" && item.Operation == PluginDeploymentOperation.Updated))
             .IsLessThan(progress.FindIndex(item => item.Resource == "plugin type" && item.Operation == PluginDeploymentOperation.Deleted));
     }
