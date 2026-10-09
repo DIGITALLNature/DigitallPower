@@ -206,10 +206,9 @@ The guarded package subset does not complete P4. Keep these requirements explici
   phases; existing retry tests do not cover unimplemented phases.
 - Harden/reuse artifact reading at final integration so local errors cannot become silent
   defaults or console-only fallbacks.
-- Verify live whether Dataverse creates `plugintype` records itself when a standalone assembly
-  is uploaded. The standalone path currently creates them explicitly (as PRT does); if the
-  platform already discovers them, that creation is redundant and the standalone and package
-  paths could share more of their registration handling.
+- Verified live: Dataverse does not create `plugintype` records when a standalone assembly is
+  created through the Web API (a type query for the new assembly returned no rows). The explicit
+  creation in the standalone path is required and stays.
 
 ## P5: Add associations and membership
 
