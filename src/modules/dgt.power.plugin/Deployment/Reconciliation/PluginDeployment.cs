@@ -62,6 +62,13 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var snapshot = await LoadSnapshotAsync(existing?.Id, cancellationToken);
         var oldSnapshot = await LoadSnapshotAsync(superseded?.Id, cancellationToken);
         var changes = RegistrationDiff.Compare(desired.PluginTypes, snapshot, oldSnapshot);
+        var desiredTypeNames = desired.PluginTypes.Select(type => type.TypeName).ToHashSet(StringComparer.Ordinal);
+        if (snapshot.Types.FirstOrDefault(type => !desiredTypeNames.Contains(type.TypeName)) is { } removedType)
+        {
+            throw new NotSupportedException($"Plugin type '{removedType.TypeName}' cannot be removed from assembly '{desired.Identity}' in place. " +
+                "Increase the major or minor assembly version so the assembly is replaced.");
+        }
+
         await ValidateRemovedTypesAsync(changes, [snapshot, oldSnapshot], cancellationToken);
 
         var messages = new Dictionary<PluginStepReference, ResolvedSdkMessage>();

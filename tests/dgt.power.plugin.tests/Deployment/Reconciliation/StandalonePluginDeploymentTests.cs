@@ -287,10 +287,24 @@ public class StandalonePluginDeploymentTests
         var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
 
-        var changes = await deployment.PrepareAsync(desired with { PluginTypes = [] });
+        var changes = await deployment.PrepareAsync(desired with { PluginTypes = [], Version = new Version(2, 0, 0, 0) });
         await deployment.ApplyAsync(changes);
         await Assert.That(All(service, "plugintype")).Count().IsEqualTo(0);
         await Assert.That(All(service, "sdkmessageprocessingstep")).Count().IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task Prepare_TypeRemovalInSameVersionTrain_IsRejectedBeforeWrites()
+    {
+        var service = Service();
+        var desired = Assembly(Step());
+        SeedAssembly(service, desired);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
+
+        await Assert.That(async () => await deployment.PrepareAsync(desired with { PluginTypes = [], Version = new Version(1, 0, 1, 0), Content = "bmV3", ContentHash = "changed" }))
+            .ThrowsExactly<NotSupportedException>();
+        await Assert.That(All(service, "plugintype")).Count().IsEqualTo(1);
     }
 
     [Test]

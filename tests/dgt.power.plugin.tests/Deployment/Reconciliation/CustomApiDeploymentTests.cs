@@ -209,7 +209,7 @@ public class CustomApiDeploymentTests
         var apiId = service.Create(new CustomAPI { UniqueName = "new_Api" });
         var deployment = new PluginDeployment(service);
         await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
-        var removal = await deployment.PrepareAsync(Desired() with { PluginTypes = [] });
+        var removal = await deployment.PrepareAsync(Desired() with { PluginTypes = [], Version = new Version(2, 0, 0, 0) });
         using var console = new TestConsole();
         console.Profile.Width = 160;
         new DeploymentRenderer(console).Render(removal);
