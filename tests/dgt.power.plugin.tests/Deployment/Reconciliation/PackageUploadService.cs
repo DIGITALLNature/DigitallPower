@@ -87,19 +87,7 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
             var declaredTypes = assembly.PluginTypes.Select(pluginType => pluginType.TypeName).ToHashSet(StringComparer.Ordinal);
             foreach (var (typeName, typeId) in existingTypes.Where(pair => !declaredTypes.Contains(pair.Key)))
             {
-                var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
-                {
-                    Criteria = new FilterExpression
-                    {
-                        Conditions = { new ConditionExpression(SdkMessageProcessingStep.LogicalNames.EventHandler, ConditionOperator.Equal, typeId) }
-                    }
-                }).Entities;
-                if (steps.Count > 0)
-                {
-                    throw new InvalidOperationException($"Unable to delete '{typeName}' plugintype due to {steps.Count} step(s) registered on it.");
-                }
-
-                service.Delete(PluginType.EntityLogicalName, typeId);
+                DeleteType(typeName, typeId);
             }
 
             foreach (var pluginType in assembly.PluginTypes.Where(pluginType => !existingTypes.ContainsKey(pluginType.TypeName)))
@@ -113,6 +101,51 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
                 });
             }
         }
+
+        // Assumed platform behavior (to be confirmed live): an assembly missing from the uploaded package is removed with its types.
+        var declaredAssemblies = package.Assemblies.Select(assembly => assembly.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var packageAssemblies = service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(PluginAssembly.LogicalNames.Name),
+            Criteria = new FilterExpression
+            {
+                Conditions = { new ConditionExpression(PluginAssembly.LogicalNames.PackageId, ConditionOperator.Equal, packageId) }
+            }
+        }).Entities;
+        foreach (var removed in packageAssemblies.Where(entity => !declaredAssemblies.Contains(entity.GetAttributeValue<string>(PluginAssembly.LogicalNames.Name))))
+        {
+            var types = service.RetrieveMultiple(new QueryExpression(PluginType.EntityLogicalName)
+            {
+                ColumnSet = new ColumnSet(PluginType.LogicalNames.TypeName),
+                Criteria = new FilterExpression
+                {
+                    Conditions = { new ConditionExpression(PluginType.LogicalNames.PluginAssemblyId, ConditionOperator.Equal, removed.Id) }
+                }
+            }).Entities;
+            foreach (var type in types)
+            {
+                DeleteType(type.GetAttributeValue<string>(PluginType.LogicalNames.TypeName), type.Id);
+            }
+
+            service.Delete(PluginAssembly.EntityLogicalName, removed.Id);
+        }
+    }
+
+    private void DeleteType(string typeName, Guid typeId)
+    {
+        var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+        {
+            Criteria = new FilterExpression
+            {
+                Conditions = { new ConditionExpression(SdkMessageProcessingStep.LogicalNames.EventHandler, ConditionOperator.Equal, typeId) }
+            }
+        }).Entities;
+        if (steps.Count > 0)
+        {
+            throw new InvalidOperationException($"Unable to delete '{typeName}' plugintype due to {steps.Count} step(s) registered on it.");
+        }
+
+        service.Delete(PluginType.EntityLogicalName, typeId);
     }
 
     public Task AssociateAsync(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities, CancellationToken cancellationToken) =>

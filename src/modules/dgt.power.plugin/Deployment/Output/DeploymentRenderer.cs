@@ -95,6 +95,13 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         }
 
         AddCustomApiUnlinks(tree, changes.CustomApis, renderedUnlinks);
+        foreach (var removed in changes.RemovedAssemblies)
+        {
+            var node = tree.AddNode(Label($"{Emoji.Known.PuzzlePiece} {Markup.Escape(removed.Assembly.Identity)}", Delete));
+            var empty = new LocalAssembly { Name = removed.Assembly.Name, Version = removed.Assembly.Version, Content = string.Empty, ContentHash = string.Empty };
+            AddRegistrations(node, empty, removed.Registrations, changes.CustomApis, renderedUnlinks);
+        }
+
         console.Write(tree);
         if (changes.Solution is { } solution)
         {

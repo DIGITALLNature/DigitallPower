@@ -17,14 +17,17 @@ internal sealed record PackageDeploymentChanges(
     PackageSolutionChanges? Solution,
     IReadOnlyList<DataProviderChange> Providers)
 {
+    internal IReadOnlyList<RemovedPackageAssembly> RemovedAssemblies { get; init; } = [];
+
     internal int DestructiveCount => Assemblies.Sum(assembly => assembly.Registrations.DestructiveCount) +
+        RemovedAssemblies.Sum(assembly => 1 + assembly.Registrations.DestructiveCount) +
         CustomApis.Count(api => api.PreviousHandlerId is not null) + Providers.Sum(provider => provider.DestructiveCount);
 
     internal bool HasChanges
     {
         get
         {
-            if (Existing is null || UpdateContent)
+            if (Existing is null || UpdateContent || RemovedAssemblies.Count > 0)
             {
                 return true;
             }

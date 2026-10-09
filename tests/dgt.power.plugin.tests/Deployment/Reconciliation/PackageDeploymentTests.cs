@@ -715,7 +715,7 @@ public class PackageDeploymentTests
     }
 
     [Test]
-    public async Task Prepare_PackageAssemblyRemoval_FailsBeforeUpload()
+    public async Task Prepare_PackageAssemblyRemoval_PlansAssemblyDeletionAsDestructive()
     {
         var oldDesired = Package(Convert.ToBase64String(s_initialPackage),
             Assembly("First", CreateLocalType("First.Plugin")), Assembly("Second", CreateLocalType("Second.Plugin")));
@@ -726,9 +726,39 @@ public class PackageDeploymentTests
         service.MaterializeAssemblies(packageId, oldDesired);
         var deployment = new PluginDeployment(service);
 
-        await Assert.That(async () => await deployment.PreparePackageAsync(desired, "new")).ThrowsExactly<NotSupportedException>();
+        var changes = await deployment.PreparePackageAsync(desired, "new");
 
+        await Assert.That(changes.HasChanges).IsTrue();
+        await Assert.That(changes.RemovedAssemblies).Count().IsEqualTo(1);
+        await Assert.That(changes.DestructiveCount).IsEqualTo(2);
         await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(2);
+        using var console = new TestConsole();
+        console.Profile.Width = 160;
+        new DeploymentRenderer(console).RenderPackage(changes);
+        await Assert.That(console.Output).Contains("Second v").And.Contains("- Delete");
+        await Assert.That(console.Output).Contains("Plugin type Second.Plugin - Delete");
+    }
+
+    [Test]
+    public async Task Apply_PackageAssemblyRemoval_DeletesStepsBeforeUploadSoServerCanRemoveAssembly()
+    {
+        var oldDesired = Package(Convert.ToBase64String(s_initialPackage),
+            Assembly("First", CreateLocalType("First.Plugin")), Assembly("Second", CreateLocalType("Second.Plugin", Step("registered"))));
+        var removal = Package(Convert.ToBase64String("smaller-package"u8), Assembly("First", CreateLocalType("First.Plugin")));
+        var store = CreateStore();
+        var service = new PackageUploadService(store, oldDesired);
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(oldDesired, "new"));
+        service.RetargetUpload(removal);
+        var changes = await deployment.PreparePackageAsync(removal, "new");
+        var progress = new List<PluginDeploymentProgress>();
+
+        await deployment.ApplyPackageAsync(changes, progress.Add);
+
+        await Assert.That(progress.Any(item => item.Resource == "step" && item.Operation == PluginDeploymentOperation.Deleted)).IsTrue();
+        await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
     }
 
     [Test]

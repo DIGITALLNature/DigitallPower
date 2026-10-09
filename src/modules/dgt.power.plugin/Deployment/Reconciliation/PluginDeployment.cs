@@ -359,14 +359,16 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         }
 
         var declaredNames = desired.Assemblies.Select(assembly => assembly.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        if (remoteAssemblies.Any(assembly => !declaredNames.Contains(assembly.Name)))
-        {
-            throw new NotSupportedException("Package assembly removal requires verification of server-side upload/dependency behavior before it can be applied.");
-        }
-
         var assemblies = new List<PackageAssemblyChanges>();
+        var removedAssemblies = new List<RemovedPackageAssembly>();
         var ownedTypes = new List<RemotePluginType>();
         var existingTypeIds = new Dictionary<PluginTypeReference, Guid>();
+        foreach (var removed in remoteAssemblies.Where(assembly => !declaredNames.Contains(assembly.Name)))
+        {
+            var snapshot = await LoadSnapshotAsync(removed.Id, cancellationToken);
+            ownedTypes.AddRange(snapshot.Types);
+            removedAssemblies.Add(new RemovedPackageAssembly(removed, RegistrationDiff.Compare([], snapshot)));
+        }
         foreach (var assembly in desired.Assemblies)
         {
             var remote = remoteAssemblies.SingleOrDefault(candidate => string.Equals(candidate.Name, assembly.Name, StringComparison.OrdinalIgnoreCase));
@@ -397,7 +399,10 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         }
         return new PackageDeploymentChanges(desired, name, existing,
             existing is not null && !string.Equals(existing.PackageHash, desired.Package.PackageHash, StringComparison.OrdinalIgnoreCase),
-            remoteAssemblies, assemblies, customApis, membership, providers.Changes);
+            remoteAssemblies, assemblies, customApis, membership, providers.Changes)
+        {
+            RemovedAssemblies = removedAssemblies
+        };
     }
 
     internal Task<Guid> ApplyPackageAsync(PackageDeploymentChanges changes, Action<PluginDeploymentProgress>? progress = null, CancellationToken cancellationToken = default)
@@ -543,7 +548,9 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
     private async Task<ReleasedTypeDependencies> ReleaseRemovedTypesAsync(PackageDeploymentChanges changes,
         Action<PluginDeploymentProgress>? progress, CancellationToken cancellationToken)
     {
-        var removedTypeIds = changes.Assemblies.SelectMany(assembly => assembly.Registrations.TypesToDelete).Select(type => type.Id).ToHashSet();
+        var removalSources = changes.Assemblies.Select(assembly => assembly.Registrations)
+            .Concat(changes.RemovedAssemblies.Select(assembly => assembly.Registrations)).ToList();
+        var removedTypeIds = removalSources.SelectMany(registrations => registrations.TypesToDelete).Select(type => type.Id).ToHashSet();
         if (removedTypeIds.Count == 0)
         {
             return ReleasedTypeDependencies.None;
@@ -562,10 +569,10 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         }
 
         var stepIds = new HashSet<Guid>();
-        foreach (var assembly in changes.Assemblies)
+        foreach (var registrations in removalSources)
         {
-            var planned = assembly.Registrations.StepsToDelete.ToDictionary(step => step.Id);
-            foreach (var type in assembly.Registrations.TypesToDelete)
+            var planned = registrations.StepsToDelete.ToDictionary(step => step.Id);
+            foreach (var type in registrations.TypesToDelete)
             {
                 foreach (var step in await _steps.ListByPluginTypeAsync(type.Id, cancellationToken))
                 {
