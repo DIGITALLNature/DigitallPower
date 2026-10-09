@@ -98,11 +98,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         foreach (var type in changes.TypesToDelete)
         {
             var owner = snapshots.First(snapshot => snapshot.StepsByType.ContainsKey(type.Id));
-            if (owner.StepsByType[type.Id].Any(step => !LocalPluginStepValidator.IsDeclarativeStage(step.Stage)))
-            {
-                throw new NotSupportedException($"Plugin type '{type.TypeName}' has platform-only steps; its owning association phase must be implemented before cleanup.");
-            }
-
             var knownStepIds = owner.StepsByType[type.Id].Select(step => step.Id).ToHashSet();
             var dependentStepIds = await _types.GetDependentStepIdsAsync(type.Id, cancellationToken);
             if (dependentStepIds.Any(id => !knownStepIds.Contains(id)))

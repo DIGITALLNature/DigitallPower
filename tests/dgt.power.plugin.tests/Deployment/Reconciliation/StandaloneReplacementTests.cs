@@ -182,13 +182,17 @@ public class StandaloneReplacementTests
     [Arguments(30)]
     [Arguments(80)]
     [Arguments(90)]
-    public async Task Prepare_ReplacementHasPlatformStep_BlocksCleanup(int stage)
+    public async Task Apply_ReplacementWithRemainingPlatformStep_StopsBeforeDeletingOldType(int stage)
     {
-        var (service, _, _, stepId, _) = Seed();
+        var (service, oldAssembly, oldType, stepId, _) = Seed();
         service.Update(new Entity("sdkmessageprocessingstep", stepId) { ["stage"] = new OptionSetValue(stage) });
+        var deployment = new PluginDeployment(service);
 
-        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired())).ThrowsExactly<NotSupportedException>();
-        await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(1);
+        var changes = await deployment.PrepareAsync(Desired());
+
+        await Assert.That(async () => await deployment.ApplyAsync(changes)).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(All(service, "pluginassembly").Any(assembly => assembly.Id == oldAssembly)).IsTrue();
+        await Assert.That(All(service, "plugintype").Any(type => type.Id == oldType)).IsTrue();
     }
 
     [Test]

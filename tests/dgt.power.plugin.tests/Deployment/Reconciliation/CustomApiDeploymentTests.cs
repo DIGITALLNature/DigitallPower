@@ -152,6 +152,31 @@ public class CustomApiDeploymentTests
     }
 
     [Test]
+    public async Task Prepare_RemovedTypeWithPlatformManagedStep_LeavesStepToTheUnlink()
+    {
+        var service = Service();
+        SeedAssembly(service);
+        service.Create(new CustomAPI { UniqueName = "new_Api" });
+        var deployment = new PluginDeployment(service);
+        await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
+        var oldType = All(service, PluginType.EntityLogicalName).Single().Id;
+        var messageId = service.Create(new Entity("sdkmessage", Guid.NewGuid()) { ["name"] = "new_Api" });
+        service.Create(new Entity("sdkmessageprocessingstep", Guid.NewGuid())
+        {
+            ["name"] = "platform step", ["eventhandler"] = new EntityReference("plugintype", oldType),
+            ["sdkmessageid"] = new EntityReference("sdkmessage", messageId), ["stage"] = new OptionSetValue(30),
+            ["mode"] = new OptionSetValue(0), ["rank"] = 1
+        });
+        var desired = Desired();
+        var renamed = desired with { Version = new Version(2, 0, 0, 0), PluginTypes = [desired.PluginTypes[0] with { TypeName = "Renamed" }] };
+
+        var changes = await deployment.PrepareAsync(renamed);
+
+        await Assert.That(changes.AssemblyToDelete).IsNotNull();
+        await Assert.That(changes.CustomApis).Count().IsEqualTo(1);
+    }
+
+    [Test]
     [Arguments(false)]
     [Arguments(true)]
     public async Task Apply_InterruptedAssociationWrite_FreshPreparationResumesWithoutRepeatingWrite(bool unlink)

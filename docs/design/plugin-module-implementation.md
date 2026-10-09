@@ -141,8 +141,9 @@ create duplicate active registrations or delete still-referenced types.
 Selected recovery boundary: at most two same-name standalone records, exactly one in the
 desired major/minor train, with target content matching the requested artifact. The hash
 check is a provisional conservative guard, not proof of a failed push. More/duplicate trains,
-content mismatch, and ambiguous step candidates fail. Provider dependencies
-and platform-only steps block cleanup until their lifecycles are supported and verified.
+content mismatch, and ambiguous step candidates fail. Provider dependencies block cleanup.
+Platform-managed steps (created by a Custom API link) are not validated: they disappear with
+the unlink, which runs before cleanup, and anything else is left to Dataverse to reject.
 Custom API associations are reassigned or unlinked before cleanup by the shared P5 slice.
 
 ## P4: Add package deployment

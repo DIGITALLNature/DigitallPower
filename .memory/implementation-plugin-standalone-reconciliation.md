@@ -27,7 +27,9 @@ step value alone is not a safe assembly-wide dictionary key.
 ## Ownership and supported boundary
 
 Reconciliation owns supported declarative stages (10, 20, 40). Internal/platform-only
-stages are retained and their images are not reconciled. Duplicate declarations and
+stages are retained and their images are not reconciled. Platform-managed steps of a removed
+type (created by a Custom API link) are not validated in prepare: the unlink that runs before
+cleanup removes them, and apply stops before deleting the type if any dependent step remains. Duplicate declarations and
 ambiguous remote matches fail before writes. Type matching is ordinal/case-sensitive;
 message/entity matching is case-insensitive.
 
