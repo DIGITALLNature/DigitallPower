@@ -83,7 +83,8 @@ public class CustomApiDeploymentTests
         using var console = new TestConsole();
         new DeploymentRenderer(console).Render(changes);
 
-        await Assert.That(console.Output).Contains("Reassign from");
+        await Assert.That(console.Output).Contains("Custom API new_Api ~ Update");
+        await Assert.That(console.Output).DoesNotContain("Reassign");
         await Assert.That(console.Output).Contains("Destructive operations: 1");
         await deployment.ApplyAsync(changes);
 

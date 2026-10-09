@@ -215,7 +215,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         var action = Unchanged;
         if (change is not null)
         {
-            action = change.PreviousHandlerId is null ? Link : $"Reassign from {change.PreviousHandlerId}";
+            action = change.PreviousHandlerId is null ? Link : Update;
         }
 
         typeNode.AddNode(Label($"Custom API {Markup.Escape(type.CustomApi)}", action));
