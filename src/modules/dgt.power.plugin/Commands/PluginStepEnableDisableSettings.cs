@@ -45,6 +45,14 @@ public class PluginStepEnableDisableSettings : PluginSettings
     [Description("Execution order / rank.")]
     public int? ExecutionOrder { get; init; }
 
+    [CommandOption("--reason")]
+    [Description("Optional reason for the state change. If --persist-reason is specified, this will be stored in the step's description field.")]
+    public string? Reason { get; init; }
+
+    [CommandOption("--persist-reason")]
+    [Description("Persist the reason to the step's description field in Dataverse")]
+    public bool PersistReason { get; init; }
+
     /// <inheritdoc />
     public override ValidationResult Validate()
     {

@@ -1,11 +1,14 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Globalization;
 using dgt.power.common;
+using dgt.power.dataverse;
 using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
@@ -39,11 +42,27 @@ public abstract class PluginStepEnableDisableCommandBase(
         var service = (IOrganizationServiceAsync2)Connection;
         var stepRepository = new SdkMessageProcessingStepRepository(service);
 
-        // Resolve step id
+        // Resolve step id and get step name
         Guid stepId;
+        string? stepName = null;
+
         if (settings.StepId.HasValue)
         {
             stepId = settings.StepId.Value;
+            try
+            {
+                var entity = await service.RetrieveAsync(
+                    SdkMessageProcessingStep.EntityLogicalName,
+                    stepId,
+                    new ColumnSet(SdkMessageProcessingStep.LogicalNames.Name),
+                    cancellationToken);
+                stepName = entity.GetAttributeValue<string>(SdkMessageProcessingStep.LogicalNames.Name);
+            }
+            catch
+            {
+                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]No plugin step matches the supplied criteria.[/]");
+                return Tracer.End(this, false);
+            }
         }
         else
         {
@@ -66,6 +85,7 @@ public abstract class PluginStepEnableDisableCommandBase(
                     return Tracer.End(this, false);
                 default:
                     stepId = matches[0].Id;
+                    stepName = matches[0].Name;
                     break;
             }
         }
@@ -73,12 +93,28 @@ public abstract class PluginStepEnableDisableCommandBase(
         if (ShouldEnable)
         {
             await stepRepository.EnableAsync(stepId, cancellationToken);
-            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Plugin step enabled");
+            var message = settings.Reason is not null
+                ? $"[green]●[/] {Markup.Escape(stepName ?? stepId.ToString())} - {settings.Reason}"
+                : $"[green]●[/] {Markup.Escape(stepName ?? stepId.ToString())}";
+            Console.MarkupLine(message);
         }
         else
         {
             await stepRepository.DisableAsync(stepId, cancellationToken);
-            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Plugin step disabled");
+            var message = settings.Reason is not null
+                ? $"[red]●[/] {Markup.Escape(stepName ?? stepId.ToString())} - {settings.Reason}"
+                : $"[red]●[/] {Markup.Escape(stepName ?? stepId.ToString())}";
+            Console.MarkupLine(message);
+        }
+
+        // Optionally persist reason to description
+        if (settings.PersistReason && settings.Reason != null)
+        {
+            var step = new SdkMessageProcessingStep(stepId)
+            {
+                Description = settings.Reason
+            };
+            await service.UpdateAsync(step, cancellationToken);
         }
 
         return Tracer.End(this, true);

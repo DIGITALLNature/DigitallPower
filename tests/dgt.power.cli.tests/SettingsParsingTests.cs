@@ -610,6 +610,36 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesReasonAndPersistReason()
+    {
+        var stepId = Guid.NewGuid();
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--step-id", stepId.ToString(),
+            "--reason", "Maintenance mode",
+            "--persist-reason");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsEqualTo(stepId);
+        await Assert.That(settings.Reason).IsEqualTo("Maintenance mode");
+        await Assert.That(settings.PersistReason).IsTrue();
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_DefaultPersistReason_IsFalse()
+    {
+        var stepId = Guid.NewGuid();
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--step-id", stepId.ToString(),
+            "--reason", "Maintenance mode");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.Reason).IsEqualTo("Maintenance mode");
+        await Assert.That(settings.PersistReason).IsFalse();
+    }
+
+    [Test]
     public async Task PluginStepEnableDisableSettings_ParsesCompositeKey()
     {
         var result = Parse<PluginStepEnableDisableSettings>(
