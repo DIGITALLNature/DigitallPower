@@ -67,7 +67,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
-| **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage step configuration with `plugin step config set`; enable/disable steps with `plugin step enable`/`disable`; bulk manage step states with `plugin step state set` |
+| **Plugin** | Deploy plugin assemblies with `plugin push`; manage plugin steps (configuration, enable/disable, bulk state) |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
 
 ## 🚀 Installation
