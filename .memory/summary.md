@@ -32,8 +32,8 @@ src/
     ├── dgt.power.connection/   Connection management + auth lifecycle (canonical)
     ├── dgt.power.export/       Entity data export (calendar, templates, bulk deletes, etc.)
     ├── dgt.power.import/       Entity data import with conflict resolution
-    ├── dgt.power.maintenance/  Workflow state management, SDK step control, carrier info
-    ├── dgt.power.plugin/       Resource-oriented `plugin push` + `plugin step config set`
+    ├── dgt.power.maintenance/  Workflow state management, carrier info
+    ├── dgt.power.plugin/       Resource-oriented `plugin push` + `plugin step config set|enable|disable|state set`
     ├── dgt.power.profile/      Deprecated alias for dgt.power.connection (kept for BC)
     ├── dgt.power.solution/     `dgtp solution version|lint|copy-components` - single/multi-solution operations: version increment (formerly `maintenance solution-version`), configuration-driven Dataverse quality gates (formerly dgt.power.linter), and copying solution components between solutions with managed/active-layer-aware filtering, per-component execution progress, and `--apps skip|strip|allow` model-driven app handling
     └── dgt.power.webresource/  Dedicated webresource deployment
@@ -277,11 +277,15 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `implementation-plugin-push-outdated-assembly-migration.md` | implementation | New `dgt.power.plugin` module: `plugin push` pipeline (Local/Planning/Dataverse/Execution), unconditional outdated-assembly migration+purge (no flag), code-activity rejection |
 | `implementation-plugin-push-fail-closed-validation.md` | implementation | Plugin push aborts incomplete metadata reads, validates requested solutions and package component definitions before writes, and rejects all Create pre-images |
 | `implementation-plugin-step-config-set.md` | implementation | `dgtp plugin step config set`: enum-validated stages 10/20/30/40, file/inline config, composite resolution with concise name/ID ambiguity diagnostics |
+| `implementation-plugin-step-enable-disable-state.md` | implementation | `dgtp plugin step enable|disable|state set`: three identification modes (step-id, composite key, solution), auto-persist reason, bulk config-file operations |
 | `research-plugin-plan-output-adaptation.md` | research | Adaptation of webresource V2 plan-tree and execution reporting for hierarchical plugin pushes |
 | `decision-plugin-deployment-plan-pipeline.md` | decision | Single typed plan shared by plugin push rendering and execution, including upgrade and package ID-resolution semantics |
 | `decision-plugin-upgrade-retention-policy.md` | decision | Strict declarative standalone replacement policy and major/minor version-train behavior |
 | `decision-plugin-secure-config-provisioning.md` | decision | Secure step configuration is CI-provisioned by a future separate post-deployment command, never source-controlled |
 | `decision-plugin-confirmation-precedence.md` | decision | Optional per-target plugin push confirmation is overridden by dry-run and non-interactive/CI execution modes |
+| `decision-plugin-step-reason-auto-persist.md` | decision | Auto-persist reason to description when --reason is provided; removed --persist-reason flag |
+| `decision-plugin-step-three-modes.md` | decision | Plugin step enable/disable support three identification modes: step-id, composite key, solution-scoped |
+| `decision-remove-ensuresdksteps.md` | decision | Remove ensuresdksteps command; replaced by plugin step enable/disable --solution |
 | `research-plugin-custom-data-provider-push.md` | research | Provider identity, grouped metadata, handler lifecycle, specialized table provisioning, solution membership, and live-validation caveats |
 | `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |
 | `research-plugin-assembly-version-trains.md` | research | Dataverse updates build/revision changes in-place in either direction; major/minor changes require a new assembly |
