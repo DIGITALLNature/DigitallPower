@@ -58,4 +58,13 @@ public interface ISdkMessageProcessingStepRepository
 
     /// <summary>Disables a step by setting statecode=1 and statuscode=2.</summary>
     Task DisableAsync(Guid stepId, CancellationToken cancellationToken = default);
+
+    /// <summary>Retrieves a step by its ID, returning null if not found.</summary>
+    Task<RemotePluginStep?> GetByIdAsync(Guid stepId, CancellationToken cancellationToken = default);
+
+    /// <summary>Lists all steps in a given solution.</summary>
+    Task<IReadOnlyList<RemotePluginStep>> ListBySolutionAsync(string solutionName, CancellationToken cancellationToken = default);
+
+    /// <summary>Updates the description field of a step.</summary>
+    Task UpdateDescriptionAsync(Guid stepId, string description, CancellationToken cancellationToken = default);
 }

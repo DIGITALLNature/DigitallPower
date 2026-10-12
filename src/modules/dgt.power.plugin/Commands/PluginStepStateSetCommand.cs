@@ -2,10 +2,8 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
-using System.Text.Json;
 using dgt.power.common;
 using dgt.power.dataverse;
-using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -87,10 +85,10 @@ public class PluginStepStateSetCommand(
 
     private async Task<StepProcessResult> ProcessStepAsync(
         PluginStepStateConfig stepConfig,
-        ISdkMessageProcessingStepRepository stepRepository,
+        SdkMessageProcessingStepRepository stepRepository,
         CancellationToken cancellationToken)
     {
-        string? stepName = null;
+        string? stepName;
         Guid stepId;
 
         if (stepConfig.StepId.HasValue)
@@ -107,7 +105,7 @@ public class PluginStepStateSetCommand(
                     cancellationToken);
                 stepName = entity.GetAttributeValue<string>(SdkMessageProcessingStep.LogicalNames.Name);
             }
-            catch
+            catch (Exception)
             {
                 Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Step with id '{0}' not found[/]", stepId);
                 return StepProcessResult.Failure;
@@ -148,13 +146,17 @@ public class PluginStepStateSetCommand(
         if (stepConfig.Enabled)
         {
             await stepRepository.EnableAsync(stepId, cancellationToken);
-            var message = stepConfig.Reason is not null ? $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}" : $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())}";
+            var message = stepConfig.Reason is not null
+                ? $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}"
+                : $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())}";
             Console.MarkupLine(message);
         }
         else
         {
             await stepRepository.DisableAsync(stepId, cancellationToken);
-            var message = stepConfig.Reason is not null ? $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}" : $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())}";
+            var message = stepConfig.Reason is not null
+                ? $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}"
+                : $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())}";
             Console.MarkupLine(message);
         }
 
