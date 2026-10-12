@@ -8,6 +8,7 @@ using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -41,6 +42,12 @@ public abstract class PluginStepEnableDisableCommandBase(
 
         var service = (IOrganizationServiceAsync2)Connection;
         var stepRepository = new SdkMessageProcessingStepRepository(service);
+
+        // Handle solution-scoped mode
+        if (!string.IsNullOrWhiteSpace(settings.Solution))
+        {
+            return await HandleSolutionScopedAsync(settings, stepRepository, service, cancellationToken);
+        }
 
         // Resolve step id and get step name
         Guid stepId;
@@ -118,6 +125,95 @@ public abstract class PluginStepEnableDisableCommandBase(
         }
 
         return Tracer.End(this, true);
+    }
+
+    private async Task<bool> HandleSolutionScopedAsync(
+        PluginStepEnableDisableSettings settings,
+        ISdkMessageProcessingStepRepository stepRepository,
+        IOrganizationServiceAsync2 service,
+        CancellationToken cancellationToken)
+    {
+        var steps = await RetrieveStepsFromSolutionAsync(settings.Solution!, service, cancellationToken);
+
+        if (steps.Length == 0)
+        {
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[yellow]No plugin steps found in solution '{0}'[/]", settings.Solution!);
+            return Tracer.End(this, true);
+        }
+
+        var success = true;
+        foreach (var step in steps)
+        {
+            try
+            {
+                if (ShouldEnable)
+                {
+                    await stepRepository.EnableAsync(step.Id, cancellationToken);
+                    var message = settings.Reason is not null
+                        ? $"[green]●[/] Enabled {Markup.Escape(step.Name ?? step.Id.ToString())} - {settings.Reason}"
+                        : $"[green]●[/] Enabled {Markup.Escape(step.Name ?? step.Id.ToString())}";
+                    Console.MarkupLine(message);
+                }
+                else
+                {
+                    await stepRepository.DisableAsync(step.Id, cancellationToken);
+                    var message = settings.Reason is not null
+                        ? $"[red]●[/] Disabled {Markup.Escape(step.Name ?? step.Id.ToString())} - {settings.Reason}"
+                        : $"[red]●[/] Disabled {Markup.Escape(step.Name ?? step.Id.ToString())}";
+                    Console.MarkupLine(message);
+                }
+
+                // Persist reason to description if provided
+                if (settings.Reason != null)
+                {
+                    var stepEntity = new SdkMessageProcessingStep(step.Id)
+                    {
+                        Description = settings.Reason
+                    };
+                    await service.UpdateAsync(stepEntity, cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Failed to update step {0}: {1}[/]", step.Name ?? step.Id.ToString(), ex.Message);
+                success = false;
+            }
+        }
+
+        return Tracer.End(this, success);
+    }
+
+    private async Task<SdkMessageProcessingStep[]> RetrieveStepsFromSolutionAsync(
+        string solutionName,
+        IOrganizationServiceAsync2 service,
+        CancellationToken cancellationToken)
+    {
+        var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(
+                SdkMessageProcessingStep.LogicalNames.Name,
+                SdkMessageProcessingStep.LogicalNames.StateCode
+            )
+        };
+
+        var componentLink = query.AddLink(
+            SolutionComponent.EntityLogicalName,
+            SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId,
+            SolutionComponent.LogicalNames.ObjectId);
+        var solutionLink = componentLink.AddLink(
+            Solution.EntityLogicalName,
+            SolutionComponent.LogicalNames.SolutionId,
+            Solution.LogicalNames.SolutionId);
+        solutionLink.EntityAlias = "solution";
+
+        query.Criteria.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solutionName);
+
+        var retrieveMultipleRequest = new RetrieveMultipleRequest { Query = query };
+        var response = await service.ExecuteAsync(retrieveMultipleRequest, cancellationToken);
+
+        return ((RetrieveMultipleResponse)response).EntityCollection.Entities
+            .Cast<SdkMessageProcessingStep>()
+            .ToArray();
     }
 
     private void PrintMultipleMatches(IReadOnlyList<RemotePluginStep> matches)

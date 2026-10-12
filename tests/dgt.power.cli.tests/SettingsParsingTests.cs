@@ -624,6 +624,19 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesSolution()
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--solution", "mysolution",
+            "--reason", "Bulk operation");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.Solution).IsEqualTo("mysolution");
+        await Assert.That(settings.Reason).IsEqualTo("Bulk operation");
+    }
+
+    [Test]
     public async Task PluginStepEnableDisableSettings_ParsesCompositeKey()
     {
         var result = Parse<PluginStepEnableDisableSettings>(

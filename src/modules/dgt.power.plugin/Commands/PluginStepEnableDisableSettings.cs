@@ -18,8 +18,12 @@ namespace dgt.power.plugin.Commands;
 public class PluginStepEnableDisableSettings : PluginSettings
 {
     [CommandOption("--step-id")]
-    [Description("SdkMessageProcessingStep id. Mutually exclusive with composite key options.")]
+    [Description("SdkMessageProcessingStep id. Mutually exclusive with composite key options and --solution.")]
     public Guid? StepId { get; init; }
+
+    [CommandOption("-s|--solution")]
+    [Description("Unique name of the solution. Applies the state change to ALL plugin steps in that solution. Mutually exclusive with --step-id and composite key options.")]
+    public string? Solution { get; init; }
 
     [CommandOption("--plugin-type")]
     [Description("Fully qualified type name of the plugin (e.g., MyNamespace.MyPluginClass).")]
@@ -52,8 +56,9 @@ public class PluginStepEnableDisableSettings : PluginSettings
     /// <inheritdoc />
     public override ValidationResult Validate()
     {
-        // A vs B: step-id vs composite key
+        // A vs B vs C: step-id vs composite key vs solution
         var hasDirect = StepId.HasValue;
+        var hasSolution = !string.IsNullOrWhiteSpace(Solution);
         var hasCompositeKeyOptions = PluginType != null || Message != null || Stage.HasValue || Entity != null;
         var hasCompositeDisambiguators = SecondaryEntity != null || ExecutionOrder.HasValue;
         var hasCompositeOptions = hasCompositeKeyOptions || hasCompositeDisambiguators;
@@ -69,9 +74,19 @@ public class PluginStepEnableDisableSettings : PluginSettings
             return ValidationResult.Error("Cannot use --step-id together with composite key options (--plugin-type, --message, --stage, --entity, --secondary-entity, --execution-order).");
         }
 
-        if (!hasDirect && !hasCompositeKey)
+        if (hasDirect && hasSolution)
         {
-            return ValidationResult.Error("Either --step-id or all required composite key options (--plugin-type, --message, --stage, --entity) must be provided.");
+            return ValidationResult.Error("Cannot use --step-id together with --solution.");
+        }
+
+        if (hasSolution && hasCompositeOptions)
+        {
+            return ValidationResult.Error("Cannot use --solution together with composite key options (--plugin-type, --message, --stage, --entity, --secondary-entity, --execution-order).");
+        }
+
+        if (!hasDirect && !hasCompositeKey && !hasSolution)
+        {
+            return ValidationResult.Error("Either --step-id, all required composite key options (--plugin-type, --message, --stage, --entity), or --solution must be provided.");
         }
 
         return ValidationResult.Success();
