@@ -161,6 +161,16 @@ internal static class CommandTree
 
             plugin.AddBranch("step", step =>
             {
+                step.AddCommand<PluginStepEnableCommand>("enable")
+                    .WithDescription("Enables an sdkmessageprocessingstep")
+                    .WithExample("plugin", "step", "enable", "--step-id", "<guid>")
+                    .WithExample("plugin", "step", "enable", "--plugin-type", "MyNamespace.MyPlugin", "--message", "Update", "--stage", "PreOperation", "--entity", "account");
+
+                step.AddCommand<PluginStepDisableCommand>("disable")
+                    .WithDescription("Disables an sdkmessageprocessingstep")
+                    .WithExample("plugin", "step", "disable", "--step-id", "<guid>")
+                    .WithExample("plugin", "step", "disable", "--plugin-type", "MyNamespace.MyPlugin", "--message", "Update", "--stage", "PreOperation", "--entity", "account");
+
                 step.AddBranch("config", cfg =>
                 {
                     cfg.AddCommand<PluginStepConfigSetCommand>("set")

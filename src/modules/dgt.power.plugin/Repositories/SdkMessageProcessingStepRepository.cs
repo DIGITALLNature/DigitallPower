@@ -237,4 +237,24 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
         };
         await service.UpdateAsync(step, cancellationToken);
     }
+
+    public async Task EnableAsync(Guid stepId, CancellationToken cancellationToken = default)
+    {
+        var step = new SdkMessageProcessingStep(stepId)
+        {
+            StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled),
+            StatusCode = new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)
+        };
+        await service.UpdateAsync(step, cancellationToken);
+    }
+
+    public async Task DisableAsync(Guid stepId, CancellationToken cancellationToken = default)
+    {
+        var step = new SdkMessageProcessingStep(stepId)
+        {
+            StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Disabled),
+            StatusCode = new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Disabled)
+        };
+        await service.UpdateAsync(step, cancellationToken);
+    }
 }

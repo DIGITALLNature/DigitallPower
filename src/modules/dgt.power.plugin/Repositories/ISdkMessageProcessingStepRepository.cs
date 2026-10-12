@@ -52,4 +52,10 @@ public interface ISdkMessageProcessingStepRepository
     // Retain the contract for planned constructor injection; commands currently construct repositories directly.
     // ReSharper disable once UnusedMemberInSuper.Global
     Task UpdateConfigurationAsync(Guid stepId, string? configuration, CancellationToken cancellationToken = default);
+
+    /// <summary>Enables a step by setting statecode=0 and statuscode=1.</summary>
+    Task EnableAsync(Guid stepId, CancellationToken cancellationToken = default);
+
+    /// <summary>Disables a step by setting statecode=1 and statuscode=2.</summary>
+    Task DisableAsync(Guid stepId, CancellationToken cancellationToken = default);
 }

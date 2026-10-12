@@ -595,4 +595,71 @@ public class SettingsParsingTests
         await Assert.That(settings.SecureConfig).IsEqualTo("secureValue");
         await Assert.That(settings.PluginType).IsNull();
     }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesDirectStepId()
+    {
+        var stepId = Guid.NewGuid();
+        var result = Parse<PluginStepEnableDisableSettings>("--step-id", stepId.ToString());
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsEqualTo(stepId);
+        await Assert.That(settings.PluginType).IsNull();
+        await Assert.That(settings.Message).IsNull();
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesCompositeKey()
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", "PreOperation",
+            "--entity", "account");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsNull();
+        await Assert.That(settings.PluginType).IsEqualTo("MyNamespace.MyPlugin");
+        await Assert.That(settings.Message).IsEqualTo("Create");
+        await Assert.That(settings.Stage).IsEqualTo(PluginStepStage.PreOperation);
+        await Assert.That(settings.Entity).IsEqualTo("account");
+    }
+
+    [Test]
+    [Arguments("10", PluginStepStage.PreValidation)]
+    [Arguments("20", PluginStepStage.PreOperation)]
+    [Arguments("30", PluginStepStage.MainOperation)]
+    [Arguments("40", PluginStepStage.PostOperation)]
+    [Arguments("PreValidation", PluginStepStage.PreValidation)]
+    [Arguments("PreOperation", PluginStepStage.PreOperation)]
+    public async Task PluginStepEnableDisableSettings_ParsesNamedAndNumericStages(string stage, PluginStepStage expectedStage)
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", stage,
+            "--entity", "account");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.Stage).IsEqualTo(expectedStage);
+    }
+
+    [Test]
+    [Arguments("80")]
+    [Arguments("90")]
+    [Arguments("PreCommitStage")]
+    [Arguments("PostCommitStage")]
+    public async Task PluginStepEnableDisableSettings_RejectsInternalStages(string stage)
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", stage,
+            "--entity", "account");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+    }
 }
