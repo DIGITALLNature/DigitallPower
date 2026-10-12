@@ -181,6 +181,14 @@ internal static class CommandTree
 #pragma warning restore S103
                         .WithExample("plugin", "step", "config", "set", "--step-id", "<guid>", "--unsecure-file", "config.json", "--secure-file", "secrets.json");
                 });
+
+                step.AddBranch("state", state =>
+                {
+                    state.AddCommand<PluginStepStateSetCommand>("set")
+                        .WithDescription("Applies enable/disable state to multiple plugin steps from a config file")
+                        .WithExample("plugin", "step", "state", "set", "-c", "step-states.json")
+                        .WithExample("plugin", "step", "state", "set", "-c", "step-states.json", "--persist-reason");
+                });
             });
         });
 

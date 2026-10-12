@@ -662,4 +662,39 @@ public class SettingsParsingTests
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
     }
+
+    [Test]
+    public async Task PluginStepStateSetSettings_ParsesConfigOption()
+    {
+        var result = Parse<PluginStepStateSetSettings>(
+            "-c", "step-states.json");
+
+        var settings = (PluginStepStateSetSettings)result.Settings!;
+
+        await Assert.That(settings.Config).IsEqualTo("step-states.json");
+    }
+
+    [Test]
+    public async Task PluginStepStateSetSettings_ParsesPersistReasonOption()
+    {
+        var result = Parse<PluginStepStateSetSettings>(
+            "-c", "step-states.json",
+            "--persist-reason");
+
+        var settings = (PluginStepStateSetSettings)result.Settings!;
+
+        await Assert.That(settings.Config).IsEqualTo("step-states.json");
+        await Assert.That(settings.PersistReason).IsTrue();
+    }
+
+    [Test]
+    public async Task PluginStepStateSetSettings_DefaultPersistReason_IsFalse()
+    {
+        var result = Parse<PluginStepStateSetSettings>(
+            "-c", "step-states.json");
+
+        var settings = (PluginStepStateSetSettings)result.Settings!;
+
+        await Assert.That(settings.PersistReason).IsFalse();
+    }
 }
