@@ -19,8 +19,4 @@ public class PluginStepStateSetSettings : PluginSettings
     [CommandOption("-c|--config")]
     [Description("Full path to the config file, e.g. C:\\temp\\config.json")]
     public string Config { get; init; } = string.Empty;
-
-    [CommandOption("--persist-reason")]
-    [Description("Persist the reason from config to the step's description field in Dataverse")]
-    public bool PersistReason { get; init; }
 }

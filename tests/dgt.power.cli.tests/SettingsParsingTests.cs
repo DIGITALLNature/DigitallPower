@@ -610,23 +610,7 @@ public class SettingsParsingTests
     }
 
     [Test]
-    public async Task PluginStepEnableDisableSettings_ParsesReasonAndPersistReason()
-    {
-        var stepId = Guid.NewGuid();
-        var result = Parse<PluginStepEnableDisableSettings>(
-            "--step-id", stepId.ToString(),
-            "--reason", "Maintenance mode",
-            "--persist-reason");
-
-        var settings = (PluginStepEnableDisableSettings)result.Settings!;
-
-        await Assert.That(settings.StepId).IsEqualTo(stepId);
-        await Assert.That(settings.Reason).IsEqualTo("Maintenance mode");
-        await Assert.That(settings.PersistReason).IsTrue();
-    }
-
-    [Test]
-    public async Task PluginStepEnableDisableSettings_DefaultPersistReason_IsFalse()
+    public async Task PluginStepEnableDisableSettings_ParsesReason()
     {
         var stepId = Guid.NewGuid();
         var result = Parse<PluginStepEnableDisableSettings>(
@@ -635,8 +619,8 @@ public class SettingsParsingTests
 
         var settings = (PluginStepEnableDisableSettings)result.Settings!;
 
+        await Assert.That(settings.StepId).IsEqualTo(stepId);
         await Assert.That(settings.Reason).IsEqualTo("Maintenance mode");
-        await Assert.That(settings.PersistReason).IsFalse();
     }
 
     [Test]
@@ -704,27 +688,5 @@ public class SettingsParsingTests
         await Assert.That(settings.Config).IsEqualTo("step-states.json");
     }
 
-    [Test]
-    public async Task PluginStepStateSetSettings_ParsesPersistReasonOption()
-    {
-        var result = Parse<PluginStepStateSetSettings>(
-            "-c", "step-states.json",
-            "--persist-reason");
 
-        var settings = (PluginStepStateSetSettings)result.Settings!;
-
-        await Assert.That(settings.Config).IsEqualTo("step-states.json");
-        await Assert.That(settings.PersistReason).IsTrue();
-    }
-
-    [Test]
-    public async Task PluginStepStateSetSettings_DefaultPersistReason_IsFalse()
-    {
-        var result = Parse<PluginStepStateSetSettings>(
-            "-c", "step-states.json");
-
-        var settings = (PluginStepStateSetSettings)result.Settings!;
-
-        await Assert.That(settings.PersistReason).IsFalse();
-    }
 }

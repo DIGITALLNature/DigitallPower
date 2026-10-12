@@ -186,8 +186,7 @@ internal static class CommandTree
                 {
                     state.AddCommand<PluginStepStateSetCommand>("set")
                         .WithDescription("Applies enable/disable state to multiple plugin steps from a config file")
-                        .WithExample("plugin", "step", "state", "set", "-c", "step-states.json")
-                        .WithExample("plugin", "step", "state", "set", "-c", "step-states.json", "--persist-reason");
+                        .WithExample("plugin", "step", "state", "set", "-c", "step-states.json");
                 });
             });
         });

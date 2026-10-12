@@ -94,21 +94,21 @@ public abstract class PluginStepEnableDisableCommandBase(
         {
             await stepRepository.EnableAsync(stepId, cancellationToken);
             var message = settings.Reason is not null
-                ? $"[green]●[/] {Markup.Escape(stepName ?? stepId.ToString())} - {settings.Reason}"
-                : $"[green]●[/] {Markup.Escape(stepName ?? stepId.ToString())}";
+                ? $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())} - {settings.Reason}"
+                : $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())}";
             Console.MarkupLine(message);
         }
         else
         {
             await stepRepository.DisableAsync(stepId, cancellationToken);
             var message = settings.Reason is not null
-                ? $"[red]●[/] {Markup.Escape(stepName ?? stepId.ToString())} - {settings.Reason}"
-                : $"[red]●[/] {Markup.Escape(stepName ?? stepId.ToString())}";
+                ? $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())} - {settings.Reason}"
+                : $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())}";
             Console.MarkupLine(message);
         }
 
-        // Optionally persist reason to description
-        if (settings.PersistReason && settings.Reason != null)
+        // Persist reason to description if provided
+        if (settings.Reason != null)
         {
             var step = new SdkMessageProcessingStep(stepId)
             {

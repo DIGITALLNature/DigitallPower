@@ -54,8 +54,8 @@ public class PluginStepStateSetCommand(
 
         foreach (var stepConfig in config.Steps)
         {
-            var result = await ProcessStepAsync(stepConfig, stepRepository, settings.PersistReason, cancellationToken);
-            if (result == StepProcessResult.Success)
+            var result = await ProcessStepAsync(stepConfig, stepRepository, cancellationToken);
+            if (result.IsSuccess)
             {
                 if (stepConfig.Enabled)
                 {
@@ -66,12 +66,7 @@ public class PluginStepStateSetCommand(
                     disabledCount++;
                 }
             }
-            else if (result == StepProcessResult.NotFound)
-            {
-                errorCount++;
-                success = false;
-            }
-            else if (result == StepProcessResult.MultipleMatches)
+            else
             {
                 errorCount++;
                 success = false;
@@ -93,28 +88,29 @@ public class PluginStepStateSetCommand(
     private async Task<StepProcessResult> ProcessStepAsync(
         PluginStepStateConfig stepConfig,
         ISdkMessageProcessingStepRepository stepRepository,
-        bool persistReason,
         CancellationToken cancellationToken)
     {
-        // Resolve step id
+        string? stepName = null;
         Guid stepId;
+
         if (stepConfig.StepId.HasValue)
         {
             stepId = stepConfig.StepId.Value;
 
-            // Verify step exists by trying to retrieve it
+            // Retrieve step to verify it exists and get the name
             try
             {
-                await ((IOrganizationServiceAsync2)Connection).RetrieveAsync(
-                    dgt.power.dataverse.SdkMessageProcessingStep.EntityLogicalName,
+                var entity = await ((IOrganizationServiceAsync2)Connection).RetrieveAsync(
+                    SdkMessageProcessingStep.EntityLogicalName,
                     stepId,
-                    new ColumnSet(dgt.power.dataverse.SdkMessageProcessingStep.LogicalNames.Name),
+                    new ColumnSet(SdkMessageProcessingStep.LogicalNames.Name),
                     cancellationToken);
+                stepName = entity.GetAttributeValue<string>(SdkMessageProcessingStep.LogicalNames.Name);
             }
             catch
             {
                 Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Step with id '{0}' not found[/]", stepId);
-                return StepProcessResult.NotFound;
+                return StepProcessResult.Failure;
             }
         }
         else
@@ -133,16 +129,17 @@ public class PluginStepStateSetCommand(
                 case 0:
                     var compositeKey = BuildCompositeKeyDescription(stepConfig);
                     Console.MarkupLine(CultureInfo.InvariantCulture, "[red]No plugin step matches: {0}[/]", compositeKey);
-                    return StepProcessResult.NotFound;
+                    return StepProcessResult.Failure;
                 case > 1:
                     Console.MarkupLine("[yellow]Multiple plugin steps match. Refine the criteria or use stepId.[/]");
                     foreach (var step in matches)
                     {
                         Console.WriteLine($"  {step.Name} ({step.Id})");
                     }
-                    return StepProcessResult.MultipleMatches;
+                    return StepProcessResult.Failure;
                 default:
                     stepId = matches[0].Id;
+                    stepName = matches[0].Name;
                     break;
             }
         }
@@ -151,18 +148,20 @@ public class PluginStepStateSetCommand(
         if (stepConfig.Enabled)
         {
             await stepRepository.EnableAsync(stepId, cancellationToken);
-            Console.MarkupLine($"[green]Enabled step {stepId}[/]" + (stepConfig.Reason is not null ? $" - {stepConfig.Reason}" : string.Empty));
+            var message = stepConfig.Reason is not null ? $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}" : $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())}";
+            Console.MarkupLine(message);
         }
         else
         {
             await stepRepository.DisableAsync(stepId, cancellationToken);
-            Console.MarkupLine($"[green]Disabled step {stepId}[/]" + (stepConfig.Reason is not null ? $" - {stepConfig.Reason}" : string.Empty));
+            var message = stepConfig.Reason is not null ? $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}" : $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())}";
+            Console.MarkupLine(message);
         }
 
-        // Optionally persist reason to description
-        if (persistReason && stepConfig.Reason != null)
+        // Persist reason to description if provided
+        if (stepConfig.Reason != null)
         {
-            var step = new dgt.power.dataverse.SdkMessageProcessingStep(stepId)
+            var step = new SdkMessageProcessingStep(stepId)
             {
                 Description = stepConfig.Reason
             };
@@ -202,10 +201,16 @@ public class PluginStepStateSetCommand(
         return string.Join(", ", parts);
     }
 
-    private enum StepProcessResult
+    private struct StepProcessResult
     {
-        Success,
-        NotFound,
-        MultipleMatches
+        public static readonly StepProcessResult Success = new(true);
+        public static readonly StepProcessResult Failure = new(false);
+
+        public bool IsSuccess { get; }
+
+        private StepProcessResult(bool isSuccess)
+        {
+            IsSuccess = isSuccess;
+        }
     }
 }

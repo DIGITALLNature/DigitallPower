@@ -846,6 +846,7 @@ dgtp plugin step enable --plugin-type MyNamespace.MyPlugin --message Create --st
 | `--entity` | No (part of composite key) | Primary entity logical name |
 | `--secondary-entity` | No (part of composite key) | Secondary entity logical name (for Associate, Disassociate, etc.) |
 | `--execution-order` | No (part of composite key) | Rank/execution order of the step |
+| `--reason` | No | Reason for the state change; automatically stored in the step's description field when provided |
 
 ##### Notes
 
@@ -875,7 +876,6 @@ Applies enable/disable state to multiple plugin steps defined in a JSON configur
 
 ```bash
 dgtp plugin step state set -c step-states.json
-dgtp plugin step state set -c step-states.json --persist-reason
 ```
 
 ##### Config file format
@@ -904,14 +904,13 @@ dgtp plugin step state set -c step-states.json --persist-reason
 | Option | Required | Behavior |
 |--------|----------|----------|
 | `-c, --config` | Yes | Path to the JSON config file |
-| `--persist-reason` | No | Persist the `reason` from config to the step's description field in Dataverse |
 
 ##### Notes
 
 - Each step in the config must have either `stepId` or a complete composite key (`pluginType`, `message`, `stage`, `entity`).
 - `stage` accepts numeric values: 10 (PreValidation), 20 (PreOperation), 30 (MainOperation), 40 (PostOperation).
 - Composite key matching requires exactly one step to match; multiple matches or no matches will fail.
-- If `--persist-reason` is specified, the `reason` field is written to the step's `description` field in Dataverse.
+- If a `reason` is provided in the config, it is automatically stored in the step's description field.
 - The command reports a summary of enabled, disabled, and failed steps.
 
 ### `webresource` — Manage webresources
