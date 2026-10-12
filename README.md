@@ -825,31 +825,34 @@ dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --uns
 
 #### `enable` — Enable a plugin step
 
-Enables an existing plugin step. Steps can be identified either by their SDK message processing step ID or by a composite key (plugin type, message, stage, entity).
+Enables an existing plugin step. Steps can be identified by step ID, composite key, or solution name (applies to ALL steps in the solution).
 
 ##### Usage
 
 ```bash
 dgtp plugin step enable --step-id 00000000-0000-0000-0000-000000000000
 dgtp plugin step enable --plugin-type MyNamespace.MyPlugin --message Create --stage PreOperation --entity account
+dgtp plugin step enable --solution mysolution
 ```
 
 ##### Options
 
 | Option | Required | Behavior |
 |--------|----------|----------|
-| `--step-id` | No (mutually exclusive with composite key) | SDK message processing step ID |
-| `--plugin-type` | No (part of composite key) | Fully qualified plugin type name |
-| `--message` | No (part of composite key) | SDK message name (Create, Update, Delete, etc.) |
-| `--stage` | No (part of composite key) | Stage name or numeric value: PreValidation/10, PreOperation/20, MainOperation/30, PostOperation/40 |
-| `--entity` | No (part of composite key) | Primary entity logical name |
-| `--secondary-entity` | No (part of composite key) | Secondary entity logical name (for Associate, Disassociate, etc.) |
-| `--execution-order` | No (part of composite key) | Rank/execution order of the step |
+| `--step-id` | No (mutually exclusive with composite key and --solution) | SDK message processing step ID |
+| `--plugin-type` | No (part of composite key, mutually exclusive with --step-id and --solution) | Fully qualified plugin type name |
+| `--message` | No (part of composite key, mutually exclusive with --step-id and --solution) | SDK message name (Create, Update, Delete, etc.) |
+| `--stage` | No (part of composite key, mutually exclusive with --step-id and --solution) | Stage name or numeric value: PreValidation/10, PreOperation/20, MainOperation/30, PostOperation/40 |
+| `--entity` | No (part of composite key, mutually exclusive with --step-id and --solution) | Primary entity logical name |
+| `--secondary-entity` | No (part of composite key, mutually exclusive with --step-id and --solution) | Secondary entity logical name (for Associate, Disassociate, etc.) |
+| `--execution-order` | No (part of composite key, mutually exclusive with --step-id and --solution) | Rank/execution order of the step |
+| `-s, --solution` | No (mutually exclusive with --step-id and composite key) | Unique name of the solution; applies to ALL steps in that solution |
 | `--reason` | No | Reason for the state change; automatically stored in the step's description field when provided |
 
 ##### Notes
 
-- Either `--step-id` or all required composite key options (`--plugin-type`, `--message`, `--stage`, `--entity`) must be provided, but not both. `--secondary-entity` and `--execution-order` are optional composite-key filters and cannot be used with `--step-id`.
+- Exactly one of the following must be provided: `--step-id`, all required composite key options (`--plugin-type`, `--message`, `--stage`, `--entity`), or `--solution`.
+- `--secondary-entity` and `--execution-order` are optional composite-key filters and cannot be used with `--step-id` or `--solution`.
 - Composite key matching requires exactly one step to match; multiple matches or no matches will fail. Multiple matches list step display names and IDs so you can retry with `--step-id`.
 
 #### `disable` — Disable a plugin step
@@ -861,6 +864,7 @@ Disables an existing plugin step. Uses the same identification options as `enabl
 ```bash
 dgtp plugin step disable --step-id 00000000-0000-0000-0000-000000000000
 dgtp plugin step disable --plugin-type MyNamespace.MyPlugin --message Create --stage PreOperation --entity account
+dgtp plugin step disable --solution mysolution
 ```
 
 ##### Options
