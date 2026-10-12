@@ -65,7 +65,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
-| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
+| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Plugin** | Deploy plugin assemblies with `plugin push`; manage plugin steps (configuration, enable/disable, bulk state) |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
@@ -432,7 +432,6 @@ Day-to-day administrative actions against a live environment.
 | `maintenance workflowstate` | Apply a workflow-state configuration |
 | `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
 | `maintenance filterfxplugins` | Add message filtering for PowerFx plugin steps |
-| `maintenance ensuresdksteps` | Enable/disable SDK steps within a solution |
 
 ```bash
 dgtp maintenance bulkdelete --inline "<fetchxml>...</fetchxml>"

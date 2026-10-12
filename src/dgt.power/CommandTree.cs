@@ -108,9 +108,6 @@ internal static class CommandTree
                 maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
                     .WithDescription("Add Messagefiltering for PowerFx Plugins")
                     .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
-                maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
-                    .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
-                    .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
             });
 
         config.AddBranch<AnalyzeVerb>("analyze", analyze =>

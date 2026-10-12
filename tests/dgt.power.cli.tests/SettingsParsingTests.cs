@@ -280,20 +280,6 @@ public class SettingsParsingTests
     }
 
     [Test]
-    public async Task EnsureSdkStepStatusSettings_ParsesAliasesAndDefaults()
-    {
-        var result = Parse<EnsureSdkStepStatusSettings>("-s", "mysolution", "-d", "--dry-run");
-        var defaults = Parse<EnsureSdkStepStatusSettings>();
-
-        var settings = (EnsureSdkStepStatusSettings)result.Settings!;
-        await Assert.That(settings.Solution).IsEqualTo("mysolution");
-        await Assert.That(settings.Disabled).IsTrue();
-        await Assert.That(settings.DryRun).IsTrue();
-
-        await Assert.That(((EnsureSdkStepStatusSettings)defaults.Settings!).Solution).IsEqualTo("assemblies");
-    }
-
-    [Test]
     public async Task CreateWorkflowStateConfigSettings_ParsesOptionsAndCommaSeparatedLists()
     {
         var result = Parse<CreateWorkflowStateConfigSettings>(
