@@ -1,3 +1,16 @@
+# [3.0.0-beta.10](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.9...v3.0.0-beta.10) (2026-10-13)
+
+
+* feat(plugin)!: plugin step enable/disable and state management ([#198](https://github.com/DIGITALLNature/DigitallPower/issues/198)) ([6a582b1](https://github.com/DIGITALLNature/DigitallPower/commit/6a582b1d7e2020f775e4f9fdafe33ae640ed9eb7))
+
+
+### BREAKING CHANGES
+
+* `maintenance ensuresdksteps` is removed. Use
+`plugin step enable|disable --solution <name>`. There is no --confirm
+option, steps already in the desired state are skipped, and the solution
+name is matched exactly.
+
 # [3.0.0-beta.9](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.8...v3.0.0-beta.9) (2026-10-13)
 
 
