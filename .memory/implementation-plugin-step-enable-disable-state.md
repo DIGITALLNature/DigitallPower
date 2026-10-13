@@ -23,12 +23,23 @@ Rationale: Provides flexibility for different use cases:
 
 ### Auto-Persist Reason
 
-The `--reason` parameter, when provided, is automatically persisted to the step's description field in Dataverse. This removes the need for a separate `--persist-reason` flag.
+The `--reason` parameter, when provided, replaces the step's description in Dataverse (no `--persist-reason` flag). It is written only when the state actually changes.
 
-**Before**: Users had to explicitly opt-in with `--persist-reason` to save the reason
-**After**: If `--reason` is provided, it is always persisted
+### Idempotency
 
-Rationale: Simplifies the API - if you provide a reason, you want it saved.
+Steps already in the desired state are skipped (no write, reason not stored) and reported as unchanged (`○ Already enabled|disabled`). This avoids audit noise and keeps dry-run and summaries meaningful. This intentionally diverges from the removed `ensuresdksteps`, which always wrote.
+
+### Dry-Run (no confirm)
+
+`--dry-run` is available on `enable`, `disable` and `state set` (yellow `○ Would enable|disable`, DRY RUN banner). A `--confirm` prompt was rejected; dry-run gives the safety without breaking non-interactive use.
+
+### Shared Handler and Failure Boundaries
+
+`PluginStepStateHandler` holds resolve/apply/summary logic for all three commands; `PluginStepEnableDisableCommandBase` shares the enable/disable command. Per-step (and per-entry in `state set`) failures are reported and counted without aborting the rest; cancellation and fatal exceptions are never swallowed (exception filter). All user-controlled values are escaped via `MarkupLineInterpolated`. `PluginStepStateConfig.Validate()` requires `enabled` and exactly one identification mode. Solution lookup is exact-match via `SolutionComponentRepository` (unknown solution fails). Config schema: `schemas/plugin/state/schema.json`.
+
+### Known Gap: Paging
+
+`ListComponentIdsAsync` and `ListStatesAsync` do not page; tracked in `todo.md` to adopt the shared paging helper.
 
 ### Consistent Output Format
 

@@ -54,17 +54,22 @@ public interface ISdkMessageProcessingStepRepository
     Task UpdateConfigurationAsync(Guid stepId, string? configuration, CancellationToken cancellationToken = default);
 
     /// <summary>Enables a step by setting statecode=0 and statuscode=1.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
     Task EnableAsync(Guid stepId, CancellationToken cancellationToken = default);
 
     /// <summary>Disables a step by setting statecode=1 and statuscode=2.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
     Task DisableAsync(Guid stepId, CancellationToken cancellationToken = default);
 
-    /// <summary>Retrieves a step by its ID, returning null if not found.</summary>
-    Task<RemotePluginStep?> GetByIdAsync(Guid stepId, CancellationToken cancellationToken = default);
+    /// <summary>Retrieves the name and enabled state of a step, returning null if the step does not exist.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task<RemotePluginStepState?> GetStateAsync(Guid stepId, CancellationToken cancellationToken = default);
 
-    /// <summary>Lists all steps in a given solution.</summary>
-    Task<IReadOnlyList<RemotePluginStep>> ListBySolutionAsync(string solutionName, CancellationToken cancellationToken = default);
+    /// <summary>Retrieves the name and enabled state of the given steps; unknown ids are omitted.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task<IReadOnlyList<RemotePluginStepState>> ListStatesAsync(IReadOnlyCollection<Guid> stepIds, CancellationToken cancellationToken = default);
 
     /// <summary>Updates the description field of a step.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
     Task UpdateDescriptionAsync(Guid stepId, string description, CancellationToken cancellationToken = default);
 }

@@ -685,7 +685,26 @@ public class SettingsParsingTests
         var settings = (PluginStepStateSetSettings)result.Settings!;
 
         await Assert.That(settings.Config).IsEqualTo("step-states.json");
+        await Assert.That(settings.DryRun).IsFalse();
     }
 
+    [Test]
+    public async Task PluginStepStateSetSettings_ParsesDryRun()
+    {
+        var result = Parse<PluginStepStateSetSettings>("-c", "step-states.json", "--dry-run");
 
+        var settings = (PluginStepStateSetSettings)result.Settings!;
+
+        await Assert.That(settings.DryRun).IsTrue();
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesDryRun()
+    {
+        var result = Parse<PluginStepEnableDisableSettings>("--solution", "mysolution", "--dry-run");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.DryRun).IsTrue();
+    }
 }

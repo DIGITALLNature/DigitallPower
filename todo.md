@@ -64,3 +64,15 @@ Once `dgt.power.profile` is removed, the following internal renames should follo
 
 **Do not rename while both modules coexist** — the `profile` commands still depend on
 the current naming and premature renaming adds churn without user-visible benefit.
+
+---
+
+## Paging: `plugin step enable|disable --solution`
+
+`SolutionComponentRepository.ListComponentIdsAsync` and
+`SdkMessageProcessingStepRepository.ListStatesAsync` issue a single `RetrieveMultipleAsync` call each and do
+not follow `MoreRecords`/`PagingCookie`. For solutions with more than one Dataverse page of steps the
+state change silently covers only the first page.
+
+Adopt the reusable paging helper from the plugin push rewrite once it is merged, and add a test with
+more than one page of results.

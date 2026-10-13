@@ -1,13 +1,11 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Globalization;
 using dgt.power.common;
-using dgt.power.dataverse;
+using dgt.power.common.Extensions;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
@@ -30,7 +28,7 @@ public class PluginStepStateSetCommand(
     {
         Tracer.Start(this);
 
-        if (!configResolver.TryGetConfigFile<PluginStepStateConfigRoot>(settings.Config, out var config))
+        if (!ConfigResolver.TryGetConfigFile<PluginStepStateConfigRoot>(settings.Config, out var config))
         {
             Console.MarkupLine("[red]Failed to load or parse config file.[/]");
             return Tracer.End(this, false);
@@ -42,177 +40,55 @@ public class PluginStepStateSetCommand(
             return Tracer.End(this, true);
         }
 
-        var service = (IOrganizationServiceAsync2)Connection;
-        var stepRepository = new SdkMessageProcessingStepRepository(service);
-
-        var success = true;
-        var enabledCount = 0;
-        var disabledCount = 0;
-        var errorCount = 0;
-
-        foreach (var stepConfig in config.Steps)
+        if (settings.DryRun)
         {
-            var result = await ProcessStepAsync(stepConfig, stepRepository, cancellationToken);
-            if (result.IsSuccess)
-            {
-                if (stepConfig.Enabled)
-                {
-                    enabledCount++;
-                }
-                else
-                {
-                    disabledCount++;
-                }
-            }
-            else
-            {
-                errorCount++;
-                success = false;
-            }
+            PluginStepStateHandler.WriteDryRunBanner(Console);
         }
 
-        Console.MarkupLine(string.Empty);
-        Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {enabledCount} steps enabled");
-        Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {disabledCount} steps disabled");
+        var handler = new PluginStepStateHandler(Console, new SdkMessageProcessingStepRepository((IOrganizationServiceAsync2)Connection), settings.DryRun);
 
-        if (errorCount > 0)
+        for (var index = 0; index < config.Steps.Count; index++)
         {
-            Console.MarkupLine($"[red]{Emoji.Known.CrossMark}[/] {errorCount} steps failed");
+            cancellationToken.ThrowIfCancellationRequested();
+            await ProcessEntryAsync(handler, config.Steps[index], index + 1, cancellationToken);
         }
 
-        return Tracer.End(this, success && errorCount == 0);
+        handler.PrintSummary();
+        return Tracer.End(this, handler.FailedCount == 0);
     }
 
-    private async Task<StepProcessResult> ProcessStepAsync(
-        PluginStepStateConfig stepConfig,
-        SdkMessageProcessingStepRepository stepRepository,
-        CancellationToken cancellationToken)
+    private static async Task ProcessEntryAsync(PluginStepStateHandler handler, PluginStepStateConfig entry, int position, CancellationToken cancellationToken)
     {
-        string? stepName;
-        Guid stepId;
-
-        if (stepConfig.StepId.HasValue)
+        var validationError = entry.Validate();
+        if (validationError is not null)
         {
-            stepId = stepConfig.StepId.Value;
+            handler.ReportFailure($"Invalid entry #{position}: {validationError}");
+            return;
+        }
 
-            // Retrieve step to verify it exists and get the name
-            try
+        try
+        {
+            var resolution = await handler.ResolveAsync(
+                new PluginStepSelector(entry.StepId, entry.PluginType, entry.Message, entry.Stage, entry.Entity, entry.SecondaryEntity, entry.ExecutionOrder), cancellationToken);
+
+            if (resolution.IsAmbiguous)
             {
-                var entity = await ((IOrganizationServiceAsync2)Connection).RetrieveAsync(
-                    SdkMessageProcessingStep.EntityLogicalName,
-                    stepId,
-                    new ColumnSet(SdkMessageProcessingStep.LogicalNames.Name),
-                    cancellationToken);
-                stepName = entity.GetAttributeValue<string>(SdkMessageProcessingStep.LogicalNames.Name);
+                handler.ReportFailure($"Entry #{position}: multiple plugin steps match {entry.Describe()}. Refine the criteria or use stepId.");
+                handler.PrintAmbiguousMatches(resolution.Matches, "stepId");
+                return;
             }
-            catch (Exception)
+
+            if (resolution.Step is null)
             {
-                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Step with id '{0}' not found[/]", stepId);
-                return StepProcessResult.Failure;
+                handler.ReportFailure($"Entry #{position}: no plugin step matches {entry.Describe()}");
+                return;
             }
-        }
-        else
-        {
-            var matches = await stepRepository.FindByCompositeKeyAsync(
-                stepConfig.PluginType,
-                stepConfig.Message,
-                stepConfig.Stage,
-                stepConfig.Entity,
-                stepConfig.SecondaryEntity,
-                stepConfig.ExecutionOrder,
-                cancellationToken);
 
-            switch (matches.Count)
-            {
-                case 0:
-                    var compositeKey = BuildCompositeKeyDescription(stepConfig);
-                    Console.MarkupLine(CultureInfo.InvariantCulture, "[red]No plugin step matches: {0}[/]", compositeKey);
-                    return StepProcessResult.Failure;
-                case > 1:
-                    Console.MarkupLine("[yellow]Multiple plugin steps match. Refine the criteria or use stepId.[/]");
-                    foreach (var step in matches)
-                    {
-                        Console.WriteLine($"  {step.Name} ({step.Id})");
-                    }
-                    return StepProcessResult.Failure;
-                default:
-                    stepId = matches[0].Id;
-                    stepName = matches[0].Name;
-                    break;
-            }
+            await handler.ApplyAsync(resolution.Step, entry.Enabled!.Value, entry.Reason, cancellationToken);
         }
-
-        // Apply the state change
-        if (stepConfig.Enabled)
+        catch (Exception e) when (e is not (OutOfMemoryException or StackOverflowException or OperationCanceledException))
         {
-            await stepRepository.EnableAsync(stepId, cancellationToken);
-            var message = stepConfig.Reason is not null
-                ? $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}"
-                : $"[green]●[/] Enabled {Markup.Escape(stepName ?? stepId.ToString())}";
-            Console.MarkupLine(message);
-        }
-        else
-        {
-            await stepRepository.DisableAsync(stepId, cancellationToken);
-            var message = stepConfig.Reason is not null
-                ? $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())} - {stepConfig.Reason}"
-                : $"[red]●[/] Disabled {Markup.Escape(stepName ?? stepId.ToString())}";
-            Console.MarkupLine(message);
-        }
-
-        // Persist reason to description if provided
-        if (stepConfig.Reason != null)
-        {
-            var step = new SdkMessageProcessingStep(stepId)
-            {
-                Description = stepConfig.Reason
-            };
-            await ((IOrganizationServiceAsync2)Connection).UpdateAsync(step, cancellationToken);
-        }
-
-        return StepProcessResult.Success;
-    }
-
-    private static string BuildCompositeKeyDescription(PluginStepStateConfig stepConfig)
-    {
-        var parts = new List<string>();
-        if (!string.IsNullOrEmpty(stepConfig.PluginType))
-        {
-            parts.Add(stepConfig.PluginType);
-        }
-        if (!string.IsNullOrEmpty(stepConfig.Message))
-        {
-            parts.Add(stepConfig.Message);
-        }
-        if (stepConfig.Stage.HasValue)
-        {
-            parts.Add(stepConfig.Stage.Value.ToString(CultureInfo.InvariantCulture));
-        }
-        if (!string.IsNullOrEmpty(stepConfig.Entity))
-        {
-            parts.Add(stepConfig.Entity);
-        }
-        if (!string.IsNullOrEmpty(stepConfig.SecondaryEntity))
-        {
-            parts.Add(stepConfig.SecondaryEntity);
-        }
-        if (stepConfig.ExecutionOrder.HasValue)
-        {
-            parts.Add(stepConfig.ExecutionOrder.Value.ToString(CultureInfo.InvariantCulture));
-        }
-        return string.Join(", ", parts);
-    }
-
-    private struct StepProcessResult
-    {
-        public static readonly StepProcessResult Success = new(true);
-        public static readonly StepProcessResult Failure = new(false);
-
-        public bool IsSuccess { get; }
-
-        private StepProcessResult(bool isSuccess)
-        {
-            IsSuccess = isSuccess;
+            handler.ReportFailure($"Entry #{position} ({entry.Describe()}): {e.DiagnosticMessage()}");
         }
     }
 }

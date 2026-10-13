@@ -12,6 +12,8 @@ namespace dgt.power.plugin.Repositories;
 /// <inheritdoc cref="ISdkMessageProcessingStepRepository" />
 public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync2 service) : ISdkMessageProcessingStepRepository
 {
+    private const int StateQueryChunkSize = 500;
+
     public async Task<IReadOnlyList<RemotePluginStep>> ListByPluginTypeAsync(Guid pluginTypeId, CancellationToken cancellationToken = default)
     {
         var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
@@ -258,85 +260,49 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
         await service.UpdateAsync(step, cancellationToken);
     }
 
-    public async Task<RemotePluginStep?> GetByIdAsync(Guid stepId, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<RemotePluginStepState>> ListStatesAsync(IReadOnlyCollection<Guid> stepIds, CancellationToken cancellationToken = default)
     {
-        try
+        ArgumentNullException.ThrowIfNull(stepIds);
+        return ListStatesCoreAsync(stepIds, cancellationToken);
+    }
+
+    private async Task<IReadOnlyList<RemotePluginStepState>> ListStatesCoreAsync(IReadOnlyCollection<Guid> stepIds, CancellationToken cancellationToken)
+    {
+        var states = new List<RemotePluginStepState>();
+
+        // Chunked to keep the In-condition well below the Dataverse limits.
+        foreach (var chunk in stepIds.Chunk(StateQueryChunkSize))
         {
             var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
             {
                 NoLock = true,
-                TopCount = 1,
                 ColumnSet = new ColumnSet(
                     SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId,
                     SdkMessageProcessingStep.LogicalNames.Name,
-                    SdkMessageProcessingStep.LogicalNames.Mode,
-                    SdkMessageProcessingStep.LogicalNames.Stage,
-                    SdkMessageProcessingStep.LogicalNames.Rank,
-                    SdkMessageProcessingStep.LogicalNames.FilteringAttributes,
-                    SdkMessageProcessingStep.LogicalNames.SdkMessageId,
-                    SdkMessageProcessingStep.LogicalNames.SdkMessageFilterId),
-                LinkEntities =
-                {
-                    new LinkEntity(
-                        SdkMessageProcessingStep.EntityLogicalName, SdkMessage.EntityLogicalName,
-                        SdkMessageProcessingStep.LogicalNames.SdkMessageId, SdkMessage.LogicalNames.SdkMessageId, JoinOperator.Inner)
-                    {
-                        EntityAlias = "message",
-                        Columns = new ColumnSet(SdkMessage.LogicalNames.Name)
-                    },
-                    new LinkEntity(
-                        SdkMessageProcessingStep.EntityLogicalName, SdkMessageFilter.EntityLogicalName,
-                        SdkMessageProcessingStep.LogicalNames.SdkMessageFilterId, SdkMessageFilter.LogicalNames.SdkMessageFilterId, JoinOperator.LeftOuter)
-                    {
-                        EntityAlias = "filter",
-                        Columns = new ColumnSet(
-                            SdkMessageFilter.LogicalNames.PrimaryObjectTypeCode,
-                            SdkMessageFilter.LogicalNames.SecondaryObjectTypeCode)
-                    }
-                }
+                    SdkMessageProcessingStep.LogicalNames.StateCode)
             };
-
-            query.Criteria.AddCondition(SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId, ConditionOperator.Equal, stepId);
+            query.Criteria.AddCondition(SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId, ConditionOperator.In, chunk.Cast<object>().ToArray());
 
             var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-            return result.Entities.Select(ToRemoteStep).FirstOrDefault();
+            states.AddRange(result.Entities.Select(ToStepState));
         }
-        catch
-        {
-            return null;
-        }
+
+        return states.OrderBy(state => state.Name, StringComparer.OrdinalIgnoreCase).ToList();
     }
 
-    public async Task<IReadOnlyList<RemotePluginStep>> ListBySolutionAsync(string solutionName, CancellationToken cancellationToken = default)
+    public async Task<RemotePluginStepState?> GetStateAsync(Guid stepId, CancellationToken cancellationToken = default)
     {
-        var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
-        {
-            NoLock = true,
-            ColumnSet = new ColumnSet(
-                SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId,
-                SdkMessageProcessingStep.LogicalNames.Name,
-                SdkMessageProcessingStep.LogicalNames.Mode,
-                SdkMessageProcessingStep.LogicalNames.Stage,
-                SdkMessageProcessingStep.LogicalNames.Rank,
-                SdkMessageProcessingStep.LogicalNames.FilteringAttributes,
-                SdkMessageProcessingStep.LogicalNames.SdkMessageId,
-                SdkMessageProcessingStep.LogicalNames.SdkMessageFilterId)
-        };
+        var states = await ListStatesAsync([stepId], cancellationToken);
+        return states.Count > 0 ? states[0] : null;
+    }
 
-        var componentLink = query.AddLink(
-            SolutionComponent.EntityLogicalName,
-            SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId,
-            SolutionComponent.LogicalNames.ObjectId);
-        var solutionLink = componentLink.AddLink(
-            Solution.EntityLogicalName,
-            SolutionComponent.LogicalNames.SolutionId,
-            Solution.LogicalNames.SolutionId);
-        solutionLink.EntityAlias = "solution";
-
-        query.Criteria.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solutionName);
-
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(ToRemoteStep).ToList();
+    private static RemotePluginStepState ToStepState(Entity entity)
+    {
+        var step = entity.ToEntity<SdkMessageProcessingStep>();
+        return new RemotePluginStepState(
+            step.Id,
+            step.Name ?? step.Id.ToString(),
+            step.StateCode?.Value == SdkMessageProcessingStep.Options.StateCode.Enabled);
     }
 
     public async Task UpdateDescriptionAsync(Guid stepId, string description, CancellationToken cancellationToken = default)

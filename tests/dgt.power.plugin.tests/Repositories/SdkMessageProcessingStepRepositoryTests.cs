@@ -265,4 +265,79 @@ public class SdkMessageProcessingStepRepositoryTests
         await Assert.That(updated.EventHandler!.Id).IsEqualTo(newTypeId);
         await Assert.That(updated.Name).IsEqualTo("step");
     }
+
+    [Test]
+    public async Task EnableAsync_SetsEnabledStateAndStatus()
+    {
+        var service = CreateService();
+        var id = Guid.NewGuid();
+        service.Create(new SdkMessageProcessingStep(id)
+        {
+            Name = "step",
+            StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Disabled),
+            StatusCode = new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Disabled)
+        });
+
+        await new SdkMessageProcessingStepRepository(service).EnableAsync(id);
+
+        var updated = service.Retrieve(SdkMessageProcessingStep.EntityLogicalName, id, new ColumnSet(true)).ToEntity<SdkMessageProcessingStep>();
+        await Assert.That(updated.StateCode!.Value).IsEqualTo(SdkMessageProcessingStep.Options.StateCode.Enabled);
+        await Assert.That(updated.StatusCode!.Value).IsEqualTo(SdkMessageProcessingStep.Options.StatusCode.Enabled);
+    }
+
+    [Test]
+    public async Task DisableAsync_SetsDisabledStateAndStatus()
+    {
+        var service = CreateService();
+        var id = Guid.NewGuid();
+        service.Create(new SdkMessageProcessingStep(id)
+        {
+            Name = "step",
+            StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled),
+            StatusCode = new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)
+        });
+
+        await new SdkMessageProcessingStepRepository(service).DisableAsync(id);
+
+        var updated = service.Retrieve(SdkMessageProcessingStep.EntityLogicalName, id, new ColumnSet(true)).ToEntity<SdkMessageProcessingStep>();
+        await Assert.That(updated.StateCode!.Value).IsEqualTo(SdkMessageProcessingStep.Options.StateCode.Disabled);
+        await Assert.That(updated.StatusCode!.Value).IsEqualTo(SdkMessageProcessingStep.Options.StatusCode.Disabled);
+    }
+
+    [Test]
+    public async Task UpdateDescriptionAsync_ReplacesDescriptionOnly()
+    {
+        var service = CreateService();
+        var id = Guid.NewGuid();
+        service.Create(new SdkMessageProcessingStep(id) { Name = "step", Description = "old" });
+
+        await new SdkMessageProcessingStepRepository(service).UpdateDescriptionAsync(id, "new");
+
+        var updated = service.Retrieve(SdkMessageProcessingStep.EntityLogicalName, id, new ColumnSet(true)).ToEntity<SdkMessageProcessingStep>();
+        await Assert.That(updated.Description).IsEqualTo("new");
+        await Assert.That(updated.Name).IsEqualTo("step");
+    }
+
+    [Test]
+    public async Task ListStatesAsync_ReturnsRequestedStepsWithEnabledState()
+    {
+        var service = CreateService();
+        var enabledId = Guid.NewGuid();
+        var disabledId = Guid.NewGuid();
+        service.Create(new SdkMessageProcessingStep(enabledId) { Name = "b", StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled) });
+        service.Create(new SdkMessageProcessingStep(disabledId) { Name = "a", StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Disabled) });
+        service.Create(new SdkMessageProcessingStep(Guid.NewGuid()) { Name = "other", StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled) });
+
+        var states = await new SdkMessageProcessingStepRepository(service).ListStatesAsync([enabledId, disabledId]);
+
+        await Assert.That(states.Select(state => (state.Name, state.IsEnabled))).IsEquivalentTo([("a", false), ("b", true)]);
+    }
+
+    [Test]
+    public async Task GetStateAsync_UnknownStep_ReturnsNull()
+    {
+        var repository = new SdkMessageProcessingStepRepository(CreateService());
+
+        await Assert.That(await repository.GetStateAsync(Guid.NewGuid())).IsNull();
+    }
 }

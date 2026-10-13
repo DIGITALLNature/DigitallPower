@@ -59,6 +59,10 @@ dgtp plugin step disable --step-id <id> --reason "Maintenance"
 
 If `--persist-reason` was used without `--reason`, simply remove the flag. If both were used, keep only `--reason`.
 
+## Update: Only on Change
+
+The reason replaces the description only when the state actually changes; steps already in the desired state are skipped untouched (see `implementation-plugin-step-enable-disable-state.md`). `--dry-run` now exists for previewing.
+
 ## Related
 
 - `implementation-plugin-step-enable-disable-state.md` - Implementation details

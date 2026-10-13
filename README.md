@@ -847,10 +847,14 @@ dgtp plugin step enable --solution mysolution
 | `--secondary-entity` | No (part of composite key, mutually exclusive with --step-id and --solution) | Secondary entity logical name (for Associate, Disassociate, etc.) |
 | `--execution-order` | No (part of composite key, mutually exclusive with --step-id and --solution) | Rank/execution order of the step |
 | `-s, --solution` | No (mutually exclusive with --step-id and composite key) | Unique name of the solution; applies to ALL steps in that solution |
-| `--reason` | No | Reason for the state change; automatically stored in the step's description field when provided |
+| `--reason` | No | Reason for the state change; replaces the step's description when the state actually changes |
+| `--dry-run` | No | Show which steps would change without modifying anything |
 
 ##### Notes
 
+- Steps that are already in the desired state are left untouched (no write, reason not stored) and reported as unchanged.
+- The solution name must match exactly. Solutions without plugin steps report that no steps were found.
+- A failing step does not stop the remaining steps in `--solution` mode; the command exits with an error if any step failed.
 - Exactly one of the following must be provided: `--step-id`, all required composite key options (`--plugin-type`, `--message`, `--stage`, `--entity`), or `--solution`.
 - `--secondary-entity` and `--execution-order` are optional composite-key filters and cannot be used with `--step-id` or `--solution`.
 - Composite key matching requires exactly one step to match; multiple matches or no matches will fail. Multiple matches list step display names and IDs so you can retry with `--step-id`.
@@ -907,13 +911,17 @@ dgtp plugin step state set -c step-states.json
 | Option | Required | Behavior |
 |--------|----------|----------|
 | `-c, --config` | Yes | Path to the JSON config file |
+| `--dry-run` | No | Show which steps would change without modifying anything |
 
 ##### Notes
 
-- Each step in the config must have either `stepId` or a complete composite key (`pluginType`, `message`, `stage`, `entity`).
+- The config file can reference the [JSON schema](schemas/plugin/state/schema.json) for editor validation.
+- Each step must set `enabled` and have either `stepId` or a complete composite key (`pluginType`, `message`, `stage`, `entity`); mixing both is rejected.
+- Invalid or unresolvable entries are reported and do not stop the remaining entries; the command exits with an error if any entry failed.
+- Steps already in the desired state are left untouched and reported as unchanged.
 - `stage` accepts numeric values: 10 (PreValidation), 20 (PreOperation), 30 (MainOperation), 40 (PostOperation).
 - Composite key matching requires exactly one step to match; multiple matches or no matches will fail.
-- If a `reason` is provided in the config, it is automatically stored in the step's description field.
+- If a `reason` is provided in the config, it replaces the step's description when the state changes.
 - The command reports a summary of enabled, disabled, and failed steps.
 
 ### `webresource` — Manage webresources

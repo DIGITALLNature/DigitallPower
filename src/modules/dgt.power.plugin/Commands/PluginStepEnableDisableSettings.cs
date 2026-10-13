@@ -50,8 +50,12 @@ public class PluginStepEnableDisableSettings : PluginSettings
     public int? ExecutionOrder { get; init; }
 
     [CommandOption("--reason")]
-    [Description("Optional reason for the state change. If provided, this will be stored in the step's description field.")]
+    [Description("Optional reason for the state change. If provided, it replaces the step's description; steps already in the desired state are left untouched.")]
     public string? Reason { get; init; }
+
+    [CommandOption("--dry-run")]
+    [Description("Only report which steps would change; do not write anything to Dataverse.")]
+    public bool DryRun { get; init; }
 
     /// <inheritdoc />
     public override ValidationResult Validate()

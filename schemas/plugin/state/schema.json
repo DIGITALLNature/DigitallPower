@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DigitallPower plugin step state configuration",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "steps": {
+      "type": "array",
+      "description": "Plugin steps and the state they should be set to.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stepId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "SdkMessageProcessingStep id. Mutually exclusive with the composite key fields."
+          },
+          "pluginType": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Fully qualified plugin type name."
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "description": "SDK message name (Create, Update, Delete, ...)."
+          },
+          "stage": {
+            "type": "integer",
+            "enum": [10, 20, 30, 40],
+            "description": "PreValidation (10), PreOperation (20), MainOperation (30) or PostOperation (40)."
+          },
+          "entity": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Primary entity logical name."
+          },
+          "secondaryEntity": {
+            "type": "string",
+            "description": "Secondary entity logical name (Associate, Disassociate, ...)."
+          },
+          "executionOrder": {
+            "type": "integer",
+            "description": "Execution order (rank) of the step."
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "true to enable the step, false to disable it."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Optional reason; replaces the step description when the state changes."
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "oneOf": [
+          {
+            "required": [
+              "stepId"
+            ],
+            "not": {
+              "anyOf": [
+                { "required": ["pluginType"] },
+                { "required": ["message"] },
+                { "required": ["stage"] },
+                { "required": ["entity"] },
+                { "required": ["secondaryEntity"] },
+                { "required": ["executionOrder"] }
+              ]
+            }
+          },
+          {
+            "required": [
+              "pluginType",
+              "message",
+              "stage",
+              "entity"
+            ],
+            "not": {
+              "required": ["stepId"]
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "steps"
+  ],
+  "additionalProperties": false
+}
