@@ -187,9 +187,7 @@ public class CreateConnectionCommandTests
             NonInteractive = true
         };
 
-        var act = () => RunAsync(verifier, settings);
-
-        await Assert.That(act).Throws<InteractiveLoginRequiredException>();
+        await Assert.That(() => RunAsync(verifier, settings)).Throws<InteractiveLoginRequiredException>();
     }
 
     private async Task<int> RunAsync(

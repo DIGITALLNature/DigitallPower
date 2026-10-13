@@ -46,20 +46,19 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(connection);
-        return AuthenticateCoreAsync(connection, nonInteractive, allowUnencryptedStorage, cancellationToken);
-    }
-
-    private async Task<JsonElement> AuthenticateCoreAsync(
-        ConnectionDefinition connection,
-        bool nonInteractive,
-        bool allowUnencryptedStorage,
-        CancellationToken cancellationToken)
-    {
         if (nonInteractive)
         {
             throw new InteractiveLoginRequiredException(new Uri(connection.Url).Authority);
         }
 
+        return AuthenticateCoreAsync(connection, allowUnencryptedStorage, cancellationToken);
+    }
+
+    private async Task<JsonElement> AuthenticateCoreAsync(
+        ConnectionDefinition connection,
+        bool allowUnencryptedStorage,
+        CancellationToken cancellationToken)
+    {
         var context = new TokenRequestContext([GetScope(connection.Url)]);
 
         var record = connection switch
