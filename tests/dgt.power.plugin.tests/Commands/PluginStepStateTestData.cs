@@ -9,7 +9,7 @@ namespace dgt.power.plugin.tests.Commands;
 
 internal static class PluginStepStateTestData
 {
-    public const int StepComponentType = 92;
+    private const int StepComponentType = 92;
 
     public static IEnumerable<EntityMetadata> Metadata() =>
     [

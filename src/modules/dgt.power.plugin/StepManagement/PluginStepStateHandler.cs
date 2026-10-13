@@ -16,9 +16,9 @@ namespace dgt.power.plugin.StepManagement;
 /// </summary>
 internal sealed class PluginStepStateHandler(IAnsiConsole console, SdkMessageProcessingStepRepository repository, bool dryRun)
 {
-    public int EnabledCount { get; private set; }
-    public int DisabledCount { get; private set; }
-    public int UnchangedCount { get; private set; }
+    private int EnabledCount { get; set; }
+    private int DisabledCount { get; set; }
+    private int UnchangedCount { get; set; }
     public int FailedCount { get; private set; }
 
     public static void WriteDryRunBanner(IAnsiConsole console)
