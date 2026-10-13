@@ -23,5 +23,5 @@ public class MissingConnectionException : AbstractPowerException
     }
 
     public static string ErrorMessage =>
-        "No connection is selected. Please select an existing connection with dgtp profile select or create a new one with dgtp profile create";
+        "No connection is selected. Please select an existing connection with dgtp connection select or create a new one with dgtp connection create";
 }

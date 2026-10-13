@@ -21,4 +21,5 @@ public class MaintenanceVerb : BaseProgramSettings
     [CommandOption("--inline")]
     [Description("Inline data instead of files, only supported for some single tasks!")]
     public string InlineData { get; set; }
+
 }

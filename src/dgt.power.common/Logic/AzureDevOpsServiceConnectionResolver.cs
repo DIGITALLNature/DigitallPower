@@ -74,7 +74,7 @@ public static class AzureDevOpsServiceConnectionResolver
                     $"Failed to resolve Azure DevOps service connection '{serviceConnectionName}' " +
                     $"({(int)response.StatusCode} {response.ReasonPhrase}). Ensure the pipeline's build identity " +
                     "(usually 'Project Collection Build Service') has Reader access to the service connection, " +
-                    "or use --tenant/--application-id/--service-connection-id instead.");
+                    "or use --tenant/--client-id/--service-connection-id instead.");
             }
         }
 
@@ -96,7 +96,7 @@ public static class AzureDevOpsServiceConnectionResolver
         {
             throw new ServiceConnectionResolutionException(
                 $"No Azure DevOps service connection named '{serviceConnectionName}' was found in this project. " +
-                "Check the name, or use --tenant/--application-id/--service-connection-id instead.");
+                "Check the name, or use --tenant/--client-id/--service-connection-id instead.");
         }
 
         if (endpoints.Count > 1)
@@ -105,7 +105,7 @@ public static class AzureDevOpsServiceConnectionResolver
             throw new ServiceConnectionResolutionException(
                 $"Found {endpoints.Count} Azure DevOps service connections named '{serviceConnectionName}' " +
                 $"(ids: {ids}). The name is ambiguous (service connections can share a name across folders) " +
-                "— use --tenant/--application-id/--service-connection-id instead.");
+                "— use --tenant/--client-id/--service-connection-id instead.");
         }
 
         var endpoint = endpoints[0];

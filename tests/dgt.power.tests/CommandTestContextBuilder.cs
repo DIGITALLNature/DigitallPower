@@ -7,7 +7,6 @@ using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -111,20 +110,11 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
             service.AddRange(_data);
         }
 
-        var defaultConfiguration = new Dictionary<string, string?>
-        {
-            {"pollrate", TestFixtures.FakeCallDurations.ToString()}
-        };
-
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(defaultConfiguration)
-            .Build();
-
         var command = _serviceCollection
             .AddScoped<IOrganizationService>(_ => service)
             .AddScoped<IOrganizationServiceAsync2>(_ => service)
             .AddSingleton<TCommand>()
-            .AddSingleton<IConfiguration>(configuration)
+            .AddSingleton<TimeProvider>(ImmediateTimeProvider.Instance)
             .BuildServiceProvider()
             .GetRequiredService<TCommand>();
 
