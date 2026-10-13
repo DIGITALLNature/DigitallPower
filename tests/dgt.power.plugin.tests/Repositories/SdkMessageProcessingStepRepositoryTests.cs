@@ -335,6 +335,19 @@ public class SdkMessageProcessingStepRepositoryTests
     }
 
     [Test]
+    public async Task ListStatesAsync_ResultsAcrossPages_ReadsAllPages()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        var states = await new SdkMessageProcessingStepRepository(service).ListStatesAsync([Guid.NewGuid()]);
+
+        await Assert.That(states.Count).IsEqualTo(2);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, (string?)null, 5000), (2, "next-page", 5000)]);
+    }
+
+    [Test]
     public async Task GetStateAsync_UnknownStep_ReturnsNull()
     {
         var repository = new SdkMessageProcessingStepRepository(CreateService());

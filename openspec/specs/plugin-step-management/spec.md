@@ -59,11 +59,11 @@ Each `state set` entry MUST set `enabled` explicitly and use either `stepId` or 
 - **WHEN** a config entry has no `enabled` value
 - **THEN** the entry is rejected rather than treated as a disable
 
-### Requirement: Solution-wide queries are not yet paged
+### Requirement: Solution-wide queries are paged
 
-Solution mode SHALL be treated as unpaged for now: it reads solution components and step states without paging, and `todo.md` tracks adopting the shared paging helper from the plugin push rewrite. Until then, very large solutions MAY be processed incompletely.
+Solution mode MUST read solution components and step states across all Dataverse result pages, so large solutions are processed completely.
 
 #### Scenario: A solution exceeds one page of components
 
 - **WHEN** a solution contains more components than a single Dataverse page returns
-- **THEN** behavior is limited by the known gap tracked in `todo.md`
+- **THEN** every plugin step in the solution is processed
