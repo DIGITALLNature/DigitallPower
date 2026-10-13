@@ -1,15 +1,16 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.dataverse;
-using dgt.power.plugin.Remote;
+using dgt.power.plugin.Exceptions;
+using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
-using dgt.power.plugin.Steps;
+using dgt.power.plugin.StepManagement;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
-using System.Globalization;
 
 namespace dgt.power.plugin.Commands;
 

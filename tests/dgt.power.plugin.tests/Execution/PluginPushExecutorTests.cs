@@ -1,20 +1,22 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Security.Cryptography;
 using dgt.power.dataverse;
+using dgt.power.plugin.Deployment.Execution;
+using dgt.power.plugin.Deployment.Local;
+using dgt.power.plugin.Deployment.Output;
+using dgt.power.plugin.Deployment.Planning.Plans;
+using dgt.power.plugin.Deployment.Planning;
+using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.tests.Repositories;
-using dgt.power.plugin.Execution;
-using dgt.power.plugin.Local;
-using dgt.power.plugin.Output;
-using dgt.power.plugin.Planning;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using Spectre.Console;
+using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
-using System.Security.Cryptography;
+using Spectre.Console;
 
 namespace dgt.power.plugin.tests.Execution;
 

@@ -12,13 +12,13 @@ using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
-using dgt.power.plugin;
 using dgt.power.plugin.Commands;
+using dgt.power.plugin.Models;
 using dgt.power.profile.Commands;
 using dgt.power.solution.Base;
 using dgt.power.webresource.Commands;
-using Spectre.Console.Cli;
 using Spectre.Console.Cli.Testing;
+using Spectre.Console.Cli;
 
 namespace dgt.power.cli.tests;
 

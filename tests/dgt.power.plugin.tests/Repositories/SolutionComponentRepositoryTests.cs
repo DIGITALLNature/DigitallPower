@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
+using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;

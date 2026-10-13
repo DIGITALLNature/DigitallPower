@@ -1,13 +1,13 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Security.Cryptography;
 using dgt.power.dataverse;
+using dgt.power.plugin.Models;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using dgt.power.plugin.Remote;
-using System.Security.Cryptography;
+using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.plugin.Repositories;
 

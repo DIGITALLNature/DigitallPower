@@ -1,13 +1,15 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Execution;
-using dgt.power.plugin.Local;
-using dgt.power.plugin.Planning;
+using dgt.power.dataverse;
+using dgt.power.plugin.Deployment.Execution;
+using dgt.power.plugin.Deployment.Local;
+using dgt.power.plugin.Deployment.Planning.Plans;
+using dgt.power.plugin.Deployment.Planning;
+using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.plugin.tests.Planning;

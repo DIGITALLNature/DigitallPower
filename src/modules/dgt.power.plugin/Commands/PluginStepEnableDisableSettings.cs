@@ -3,8 +3,9 @@
 
 using System.ComponentModel;
 using dgt.power.plugin.Base;
-using Spectre.Console;
+using dgt.power.plugin.Models;
 using Spectre.Console.Cli;
+using Spectre.Console;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global

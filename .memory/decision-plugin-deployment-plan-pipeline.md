@@ -10,9 +10,9 @@ The comparison helper is named `PluginRegistrationComparer`. Its collection resu
 `PluginTypeComparisonSet`, `PluginStepComparisonSet`, and `PluginStepImageComparisonSet`; individual
 items are `*Comparison` records. A comparison captures remote state and whether a mutation is
 required; no-change is represented by no required mutation, not by a fake change. These files live
-in `Planning/Comparison/`. Executable-plan records live in `Planning/Deployment/`. Their namespaces
-follow the directory structure: `dgt.power.plugin.Planning.Comparison` and
-`dgt.power.plugin.Planning.Deployment`.
+in `Deployment/Planning/Comparison/`. Executable-plan records live in `Deployment/Planning/Plans/`. Their
+namespaces follow the directory structure: `dgt.power.plugin.Deployment.Planning.Comparison` and
+`dgt.power.plugin.Deployment.Planning.Plans`.
 
 Assembly package ownership is comparison state (`AssemblyComparison.IsPackageOwned`), not a change
 or executable action. The renderer therefore omits a status label for package-owned assemblies.

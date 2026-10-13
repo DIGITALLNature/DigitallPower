@@ -285,6 +285,7 @@ The TypeScript/Liquid (TSL) template engine has enterprise-grade hardening:
 | `decision-plugin-confirmation-precedence.md` | decision | Optional per-target plugin push confirmation is overridden by dry-run and non-interactive/CI execution modes |
 | `decision-plugin-step-reason-auto-persist.md` | decision | Auto-persist reason to description when --reason is provided; removed --persist-reason flag |
 | `decision-plugin-step-three-modes.md` | decision | Plugin step enable/disable support three identification modes: step-id, composite key, solution-scoped |
+| `decision-plugin-module-namespace-layout.md` | decision | Plugin module namespaces: Commands/Repositories/Models/Exceptions shared at top level; push internals in `Deployment.*`, step internals in `StepManagement` |
 | `decision-remove-ensuresdksteps.md` | decision | Remove ensuresdksteps command; replaced by plugin step enable/disable --solution |
 | `research-plugin-custom-data-provider-push.md` | research | Provider identity, grouped metadata, handler lifecycle, specialized table provisioning, solution membership, and live-validation caveats |
 | `research-plugin-package-content-idempotence.md` | research | Package deployment is idempotent by package-file SHA-256 hash, not immutable package version |

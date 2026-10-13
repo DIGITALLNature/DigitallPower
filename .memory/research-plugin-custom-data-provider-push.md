@@ -133,13 +133,13 @@ rejection of old registrations rather than silently losing that migration covera
 
 ## References
 
-- `src/modules/dgt.power.plugin/Local/AssemblyReflectionReader.cs`
-- `src/modules/dgt.power.plugin/Local/DataProviderRegistrationGrouper.cs`
-- `src/modules/dgt.power.plugin/Planning/DataProviderDeploymentPlanner.cs`
-- `src/modules/dgt.power.plugin/Planning/PluginDeploymentPlanner.cs`
+- `src/modules/dgt.power.plugin/Deployment/Local/AssemblyReflectionReader.cs`
+- `src/modules/dgt.power.plugin/Deployment/Local/DataProviderRegistrationGrouper.cs`
+- `src/modules/dgt.power.plugin/Deployment/Planning/DataProviderDeploymentPlanner.cs`
+- `src/modules/dgt.power.plugin/Deployment/Planning/PluginDeploymentPlanner.cs`
 - `src/modules/dgt.power.plugin/Repositories/EntityDataProviderRepository.cs`
-- `src/modules/dgt.power.plugin/Execution/PluginTypeDeploymentExecutor.cs`
-- `src/modules/dgt.power.plugin/Execution/PluginPushExecutor.cs`
+- `src/modules/dgt.power.plugin/Deployment/Execution/PluginTypeDeploymentExecutor.cs`
+- `src/modules/dgt.power.plugin/Deployment/Execution/PluginPushExecutor.cs`
 - [Microsoft: provider plugin registration](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/virtual-entities/custom-ve-data-providers#plug-in-registration)
 - [Microsoft: provider registration walkthrough](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/virtual-entities/sample-ve-provider-crud-operations#step-2-creating-data-provider-and-adding-plug-ins-to-the-provider)
 - [Microsoft: EntityDataProvider reference](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/reference/entities/entitydataprovider)

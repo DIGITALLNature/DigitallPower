@@ -2,15 +2,17 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
-using dgt.power.plugin.Local;
+using dgt.power.plugin.Deployment.Local;
+using dgt.power.plugin.Exceptions;
+using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
 using dgt.power.tests.Extensions;
 using Digitall.Dataverse.Testing;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.plugin.tests.Repositories;
 

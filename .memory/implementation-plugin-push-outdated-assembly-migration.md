@@ -3,30 +3,30 @@
 ## Architecture
 
 `dgt.power.plugin` is a from-scratch module (see `decision-resource-oriented-cli-redesign.md` for why)
-implementing `dgtp plugin push`, structured in four layers:
+implementing `dgtp plugin push`. Push-only code lives under `Deployment/`; shared code stays at the
+module top level (see `decision-plugin-module-namespace-layout.md`). Layers:
 
-- **`Local/`** — pure parsing of on-disk artifacts: `AssemblyReflectionReader` (reflects a `.dll` for
+- **`Deployment/Local/`** — pure parsing of on-disk artifacts: `AssemblyReflectionReader` (reflects a `.dll` for
   plugin types/steps/images declared via the registration attributes - see below),
   `PluginPackageReader` (reads `.nupkg` content). Produces `LocalAssembly`, `LocalPluginType`,
   `LocalPluginStep`, `LocalPluginStepImage` records - no Dataverse access.
-- **`Remote/`** — minimal, already-fetched Dataverse state records (`RemoteAssembly`, `RemotePackage`,
-  `RemotePluginType`, `RemotePluginStep`, `RemotePluginStepImage`), mirroring `Local/` but for the
-  target environment. Split out of `Planning/` (where these types originally lived, mixed in with pure
-  decision logic) to keep the module's namespace layout self-explanatory: `Local` and `Remote` are both
-  plain state/model namespaces, `Planning` is pure logic.
-- **`Planning/`** — typed deployment plans and planning logic. `PluginRegistrationComparer` contains pure
+- **`Models/`** — shared domain types: the minimal, already-fetched Dataverse state records
+  (`RemoteAssembly`, `RemotePackage`, `RemotePluginType`, `RemotePluginStep`, `RemotePluginStepImage`,
+  `RemotePluginStepState`, ...), `PluginStepStage`, repository DTOs and `LocalDataProvider`/`DataProviderOperation`
+  (needed by repositories). Plain state/model namespace, no logic.
+- **`Deployment/Planning/`** — typed deployment plans and planning logic. `PluginRegistrationComparer` contains pure
   Local-vs.-Remote matching helpers, while `PluginDeploymentPlanner` loads the complete remote
   snapshot, validates references, and returns the immutable plan consumed by rendering and execution.
   Low-level comparison values use `Comparison`/`ComparisonSet`; `Plan` is reserved for the complete
   executable deployment graph. The files and namespaces are grouped under `Planning.Comparison` and
-  `Planning.Deployment`.
+  `Planning.Plans`.
 - **`Repositories/`** — thin repositories (`IPluginAssemblyRepository`, `IPluginTypeRepository`,
   `ISdkMessageProcessingStepRepository`, `ISdkMessageProcessingStepImageRepository`,
   `ICustomApiRepository`, `ISdkMessageRepository`), one per entity, CRUD only - no decision logic.
   Renamed from `Dataverse/` because that name collided conceptually with the separate
   `dgt.power.dataverse` generated-entities project these repositories depend on (`using
   dgt.power.dataverse;`) - "Dataverse" described *what they talk to*, not *what they are*.
-- **`Execution/`** — `PluginPushExecutor` applies top-level assembly/package operations,
+- **`Deployment/Execution/`** — `PluginPushExecutor` applies top-level assembly/package operations,
   `PluginTypeDeploymentExecutor` applies preplanned type/step/image/Custom API operations, and
   `OutdatedAssemblyMigrator` applies preplanned upgrade migrations. `PluginPushCommand` owns
   plan/render/execute sequencing and terminal output.

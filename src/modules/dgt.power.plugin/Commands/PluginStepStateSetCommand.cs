@@ -1,10 +1,10 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common;
 using dgt.power.common.Extensions;
+using dgt.power.common;
 using dgt.power.plugin.Repositories;
-using dgt.power.plugin.Steps;
+using dgt.power.plugin.StepManagement;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
