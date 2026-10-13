@@ -141,6 +141,16 @@ public class PluginStepStateSetCommandTests : CommandTestsBase<PluginStepStateSe
     }
 
     [Test]
+    public async Task Execute_NullStepsList_TreatedAsNoEntries()
+    {
+        var context = GetBuilder().Build();
+
+        await context.Execute(new PluginStepStateSetSettings { Config = WriteConfigurationArtifact(new PluginStepStateConfigRoot { Steps = null! }).FullName }).Succeed();
+
+        await Assert.That(TestConsole.Output).Contains("No steps defined in config file.");
+    }
+
+    [Test]
     public async Task Execute_UnreadableConfig_Fails()
     {
         var context = GetBuilder().Build();

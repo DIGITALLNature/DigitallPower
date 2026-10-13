@@ -35,7 +35,7 @@ public class PluginStepStateSetCommand(
             return Tracer.End(this, false);
         }
 
-        if (config.Steps.Count == 0)
+        if (config.Steps is not { Count: > 0 })
         {
             Console.MarkupLine("[yellow]No steps defined in config file.[/]");
             return Tracer.End(this, true);
