@@ -1,5 +1,6 @@
 *.cache
 *.user
+graphify-out/
 **/.vs
 **/.vscode
 **/.codecoverage
