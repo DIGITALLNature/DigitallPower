@@ -7,8 +7,8 @@ namespace dgt.power.Telemetry;
 
 /// <summary>
 /// Strips personally identifiable and environment-specific information from exception messages and
-/// stack traces before they are sent to telemetry. See <c>.memory/decision-error-telemetry-anonymization.md</c>
-/// for the rationale and the scope/limitations of this best-effort anonymization.
+/// stack traces before they are sent to telemetry. This is best-effort anonymization, not a detector
+/// for arbitrary personal information in free-form text.
 /// </summary>
 internal static partial class TelemetryAnonymizer
 {
