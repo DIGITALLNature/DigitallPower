@@ -117,5 +117,5 @@ changing the tool.
 
 ## Reporting
 
-After the run, update the status columns here, the design doc, and `.memory\summary.md`.
+After the run, update the status columns here and the design doc.
 Record every Dataverse error code verbatim, and the exact import behaviour for C cases.

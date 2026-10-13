@@ -579,5 +579,3 @@ Paths below are relative to `src/modules/dgt.power.plugin/` unless stated otherw
 | Separate test orchestration | `tests/dgt.power.plugin.tests/Execution/PluginPushExecutorTests.cs:25-68` |
 | Configuration sequencing | `Commands/PluginStepConfigSetCommand.cs`, `Repositories/SdkMessageProcessingStepSecureConfigRepository.cs` |
 
-Additional code-level caveats are indexed in
-[`research-plugin-deployment-change-surfaces.md`](../../.memory/research-plugin-deployment-change-surfaces.md).
