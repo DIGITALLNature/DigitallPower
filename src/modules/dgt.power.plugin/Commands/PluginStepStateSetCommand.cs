@@ -58,9 +58,15 @@ public class PluginStepStateSetCommand(
         return Tracer.End(this, handler.FailedCount == 0);
     }
 
-    private static async Task ProcessEntryAsync(PluginStepStateHandler handler, PluginStepStateConfig entry, int position, CancellationToken cancellationToken)
+    private static async Task ProcessEntryAsync(PluginStepStateHandler handler,     PluginStepStateConfig? entry, int position, CancellationToken cancellationToken)
     {
-        var validationError = entry.Validate();
+            if (entry is null)
+            {
+                handler.ReportFailure($"Invalid entry #{position}: entry must not be null.");
+                return;
+            }
+
+            var validationError = entry.Validate();
         if (validationError is not null)
         {
             handler.ReportFailure($"Invalid entry #{position}: {validationError}");

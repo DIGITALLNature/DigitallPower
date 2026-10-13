@@ -73,7 +73,9 @@ public abstract class PluginStepEnableDisableCommandBase(
             return Tracer.End(this, false);
         }
 
-        return Tracer.End(this, await handler.ApplyAsync(resolution.Step, Enable, settings.Reason, cancellationToken));
+        var applied = await handler.ApplyAsync(resolution.Step, Enable, settings.Reason, cancellationToken);
+        handler.PrintSummary();
+        return Tracer.End(this, applied);
     }
 
     private async Task<bool> ApplyToSolutionAsync(

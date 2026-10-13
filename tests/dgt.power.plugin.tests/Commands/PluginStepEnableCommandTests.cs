@@ -33,6 +33,7 @@ public class PluginStepEnableCommandTests : CommandTestsBase<PluginStepEnableCom
 
         await Assert.That(PluginStepStateTestData.IsEnabled(context.GetById<SdkMessageProcessingStep>(_stepId))).IsTrue();
         await Assert.That(TestConsole.Output).Contains("Enabled TestStep");
+        await Assert.That(TestConsole.Output).Contains("1 steps enabled");
     }
 
     [Test]

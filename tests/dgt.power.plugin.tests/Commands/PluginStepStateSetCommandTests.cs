@@ -66,6 +66,18 @@ public class PluginStepStateSetCommandTests : CommandTestsBase<PluginStepStateSe
     }
 
     [Test]
+    public async Task Execute_NullEntry_FailsEntryAndContinuesWithRemainingEntries()
+    {
+        var context = GetBuilder().WithData(TwoSteps(firstEnabled: true, secondEnabled: true)).Build();
+
+        await context.Execute(ConfigFile(null!, new PluginStepStateConfig { StepId = _secondId, Enabled = false })).Fail();
+
+        await Assert.That(PluginStepStateTestData.IsEnabled(context.GetById<SdkMessageProcessingStep>(_secondId))).IsFalse();
+        await Assert.That(TestConsole.Output).Contains("Invalid entry #1: entry must not be null.");
+        await Assert.That(TestConsole.Output).Contains("1 steps failed");
+    }
+
+    [Test]
     public async Task Execute_StepIdWithCompositeFields_RejectsEntry()
     {
         var context = GetBuilder().WithData(TwoSteps(firstEnabled: true, secondEnabled: true)).Build();
