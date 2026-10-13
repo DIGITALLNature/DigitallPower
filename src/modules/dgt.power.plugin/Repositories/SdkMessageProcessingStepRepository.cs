@@ -2,16 +2,18 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.dataverse;
+using dgt.power.plugin.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using dgt.power.plugin.Remote;
+using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.plugin.Repositories;
 
 /// <inheritdoc cref="ISdkMessageProcessingStepRepository" />
 public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync2 service) : ISdkMessageProcessingStepRepository
 {
+    private const int StateQueryChunkSize = 500;
+
     public async Task<IReadOnlyList<RemotePluginStep>> ListByPluginTypeAsync(Guid pluginTypeId, CancellationToken cancellationToken = default)
     {
         var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
@@ -234,6 +236,80 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
         var step = new SdkMessageProcessingStep(stepId)
         {
             Configuration = configuration
+        };
+        await service.UpdateAsync(step, cancellationToken);
+    }
+
+    public async Task EnableAsync(Guid stepId, CancellationToken cancellationToken = default)
+    {
+        var step = new SdkMessageProcessingStep(stepId)
+        {
+            StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Enabled),
+            StatusCode = new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Enabled)
+        };
+        await service.UpdateAsync(step, cancellationToken);
+    }
+
+    public async Task DisableAsync(Guid stepId, CancellationToken cancellationToken = default)
+    {
+        var step = new SdkMessageProcessingStep(stepId)
+        {
+            StateCode = new OptionSetValue(SdkMessageProcessingStep.Options.StateCode.Disabled),
+            StatusCode = new OptionSetValue(SdkMessageProcessingStep.Options.StatusCode.Disabled)
+        };
+        await service.UpdateAsync(step, cancellationToken);
+    }
+
+    public Task<IReadOnlyList<RemotePluginStepState>> ListStatesAsync(IReadOnlyCollection<Guid> stepIds, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(stepIds);
+        return ListStatesCoreAsync(stepIds, cancellationToken);
+    }
+
+    private async Task<IReadOnlyList<RemotePluginStepState>> ListStatesCoreAsync(IReadOnlyCollection<Guid> stepIds, CancellationToken cancellationToken)
+    {
+        var states = new List<RemotePluginStepState>();
+
+        // Chunked to keep the In-condition well below the Dataverse limits.
+        foreach (var chunk in stepIds.Chunk(StateQueryChunkSize))
+        {
+            var query = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+            {
+                NoLock = true,
+                ColumnSet = new ColumnSet(
+                    SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId,
+                    SdkMessageProcessingStep.LogicalNames.Name,
+                    SdkMessageProcessingStep.LogicalNames.StateCode)
+            };
+            query.Criteria.AddCondition(SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId, ConditionOperator.In, chunk.Cast<object>().ToArray());
+
+            var result = await service.RetrieveMultipleAsync(query, cancellationToken);
+            states.AddRange(result.Entities.Select(ToStepState));
+        }
+
+        return states.OrderBy(state => state.Name, StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
+    public async Task<RemotePluginStepState?> GetStateAsync(Guid stepId, CancellationToken cancellationToken = default)
+    {
+        var states = await ListStatesAsync([stepId], cancellationToken);
+        return states.Count > 0 ? states[0] : null;
+    }
+
+    private static RemotePluginStepState ToStepState(Entity entity)
+    {
+        var step = entity.ToEntity<SdkMessageProcessingStep>();
+        return new RemotePluginStepState(
+            step.Id,
+            step.Name ?? step.Id.ToString(),
+            step.StateCode?.Value == SdkMessageProcessingStep.Options.StateCode.Enabled);
+    }
+
+    public async Task UpdateDescriptionAsync(Guid stepId, string description, CancellationToken cancellationToken = default)
+    {
+        var step = new SdkMessageProcessingStep(stepId)
+        {
+            Description = description
         };
         await service.UpdateAsync(step, cancellationToken);
     }

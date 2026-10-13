@@ -12,12 +12,12 @@ using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
-using dgt.power.plugin;
 using dgt.power.plugin.Commands;
+using dgt.power.plugin.Models;
 using dgt.power.solution.Base;
 using dgt.power.webresource.Commands;
-using Spectre.Console.Cli;
 using Spectre.Console.Cli.Testing;
+using Spectre.Console.Cli;
 
 namespace dgt.power.cli.tests;
 
@@ -294,20 +294,6 @@ public class SettingsParsingTests
         await Assert.That(settings.TargetSolution).IsEqualTo("tmpsolution");
         await Assert.That(settings.DryRun).IsTrue();
         await Assert.That(settings.Entities).IsFalse();
-    }
-
-    [Test]
-    public async Task EnsureSdkStepStatusSettings_ParsesAliasesAndDefaults()
-    {
-        var result = Parse<EnsureSdkStepStatusSettings>("-s", "mysolution", "-d", "--dry-run");
-        var defaults = Parse<EnsureSdkStepStatusSettings>();
-
-        var settings = (EnsureSdkStepStatusSettings)result.Settings!;
-        await Assert.That(settings.Solution).IsEqualTo("mysolution");
-        await Assert.That(settings.Disabled).IsTrue();
-        await Assert.That(settings.DryRun).IsTrue();
-
-        await Assert.That(((EnsureSdkStepStatusSettings)defaults.Settings!).Solution).IsEqualTo("assemblies");
     }
 
     [Test]
@@ -624,5 +610,131 @@ public class SettingsParsingTests
         await Assert.That(settings.UnsecureConfig).IsEqualTo("unsecureValue");
         await Assert.That(settings.SecureConfig).IsEqualTo("secureValue");
         await Assert.That(settings.PluginType).IsNull();
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesDirectStepId()
+    {
+        var stepId = Guid.NewGuid();
+        var result = Parse<PluginStepEnableDisableSettings>("--step-id", stepId.ToString());
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsEqualTo(stepId);
+        await Assert.That(settings.PluginType).IsNull();
+        await Assert.That(settings.Message).IsNull();
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesReason()
+    {
+        var stepId = Guid.NewGuid();
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--step-id", stepId.ToString(),
+            "--reason", "Maintenance mode");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsEqualTo(stepId);
+        await Assert.That(settings.Reason).IsEqualTo("Maintenance mode");
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesSolution()
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--solution", "mysolution",
+            "--reason", "Bulk operation");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.Solution).IsEqualTo("mysolution");
+        await Assert.That(settings.Reason).IsEqualTo("Bulk operation");
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesCompositeKey()
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", "PreOperation",
+            "--entity", "account");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.StepId).IsNull();
+        await Assert.That(settings.PluginType).IsEqualTo("MyNamespace.MyPlugin");
+        await Assert.That(settings.Message).IsEqualTo("Create");
+        await Assert.That(settings.Stage).IsEqualTo(PluginStepStage.PreOperation);
+        await Assert.That(settings.Entity).IsEqualTo("account");
+    }
+
+    [Test]
+    [Arguments("10", PluginStepStage.PreValidation)]
+    [Arguments("20", PluginStepStage.PreOperation)]
+    [Arguments("30", PluginStepStage.MainOperation)]
+    [Arguments("40", PluginStepStage.PostOperation)]
+    [Arguments("PreValidation", PluginStepStage.PreValidation)]
+    [Arguments("PreOperation", PluginStepStage.PreOperation)]
+    public async Task PluginStepEnableDisableSettings_ParsesNamedAndNumericStages(string stage, PluginStepStage expectedStage)
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", stage,
+            "--entity", "account");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.Stage).IsEqualTo(expectedStage);
+    }
+
+    [Test]
+    [Arguments("80")]
+    [Arguments("90")]
+    [Arguments("PreCommitStage")]
+    [Arguments("PostCommitStage")]
+    public async Task PluginStepEnableDisableSettings_RejectsInternalStages(string stage)
+    {
+        var result = Parse<PluginStepEnableDisableSettings>(
+            "--plugin-type", "MyNamespace.MyPlugin",
+            "--message", "Create",
+            "--stage", stage,
+            "--entity", "account");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
+    public async Task PluginStepStateSetSettings_ParsesConfigOption()
+    {
+        var result = Parse<PluginStepStateSetSettings>(
+            "-c", "step-states.json");
+
+        var settings = (PluginStepStateSetSettings)result.Settings!;
+
+        await Assert.That(settings.Config).IsEqualTo("step-states.json");
+        await Assert.That(settings.DryRun).IsFalse();
+    }
+
+    [Test]
+    public async Task PluginStepStateSetSettings_ParsesDryRun()
+    {
+        var result = Parse<PluginStepStateSetSettings>("-c", "step-states.json", "--dry-run");
+
+        var settings = (PluginStepStateSetSettings)result.Settings!;
+
+        await Assert.That(settings.DryRun).IsTrue();
+    }
+
+    [Test]
+    public async Task PluginStepEnableDisableSettings_ParsesDryRun()
+    {
+        var result = Parse<PluginStepEnableDisableSettings>("--solution", "mysolution", "--dry-run");
+
+        var settings = (PluginStepEnableDisableSettings)result.Settings!;
+
+        await Assert.That(settings.DryRun).IsTrue();
     }
 }

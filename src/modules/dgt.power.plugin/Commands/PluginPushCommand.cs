@@ -2,14 +2,14 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
-using dgt.power.common;
 using dgt.power.common.Extensions;
+using dgt.power.common;
+using dgt.power.plugin.Deployment.Execution;
+using dgt.power.plugin.Deployment.Local;
+using dgt.power.plugin.Deployment.Output;
+using dgt.power.plugin.Deployment.Planning.Plans;
+using dgt.power.plugin.Deployment.Planning;
 using dgt.power.plugin.Repositories;
-using dgt.power.plugin.Execution;
-using dgt.power.plugin.Output;
-using dgt.power.plugin.Local;
-using dgt.power.plugin.Planning;
-using dgt.power.plugin.Planning.Deployment;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;

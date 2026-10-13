@@ -69,9 +69,9 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
-| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, ensure SDK step status, and more |
+| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, and more |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
-| **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage step configuration with `plugin step config set` |
+| **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage plugin steps (configuration, enable/disable, bulk state) |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
 
 ## 🚀 Installation
@@ -178,6 +178,10 @@ The shim is written with idempotency markers — running the command again does 
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
+| `dgtp plugin <TAB>` | `push` |
+| `dgtp plugin step <TAB>` | `enable` `disable` `config` `state` |
+| `dgtp plugin step config <TAB>` | `set` |
+| `dgtp plugin step state <TAB>` | `set` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -541,7 +545,6 @@ Day-to-day administrative actions against a live environment.
 | `maintenance workflowstate` | Apply a workflow-state configuration |
 | `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
 | `maintenance filterfxplugins` | Add message filtering for PowerFx plugin steps |
-| `maintenance ensuresdksteps` | Enable/disable SDK steps within a solution |
 
 `maintenance bulkdelete` accepts `--poll-interval <seconds>` (default `5`) to set the interval
 between asynchronous job status checks. The option is specific to this command.
@@ -935,6 +938,107 @@ dgtp plugin step config set --step-id 00000000-0000-0000-0000-000000000000 --uns
 - When using file-based configuration, the file must exist and be UTF-8 encoded.
 - Composite key matching requires exactly one step to match; multiple matches or no matches will fail. Multiple matches list step display names and IDs so you can retry with `--step-id`.
 - Secure configuration is stored in the `SdkMessageProcessingStepSecureConfig` entity.
+
+#### `enable` — Enable a plugin step
+
+Enables an existing plugin step. Steps can be identified by step ID, composite key, or solution name (applies to ALL steps in the solution).
+
+##### Usage
+
+```bash
+dgtp plugin step enable --step-id 00000000-0000-0000-0000-000000000000
+dgtp plugin step enable --plugin-type MyNamespace.MyPlugin --message Create --stage PreOperation --entity account
+dgtp plugin step enable --solution mysolution
+```
+
+##### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `--step-id` | No (mutually exclusive with composite key and --solution) | SDK message processing step ID |
+| `--plugin-type` | No (part of composite key, mutually exclusive with --step-id and --solution) | Fully qualified plugin type name |
+| `--message` | No (part of composite key, mutually exclusive with --step-id and --solution) | SDK message name (Create, Update, Delete, etc.) |
+| `--stage` | No (part of composite key, mutually exclusive with --step-id and --solution) | Stage name or numeric value: PreValidation/10, PreOperation/20, MainOperation/30, PostOperation/40 |
+| `--entity` | No (part of composite key, mutually exclusive with --step-id and --solution) | Primary entity logical name |
+| `--secondary-entity` | No (part of composite key, mutually exclusive with --step-id and --solution) | Secondary entity logical name (for Associate, Disassociate, etc.) |
+| `--execution-order` | No (part of composite key, mutually exclusive with --step-id and --solution) | Rank/execution order of the step |
+| `-s, --solution` | No (mutually exclusive with --step-id and composite key) | Unique name of the solution; applies to ALL steps in that solution |
+| `--reason` | No | Reason for the state change; replaces the step's description when the state actually changes |
+| `--dry-run` | No | Show which steps would change without modifying anything |
+
+##### Notes
+
+- Steps that are already in the desired state are left untouched (no write, reason not stored) and reported as unchanged.
+- The solution name must match exactly. Solutions without plugin steps report that no steps were found.
+- A failing step does not stop the remaining steps in `--solution` mode; the command exits with an error if any step failed.
+- Exactly one of the following must be provided: `--step-id`, all required composite key options (`--plugin-type`, `--message`, `--stage`, `--entity`), or `--solution`.
+- `--secondary-entity` and `--execution-order` are optional composite-key filters and cannot be used with `--step-id` or `--solution`.
+- Composite key matching requires exactly one step to match; multiple matches or no matches will fail. Multiple matches list step display names and IDs so you can retry with `--step-id`.
+
+#### `disable` — Disable a plugin step
+
+Disables an existing plugin step. Uses the same identification options as `enable`.
+
+##### Usage
+
+```bash
+dgtp plugin step disable --step-id 00000000-0000-0000-0000-000000000000
+dgtp plugin step disable --plugin-type MyNamespace.MyPlugin --message Create --stage PreOperation --entity account
+dgtp plugin step disable --solution mysolution
+```
+
+##### Options
+
+Same as [`enable`](#enable--enable-a-plugin-step).
+
+#### `state set` — Bulk enable/disable plugin steps from config file
+
+Applies enable/disable state to multiple plugin steps defined in a JSON configuration file. Steps can be identified by ID or by composite key (plugin type, message, stage, entity).
+
+##### Usage
+
+```bash
+dgtp plugin step state set -c step-states.json
+```
+
+##### Config file format
+
+```json
+{
+  "steps": [
+    {
+      "stepId": "00000000-0000-0000-0000-000000000000",
+      "enabled": false,
+      "reason": "Temporarily disabled for deployment"
+    },
+    {
+      "pluginType": "MyNamespace.MyPlugin",
+      "message": "Create",
+      "stage": 20,
+      "entity": "account",
+      "enabled": true
+    }
+  ]
+}
+```
+
+##### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `-c, --config` | Yes | Path to the JSON config file |
+| `--dry-run` | No | Show which steps would change without modifying anything |
+
+##### Notes
+
+- The config file can reference the [JSON schema](schemas/plugin/state/schema.json) for editor validation.
+- Each step must set `enabled` and have either `stepId` or a complete composite key (`pluginType`, `message`, `stage`, `entity`); mixing both is rejected.
+- Invalid or unresolvable entries are reported and do not stop the remaining entries; the command exits with an error if any entry failed.
+- Steps already in the desired state are left untouched and reported as unchanged.
+- `stage` accepts numeric values: 10 (PreValidation), 20 (PreOperation), 30 (MainOperation), 40 (PostOperation).
+- Composite key matching requires exactly one step to match; multiple matches or no matches will fail.
+- If a `reason` is provided in the config, it replaces the step's description when the state changes.
+- The command reports a summary of enabled, disabled, and failed steps.
 
 ### `webresource` — Manage webresources
 

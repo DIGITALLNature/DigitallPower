@@ -14,9 +14,9 @@ using dgt.power.import.Logic;
 using dgt.power.maintenance.Logic;
 using dgt.power.plugin.Base;
 using dgt.power.plugin.Commands;
-using dgt.power.Telemetry;
 using dgt.power.solution;
 using dgt.power.solution.Base;
+using dgt.power.Telemetry;
 using dgt.power.webresource.Base;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
@@ -101,9 +101,6 @@ internal static class CommandTree
                 maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
                     .WithDescription("Add Messagefiltering for PowerFx Plugins")
                     .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
-                maintenance.AddCommand<EnsureSdkStepStatus>("ensuresdksteps")
-                    .WithDescription("Ensure sdk steps within a solution are enabled (or disabled)")
-                    .WithExample("maintenance", "ensuresdksteps", "--solution", "assemblies");
             });
 
         config.AddBranch<AnalyzeVerb>("analyze", analyze =>
@@ -154,6 +151,16 @@ internal static class CommandTree
 
             plugin.AddBranch("step", step =>
             {
+                step.AddCommand<PluginStepEnableCommand>("enable")
+                    .WithDescription("Enables an sdkmessageprocessingstep")
+                    .WithExample("plugin", "step", "enable", "--step-id", "<guid>")
+                    .WithExample("plugin", "step", "enable", "--plugin-type", "MyNamespace.MyPlugin", "--message", "Update", "--stage", "PreOperation", "--entity", "account");
+
+                step.AddCommand<PluginStepDisableCommand>("disable")
+                    .WithDescription("Disables an sdkmessageprocessingstep")
+                    .WithExample("plugin", "step", "disable", "--step-id", "<guid>")
+                    .WithExample("plugin", "step", "disable", "--plugin-type", "MyNamespace.MyPlugin", "--message", "Update", "--stage", "PreOperation", "--entity", "account");
+
                 step.AddBranch("config", cfg =>
                 {
                     cfg.AddCommand<PluginStepConfigSetCommand>("set")
@@ -163,6 +170,13 @@ internal static class CommandTree
                         .WithExample("plugin", "step", "config", "set", "--plugin-type", "MyNamespace.MyPlugin", "--message", "Update", "--stage", "PreOperation", "--entity", "account", "--unsecure", "<value>")
 #pragma warning restore S103
                         .WithExample("plugin", "step", "config", "set", "--step-id", "<guid>", "--unsecure-file", "config.json", "--secure-file", "secrets.json");
+                });
+
+                step.AddBranch("state", state =>
+                {
+                    state.AddCommand<PluginStepStateSetCommand>("set")
+                        .WithDescription("Applies enable/disable state to multiple plugin steps from a config file")
+                        .WithExample("plugin", "step", "state", "set", "-c", "step-states.json");
                 });
             });
         });

@@ -2,10 +2,10 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
-using dgt.power.plugin.Remote;
+using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
-using Microsoft.Xrm.Sdk;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;

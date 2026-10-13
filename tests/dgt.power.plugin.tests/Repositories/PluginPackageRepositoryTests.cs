@@ -1,11 +1,11 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Security.Cryptography;
 using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk.Query;
-using System.Security.Cryptography;
 
 namespace dgt.power.plugin.tests.Repositories;
 

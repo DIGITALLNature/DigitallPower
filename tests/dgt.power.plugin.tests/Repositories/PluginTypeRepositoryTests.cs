@@ -5,8 +5,8 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.plugin.tests.Repositories;
 

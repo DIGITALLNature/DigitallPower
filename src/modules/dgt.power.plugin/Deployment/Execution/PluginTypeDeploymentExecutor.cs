@@ -1,0 +1,227 @@
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.plugin.Deployment.Planning.Plans;
+using dgt.power.plugin.Models;
+using dgt.power.plugin.Repositories;
+
+namespace dgt.power.plugin.Deployment.Execution;
+
+public sealed class PluginTypeDeploymentExecutor(
+    IPluginTypeRepository typeRepository,
+    ISdkMessageProcessingStepRepository stepRepository,
+    ISdkMessageProcessingStepImageRepository imageRepository,
+    ICustomApiRepository customApiRepository,
+    ISolutionComponentRepository solutionRepository,
+    IEntityDataProviderRepository dataProviderRepository)
+{
+    public Task<IReadOnlyDictionary<string, Guid>> ApplyAsync(PluginTypeDeployment plan, Guid assemblyId, Action<PluginDeploymentProgress>? reportProgress = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(plan);
+
+        return ApplyCoreAsync(plan, assemblyId, reportProgress, cancellationToken);
+    }
+
+    private async Task<IReadOnlyDictionary<string, Guid>> ApplyCoreAsync(PluginTypeDeployment plan, Guid assemblyId, Action<PluginDeploymentProgress>? reportProgress,
+        CancellationToken cancellationToken)
+    {
+        var typeIds = await ApplyTypesAsync(plan, assemblyId, reportProgress, cancellationToken);
+        await ApplyDataProvidersAsync(plan.DataProviders, typeIds, reportProgress, cancellationToken);
+        await ApplyRegistrationsAsync(plan, typeIds, reportProgress, cancellationToken);
+        await DeleteTypesAsync(plan.Deletions, reportProgress, cancellationToken);
+        return typeIds;
+    }
+
+    internal async Task<IReadOnlyDictionary<string, Guid>> ApplyTypesAsync(PluginTypeDeployment plan, Guid assemblyId,
+        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        var typeIds = new Dictionary<string, Guid>(StringComparer.Ordinal);
+        foreach (var item in plan.Types)
+        {
+            var typeId = item.Comparison.RequiresCreate
+                ? await typeRepository.CreateAsync(assemblyId, item.Comparison.Local.TypeName, item.Comparison.Local.Name, cancellationToken)
+                : item.Comparison.Remote!.Id;
+            if (item.Comparison.RequiresCreate)
+            {
+                Report(reportProgress, PluginDeploymentOperation.Created, "plugin type", item.Comparison.Local.TypeName);
+            }
+
+            typeIds.Add(item.Comparison.Local.TypeName, typeId);
+        }
+
+        return typeIds;
+    }
+
+    internal async Task ApplyRegistrationsAsync(PluginTypeDeployment plan, IReadOnlyDictionary<string, Guid> typeIds,
+        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        foreach (var item in plan.Types)
+        {
+            var typeId = typeIds[item.Comparison.Local.TypeName];
+            foreach (var step in item.Steps)
+            {
+                var stepId = await ApplyStepAsync(step, typeId, reportProgress, cancellationToken);
+                await ApplyImagesAsync(step, stepId, reportProgress, cancellationToken);
+                if (step.Solution is { } solution)
+                {
+                    await solutionRepository.AddToSolutionAsync(solution.ComponentType, stepId, solution.SolutionUniqueName, cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Added, "step", $"{solution.ComponentName} to solution {solution.SolutionUniqueName}");
+                }
+            }
+
+            foreach (var step in item.StepDeletions)
+            {
+                await stepRepository.DeleteAsync(step.Step.Id, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Deleted, "step", step.Step.Name);
+            }
+
+            foreach (var customApiId in item.CustomApi.UnlinkIds)
+            {
+                await customApiRepository.UnlinkPluginTypeAsync(customApiId, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Unlinked, "Custom API", customApiId.ToString());
+            }
+
+            if (item.CustomApi.Link)
+            {
+                await customApiRepository.LinkPluginTypeAsync(item.CustomApi.DesiredId!.Value, typeId, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Linked, "Custom API", item.CustomApi.UniqueName);
+            }
+        }
+    }
+
+    internal async Task DeleteTypesAsync(IReadOnlyList<PluginTypeDeletion> deletions, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        foreach (var deletion in deletions)
+        {
+            foreach (var customApiId in deletion.LinkedCustomApiIds)
+            {
+                await customApiRepository.UnlinkPluginTypeAsync(customApiId, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Unlinked, "Custom API", customApiId.ToString());
+            }
+
+            foreach (var stepId in deletion.DependentStepIds)
+            {
+                await stepRepository.DeleteAsync(stepId, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Deleted, "step", stepId.ToString());
+            }
+
+            await typeRepository.DeleteAsync(deletion.Type.Id, cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Deleted, "plugin type", deletion.Type.TypeName);
+        }
+    }
+
+    internal async Task ApplyDataProvidersAsync(IReadOnlyList<DataProviderDeployment> deployments, IReadOnlyDictionary<string, Guid> typeIds,
+        Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        foreach (var deployment in deployments)
+        {
+            var tableId = deployment.DataSource?.MetadataId;
+            var tableCreated = false;
+            if (deployment is { Local: { } local, UpdateDataSource: true })
+            {
+                if (deployment.DataSource is null)
+                {
+                    tableId = await dataProviderRepository.CreateDataSourceAsync(local, deployment.DataSourceSolution?.SolutionUniqueName, cancellationToken);
+                    tableCreated = true;
+                    Report(reportProgress, PluginDeploymentOperation.Created, "data-source table", local.DataSourceLogicalName);
+                }
+                else
+                {
+                    await dataProviderRepository.UpdateDataSourceAsync(deployment.DataSource, local, cancellationToken);
+                    Report(reportProgress, PluginDeploymentOperation.Updated, "data-source table", local.DataSourceLogicalName);
+                }
+            }
+
+            // CreateEntityRequest already places a new table into the target solution.
+            if (deployment.DataSourceSolution is { } tableSolution && !tableCreated)
+            {
+                await solutionRepository.AddToSolutionAsync(tableSolution.ComponentType, tableId!.Value, tableSolution.SolutionUniqueName, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Added, "data-source table", $"{tableSolution.ComponentName} to solution {tableSolution.SolutionUniqueName}");
+            }
+
+            var providerId = deployment.Remote?.Id;
+            if (deployment.UpdateProvider)
+            {
+                var handlers = deployment.Handlers.ToDictionary(handler => handler.Key, handler => typeIds[handler.Value]);
+                providerId = await dataProviderRepository.ApplyAsync(providerId, deployment.Local, handlers, cancellationToken);
+                Report(reportProgress, deployment.Remote is null ? PluginDeploymentOperation.Created : PluginDeploymentOperation.Updated, "data provider", deployment.Name);
+            }
+
+            if (deployment.ProviderSolution is { } providerSolution)
+            {
+                await solutionRepository.AddToSolutionAsync(providerSolution.ComponentType, providerId!.Value, providerSolution.SolutionUniqueName, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Added, "data provider", $"{deployment.Name} to solution {providerSolution.SolutionUniqueName}");
+            }
+        }
+    }
+
+    private async Task<Guid> ApplyStepAsync(PluginStepDeployment deployment, Guid pluginTypeId, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        if (deployment.MigrationSource is { } migration)
+        {
+            var migratedLocal = deployment.Comparison.Local;
+            if (deployment.Comparison.RequiresUpdate)
+            {
+                var migratedMessage = deployment.Message ?? throw new InvalidOperationException("An updated step requires a resolved SDK message.");
+                await stepRepository.UpdateAsync(migration.Step.Id,
+                    new PluginStepData(migratedLocal.Name, pluginTypeId, migratedMessage.MessageId, migratedMessage.MessageFilterId, migratedLocal.Stage, migratedLocal.Mode,
+                        migratedLocal.ExecutionOrder, migratedLocal.FilterAttributes), cancellationToken);
+            }
+            else
+            {
+                await stepRepository.ReassignPluginTypeAsync(migration.Step.Id, pluginTypeId, cancellationToken);
+            }
+
+            Report(reportProgress, PluginDeploymentOperation.Migrated, "step", migratedLocal.Name);
+            return migration.Step.Id;
+        }
+
+        if (deployment.Comparison is { RequiresCreate: false, RequiresUpdate: false })
+        {
+            return deployment.Comparison.Remote!.Id;
+        }
+
+        var message = deployment.Message ?? throw new InvalidOperationException("A create or update step operation requires a resolved SDK message.");
+        var local = deployment.Comparison.Local;
+        var data = new PluginStepData(local.Name, pluginTypeId, message.MessageId, message.MessageFilterId, local.Stage, local.Mode, local.ExecutionOrder, local.FilterAttributes);
+
+        if (deployment.Comparison.RequiresCreate)
+        {
+            var stepId = await stepRepository.CreateAsync(data, cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Created, "step", local.Name);
+            return stepId;
+        }
+
+        await stepRepository.UpdateAsync(deployment.Comparison.Remote!.Id, data, cancellationToken);
+        Report(reportProgress, PluginDeploymentOperation.Updated, "step", local.Name);
+        return deployment.Comparison.Remote.Id;
+    }
+
+    private async Task ApplyImagesAsync(PluginStepDeployment deployment, Guid stepId, Action<PluginDeploymentProgress>? reportProgress, CancellationToken cancellationToken)
+    {
+        foreach (var image in deployment.Images.Comparisons)
+        {
+            if (image.RequiresCreate)
+            {
+                var local = image.Local;
+                await imageRepository.CreateAsync(new PluginStepImageData(stepId, local.Name, local.EntityAlias, local.ImageType, local.MessagePropertyName, local.Attributes), cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Created, "step image", local.Name);
+            }
+            else if (image.RequiresUpdate)
+            {
+                await imageRepository.UpdateAsync(image.Remote!.Id, stepId, image.Local.Attributes, cancellationToken);
+                Report(reportProgress, PluginDeploymentOperation.Updated, "step image", image.Local.Name);
+            }
+        }
+
+        foreach (var image in deployment.Images.Deletions)
+        {
+            await imageRepository.DeleteAsync(image.Id, cancellationToken);
+            Report(reportProgress, PluginDeploymentOperation.Deleted, "step image", image.Name);
+        }
+    }
+
+    private static void Report(Action<PluginDeploymentProgress>? reportProgress, PluginDeploymentOperation operation, string resource, string name) =>
+        reportProgress?.Invoke(new PluginDeploymentProgress(operation, resource, name));
+}

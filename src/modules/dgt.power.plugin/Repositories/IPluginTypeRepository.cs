@@ -1,13 +1,13 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Remote;
+using dgt.power.plugin.Models;
 
 namespace dgt.power.plugin.Repositories;
 
 /// <summary>
 /// Thin CRUD access to <c>plugintype</c> records. Contains no create/unchanged decision logic -
-/// see <see cref="dgt.power.plugin.Planning.PluginRegistrationComparer"/> for that.
+/// see <see cref="dgt.power.plugin.Deployment.Planning.PluginRegistrationComparer"/> for that.
 /// </summary>
 public interface IPluginTypeRepository
 {

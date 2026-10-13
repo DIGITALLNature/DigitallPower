@@ -1,13 +1,13 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.plugin.Remote;
+using dgt.power.plugin.Models;
 
 namespace dgt.power.plugin.Repositories;
 
 /// <summary>
 /// Thin CRUD access to <c>sdkmessageprocessingstep</c> records. Contains no Create/Update decision
-/// logic - see <see cref="dgt.power.plugin.Planning.PluginRegistrationComparer"/> for that.
+/// logic - see <see cref="dgt.power.plugin.Deployment.Planning.PluginRegistrationComparer"/> for that.
 /// </summary>
 public interface ISdkMessageProcessingStepRepository
 {
@@ -52,4 +52,24 @@ public interface ISdkMessageProcessingStepRepository
     // Retain the contract for planned constructor injection; commands currently construct repositories directly.
     // ReSharper disable once UnusedMemberInSuper.Global
     Task UpdateConfigurationAsync(Guid stepId, string? configuration, CancellationToken cancellationToken = default);
+
+    /// <summary>Enables a step by setting statecode=0 and statuscode=1.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task EnableAsync(Guid stepId, CancellationToken cancellationToken = default);
+
+    /// <summary>Disables a step by setting statecode=1 and statuscode=2.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task DisableAsync(Guid stepId, CancellationToken cancellationToken = default);
+
+    /// <summary>Retrieves the name and enabled state of a step, returning null if the step does not exist.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task<RemotePluginStepState?> GetStateAsync(Guid stepId, CancellationToken cancellationToken = default);
+
+    /// <summary>Retrieves the name and enabled state of the given steps; unknown ids are omitted.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task<IReadOnlyList<RemotePluginStepState>> ListStatesAsync(IReadOnlyCollection<Guid> stepIds, CancellationToken cancellationToken = default);
+
+    /// <summary>Updates the description field of a step.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
+    Task UpdateDescriptionAsync(Guid stepId, string description, CancellationToken cancellationToken = default);
 }
