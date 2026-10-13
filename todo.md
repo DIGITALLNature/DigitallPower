@@ -90,3 +90,32 @@ assemblies skipped by the batch reader (`TargetReadResult.Skipped`) and could li
 reason, when verbose output is requested. Default output stays quiet.
 
 Deliberately out of scope for the plugin rewrite: it changes shared settings and every module.
+
+---
+
+## `plugin step enable` / `plugin step disable`
+
+Idea: toggle `sdkmessageprocessingstep` state from the CLI, for example when isolating a step
+during debugging or before a staged removal. Open question: `plugin push` must not treat a
+disabled step as drift, or the next push would re-enable it silently. Decide how the declarative
+registration and the runtime state interact before building it.
+
+---
+
+## Package replacement for removals
+
+Idea: mirror the standalone replacement path for plugin packages. A removal would require a new
+package identity: the tool creates a new package record, moves surviving steps and Custom API
+links onto its types, then deletes the old package. A managed import could then replace the old
+package without hitting "Unable to delete plugintype due to 1 step(s) registered on it", because
+package assemblies are otherwise updated in place (same `pluginassemblyid` across assembly
+versions).
+
+Open questions to prototype:
+- Identity scheme: the package unique name is `<prefix>_<package id>` and excludes the version,
+  so a new record needs a derived name (for example a major-version suffix) or a new NuGet id.
+- Moving steps onto types in a different assembly (see test case P12).
+- Whether Dataverse allows two packages with the same assembly name side by side, and whether the
+  import deletes the old package cleanly.
+- Scope: trigger only for removals; keep in-place updates for everything else.
+- User impact: package name change needs a migration guide entry.

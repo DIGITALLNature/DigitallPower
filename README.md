@@ -920,6 +920,21 @@ then removes the superseded assembly and registrations. More than one same-name 
 assembly is unsupported: `plugin push` fails before writing and requires manual cleanup. Use
 `--dry-run` to preview the supported update or replacement outcome.
 
+##### Removals and solution import
+
+`plugin push` only changes the environment it targets. A cleared Custom API handler link is not
+propagated by managed solution import (a Dataverse platform limitation), and the linked plugin
+type or assembly cannot be deleted while the link exists. Workaround: unlink the handler manually
+in each downstream environment before the release that removes the type or assembly. This
+creates no unmanaged layer, and the next import then removes the type or assembly.
+
+For plugin packages the same applies to steps: package assemblies are updated in place, even
+when the assembly version changes. A managed import that removes a plugin type fails with "Unable
+to delete plugintype due to 1 step(s) registered on it" while the type still has a step
+downstream, or while a Custom API is still linked to it (Dataverse reports both as a registered
+step). Delete the step or unlink the handler manually in each downstream environment before
+deploying the release that removes the type.
+
 #### `step config set` — Set plugin step configuration
 
 Sets the unsecure and/or secure configuration for an existing plugin step. Steps can be identified

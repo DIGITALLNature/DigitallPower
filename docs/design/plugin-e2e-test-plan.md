@@ -42,39 +42,40 @@ to keep exports small.
 5. Import into Target-B (upgrade) and, for create cases, into Target-A.
 6. Compare the states and note the result. Record any Dataverse error code verbatim.
 
-Status: `V` verified, `-` not run, `?` open.
+Status: `V` verified, `F` failed, `-` not run, `?` open.
 
 ## A. Standalone assemblies
 
 | ID | Scenario (release N vs N-1) | Dev push expectation | Import expectation | Status |
 |----|-----------------------------|----------------------|--------------------|--------|
-| S1 | Create assembly with types and steps | Create assembly, types, steps | Fresh install in Target-A | - |
+| S1 | Create assembly with types and steps | Create assembly, types, steps | Fresh install in Target-A | V |
 | S2 | Unchanged re-push | Up to date | n/a | V |
-| S3 | Content change (build or revision bump) | Update assembly | Upgrade in place; steps survive | - |
-| S4 | Add a type with step | Create type and step | Type and step appear | - |
-| S5 | Change step (stage, mode, filtering attributes, rank) | Update step | Step updated | - |
-| S6 | Change image | Update image | Image updated | - |
-| S7 | Remove a step, keep the type | Delete step | Step removed, no leftovers | - |
+| S3 | Content change (build or revision bump) | Update assembly | Upgrade in place; steps survive | V |
+| S4 | Add a type with step | Create type and step | Type and step appear | V |
+| S5 | Change step (stage, mode, filtering attributes, rank) | Update step | Step updated | V (filtering attributes update in place; stage or rank change replaces the step) |
+| S6 | Change image | Update image | Image updated | V |
+| S7 | Remove a step, keep the type | Delete step | Step removed, no leftovers | V |
 | S8 | Remove a type with steps, same version | Rejected at prepare with version bump hint | n/a | V |
-| S9 | Remove a type, major or minor bump | New assembly created, old deleted with types and steps | Old assembly removed in Target-B without manual deletes | - |
-| S10 | Major or minor bump, types unchanged | Replacement path: steps moved | Upgrade works; no duplicated steps | - |
-| S11 | Remove the whole assembly | Delete assembly with its types and steps | Assembly and steps removed by import alone | - |
-| S12 | Custom API link | Link handler type | Link present in Target | V (Dev only) |
-| S13 | Custom API handler moves to another type (rename and bump) | Update link; old assembly deleted | Link points to new type | - |
-| S14 | Custom API loses its handler | Unlink, then delete type | No dangling link in Target | - |
-| S15 | Data provider add, change, remove | Matches preview | Matches Dev | - |
-| S16 | Retry after a partial failure | Resumes cleanly | n/a | - |
+| S9 | Remove a type, major or minor bump | New assembly created, old deleted with types and steps | Old assembly removed in Target-B without manual deletes | V |
+| S10 | Major or minor bump, types unchanged | Replacement path: steps moved | Upgrade works; no duplicated steps | V |
+| S11 | Remove the whole assembly | Not supported by the CLI for standalone DLLs; delete the assembly in Dev manually | Assembly and steps removed by import alone | F (Test import: assembly delete blocked by 2 steps and the Custom API link) |
+| S11b | Staged removal: release N deletes steps and unlinks the Custom API, release N+1 deletes the assembly | Manual edits in Dev | Steps removed; Custom API link stays in Test (documented limitation, manual unlink needed); assembly removed by the next import after the manual unlink | V |
+| S12 | Custom API link | Link handler type | Link present in Target | V |
+| S13 | Custom API handler moves to another type (rename and bump) | Update link; old assembly deleted | Link points to new type | V |
+| S14 | Custom API loses its handler | Unlink, then delete type | No dangling link in Target | F (Dev OK; Test import blocked until the link is removed manually, see README). With the manual unlink the import succeeds and Target matches Dev |
+| S15 | Data provider add, change, remove | Matches preview | Matches Dev | ? (skipped: no working data provider example) |
+| S16 | Retry after a partial failure | Resumes cleanly | n/a | V |
 
 ## B. Packages
 
 | ID | Scenario | Dev push expectation | Import expectation | Status |
 |----|----------|----------------------|--------------------|--------|
-| P1 | Create package | Upload creates assembly and types; tool registers steps | Fresh install in Target-A | V (Dev) |
+| P1 | Create package | Upload creates assembly and types; tool registers steps | Fresh install in Target-A | V |
 | P2 | Unchanged re-push | Up to date | n/a | V |
-| P3 | Update step or image | Update | Updated in Target-B | V (Dev) |
-| P4 | Add a type with step | Create | Appears | - |
-| P5 | Remove a type with steps | Steps deleted, then upload removes type | Import alone removes type and steps | V (Dev) |
-| P6 | Remove a stepless type | Upload removes type | Import alone removes type | V (Dev) |
+| P3 | Update step or image | Update | Updated in Target-B | V |
+| P4 | Add a type with step | Create | Appears | V |
+| P5 | Remove a type with steps | Steps deleted, then upload removes type | Import alone removes type and steps | F (Dev OK; Test import fails: "Unable to delete plugintype due to 1 step(s) registered on it"; with the step deleted manually in Test first, the import succeeds and the type is removed; a major or minor assembly version bump in the package does not change this; the assembly ID stays the same across 1.1.0.0, 1.2.0.0 and 2.0.0.0, so Dataverse updates the package assembly in place) |
+| P6 | Remove a stepless type | Upload removes type | Import alone removes type | F (Dev OK; Test import fails: "Unable to delete plugintype due to 1 step(s) registered on it", caused by the Custom API link; with a manual unlink in Test first, the import succeeds and the type is removed) |
 | P7 | Add a second assembly | Create | Appears | V (Dev) |
 | P8 | Remove an assembly with steps | Steps deleted, upload removes assembly | Import alone removes assembly and steps | V (Dev) |
 | P9 | Remove an assembly without steps | Upload removes assembly | Import alone removes assembly | - |
@@ -91,7 +92,7 @@ Alternatively compare to the tool path in A and B.
 | ID | Removal | Expected question | Status |
 |----|---------|-------------------|--------|
 | M1 | Standalone type without steps (version bump) | Does import delete the old assembly? | - |
-| M2 | Package type with steps | Does import fail with `0x80040265`? | ? |
+| M2 | Package type with steps | Does import fail with `0x80040265`? | F (observed in P5: import fails with "Unable to delete plugintype due to 1 step(s) registered on it"; no error code captured) |
 | M3 | Package assembly with steps | Does Dataverse cascade the steps? | ? |
 | M4 | Package type without steps | Removed cleanly? | - |
 | M5 | Package assembly without steps | Removed cleanly? | - |
@@ -110,7 +111,7 @@ changing the tool.
 | X1 | Several targets in one run | One preview, one confirmation, one apply | - |
 | X2 | Two targets conflict on the same assembly or package | Preflight reports the conflict | - |
 | X3 | Declined confirmation | No writes | - |
-| X4 | Destructive count in the preview | Counts steps, types and assemblies | V |
+| X4 | Destructive count in the preview | Counts steps, types and assemblies | - |
 | X5 | CI mode (no prompt) | Applies without prompting | - |
 | X6 | Error paths (missing file, invalid package) | Clear message, no writes | - |
 
