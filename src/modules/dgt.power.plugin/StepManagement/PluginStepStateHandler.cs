@@ -119,8 +119,8 @@ internal sealed class PluginStepStateHandler(IAnsiConsole console, SdkMessagePro
         }
 
         Count(enable);
-        var dot = enable ? "[green]●[/]" : "[red]●[/]";
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"{dot} {(enable ? "Enabled" : "Disabled")} {step.Name}{reasonSuffix}");
+        var color = enable ? "green" : "red";
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[{color}]●[/] {(enable ? "Enabled" : "Disabled")} {step.Name}{reasonSuffix}");
         return true;
     }
 

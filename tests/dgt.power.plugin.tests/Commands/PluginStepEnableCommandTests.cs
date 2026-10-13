@@ -69,6 +69,7 @@ public class PluginStepEnableCommandTests : CommandTestsBase<PluginStepEnableCom
 
         await Assert.That(context.GetById<SdkMessageProcessingStep>(_stepId).Description).IsEqualTo("[red]maintenance[/] done");
         await Assert.That(TestConsole.Output).Contains("Enabled TestStep - [red]maintenance[/] done");
+        await Assert.That(TestConsole.Output).DoesNotContain("[green]");
     }
 
     [Test]
