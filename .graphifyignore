@@ -1,0 +1,9 @@
+# Keep the pilot focused on source relationships, not build/project metadata.
+*.csproj
+*.sln
+*.slnx
+.github/
+.husky/
+.copilot/
+scripts/
+graphify-out/
