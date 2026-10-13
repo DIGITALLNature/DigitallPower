@@ -17,7 +17,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
 
-namespace dgt.power.plugin.tests.Execution;
+namespace dgt.power.plugin.tests.Deployment.Execution;
 
 public class PluginTypeDeploymentExecutorTests
 {

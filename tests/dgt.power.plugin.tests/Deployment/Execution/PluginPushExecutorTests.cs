@@ -8,7 +8,6 @@ using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Planning;
-using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.tests.Repositories;
 using dgt.power.tests.FakeExecutor;
@@ -18,7 +17,7 @@ using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
 using Spectre.Console;
 
-namespace dgt.power.plugin.tests.Execution;
+namespace dgt.power.plugin.tests.Deployment.Execution;
 
 public class PluginPushExecutorTests
 {

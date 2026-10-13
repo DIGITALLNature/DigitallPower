@@ -11,7 +11,7 @@ using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk;
 
-namespace dgt.power.plugin.tests.Planning;
+namespace dgt.power.plugin.tests.Deployment.Planning;
 
 public class DataProviderDeploymentPlannerTests
 {

@@ -12,7 +12,7 @@ using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 
-namespace dgt.power.plugin.tests.Planning;
+namespace dgt.power.plugin.tests.Deployment.Planning;
 
 public class PluginDeploymentPlannerTests
 {

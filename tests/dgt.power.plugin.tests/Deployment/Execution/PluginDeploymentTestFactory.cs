@@ -2,13 +2,12 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Deployment.Execution;
-using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Planning;
 using dgt.power.plugin.Repositories;
-using dgt.power.plugin.tests.Planning;
+using dgt.power.plugin.tests.Deployment.Planning;
 using Digitall.Dataverse.Testing;
 
-namespace dgt.power.plugin.tests.Execution;
+namespace dgt.power.plugin.tests.Deployment.Execution;
 
 internal sealed class PluginDeploymentTestFactory
 {

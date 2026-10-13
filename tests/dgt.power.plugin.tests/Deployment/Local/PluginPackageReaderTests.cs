@@ -7,7 +7,7 @@ using NuGet.Packaging;
 using NuGet.Versioning;
 using Spectre.Console.Testing;
 
-namespace dgt.power.plugin.tests.Local;
+namespace dgt.power.plugin.tests.Deployment.Local;
 
 public class PluginPackageReaderTests
 {

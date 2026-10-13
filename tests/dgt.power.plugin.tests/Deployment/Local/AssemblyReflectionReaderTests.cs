@@ -11,7 +11,7 @@ using Digitall.Plugins.Registration;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
 
-namespace dgt.power.plugin.tests.Local;
+namespace dgt.power.plugin.tests.Deployment.Local;
 
 public class AssemblyReflectionReaderTests
 {

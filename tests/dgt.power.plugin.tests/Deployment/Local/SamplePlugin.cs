@@ -4,7 +4,7 @@
 using Microsoft.Xrm.Sdk;
 using Digitall.Plugins.Registration;
 
-namespace dgt.power.plugin.tests.Local;
+namespace dgt.power.plugin.tests.Deployment.Local;
 
 /// <summary>
 /// A top-level (non-nested) <see cref="IPlugin"/> implementation so it is discoverable via

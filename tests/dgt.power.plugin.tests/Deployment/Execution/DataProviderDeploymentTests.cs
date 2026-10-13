@@ -8,7 +8,7 @@ using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Planning;
 using dgt.power.plugin.Models;
-using dgt.power.plugin.tests.Planning;
+using dgt.power.plugin.tests.Deployment.Planning;
 using dgt.power.plugin.tests.Repositories;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
@@ -17,7 +17,7 @@ using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console.Testing;
 
-namespace dgt.power.plugin.tests.Execution;
+namespace dgt.power.plugin.tests.Deployment.Execution;
 
 public class DataProviderDeploymentTests
 {

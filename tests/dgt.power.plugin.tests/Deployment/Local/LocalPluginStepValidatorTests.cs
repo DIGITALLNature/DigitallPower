@@ -5,7 +5,7 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Exceptions;
 
-namespace dgt.power.plugin.tests.Local;
+namespace dgt.power.plugin.tests.Deployment.Local;
 
 public class LocalPluginStepValidatorTests
 {

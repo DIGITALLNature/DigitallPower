@@ -5,7 +5,7 @@ using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.Models;
 
-namespace dgt.power.plugin.tests.Local;
+namespace dgt.power.plugin.tests.Deployment.Local;
 
 public class DataProviderRegistrationGrouperTests
 {

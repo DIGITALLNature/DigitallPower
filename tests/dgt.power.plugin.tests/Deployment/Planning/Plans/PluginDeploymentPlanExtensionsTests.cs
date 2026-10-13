@@ -6,7 +6,7 @@ using dgt.power.plugin.Deployment.Planning.Comparison;
 using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Models;
 
-namespace dgt.power.plugin.tests.Planning.Deployment;
+namespace dgt.power.plugin.tests.Deployment.Planning.Plans;
 
 public class PluginDeploymentPlanExtensionsTests
 {
