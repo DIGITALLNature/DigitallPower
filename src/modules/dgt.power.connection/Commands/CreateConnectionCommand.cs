@@ -25,7 +25,8 @@ public class CreateConnectionCommand(
 
     private async Task<int> ExecuteCoreAsync(CreateConnectionSettings settings, CancellationToken cancellationToken)
     {
-        var previousDefinition = connectionStore.Find(settings.Name);
+        var name = connectionStore.ResolveName(settings.Name);
+        var previousDefinition = connectionStore.Find(name);
         var previousCurrent = connectionStore.Current;
         var definition = await CreateDefinitionAsync(settings, cancellationToken);
         var secretToStore = GetSecret(settings);
@@ -34,8 +35,8 @@ public class CreateConnectionCommand(
 
         if (secretToStore is not null && secretKey is not null)
         {
-            previousSecret = secretStore.ReadSecret(settings.Name, secretKey);
-            secretStore.WriteSecret(settings.Name, secretKey, secretToStore);
+            previousSecret = secretStore.ReadSecret(name, secretKey);
+            secretStore.WriteSecret(name, secretKey, secretToStore);
         }
 
         var persisted = false;
@@ -44,15 +45,15 @@ public class CreateConnectionCommand(
             if (!settings.NoVerify)
             {
                 await connectionVerifier.VerifyAsync(
-                    settings.Name,
+                    name,
                     definition,
                     invocationContext.AllowUnencryptedStorage,
                     cancellationToken);
             }
 
-            connectionStore.Upsert(settings.Name, definition);
+            connectionStore.Upsert(name, definition);
             persisted = true;
-            RemoveObsoleteSecret(settings.Name, previousDefinition, definition);
+            RemoveObsoleteSecret(name, previousDefinition, definition);
         }
         catch
         {
@@ -60,11 +61,11 @@ public class CreateConnectionCommand(
             {
                 if (previousSecret is null)
                 {
-                    secretStore.DeleteSecret(settings.Name, secretKey);
+                    secretStore.DeleteSecret(name, secretKey);
                 }
                 else
                 {
-                    secretStore.WriteSecret(settings.Name, secretKey, previousSecret);
+                    secretStore.WriteSecret(name, secretKey, previousSecret);
                 }
             }
 
@@ -72,21 +73,21 @@ public class CreateConnectionCommand(
             {
                 if (previousDefinition is null)
                 {
-                    connectionStore.Remove(settings.Name);
+                    connectionStore.Remove(name);
                 }
                 else
                 {
                     connectionStore.Upsert(
-                        settings.Name,
+                        name,
                         previousDefinition,
-                        makeCurrent: string.Equals(previousCurrent, settings.Name, StringComparison.OrdinalIgnoreCase));
+                        makeCurrent: string.Equals(previousCurrent, name, StringComparison.OrdinalIgnoreCase));
                 }
             }
 
             throw;
         }
 
-        var rule = new Rule($"Connection [lime]{Markup.Escape(settings.Name)}[/] saved.");
+        var rule = new Rule($"Connection [lime]{Markup.Escape(name)}[/] saved.");
         rule.LeftJustified();
         console.Write(rule);
         return 0;

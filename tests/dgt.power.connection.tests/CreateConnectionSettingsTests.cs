@@ -112,6 +112,23 @@ public class CreateConnectionSettingsTests
     }
 
     [Test]
+    [Arguments("", " ")]
+    [Arguments(" ", null)]
+    [Arguments(null, "")]
+    [Arguments(null, "  ")]
+    public async Task CertificateRejectsEmptyOrWhitespaceValues(string? thumbprint, string? path)
+    {
+        var settings = new CreateConnectionSettings
+        {
+            Name = "prod", Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant", ClientId = "client",
+            CertificateThumbprint = thumbprint, CertificatePath = path
+        };
+
+        await Assert.That(settings.Validate().Successful).IsFalse();
+    }
+
+    [Test]
     public async Task CertificatePasswordRequiresFile()
     {
         var settings = new CreateConnectionSettings

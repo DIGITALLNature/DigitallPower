@@ -79,6 +79,53 @@ public class CreateConnectionCommandTests
     }
 
     [Test]
+    public async Task UpdatingConnectionWithDifferentCaseUsesPersistedNameForSecrets()
+    {
+        ConnectionStore.Upsert("Prod", new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.ExistingDataverse,
+            TenantId = "tenant",
+            ClientId = "client"
+        });
+        SecretStore.WriteSecret("Prod", "clientSecret", "old-secret");
+
+        var result = await RunAsync(new FakeConnectionVerifier(), new CreateConnectionSettings
+        {
+            Name = "prod", Url = ConnectionTestUrls.ReplacementDataverse,
+            TenantId = "tenant", ClientId = "client", ClientSecret = "new-secret",
+            NonInteractive = true
+        });
+
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(SecretStore.ReadSecret("Prod", "clientSecret")).IsEqualTo("new-secret");
+        await Assert.That(SecretStore.ReadSecret("prod", "clientSecret")).IsNull();
+        await Assert.That(ConnectionStore.GetAll().Keys).Contains("Prod");
+    }
+
+    [Test]
+    public async Task FailedVerificationWithDifferentCaseRestoresPersistedSecret()
+    {
+        ConnectionStore.Upsert("Prod", new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.ExistingDataverse,
+            TenantId = "tenant",
+            ClientId = "client"
+        });
+        SecretStore.WriteSecret("Prod", "clientSecret", "old-secret");
+
+        await RunExpectingVerificationFailureAsync(
+            new FakeConnectionVerifier(new InvalidOperationException("verification failed")),
+            new CreateConnectionSettings
+            {
+                Name = "prod", Url = ConnectionTestUrls.ReplacementDataverse,
+                TenantId = "tenant", ClientId = "client", ClientSecret = "new-secret"
+            });
+
+        await Assert.That(SecretStore.ReadSecret("Prod", "clientSecret")).IsEqualTo("old-secret");
+        await Assert.That(SecretStore.ReadSecret("prod", "clientSecret")).IsNull();
+    }
+
+    [Test]
     public async Task NoVerifySkipsDataverseVerification()
     {
         var verifier = new FakeConnectionVerifier();

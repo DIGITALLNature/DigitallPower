@@ -133,6 +133,16 @@ public class CreateConnectionSettings : ConnectionSettings
                 "--service-connection-name and --service-connection-id require --azure-devops-federated.");
         }
 
+        if (CertificateThumbprint is not null && string.IsNullOrWhiteSpace(CertificateThumbprint))
+        {
+            return ValidationResult.Error("--certificate-thumbprint must not be empty or whitespace.");
+        }
+
+        if (CertificatePath is not null && string.IsNullOrWhiteSpace(CertificatePath))
+        {
+            return ValidationResult.Error("--certificate-path must not be empty or whitespace.");
+        }
+
         var hasCertificate = CertificateThumbprint is not null || CertificatePath is not null;
         var hasUserMode = ClientSecret is null && !hasCertificate;
         if (DeviceCode && (ClientSecret is not null || hasCertificate))

@@ -32,10 +32,10 @@ public class DeleteConnectionCommand(
             return await DeleteAllAsync(settings, connections, cancellationToken);
         }
 
-        var name = settings.Name!;
+        var name = connectionStore.ResolveName(settings.Name!);
         if (!connections.TryGetValue(name, out var definition))
         {
-            console.MarkupLine($"[red]Connection {Markup.Escape(name)} not found.[/]");
+            console.MarkupLine($"[red]Connection {Markup.Escape(settings.Name!)} not found.[/]");
             return -1;
         }
 

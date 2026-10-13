@@ -38,6 +38,33 @@ public class DeleteConnectionCommandTests : ConnectionTestsBase<DeleteConnection
     }
 
     [Test]
+    public async Task DeletingWithDifferentCaseRemovesPersistedSecret()
+    {
+        ConnectionStore.Upsert("Dev", new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "contoso.onmicrosoft.com",
+            ClientId = "client-id"
+        });
+        SecretStore.WriteSecret("Dev", "clientSecret", "secret");
+        ICommand<DeleteConnectionSettings> command = new DeleteConnectionCommand(
+            ConnectionStore,
+            SecretStore,
+            UserTokenCache,
+            new ConnectionInvocationContext(),
+            TestConsole);
+
+        var result = await command.ExecuteAsync(
+            CreateContext(),
+            new DeleteConnectionSettings { Name = "dev" },
+            CancellationToken.None);
+
+        await Assert.That(result).IsEqualTo(0);
+        await Assert.That(ConnectionStore.Find("Dev")).IsNull();
+        await Assert.That(SecretStore.ReadSecret("Dev", "clientSecret")).IsNull();
+    }
+
+    [Test]
     public async Task DeletesAllConnections()
     {
         ConnectionStore.Upsert("Dev", new InteractiveConnection

@@ -51,15 +51,15 @@ public sealed partial class DataverseConnection(
         }
 
         var (name, definition) = ResolveConnection();
-        var credential = credentialFactory.Create(
-            name,
-            definition,
-            nonInteractive: true,
-            allowUnencryptedStorage: invocationContext.AllowUnencryptedStorage);
         var scope = new TokenRequestContext([CredentialConnector.GetScope(definition.Url)]);
 
         try
         {
+            var credential = credentialFactory.Create(
+                name,
+                definition,
+                nonInteractive: true,
+                allowUnencryptedStorage: invocationContext.AllowUnencryptedStorage);
             await credential.GetTokenAsync(scope, CancellationToken.None);
             return true;
         }
@@ -67,7 +67,9 @@ public sealed partial class DataverseConnection(
         {
             return false;
         }
-        catch (Exception exception) when (exception is AuthenticationFailedException or CredentialUnavailableException)
+        catch (Exception exception) when (exception is AuthenticationFailedException
+                                              or CredentialUnavailableException
+                                              or MissingConnectionException)
         {
             return false;
         }
@@ -101,7 +103,7 @@ public sealed partial class DataverseConnection(
         connectionStore.Upsert(name, updated, makeCurrent: false);
     }
 
-    private (string Name, ConnectionDefinition Definition) ResolveConnection()
+    private ResolvedConnection ResolveConnection()
     {
         var name = invocationContext.ConnectionName ?? connectionStore.Current;
         if (string.IsNullOrWhiteSpace(name))
@@ -117,10 +119,10 @@ public sealed partial class DataverseConnection(
                 $"Connection '{name}' was not found. Create it with 'dgtp connection create'.");
         }
 
-        return (name, definition);
+        return new ResolvedConnection(connectionStore.ResolveName(name), definition);
     }
 
-    private async Task<IOrganizationServiceAsync2> ConnectUsingAsync(IConnector connector, string name)
+    private async Task<IOrganizationServiceAsync2>     ConnectUsingAsync(IConnector connector, string name)
     {
         try
         {
