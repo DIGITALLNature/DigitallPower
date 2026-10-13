@@ -1,3 +1,16 @@
+# [3.0.0-beta.9](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.8...v3.0.0-beta.9) (2026-10-13)
+
+
+* feat(connection)!: replace profiles with typed Dataverse connections ([#194](https://github.com/DIGITALLNature/DigitallPower/issues/194)) ([743d09d](https://github.com/DIGITALLNature/DigitallPower/commit/743d09db3cd4740b6b2bf0350b7774ac5efb2e44))
+
+
+### BREAKING CHANGES
+
+* profiles and saved connection strings are removed in
+favor of typed connections stored under DGTP_HOME. Existing profiles are
+not migrated automatically; recreate them with `dgtp connection create`.
+See docs/migrations/2.x-to-3.x.md.
+
 # [3.0.0-beta.8](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.7...v3.0.0-beta.8) (2026-10-06)
 
 
