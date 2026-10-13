@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
-namespace dgt.power.plugin.Commands;
+namespace dgt.power.plugin.Steps;
 
 /// <summary>
 /// Configuration for a single plugin step state entry. A step is identified either by <see cref="StepId"/> or by
@@ -98,12 +98,18 @@ public class PluginStepStateConfig
             return "Either 'stepId' or all of 'pluginType', 'message', 'stage' and 'entity' must be provided.";
         }
 
-        var stage = (PluginStepStage)Stage.Value;
-        return stage == PluginStepStage.None || !Enum.IsDefined(stage) ? $"Invalid stage value: {Stage.Value}." : null;
+        return IsValidStage(Stage.Value) ? null : $"Invalid stage value: {Stage.Value}.";
     }
 
-    private bool HasCompositeKeyFields() =>
-        PluginType != null || Message != null || Entity != null || SecondaryEntity != null || Stage.HasValue || ExecutionOrder.HasValue;
+    private static bool IsValidStage(int value)
+    {
+        var stage = (PluginStepStage)value;
+        return stage != PluginStepStage.None && Enum.IsDefined(stage);
+    }
+
+    private bool HasCompositeKeyFields() => HasCompositeTextFields() || Stage.HasValue || ExecutionOrder.HasValue;
+
+    private bool HasCompositeTextFields() => PluginType != null || Message != null || Entity != null || SecondaryEntity != null;
 
     /// <summary>
     /// Short human-readable identification of the entry for messages.

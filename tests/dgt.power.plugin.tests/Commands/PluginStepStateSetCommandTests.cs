@@ -3,6 +3,7 @@
 
 using dgt.power.dataverse;
 using dgt.power.plugin.Commands;
+using dgt.power.plugin.Steps;
 using dgt.power.tests;
 using dgt.power.tests.Extensions;
 

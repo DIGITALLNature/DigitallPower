@@ -1,7 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-namespace dgt.power.plugin.Commands;
+namespace dgt.power.plugin.Steps;
 
 /// <summary>
 /// Identifies a plugin step either by <see cref="StepId"/> or by composite key criteria.

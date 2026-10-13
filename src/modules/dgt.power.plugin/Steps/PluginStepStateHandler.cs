@@ -7,7 +7,7 @@ using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
 using Spectre.Console;
 
-namespace dgt.power.plugin.Commands;
+namespace dgt.power.plugin.Steps;
 
 /// <summary>
 /// Resolves plugin steps and applies enable/disable state changes for the <c>plugin step enable|disable|state set</c>
@@ -31,10 +31,14 @@ internal sealed class PluginStepStateHandler(IAnsiConsole console, SdkMessagePro
         });
     }
 
-    public async Task<PluginStepResolution> ResolveAsync(PluginStepSelector selector, CancellationToken cancellationToken)
+    public Task<PluginStepResolution> ResolveAsync(PluginStepSelector selector, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(selector);
+        return ResolveCoreAsync(selector, cancellationToken);
+    }
 
+    private async Task<PluginStepResolution> ResolveCoreAsync(PluginStepSelector selector, CancellationToken cancellationToken)
+    {
         if (selector.StepId.HasValue)
         {
             return new PluginStepResolution(await repository.GetStateAsync(selector.StepId.Value, cancellationToken), []);

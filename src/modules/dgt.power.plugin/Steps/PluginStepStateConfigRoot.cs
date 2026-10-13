@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
-namespace dgt.power.plugin.Commands;
+namespace dgt.power.plugin.Steps;
 
 /// <summary>
 /// Root configuration for plugin step state management.

@@ -5,6 +5,7 @@ using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.plugin.Remote;
 using dgt.power.plugin.Repositories;
+using dgt.power.plugin.Steps;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
