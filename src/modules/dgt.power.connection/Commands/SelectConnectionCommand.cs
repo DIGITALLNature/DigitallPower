@@ -1,34 +1,31 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common;
+using dgt.power.common.Connections;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-// ReSharper disable ClassNeverInstantiated.Global
-
 namespace dgt.power.connection.Commands;
 
-public class SelectConnectionCommand(IProfileManager profileManager, IAnsiConsole console) : Command<NamedConnectionSettings>
+public class SelectConnectionCommand(IConnectionStore connectionStore, IAnsiConsole console)
+    : Command<NamedConnectionSettings>
 {
-    public override int Execute(CommandContext context, NamedConnectionSettings settings, CancellationToken cancellationToken)
+    public override int Execute(
+        CommandContext context,
+        NamedConnectionSettings settings,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
-
-        var identities = profileManager.LoadIdentities();
-        if (!identities.Contains(settings.Name))
+        if (connectionStore.Find(settings.Name) is null)
         {
-            console.MarkupLine($"[Red]Connection {Markup.Escape(settings.Name)} not found![/]");
+            console.MarkupLine($"[red]Connection {Markup.Escape(settings.Name)} not found.[/]");
             return -1;
         }
 
-        identities.SetCurrent(settings.Name);
-        profileManager.Save();
-
+        connectionStore.SetCurrent(settings.Name);
         var rule = new Rule($"Connection [lime]{Markup.Escape(settings.Name)}[/] set.");
         rule.LeftJustified();
         console.Write(rule);
-
         return 0;
     }
 }

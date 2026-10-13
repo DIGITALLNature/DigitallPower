@@ -212,7 +212,7 @@ Every code change that modifies behavior **must** be accompanied by tests.
   - `tests/dgt.power.import.tests/`
   - `tests/dgt.power.analyzer.tests/`
   - `tests/dgt.power.codegeneration.tests/`
-  - `tests/dgt.power.profile.tests/`
+  - `tests/dgt.power.connection.tests/`
   - `tests/dgt.power.telemetry.tests/`
   - `tests/dgt.power.tests/` (shared test helpers / base classes)
 - Mirror the source folder structure within each test project (e.g. `Logic/` tests go in `tests/dgt.power.<module>.tests/`)

@@ -1,21 +1,24 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Connections;
 using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
-using dgt.power.common.Logic;
 using Spectre.Console.Cli;
 
 namespace dgt.power.connection.tests;
 
-[NotInParallel("Serial_Connection_Tests")]
 public class ConnectionStatusCommandTests : ConnectionTestsBase<ConnectionStatusCommand, ConnectionSettings>
 {
     [Test]
-    public async Task ShouldReturnSuccess_WhenAuthenticationIsValid()
+    public async Task ReturnsSuccessWhenAuthenticationIsValid()
     {
-        ICommand<ConnectionSettings> command = new ConnectionStatusCommand(new FakeXrmConnection { CheckAuthResult = true }, ProfileManager, TestConsole);
+        ICommand<ConnectionSettings> command = new ConnectionStatusCommand(
+            new FakeDataverseConnection { CheckAuthResult = true },
+            ConnectionStore,
+            new ConnectionInvocationContext(),
+            TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);
 
@@ -24,9 +27,13 @@ public class ConnectionStatusCommandTests : ConnectionTestsBase<ConnectionStatus
     }
 
     [Test]
-    public async Task ShouldReturnAuthRequired_WhenAuthenticationIsInvalid()
+    public async Task ReturnsAuthRequiredWhenAuthenticationIsInvalid()
     {
-        ICommand<ConnectionSettings> command = new ConnectionStatusCommand(new FakeXrmConnection { CheckAuthResult = false }, ProfileManager, TestConsole);
+        ICommand<ConnectionSettings> command = new ConnectionStatusCommand(
+            new FakeDataverseConnection { CheckAuthResult = false },
+            ConnectionStore,
+            new ConnectionInvocationContext(),
+            TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);
 
@@ -36,28 +43,28 @@ public class ConnectionStatusCommandTests : ConnectionTestsBase<ConnectionStatus
     }
 
     [Test]
-    public async Task ShouldReturnAuthRequired_WithoutRefreshTip_WhenFederatedAuthenticationIsInvalid()
+    public async Task ReturnsFederatedHintForFederatedConnection()
     {
-        var manager = ProfileManager;
-#pragma warning disable S1075
-        manager.LoadIdentities().Upsert("FEDERATED", new AzureDevOpsFederatedIdentity
+        ConnectionStore.Upsert("Pipeline", new AzureDevOpsFederatedConnection
         {
-            ConnectionString = "https://contoso.crm.dynamics.com",
-            TenantId = "11111111-1111-1111-1111-111111111111",
-            ClientId = "22222222-2222-2222-2222-222222222222",
-            ServiceConnectionId = "33333333-3333-3333-3333-333333333333"
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant",
+            ClientId = "client",
+            ServiceConnectionId = "service-connection"
         });
-#pragma warning restore S1075
-        manager.Save();
-
-        ICommand<ConnectionSettings> command = new ConnectionStatusCommand(new FakeXrmConnection { CheckAuthResult = false }, manager, TestConsole);
+        ICommand<ConnectionSettings> command = new ConnectionStatusCommand(
+            new FakeDataverseConnection { CheckAuthResult = false },
+            ConnectionStore,
+            new ConnectionInvocationContext(),
+            TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(2);
-        await Assert.That(TestConsole.Output).Contains("AUTH_REQUIRED");
-        await Assert.That(TestConsole.Output).Contains("SYSTEM_ACCESSTOKEN");
-        await Assert.That(TestConsole.Output).DoesNotContain("dgtp connection refresh");
+        var normalizedOutput = string.Join(
+            " ",
+            TestConsole.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        await Assert.That(normalizedOutput).Contains("workload identity federation");
     }
 
     private static CommandContext CreateContext() =>

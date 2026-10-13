@@ -185,14 +185,15 @@ public class CompletionEngineTests
     public async Task GetCompletions_LeafCommandWithPositionalArg_CallsDynamicProvider()
     {
         var model = BuildModel(
-            Branch("profile",
+            Branch("connection",
                 CommandWithArg("select"),
                 CommandWithArg("delete"),
                 Command("list")));
 
         var provider = new FakeDynamicProvider(["dev", "prod", "staging"]);
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp profile select ", 20, provider);
+        const string commandLine = "dgtp connection select ";
+        var result = CompletionEngine.GetCompletions(model, commandLine, commandLine.Length, provider);
 
         await Assert.That(result).Contains("dev");
         await Assert.That(result).Contains("prod");
@@ -203,11 +204,12 @@ public class CompletionEngineTests
     public async Task GetCompletions_LeafCommandWithPositionalArg_FiltersByPrefix()
     {
         var model = BuildModel(
-            Branch("profile", CommandWithArg("select")));
+            Branch("connection", CommandWithArg("select")));
 
         var provider = new FakeDynamicProvider(["dev", "prod", "staging"]);
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp profile select pr", 22, provider);
+        const string commandLine = "dgtp connection select pr";
+        var result = CompletionEngine.GetCompletions(model, commandLine, commandLine.Length, provider);
 
         await Assert.That(result).Contains("prod");
         await Assert.That(result).DoesNotContain("dev");
@@ -218,14 +220,15 @@ public class CompletionEngineTests
     public async Task GetCompletions_BranchCommand_DoesNotCallDynamicProvider()
     {
         var model = BuildModel(
-            Branch("profile",
+            Branch("connection",
                 CommandWithArg("select"),
                 CommandWithArg("delete")));
 
         var provider = new FakeDynamicProvider(["dev", "prod"]);
 
-        // "profile " — still a branch, not a leaf
-        var result = CompletionEngine.GetCompletions(model, "dgtp profile ", 13, provider);
+        // "connection " — still a branch, not a leaf
+        const string commandLine = "dgtp connection ";
+        var result = CompletionEngine.GetCompletions(model, commandLine, commandLine.Length, provider);
 
         await Assert.That(provider.WasCalled).IsFalse();
         await Assert.That(result).Contains("select");
@@ -236,9 +239,10 @@ public class CompletionEngineTests
     public async Task GetCompletions_WhenNoDynamicProvider_ReturnsEmptyForPositionalArg()
     {
         var model = BuildModel(
-            Branch("profile", CommandWithArg("select")));
+            Branch("connection", CommandWithArg("select")));
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp profile select ", 20);
+        const string commandLine = "dgtp connection select ";
+        var result = CompletionEngine.GetCompletions(model, commandLine, commandLine.Length);
 
         await Assert.That(result).IsEmpty();
     }
@@ -247,11 +251,12 @@ public class CompletionEngineTests
     public async Task GetCompletions_WhenProviderReturnsNull_ReturnsEmpty()
     {
         var model = BuildModel(
-            Branch("profile", CommandWithArg("select")));
+            Branch("connection", CommandWithArg("select")));
 
         var provider = new FakeDynamicProvider(null); // null = doesn't handle this path
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp profile select ", 20, provider);
+        const string commandLine = "dgtp connection select ";
+        var result = CompletionEngine.GetCompletions(model, commandLine, commandLine.Length, provider);
 
         await Assert.That(result).IsEmpty();
     }

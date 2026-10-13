@@ -41,7 +41,6 @@ public class CommandTreeTests
     // routing issues that only surface when actually navigating into a specific path.)
     [Test]
     [Arguments("connection")]
-    [Arguments("profile")]
     [Arguments("export")]
     [Arguments("maintenance")]
     [Arguments("analyze")]

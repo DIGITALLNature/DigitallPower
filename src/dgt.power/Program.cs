@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
-using System.IO.IsolatedStorage;
 using System.Runtime.Caching;
 using System.Text;
 using System.Text.Json;
@@ -16,13 +15,14 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.Commands.Complete;
 using dgt.power.common;
 using dgt.power.common.Commands;
+using dgt.power.common.Connections;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
+using dgt.power.common.Storage;
 using dgt.power.Completion;
 using dgt.power.Telemetry;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Xrm.Sdk;
 using NuGet.Protocol;
@@ -33,11 +33,6 @@ using OpenTelemetry.Trace;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using Tracer = dgt.power.Tracer;
-
-var defaultConfiguration = new Dictionary<string, string?>
-{
-    {"pollrate", "5000"}
-};
 
 // ── SUGGEST MODE: early exit before any I/O, telemetry or network calls ──────
 // dotnet-suggest invokes the app as: dgtp [suggest:<position>] "<command-line>"
@@ -50,16 +45,11 @@ if (DotnetSuggestHandler.IsSuggestMode(args))
 
 Console.OutputEncoding = Encoding.UTF8;
 
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddInMemoryCollection(defaultConfiguration)
-    .AddJsonFile("dgtp.json", optional: true)
-    .AddEnvironmentVariables("dgtp:")
-    .AddCommandLine(args)
-    .Build();
-
+var connectionInvocationContext = new ConnectionInvocationContext();
 var appConsole = AnsiConsole.Console;
 var registrations = new ServiceCollection();
+var dgtpHome = new DgtpHome();
+var stateStore = new StateStore(dgtpHome);
 registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
     .GetCoreV3("https://api.nuget.org/v3/index.json")
     .GetResource<PackageMetadataResource>()! // nuget.org's v3 feed always supports this resource
@@ -69,9 +59,7 @@ registrations.AddSingleton<VersionCheckInterceptor>();
 registrations.AddSingleton<DeprecationInterceptor>();
 
 // Telemetry setup
-var isolatedStorage = IsolatedStorageFile.GetUserStoreForAssembly();
-var telemetryEnabled = !TelemetryConfig.IsOptedOut;
-string? installId = null;
+var tracer = new Tracer(console: appConsole);
 TracerProvider? tracerProvider = null;
 void FlushAndDisposeTelemetryProvider()
 {
@@ -85,12 +73,20 @@ void FlushAndDisposeTelemetryProvider()
     provider.Dispose();
 }
 
-if (telemetryEnabled)
+void InitializeTelemetry()
 {
-    TelemetryNotice.ShowIfFirstRun(isolatedStorage, appConsole);
-    installId = TelemetryConfig.GetOrCreateInstallId(isolatedStorage);
+    if (!TelemetryConfig.IsEnabled(stateStore))
+    {
+        return;
+    }
 
-    var connectionString = Environment.GetEnvironmentVariable("DGT_TELEMETRY_CONNECTION_STRING")
+    var installId = stateStore.GetOrCreateTelemetryInstallId(out var created);
+    if (created)
+    {
+        TelemetryNotice.Show(appConsole);
+    }
+
+    var connectionString = Environment.GetEnvironmentVariable("DGTP_TELEMETRY_CONNECTION_STRING")
         ?? EmbeddedTelemetryConfig.ConnectionString;
     if (!string.IsNullOrEmpty(connectionString))
     {
@@ -101,9 +97,10 @@ if (telemetryEnabled)
             .AddAzureMonitorTraceExporter(o => o.ConnectionString = connectionString)
             .Build();
     }
+
+    tracer.EnableTelemetry(installId);
 }
 
-var tracer = new Tracer(telemetryEnabled, installId, appConsole);
 registrations.AddSingleton<ITracer>(tracer);
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
@@ -123,9 +120,20 @@ EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler = 
 AppDomain.CurrentDomain.UnhandledException += unhandledExceptionHandler;
 TaskScheduler.UnobservedTaskException += unobservedTaskExceptionHandler;
 
-registrations.AddSingleton<IConfiguration>(configuration);
-registrations.AddSingleton<IXrmConnection, XrmConnection>();
-registrations.AddSingleton<IProfileManager, ProfileManager>();
+registrations.AddSingleton<IDataverseConnection, DataverseConnection>();
+registrations.AddSingleton(dgtpHome);
+registrations.AddSingleton(stateStore);
+registrations.AddSingleton(TimeProvider.System);
+registrations.AddSingleton(connectionInvocationContext);
+registrations.AddSingleton<StorageSecurityNotice>(_ => new StorageSecurityNotice(appConsole));
+registrations.AddSingleton<IConnectionStore, ConnectionStore>();
+registrations.AddSingleton<IUserTokenCache, PersistentUserTokenCache>();
+registrations.AddSingleton<ISecretStore>(provider => new SecretStore(
+    dgtpHome.SecretsDirectory,
+    connectionInvocationContext.AllowUnencryptedStorage,
+    provider.GetRequiredService<StorageSecurityNotice>()));
+registrations.AddSingleton<CredentialFactory>();
+registrations.AddSingleton<IConnectionVerifier, DataverseConnectionVerifier>();
 registrations.AddSingleton<ObjectCache, MemoryCache>(_ => MemoryCache.Default);
 registrations.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
 {
@@ -134,7 +142,6 @@ registrations.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
         new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
     }
 });
-registrations.AddSingleton<IsolatedStorageFile>(_ => isolatedStorage);
 registrations.AddScoped<IConfigResolver, ConfigResolver>();
 registrations.AddScoped<IMetadataService, MetadataService>();
 registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
@@ -143,7 +150,7 @@ registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();
-registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IXrmConnection>().ConnectAsync().GetAwaiter().GetResult());
+registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IDataverseConnection>().ConnectAsync().GetAwaiter().GetResult());
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
@@ -154,7 +161,11 @@ app.Configure(config =>
 
     var versionCheckInterceptor = serviceProvider.GetRequiredService<VersionCheckInterceptor>();
     var deprecationInterceptor = serviceProvider.GetRequiredService<DeprecationInterceptor>();
-    config.SetInterceptor(new CompositeInterceptor(new TelemetryInterceptor(), versionCheckInterceptor, deprecationInterceptor));
+    config.SetInterceptor(new CompositeInterceptor(
+        new ConnectionSettingsInterceptor(connectionInvocationContext),
+        new TelemetryInterceptor(InitializeTelemetry),
+        versionCheckInterceptor,
+        deprecationInterceptor));
     CommandTree.Register(config);
 
     config.SetExceptionHandler((exception, _) =>

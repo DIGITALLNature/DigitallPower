@@ -7,7 +7,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.tests;
 
-public class TestConnection(IOrganizationServiceAsync2 service) : IXrmConnection
+public class TestConnection(IOrganizationServiceAsync2 service) : IDataverseConnection
 {
     public Task<IOrganizationServiceAsync2> ConnectAsync()
     {

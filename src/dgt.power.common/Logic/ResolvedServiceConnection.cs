@@ -5,8 +5,8 @@ namespace dgt.power.common.Logic;
 
 /// <summary>
 /// The non-secret values of an Azure DevOps service connection needed to open an
-/// <see cref="AzureDevOpsFederatedIdentity"/> connection, as resolved from its name.
+/// <see cref="dgt.power.common.Connections.AzureDevOpsFederatedConnection"/> connection, as resolved from its name.
 /// </summary>
-#pragma warning disable CA1056, S3996, CA1054 // Url is intentionally a string, not Uri, to mirror AzureDevOpsFederatedIdentity/CreateConnectionSettings.
+#pragma warning disable CA1056, S3996, CA1054 // Url is intentionally a string, not Uri, to mirror CreateConnectionSettings.
 public sealed record ResolvedServiceConnection(string Url, string TenantId, string ClientId, string ServiceConnectionId);
 #pragma warning restore CA1056, S3996, CA1054

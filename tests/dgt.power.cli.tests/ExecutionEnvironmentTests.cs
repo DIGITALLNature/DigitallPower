@@ -5,7 +5,7 @@ using dgt.power.common;
 
 namespace dgt.power.cli.tests;
 
-[NotInParallel(nameof(ExecutionEnvironmentTests))]
+[NotInParallel("CiEnvironmentVariables")]
 public class ExecutionEnvironmentTests
 {
     [Test]

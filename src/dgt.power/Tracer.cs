@@ -14,13 +14,21 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
 {
     private Activity? _currentActivity;
     private readonly IAnsiConsole _console = console ?? AnsiConsole.Console;
+    private bool _telemetryEnabled = telemetryEnabled;
+    private string? _installId = installId;
+
+    internal void EnableTelemetry(string id)
+    {
+        _installId = id;
+        _telemetryEnabled = true;
+    }
 
     /// <summary>
     /// Set to true by the TelemetryInterceptor when --no-telemetry is passed.
     /// </summary>
     internal static bool SuppressForInvocation { get; set; }
 
-    private bool IsActive => telemetryEnabled && !SuppressForInvocation;
+    private bool IsActive => _telemetryEnabled && !SuppressForInvocation;
 
     public void Log(string message, TraceEventType type) => _console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[underline red]{type}:[/]  {message}");
 
@@ -36,9 +44,9 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
             _currentActivity?.SetTag("dgtp.is_ci", TelemetryConfig.IsCi);
             _currentActivity?.SetTag("dgtp.os", Environment.OSVersion.Platform.ToString());
             _currentActivity?.SetTag("dgtp.version", DgtpActivitySource.Instance.Version);
-            if (installId != null)
+            if (_installId != null)
             {
-                _currentActivity?.SetTag("dgtp.install_id", installId);
+                _currentActivity?.SetTag("dgtp.install_id", _installId);
             }
         }
     }
@@ -89,9 +97,9 @@ internal sealed class Tracer(bool telemetryEnabled = false, string? installId = 
             activity.SetTag("dgtp.is_ci", TelemetryConfig.IsCi);
             activity.SetTag("dgtp.os", Environment.OSVersion.Platform.ToString());
             activity.SetTag("dgtp.version", DgtpActivitySource.Instance.Version);
-            if (installId != null)
+            if (_installId != null)
             {
-                activity.SetTag("dgtp.install_id", installId);
+                activity.SetTag("dgtp.install_id", _installId);
             }
 
             var anonymizedMessage = TelemetryAnonymizer.Anonymize(error.Message);

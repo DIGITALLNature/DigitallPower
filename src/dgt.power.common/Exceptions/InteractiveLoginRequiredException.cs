@@ -16,6 +16,11 @@ public sealed class InteractiveLoginRequiredException : AbstractPowerException
     {
     }
 
+    public InteractiveLoginRequiredException(Exception innerException)
+        : base(DefaultMessage, innerException)
+    {
+    }
+
     public InteractiveLoginRequiredException(string environment)
         : base(EnvironmentMessage(environment))
     {
@@ -28,10 +33,9 @@ public sealed class InteractiveLoginRequiredException : AbstractPowerException
 
     public const string DefaultMessage =
         "AUTH_REQUIRED: Interactive login is required but the tool is running in non-interactive mode. " +
-        "Ask the user to re-authenticate by running: dgtp profile create <name> <url> --msal";
+        "Ask the user to re-authenticate by running: dgtp connection refresh";
 
     public static string EnvironmentMessage(string environment) =>
         $"AUTH_REQUIRED: Interactive login is required for '{environment}' but the tool is running in " +
-        "non-interactive mode. Ask the user to re-authenticate by running: dgtp profile create <name> <url> --msal";
+        "non-interactive mode. Ask the user to re-authenticate by running: dgtp connection refresh";
 }
-
