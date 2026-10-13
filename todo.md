@@ -43,3 +43,27 @@ protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken ca
 ### Note on DataContext
 `DataContext` (LINQ to CRM) is fundamentally synchronous. Replacing it requires switching to
 `QueryExpression` + `RetrieveMultipleAsync`. This is the main effort per class.
+
+### Note on `Connection` type
+`PowerLogic<T>.Connection` is still `IOrganizationService`. `IOrganizationServiceAsync2` extends it, so
+changing the property type is source-compatible and removes the `(IOrganizationServiceAsync2)Connection`
+casts. Combine this with the lazy connection item below.
+
+## Lazy Dataverse Connection
+
+`Program.cs` registers `IOrganizationService` as a singleton that calls `ConnectAsync()` while the command
+is constructed. This honours `--connection`, `--connection-string` and `--non-interactive` (Spectre runs
+interceptors before it resolves the command), but every command connects and authenticates, including ones that never use
+Dataverse.
+
+**Goal:** connect on demand, after the settings are known.
+
+**Preferred approach:** `PowerLogic` (and `MetadataService`) take `IDataverseConnection` and call
+`ConnectAsync()` in `ExecuteAsync`, exposing `Connection` as `IOrganizationServiceAsync2`. Remove the eager
+`IOrganizationService` registration. The change is about 60 mechanical constructor edits.
+
+**Constraints:**
+- Spectre registers the concrete `CommandSettings` type of the running command, not `BaseProgramSettings`
+  or `CommandSettings`, so a factory cannot request the base type from DI. Keep using
+  `ConnectionInvocationContext` (filled by `ConnectionSettingsInterceptor`) or pass `settings` explicitly.
+- `Connection` must not be used in constructors or field initializers after the change.
