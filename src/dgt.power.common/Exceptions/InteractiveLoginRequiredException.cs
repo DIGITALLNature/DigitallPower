@@ -16,6 +16,11 @@ public sealed class InteractiveLoginRequiredException : AbstractPowerException
     {
     }
 
+    public InteractiveLoginRequiredException(Exception innerException)
+        : base(DefaultMessage, innerException)
+    {
+    }
+
     public InteractiveLoginRequiredException(string environment)
         : base(EnvironmentMessage(environment))
     {

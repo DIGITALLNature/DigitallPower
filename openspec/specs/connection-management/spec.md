@@ -67,10 +67,10 @@ When `--non-interactive` or `DGTP_NON_INTERACTIVE` is set, authentication MUST N
 
 `azureDevOpsFederated` connections MUST obtain tokens through `AzurePipelinesCredential` using the pipeline's `SYSTEM_ACCESSTOKEN` and MUST NOT cache tokens on disk. With `--service-connection-name`, the CLI MUST resolve URL, tenant, application ID, and service connection ID via the Azure DevOps REST API; zero or multiple matches MUST fail and point to the explicit options. The service connection name and the explicit values are mutually exclusive.
 
-#### Scenario: A service connection name is ambiguous
+#### Scenario: An ambiguous service connection name is supplied
 
 - **WHEN** more than one service connection matches the name
-- **THEN** creation fails and recommends the explicit `--tenant`, `--application-id`, and `--service-connection-id` options
+- **THEN** creation fails and recommends the explicit `--tenant`, `--client-id`, and `--service-connection-id` options
 
 ### Requirement: Certificate authentication
 

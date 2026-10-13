@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using Azure.Core;
 using Azure.Identity;
+using dgt.power.common.Exceptions;
 using dgt.power.common.Logic;
 using Spectre.Console;
 
@@ -40,15 +41,25 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
 
     public Task<JsonElement> AuthenticateAsync(
         ConnectionDefinition connection,
+        bool nonInteractive,
         bool allowUnencryptedStorage,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(connection);
-        return AuthenticateCoreAsync(connection, allowUnencryptedStorage, cancellationToken);
+        return AuthenticateCoreAsync(connection, nonInteractive, allowUnencryptedStorage, cancellationToken);
     }
 
-    private async Task<JsonElement> AuthenticateCoreAsync(ConnectionDefinition connection, bool allowUnencryptedStorage, CancellationToken cancellationToken)
+    private async Task<JsonElement> AuthenticateCoreAsync(
+        ConnectionDefinition connection,
+        bool nonInteractive,
+        bool allowUnencryptedStorage,
+        CancellationToken cancellationToken)
     {
+        if (nonInteractive)
+        {
+            throw new InteractiveLoginRequiredException(new Uri(connection.Url).Authority);
+        }
+
         var context = new TokenRequestContext([GetScope(connection.Url)]);
 
         var record = connection switch

@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common.Connections;
+using dgt.power.common.Exceptions;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
 using Spectre.Console.Cli;
@@ -173,6 +174,22 @@ public class CreateConnectionCommandTests
             await Assert.That(await File.ReadAllTextAsync(Home.ConnectionsPath)).DoesNotContain(password);
             await Assert.That(TestConsole.Output).DoesNotContain(password);
         }
+    }
+
+    [Test]
+    public async Task NonInteractiveInteractiveConnectionCreationFailsWithAuthRequired()
+    {
+        var verifier = new FakeConnectionVerifier();
+        var settings = new CreateConnectionSettings
+        {
+            Name = "dev",
+            Url = ConnectionTestUrls.Dataverse,
+            NonInteractive = true
+        };
+
+        var act = () => RunAsync(verifier, settings);
+
+        await Assert.That(act).Throws<InteractiveLoginRequiredException>();
     }
 
     private async Task<int> RunAsync(

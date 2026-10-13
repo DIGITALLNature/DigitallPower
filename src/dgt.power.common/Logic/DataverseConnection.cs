@@ -92,6 +92,7 @@ public sealed partial class DataverseConnection(
         };
         var authenticationRecord = await credentialFactory.AuthenticateAsync(
             freshLoginDefinition,
+            nonInteractive: false,
             invocationContext.AllowUnencryptedStorage,
             CancellationToken.None);
         ConnectionDefinition updated = definition switch

@@ -143,6 +143,7 @@ public class CreateConnectionCommand(
             };
             var record = await credentialFactory.AuthenticateAsync(
                 connection,
+                settings.NonInteractive || invocationContext.NonInteractive,
                 invocationContext.AllowUnencryptedStorage,
                 cancellationToken);
             return connection with { AuthenticationRecord = record };
@@ -155,6 +156,7 @@ public class CreateConnectionCommand(
         };
         var authenticationRecord = await credentialFactory.AuthenticateAsync(
             interactiveConnection,
+            settings.NonInteractive || invocationContext.NonInteractive,
             invocationContext.AllowUnencryptedStorage,
             cancellationToken);
         return interactiveConnection with { AuthenticationRecord = authenticationRecord };
