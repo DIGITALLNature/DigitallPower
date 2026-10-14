@@ -818,7 +818,7 @@ later. Other registration namespaces are not recognized.
 |-----------|----------|
 | `PluginRegistrationAttribute` | Registers plugin steps, including message, stage, mode, entity filters, and images |
 | `CustomApiRegistrationAttribute` | Links a plugin type to the declared Custom API |
-| `CustomDataProviderRegistrationAttribute` | Creates/updates a custom data provider and links its operation handlers |
+| `CustomDataProviderRegistrationAttribute` | Creates/updates a custom data provider record and links its operation handlers (experimental support); the configuration table must already exist |
 
 Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
 Every concrete `IPlugin` type must carry one of the supported registration attributes; assemblies
@@ -826,8 +826,8 @@ with manually maintained plugin registrations are not supported.
 
 ##### Custom data providers
 
-**Experimental:** Custom data-provider deployment is still experimental. Validate it in a
-non-production environment before production rollout.
+**Experimental support:** Custom data-provider deployment is offered as experimental support.
+Validate it in a non-production environment before production rollout.
 
 Requires `Digitall.Plugins.Registration` 3.0.0 or later and its three-argument constructor:
 data-source configuration-table schema name, operation, and provider name on every declaration.
@@ -835,16 +835,22 @@ Rebuild assemblies using the old two-argument constructor before deployment. See
 [registration library](https://github.com/DIGITALLNature/DigitallRegistrationPower) for attribute
 usage and examples.
 
-`plugin push` creates or updates the provider, creates or validates its configuration table, and
-assigns the Retrieve, RetrieveMultiple, Create, Update, and Delete handlers. Undeclared handlers and
-omitted optional metadata are preserved. With `--solution`, the provider and configuration-table
-schema are included; `--dry-run` previews the deployment.
+The data-source configuration table is a prerequisite: `plugin push` does not create, update, or
+delete it. Provision the table in each environment first. A missing table, or one that is not an
+organization-owned table backed by the `JsonConverter` data provider, is rejected before any
+deployment writes. The target environment must contain exactly one data provider named
+`JsonConverter`; its ID is resolved automatically.
 
-On new providers, undeclared handlers are left unset.
-New data-source tables use `<publisher-prefix>_name` as their primary-name column; existing columns are unchanged.
-Existing tables incompatible with data-source configuration are rejected before deployment writes.
-The target environment must contain exactly one data provider named `JsonConverter` to back the
-configuration table; its ID is resolved automatically.
+`plugin push` creates or updates the provider record and assigns the Retrieve, RetrieveMultiple,
+Create, Update, and Delete handlers. A declaration owns all handler slots of its provider:
+undeclared handlers are cleared, even when they reference types from other assemblies. Omitted
+optional metadata such as the description is preserved. If a provider is no longer declared, only
+handlers referring to plugin types owned by the target are cleared; the provider record and its
+table are never deleted. `--dry-run` previews the deployment.
+
+With `--solution`, only missing provider records are added to the solution. The configuration
+table, its schema, and its data are not managed by `plugin push` and are not added; transport the
+table to downstream environments through your own solution, as with Custom API records.
 
 Data-source records, custom configuration columns, business virtual tables, mappings, and
 bulk-operation handlers are outside scope. Existing ordinary tables are not converted into
