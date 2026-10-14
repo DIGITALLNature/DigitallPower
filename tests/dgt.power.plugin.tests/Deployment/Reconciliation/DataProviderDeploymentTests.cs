@@ -7,7 +7,6 @@ using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Reconciliation;
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -197,19 +196,22 @@ public class DataProviderDeploymentTests
         await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
         desired = desired with { Version = new Version(2, 0, 0, 0) };
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
-        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(desired), progress =>
+        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(desired, cancellationToken: token), progress =>
         {
             if (progress.Resource == "data provider")
             {
+                // The assertion is awaited before the cancellation source is disposed.
+                // ReSharper disable once AccessToDisposedClosure
                 cancellation.Cancel();
             }
-        }, cancellation.Token)).Throws<OperationCanceledException>();
+        }, token)).Throws<OperationCanceledException>();
 
         await Assert.That(All(service, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(2);
         var target = All(service, PluginAssembly.EntityLogicalName).Single(assembly => assembly.GetAttributeValue<string>("version") is null);
         service.Update(new PluginAssembly(target.Id) { Version = desired.Version.ToString(), SourceType = new OptionSetValue(0), IsolationMode = new OptionSetValue(2) });
-        await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
+        await deployment.ApplyAsync(await deployment.PrepareAsync(desired, cancellationToken: CancellationToken.None), cancellationToken: CancellationToken.None);
         await Assert.That(All(service, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
     }
 
@@ -224,6 +226,8 @@ public class DataProviderDeploymentTests
         var oldType = All(service, PluginType.EntityLogicalName).Single().Id;
         desired = desired with { Version = new Version(2, 0, 0, 0) };
 
+        // The callback deliberately interrupts a write; it is not an argument precondition.
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(desired), progress =>
         {
             if (progress.Resource == "data provider")

@@ -95,8 +95,8 @@ public class StandaloneReplacementTests
         await Assert.That(console.Output).Contains("Plugins v1.0.0.0 - Delete");
         await Assert.That(console.Output).DoesNotContain("Superseded");
         await Assert.That(console.Output).Contains("\n🧩 Plugins v1.0.0.0");
-        await Assert.That(progress.FindIndex(item => item.Resource == "step" && item.Operation == PluginDeploymentOperation.Updated))
-            .IsLessThan(progress.FindIndex(item => item.Resource == "plugin type" && item.Operation == PluginDeploymentOperation.Deleted));
+        await Assert.That(progress.FindIndex(item => item is { Resource: "step", Operation: PluginDeploymentOperation.Updated }))
+            .IsLessThan(progress.FindIndex(item => item is { Resource: "plugin type", Operation: PluginDeploymentOperation.Deleted }));
     }
 
     [Test]
@@ -112,6 +112,8 @@ public class StandaloneReplacementTests
         var deployment = new PluginDeployment(service);
         var changes = await deployment.PrepareAsync(desired);
 
+        // The callback deliberately interrupts a write; it is not an argument precondition.
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         await Assert.That(async () => await deployment.ApplyAsync(changes, progress =>
         {
             if (progress.Resource == resource && progress.Operation == operation)
@@ -270,18 +272,21 @@ public class StandaloneReplacementTests
         var desired = Desired();
         var changes = await deployment.PrepareAsync(desired);
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
         await Assert.That(async () => await deployment.ApplyAsync(changes, progress =>
         {
-            if (progress.Resource == "plugin type" && progress.Operation == PluginDeploymentOperation.Created)
+            if (progress is { Resource: "plugin type", Operation: PluginDeploymentOperation.Created })
             {
+                // The assertion is awaited before the cancellation source is disposed.
+                // ReSharper disable once AccessToDisposedClosure
                 cancellation.Cancel();
             }
-        }, cancellation.Token)).Throws<OperationCanceledException>();
+        }, token)).Throws<OperationCanceledException>();
 
         var target = All(service, "pluginassembly").Single(assembly => assembly.Id != oldAssembly);
         service.Update(new PluginAssembly(target.Id) { Version = desired.Version.ToString(), SourceType = new OptionSetValue(0), IsolationMode = new OptionSetValue(2) });
-        await deployment.ApplyAsync(await deployment.PrepareAsync(desired));
+        await deployment.ApplyAsync(await deployment.PrepareAsync(desired, cancellationToken: CancellationToken.None), cancellationToken: CancellationToken.None);
 
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(1);
         await Assert.That(All(service, "sdkmessageprocessingstep").Single().Id).IsEqualTo(stepId);

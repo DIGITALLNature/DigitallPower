@@ -14,7 +14,7 @@ namespace dgt.power.plugin.Deployment.Batch;
 /// </summary>
 internal static class ArtifactPathResolver
 {
-    private static readonly char[] GlobCharacters = ['*', '?', '[', '{'];
+    private static readonly char[] s_globCharacters = ['*', '?', '[', '{'];
 
     internal static IReadOnlyList<string> Resolve(string pattern)
     {
@@ -31,7 +31,7 @@ internal static class ArtifactPathResolver
             return RequireArtifacts(Directory.EnumerateFiles(pattern, "*", SearchOption.TopDirectoryOnly).Where(IsArtifact), pattern);
         }
 
-        if (pattern.IndexOfAny(GlobCharacters) < 0)
+        if (pattern.IndexOfAny(s_globCharacters) < 0)
         {
             throw new ArtifactPathException($"Path '{pattern}' not found");
         }
@@ -39,7 +39,7 @@ internal static class ArtifactPathResolver
         var split = SplitPattern(pattern);
         if (!Directory.Exists(split.Root))
         {
-            throw new ArtifactPathException($"Directory '{split.Root}' of pattern '{pattern}' not found");
+            throw new ArtifactPathException($"Directory '{split.Root}' for '{pattern}' not found");
         }
 
         var matcher = new Matcher(StringComparison.OrdinalIgnoreCase);
@@ -50,7 +50,7 @@ internal static class ArtifactPathResolver
         return RequireArtifacts(matches, pattern);
     }
 
-    private static IReadOnlyList<string> RequireArtifacts(IEnumerable<string> paths, string pattern)
+    private static List<string> RequireArtifacts(IEnumerable<string> paths, string pattern)
     {
         var artifacts = Normalize(paths);
         return artifacts.Count > 0 ? artifacts : throw new ArtifactPathException($"'{pattern}' contains or matches no .dll or .nupkg files");
@@ -60,7 +60,7 @@ internal static class ArtifactPathResolver
     private static GlobPatternRoot SplitPattern(string target)
     {
         var segments = target.Replace('\\', '/').Split('/');
-        var firstGlob = Array.FindIndex(segments, segment => segment.IndexOfAny(GlobCharacters) >= 0);
+        var firstGlob = Array.FindIndex(segments, segment => segment.IndexOfAny(s_globCharacters) >= 0);
         var root = string.Join('/', segments.Take(firstGlob));
         if (root.Length == 0 && target.StartsWith('/'))
         {

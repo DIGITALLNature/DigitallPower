@@ -52,7 +52,7 @@ internal static class RegistrationDiff
             var destinationStepIds = remoteSteps.Select(step => step.Id).ToHashSet();
             if (oldTypes.TryGetValue(type.TypeName, out var oldType))
             {
-                remoteSteps = remoteSteps.Concat(superseded!.StepsByType[oldType.Id].Where(step => LocalPluginStepValidator.IsDeclarativeStage(step.Stage))).ToList();
+                remoteSteps = [.. remoteSteps, .. superseded!.StepsByType[oldType.Id].Where(step => LocalPluginStepValidator.IsDeclarativeStage(step.Stage))];
             }
 
             var matches = PluginStepMatcher.Match(type, remoteSteps);

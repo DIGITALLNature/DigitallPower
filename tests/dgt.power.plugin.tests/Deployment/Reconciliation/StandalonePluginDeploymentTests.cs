@@ -198,8 +198,9 @@ public class StandalonePluginDeploymentTests
         var changes = await deployment.PrepareAsync(Assembly(Step()));
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
+        var token = cancellation.Token;
 
-        await Assert.That(async () => await deployment.ApplyAsync(changes, cancellationToken: cancellation.Token)).Throws<OperationCanceledException>();
+        await Assert.That(async () => await deployment.ApplyAsync(changes, cancellationToken: token)).Throws<OperationCanceledException>();
         await Assert.That(All(service, "pluginassembly")).Count().IsEqualTo(0);
     }
 

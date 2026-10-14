@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 using Assembly = System.Reflection.Assembly;

@@ -32,8 +32,9 @@ public class DataverseQueryReaderTests
         service.AddRequests(executor);
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
+        var token = cancellation.Token;
 
-        await Assert.That(async () => await DataverseQueryReader.ReadAllAsync(service, new QueryExpression("plugintype"), cancellation.Token))
+        await Assert.That(async () => await DataverseQueryReader.ReadAllAsync(service, new QueryExpression("plugintype"), token))
             .Throws<OperationCanceledException>();
         await Assert.That(executor.Requests).Count().IsEqualTo(0);
     }

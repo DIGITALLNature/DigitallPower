@@ -10,6 +10,5 @@ public enum PluginDeploymentOperation
     Deleted,
     AddedToSolution,
     Linked,
-    Unlinked,
-    Migrated
+    Unlinked
 }

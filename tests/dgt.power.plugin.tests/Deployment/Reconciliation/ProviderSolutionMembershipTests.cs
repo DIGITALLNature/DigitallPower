@@ -6,7 +6,6 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Reconciliation;
-using dgt.power.plugin.Models;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -88,7 +87,7 @@ public class ProviderSolutionMembershipTests
     [Arguments(ProviderComponentType)]
     public async Task Apply_MembershipOnly_DoesNotRewriteProviderAndPreservesUnrelatedMembership(int unrelatedType)
     {
-        var (store, membership) = Setup();
+        var (store, _) = Setup();
         var deployment = new PluginDeployment(store);
         await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
         var unrelated = store.Create(new SolutionComponent
@@ -117,22 +116,25 @@ public class ProviderSolutionMembershipTests
         var (store, membership) = Setup();
         var deployment = new PluginDeployment(store);
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
-        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(Desired(), "target"), progress =>
+        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(Desired(), "target", token), progress =>
         {
             if (progress is { Operation: PluginDeploymentOperation.AddedToSolution, Resource: "data provider" })
             {
+                // The assertion is awaited before the cancellation source is disposed.
+                // ReSharper disable once AccessToDisposedClosure
                 cancellation.Cancel();
             }
-        }, cancellation.Token)).Throws<OperationCanceledException>();
+        }, token)).Throws<OperationCanceledException>();
 
         await Assert.That(membership.Requests).Count().IsEqualTo(1);
-        var retry = await deployment.PrepareAsync(Desired(), "target");
+        var retry = await deployment.PrepareAsync(Desired(), "target", CancellationToken.None);
         await Assert.That(retry.Solution!.Providers!.Additions).IsEmpty();
         await Assert.That(retry.Providers).IsEmpty();
-        await deployment.ApplyAsync(retry);
+        await deployment.ApplyAsync(retry, cancellationToken: CancellationToken.None);
         await Assert.That(membership.Requests).Count().IsEqualTo(2);
-        await Assert.That((await deployment.PrepareAsync(Desired(), "target")).HasChanges).IsFalse();
+        await Assert.That((await deployment.PrepareAsync(Desired(), "target", CancellationToken.None)).HasChanges).IsFalse();
     }
 
     [Test]
@@ -271,19 +273,22 @@ public class ProviderSolutionMembershipTests
         var service = new PackageUploadService(store, desired);
         var deployment = new PluginDeployment(service);
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
-        await Assert.That(async () => await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "dgt", "target"), progress =>
+        await Assert.That(async () => await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "dgt", "target", token), progress =>
         {
             if (progress is { Operation: PluginDeploymentOperation.AddedToSolution, Resource: "data provider" })
             {
+                // The assertion is awaited before the cancellation source is disposed.
+                // ReSharper disable once AccessToDisposedClosure
                 cancellation.Cancel();
             }
-        }, cancellation.Token)).Throws<OperationCanceledException>();
+        }, token)).Throws<OperationCanceledException>();
 
-        var retry = await deployment.PreparePackageAsync(desired, "dgt", "target");
+        var retry = await deployment.PreparePackageAsync(desired, "dgt", "target", CancellationToken.None);
         await Assert.That(retry.Solution!.Providers!.Additions).IsEmpty();
         await Assert.That(retry.Providers).IsEmpty();
-        await deployment.ApplyPackageAsync(retry);
+        await deployment.ApplyPackageAsync(retry, cancellationToken: CancellationToken.None);
         await Assert.That(membership.Requests.Select(request => request.ComponentType)).IsEquivalentTo([ProviderComponentType, 10119]);
         await Assert.That(service.UploadCount).IsEqualTo(1);
     }

@@ -65,7 +65,7 @@ public class SolutionComponentRepositoryTests
 
         await Assert.That(async () => await new SolutionComponentRepository(service).GetComponentTypeAsync(PluginPackage.EntityLogicalName))
             .ThrowsExactly<InvalidOperationException>();
-        await Assert.That(executor.Requests).IsEquivalentTo([(1, (string?)null, 5000), (2, "next-page", 5000)]);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, null, 5000), (2, "next-page", 5000)]);
     }
 
     [Test]
@@ -139,7 +139,7 @@ public class SolutionComponentRepositoryTests
         var result = await new SolutionComponentRepository(service).ListComponentIdsAsync("target", IPluginAssemblyRepository.ComponentType);
 
         await Assert.That(result).IsEquivalentTo([firstId, secondId]);
-        await Assert.That(pages).IsEquivalentTo([(1, (string?)null), (2, "next-page")]);
+        await Assert.That(pages).IsEquivalentTo([(1, null), (2, "next-page")]);
     }
 
     private static SolutionComponent CreateSolutionComponent(Guid solutionId, Guid componentId, int componentType)

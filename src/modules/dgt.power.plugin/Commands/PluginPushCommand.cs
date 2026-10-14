@@ -47,7 +47,8 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
 
         if (read.Targets.Count == 0)
         {
-            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{paths.Count} file(s) matched '{settings.Target}', but none contain plugins. Narrow the target to the plugin artifacts.[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+                $"[red]{paths.Count} file(s) matched '{settings.Target}', but none contain plugins. Narrow the target to the plugin artifacts.[/]");
             return Tracer.End(this, false);
         }
 

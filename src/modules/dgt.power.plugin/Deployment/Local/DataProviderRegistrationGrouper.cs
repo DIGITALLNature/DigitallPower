@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 
 namespace dgt.power.plugin.Deployment.Local;
 

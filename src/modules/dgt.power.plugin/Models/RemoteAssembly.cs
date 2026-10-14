@@ -21,10 +21,5 @@ public sealed record RemoteAssembly(
     string? ContentHash = null,
     Guid? ManagedIdentityId = null)
 {
-    public RemoteAssembly(Guid id, Version version, Guid? PackageId, string? ContentHash = null)
-        : this(id, string.Empty, version, PackageId, ContentHash)
-    {
-    }
-
     public string Identity => $"{Name} v{Version}";
 }

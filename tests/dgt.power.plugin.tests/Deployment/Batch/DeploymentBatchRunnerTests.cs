@@ -15,7 +15,7 @@ namespace dgt.power.plugin.tests.Deployment.Batch;
 
 public class DeploymentBatchRunnerTests
 {
-    private static readonly BatchOptions Default = new(null, null, false, false, false, false);
+    private static readonly BatchOptions s_default = new(null, null, false, false, false, false);
 
     private static FakeOrganizationServiceAsync Store(params string[] assemblies)
     {
@@ -45,8 +45,8 @@ public class DeploymentBatchRunnerTests
         using var console = new TestConsole();
         var runner = new DeploymentBatchRunner(new PluginDeployment(store), console);
 
-        var first = await runner.RunAsync([Target("A")], Default);
-        var second = await runner.RunAsync([Target("A")], Default);
+        var first = await runner.RunAsync([Target("A")], s_default);
+        var second = await runner.RunAsync([Target("A")], s_default);
 
         await Assert.That(first.Targets.Single().Outcome).IsEqualTo(TargetOutcome.Applied);
         await Assert.That(second.Targets.Single().Outcome).IsEqualTo(TargetOutcome.Unchanged);
@@ -61,10 +61,10 @@ public class DeploymentBatchRunnerTests
         using var console = new TestConsole();
         var runner = new DeploymentBatchRunner(new PluginDeployment(store), console);
 
-        await runner.RunAsync([Target("A")], Default);
+        await runner.RunAsync([Target("A")], s_default);
         await Assert.That(console.Output).Contains("A.dll deployed").And.DoesNotContain("up to date");
 
-        await runner.RunAsync([Target("A")], Default);
+        await runner.RunAsync([Target("A")], s_default);
         await Assert.That(console.Output).Contains("A.dll is up to date");
     }
 
@@ -98,7 +98,7 @@ public class DeploymentBatchRunnerTests
         var store = Store("A");
         using var console = new TestConsole();
 
-        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("A")], Default with { DryRun = true, Confirm = true });
+        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("A")], s_default with { DryRun = true, Confirm = true });
 
         await Assert.That(result.Targets.Single().Outcome).IsEqualTo(TargetOutcome.DryRun);
         await Assert.That(Count(store, PluginType.EntityLogicalName)).IsEqualTo(0);
@@ -115,7 +115,7 @@ public class DeploymentBatchRunnerTests
         console.Input.PushTextWithEnter("n");
         console.Input.PushTextWithEnter("y");
 
-        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("B"), Target("A")], Default with { Confirm = true });
+        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("B"), Target("A")], s_default with { Confirm = true });
 
         await Assert.That(result.Targets.Select(target => target.Outcome)).IsEquivalentTo([TargetOutcome.Declined, TargetOutcome.Applied]);
         await Assert.That(Count(store, PluginType.EntityLogicalName)).IsEqualTo(1);
@@ -132,7 +132,7 @@ public class DeploymentBatchRunnerTests
         using var console = new TestConsole();
 
         var result = await new DeploymentBatchRunner(new PluginDeployment(store), console)
-            .RunAsync([Target("A")], Default with { Confirm = true, NonInteractive = nonInteractive, IsCiAgent = ci });
+            .RunAsync([Target("A")], s_default with { Confirm = true, NonInteractive = nonInteractive, IsCiAgent = ci });
 
         await Assert.That(result.Targets.Single().Outcome).IsEqualTo(TargetOutcome.Applied);
     }
@@ -150,7 +150,7 @@ public class DeploymentBatchRunnerTests
         }
 
         using var console = new TestConsole();
-        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("Z"), Target("Bad"), Target("A")], Default);
+        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("Z"), Target("Bad"), Target("A")], s_default);
 
         await Assert.That(result.Targets.Select(target => (Path.GetFileName(target.FilePath), target.Outcome)))
             .IsEquivalentTo([("A.dll", TargetOutcome.Applied), ("Bad.dll", TargetOutcome.Failed), ("Z.dll", TargetOutcome.Applied)]);
@@ -164,7 +164,7 @@ public class DeploymentBatchRunnerTests
         var store = Store("A", "B", "C");
         using var console = new TestConsole();
 
-        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("C"), Target("a"), Target("B")], Default);
+        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([Target("C"), Target("a"), Target("B")], s_default);
 
         await Assert.That(result.Targets.Select(target => Path.GetFileName(target.FilePath))).IsEquivalentTo(["a.dll", "B.dll", "C.dll"]);
     }
@@ -176,7 +176,7 @@ public class DeploymentBatchRunnerTests
         using var console = new TestConsole();
         var targets = new[] { BatchPreflightTests.Standalone("1/A.dll", BatchPreflightTests.Assembly("A")), BatchPreflightTests.Standalone("2/A.dll", BatchPreflightTests.Assembly("A")) };
 
-        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync(targets, Default);
+        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync(targets, s_default);
 
         await Assert.That(result.Success).IsFalse();
         await Assert.That(result.Targets).IsEmpty();
@@ -190,7 +190,7 @@ public class DeploymentBatchRunnerTests
         using var console = new TestConsole();
         var package = BatchPreflightTests.Package("p.nupkg", "P", BatchPreflightTests.Assembly("A"));
 
-        var result = await new DeploymentBatchRunner(new PluginDeployment(Store()), console).RunAsync([package], Default);
+        var result = await new DeploymentBatchRunner(new PluginDeployment(Store()), console).RunAsync([package], s_default);
 
         await Assert.That(result.Success).IsFalse();
         await Assert.That(result.PreflightErrors.Single()).Contains("--publisher-prefix");
@@ -202,8 +202,10 @@ public class DeploymentBatchRunnerTests
         using var console = new TestConsole();
         using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
+        var token = cts.Token;
+        var runner = new DeploymentBatchRunner(new PluginDeployment(Store("A")), console);
 
-        await Assert.That(async () => await new DeploymentBatchRunner(new PluginDeployment(Store("A")), console).RunAsync([Target("A")], Default, cts.Token))
+        await Assert.That(async () => await runner.RunAsync([Target("A")], s_default, token))
             .Throws<OperationCanceledException>();
         await Assert.That(console.Output).Contains("Cancelled");
     }

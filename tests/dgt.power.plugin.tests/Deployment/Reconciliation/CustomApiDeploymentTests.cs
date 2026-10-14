@@ -139,7 +139,7 @@ public class CustomApiDeploymentTests
 
         await deployment.ApplyAsync(await deployment.PrepareAsync(upgraded), progress =>
         {
-            if (progress.Resource == "plugin type" && progress.Operation == PluginDeploymentOperation.Deleted)
+            if (progress is { Resource: "plugin type", Operation: PluginDeploymentOperation.Deleted })
             {
                 if (ReadApi(service, apiId).PluginTypeId?.Id == oldType)
                 {
@@ -189,6 +189,8 @@ public class CustomApiDeploymentTests
         await deployment.ApplyAsync(await deployment.PrepareAsync(Desired()));
         var desired = Desired(unlink ? string.Empty : "new_Api") with { Version = new Version(2, 0, 0, 0) };
 
+        // The callback deliberately interrupts a write; it is not an argument precondition.
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(desired), progress =>
         {
             if (progress.Resource == "Custom API")
@@ -257,14 +259,17 @@ public class CustomApiDeploymentTests
         desired = desired with { PluginTypes = [desired.PluginTypes[0], desired.PluginTypes[0] with { TypeName = "Other", CustomApi = "new_Second" }] };
         var deployment = new PluginDeployment(service);
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
-        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(desired), progress =>
+        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(desired, cancellationToken: token), progress =>
         {
             if (progress.Resource == "Custom API")
             {
+                // The assertion is awaited before the cancellation source is disposed.
+                // ReSharper disable once AccessToDisposedClosure
                 cancellation.Cancel();
             }
-        }, cancellation.Token)).Throws<OperationCanceledException>();
+        }, token)).Throws<OperationCanceledException>();
 
         await Assert.That(ReadApi(service, secondApi).PluginTypeId).IsNull();
     }

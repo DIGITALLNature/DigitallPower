@@ -6,6 +6,8 @@ using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using EntityDataProvider = dgt.power.dataverse.EntityDataProvider;
+using PluginPackage = dgt.power.dataverse.PluginPackage;
 
 namespace dgt.power.plugin.Deployment.Reconciliation;
 
@@ -601,7 +603,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             return null;
         }
 
-        var componentType = await _solutions.GetComponentTypeAsync(dgt.power.dataverse.PluginPackage.EntityLogicalName, cancellationToken) ??
+        var componentType = await _solutions.GetComponentTypeAsync(PluginPackage.EntityLogicalName, cancellationToken) ??
             throw new InvalidOperationException($"The target environment does not define a solution component type for pluginpackage; membership in '{solution}' cannot be prepared.");
         var packages = await _solutions.ListComponentIdsAsync(solution, componentType, cancellationToken);
         var steps = await _solutions.ListComponentIdsAsync(solution, ISdkMessageProcessingStepRepository.ComponentType, cancellationToken);
@@ -645,7 +647,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var additions = new List<ProviderMembershipAddition>();
         if (declarations.Count > 0 && !string.IsNullOrWhiteSpace(solutionName))
         {
-            componentType = await _solutions.GetComponentTypeAsync(dgt.power.dataverse.EntityDataProvider.EntityLogicalName, cancellationToken) ??
+            componentType = await _solutions.GetComponentTypeAsync(EntityDataProvider.EntityLogicalName, cancellationToken) ??
                 throw new InvalidOperationException($"The target environment does not define a solution component type for entitydataprovider; membership in '{solutionName}' cannot be prepared.");
             providerMembers = await _solutions.ListComponentIdsAsync(solutionName, componentType.Value, cancellationToken);
         }
@@ -673,10 +675,10 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             foreach (var operation in provider.Handlers.Keys)
             {
                 var matches = desired.SelectMany(assembly => assembly.PluginTypes
-                        .Where(type => type.DataProviders.Any(registration =>
+                        .Where(pluginType => pluginType.DataProviders.Any(registration =>
                             string.Equals(registration.DataSourceSchemaName, provider.DataSourceSchemaName, StringComparison.OrdinalIgnoreCase) &&
                             registration.Event == operation))
-                        .Select(type => new PluginTypeReference(assembly.Name, type.TypeName)))
+                        .Select(pluginType => new PluginTypeReference(assembly.Name, pluginType.TypeName)))
                     .Distinct().ToList();
                 if (matches.Count != 1)
                 {
@@ -707,7 +709,7 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
         }
 
-        var ownedIds = ownedTypes.Select(type => type.Id).ToHashSet();
+        var ownedIds = ownedTypes.Select(pluginType => pluginType.Id).ToHashSet();
         foreach (var provider in remote.Where(provider => !declaredSources.Contains(provider.DataSourceLogicalName)))
         {
             var handlers = provider.Handlers.Where(pair => ownedIds.Contains(pair.Value))

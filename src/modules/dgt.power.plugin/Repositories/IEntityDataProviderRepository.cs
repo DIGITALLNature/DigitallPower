@@ -7,6 +7,8 @@ using Microsoft.Xrm.Sdk.Metadata;
 
 namespace dgt.power.plugin.Repositories;
 
+// Public repository contract; the deployment core uses the sealed implementations directly.
+// ReSharper disable UnusedMemberInSuper.Global
 public interface IEntityDataProviderRepository
 {
     Task<IReadOnlyList<RemoteDataProvider>> ListAsync(CancellationToken cancellationToken = default);
@@ -26,7 +28,7 @@ public interface IEntityDataProviderRepository
     /// <exception cref="InvalidOperationException">
     /// JsonConverter is missing or ambiguous.
     /// </exception>
-    /// <exception cref="InvalidDataSourceException">
+    /// <exception cref="dgt.power.plugin.Exceptions.InvalidDataSourceException">
     /// The existing table is not organization-owned,
     /// is backed by another provider, or has no metadata ID.
     /// </exception>

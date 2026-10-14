@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 using dgt.registration;
 using Digitall.Plugins.Registration;
 using Microsoft.Xrm.Sdk;

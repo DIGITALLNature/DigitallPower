@@ -185,22 +185,25 @@ public class StandaloneSolutionDeploymentTests
         var (service, membership) = Service();
         var deployment = new PluginDeployment(service);
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
-        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(Desired(), "target"), progress =>
+        await Assert.That(async () => await deployment.ApplyAsync(await deployment.PrepareAsync(Desired(), "target", token), progress =>
         {
             if (progress.Operation == PluginDeploymentOperation.AddedToSolution)
             {
+                // The assertion is awaited before the cancellation source is disposed.
+                // ReSharper disable once AccessToDisposedClosure
                 cancellation.Cancel();
             }
-        }, cancellation.Token)).Throws<OperationCanceledException>();
+        }, token)).Throws<OperationCanceledException>();
 
         await Assert.That(membership.Requests).Count().IsEqualTo(1);
         var target = All(service, PluginAssembly.EntityLogicalName).Single();
         SetAssemblyMetadata(service, target.Id, Desired().Version);
-        var retry = await deployment.PrepareAsync(Desired(), "target");
+        var retry = await deployment.PrepareAsync(Desired(), "target", CancellationToken.None);
         await Assert.That(retry.Solution!.AddAssembly).IsFalse();
         await Assert.That(retry.Solution.Steps).Count().IsEqualTo(1);
-        await deployment.ApplyAsync(retry);
+        await deployment.ApplyAsync(retry, cancellationToken: CancellationToken.None);
         await Assert.That(membership.Requests).Count().IsEqualTo(2);
     }
 }

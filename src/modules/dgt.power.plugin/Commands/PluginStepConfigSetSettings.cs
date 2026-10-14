@@ -6,7 +6,6 @@ using dgt.power.plugin.Base;
 using dgt.power.plugin.Models;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using Spectre.Console;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global

@@ -10,6 +10,8 @@ namespace dgt.power.plugin.Repositories;
 /// only the message and entity names declared locally. This lookup genuinely requires Dataverse -
 /// message/filter ids are environment-specific and cannot be derived from the assembly alone.
 /// </summary>
+// Public repository contract; the deployment core uses the sealed implementations directly.
+// ReSharper disable UnusedMemberInSuper.Global
 public interface ISdkMessageRepository
 {
     /// <summary>

@@ -344,7 +344,7 @@ public class SdkMessageProcessingStepRepositoryTests
         var states = await new SdkMessageProcessingStepRepository(service).ListStatesAsync([Guid.NewGuid()]);
 
         await Assert.That(states.Count).IsEqualTo(2);
-        await Assert.That(executor.Requests).IsEquivalentTo([(1, (string?)null, 5000), (2, "next-page", 5000)]);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, null, 5000), (2, "next-page", 5000)]);
     }
 
     [Test]

@@ -63,7 +63,9 @@ public sealed class DeploymentTargetReaderTests : IDisposable
         using var console = new TestConsole();
         using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
+        var token = cts.Token;
+        var reader = new DeploymentTargetReader(console);
 
-        await Assert.That(() => new DeploymentTargetReader(console).Read(["a.dll"], cts.Token)).Throws<OperationCanceledException>();
+        await Assert.That(() => reader.Read(["a.dll"], token)).Throws<OperationCanceledException>();
     }
 }

@@ -33,7 +33,7 @@ public sealed class PluginPushCommandTests : CommandTestsBase<PluginPushCommand,
     [Test]
     public async Task Execute_FilesWithoutPlugins_FailsWithCount()
     {
-        File.WriteAllBytes(Path.Combine(_root, "native.dll"), "MZ not managed"u8.ToArray());
+        await File.WriteAllBytesAsync(Path.Combine(_root, "native.dll"), "MZ not managed"u8.ToArray());
         File.Copy(typeof(object).Assembly.Location, Path.Combine(_root, "runtime.dll"));
 
         await Assert.That(Run(_root)).IsFalse();
@@ -43,7 +43,7 @@ public sealed class PluginPushCommandTests : CommandTestsBase<PluginPushCommand,
     [Test]
     public async Task Execute_UnreadablePackage_FailsBeforeAnyWrite()
     {
-        File.WriteAllBytes(Path.Combine(_root, "broken.nupkg"), "not a zip"u8.ToArray());
+        await File.WriteAllBytesAsync(Path.Combine(_root, "broken.nupkg"), "not a zip"u8.ToArray());
 
         await Assert.That(Run(_root)).IsFalse();
         await Assert.That(TestConsole.Output).Contains("Nothing was deployed");

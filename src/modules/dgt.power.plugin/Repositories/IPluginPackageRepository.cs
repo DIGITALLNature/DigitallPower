@@ -9,6 +9,8 @@ namespace dgt.power.plugin.Repositories;
 /// Thin CRUD access to <c>pluginpackage</c> records. Contains no Create/Update decision logic -
 /// see <see cref="dgt.power.plugin.Deployment.Reconciliation.PluginDeployment"/> for that.
 /// </summary>
+// Public repository contract; the deployment core uses the sealed implementations directly.
+// ReSharper disable UnusedMemberInSuper.Global
 public interface IPluginPackageRepository
 {
     /// <summary>

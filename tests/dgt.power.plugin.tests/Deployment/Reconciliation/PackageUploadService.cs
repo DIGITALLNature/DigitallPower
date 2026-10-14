@@ -13,9 +13,9 @@ namespace dgt.power.plugin.tests.Deployment.Reconciliation;
 
 internal sealed class PackageUploadService : IOrganizationServiceAsync2
 {
-    private readonly FakeOrganizationServiceAsync service;
-    private LocalPluginPackage target;
-    private readonly bool materializeOnUpload;
+    private readonly FakeOrganizationServiceAsync _service;
+    private LocalPluginPackage _target;
+    private readonly bool _materializeOnUpload;
     private readonly Dictionary<Guid, byte[]> _packageFiles = [];
 
     public int UploadCount { get; private set; }
@@ -25,21 +25,21 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
     public PackageUploadService(FakeOrganizationServiceAsync service, LocalPluginPackage target,
         bool materializeOnUpload = true, LocalPluginPackage? uploadedPackage = null)
     {
-        this.service = service;
-        this.target = uploadedPackage ?? target;
-        this.materializeOnUpload = materializeOnUpload;
+        _service = service;
+        _target = uploadedPackage ?? target;
+        _materializeOnUpload = materializeOnUpload;
         service.AddRequests(new InitializePackageFileDownloadExecutor(_packageFiles));
         service.AddRequests(new DownloadPackageFileBlockExecutor(_packageFiles));
     }
 
     public byte[] PackageContent(Guid packageId) => _packageFiles[packageId];
 
-    public void RetargetUpload(LocalPluginPackage package) => target = package;
+    public void RetargetUpload(LocalPluginPackage package) => _target = package;
 
     public Guid SeedPackage(string name, LocalPluginPackage package, byte[] bytes)
     {
         var fileId = Guid.NewGuid();
-        var id = service.Create(new PluginPackage
+        var id = _service.Create(new PluginPackage
         {
             Name = name,
             Version = package.Package.Version,
@@ -55,7 +55,7 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
     {
         foreach (var assembly in package.Assemblies)
         {
-            var existing = service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName)
+            var existing = _service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName)
             {
                 ColumnSet = new ColumnSet(PluginAssembly.LogicalNames.PluginAssemblyId),
                 Criteria = new FilterExpression
@@ -67,7 +67,7 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
                     }
                 }
             }).Entities.SingleOrDefault();
-            var assemblyId = existing?.Id ?? service.Create(new PluginAssembly
+            var assemblyId = existing?.Id ?? _service.Create(new PluginAssembly
             {
                 Name = assembly.Name,
                 Version = assembly.Version.ToString(),
@@ -76,7 +76,7 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
                 PackageId = new EntityReference(PluginPackage.EntityLogicalName, packageId)
             });
 
-            var existingTypes = service.RetrieveMultiple(new QueryExpression(PluginType.EntityLogicalName)
+            var existingTypes = _service.RetrieveMultiple(new QueryExpression(PluginType.EntityLogicalName)
             {
                 ColumnSet = new ColumnSet(PluginType.LogicalNames.TypeName),
                 Criteria = new FilterExpression
@@ -92,7 +92,7 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
 
             foreach (var pluginType in assembly.PluginTypes.Where(pluginType => !existingTypes.ContainsKey(pluginType.TypeName)))
             {
-                service.Create(new PluginType
+                _service.Create(new PluginType
                 {
                     PluginAssemblyId = new EntityReference(PluginAssembly.EntityLogicalName, assemblyId),
                     TypeName = pluginType.TypeName,
@@ -104,7 +104,7 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
 
         // Assumed platform behavior (to be confirmed live): an assembly missing from the uploaded package is removed with its types.
         var declaredAssemblies = package.Assemblies.Select(assembly => assembly.Name).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var packageAssemblies = service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName)
+        var packageAssemblies = _service.RetrieveMultiple(new QueryExpression(PluginAssembly.EntityLogicalName)
         {
             ColumnSet = new ColumnSet(PluginAssembly.LogicalNames.Name),
             Criteria = new FilterExpression
@@ -114,7 +114,7 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
         }).Entities;
         foreach (var removed in packageAssemblies.Where(entity => !declaredAssemblies.Contains(entity.GetAttributeValue<string>(PluginAssembly.LogicalNames.Name))))
         {
-            var types = service.RetrieveMultiple(new QueryExpression(PluginType.EntityLogicalName)
+            var types = _service.RetrieveMultiple(new QueryExpression(PluginType.EntityLogicalName)
             {
                 ColumnSet = new ColumnSet(PluginType.LogicalNames.TypeName),
                 Criteria = new FilterExpression
@@ -127,13 +127,13 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
                 DeleteType(type.GetAttributeValue<string>(PluginType.LogicalNames.TypeName), type.Id);
             }
 
-            service.Delete(PluginAssembly.EntityLogicalName, removed.Id);
+            _service.Delete(PluginAssembly.EntityLogicalName, removed.Id);
         }
     }
 
     private void DeleteType(string typeName, Guid typeId)
     {
-        var steps = service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+        var steps = _service.RetrieveMultiple(new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
         {
             Criteria = new FilterExpression
             {
@@ -145,22 +145,22 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
             throw new InvalidOperationException($"Unable to delete '{typeName}' plugintype due to {steps.Count} step(s) registered on it.");
         }
 
-        service.Delete(PluginType.EntityLogicalName, typeId);
+        _service.Delete(PluginType.EntityLogicalName, typeId);
     }
 
     public Task AssociateAsync(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities, CancellationToken cancellationToken) =>
-        service.AssociateAsync(entityName, entityId, relationship, relatedEntities, cancellationToken);
+        _service.AssociateAsync(entityName, entityId, relationship, relatedEntities, cancellationToken);
     public Task AssociateAsync(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities) =>
-        service.AssociateAsync(entityName, entityId, relationship, relatedEntities);
+        _service.AssociateAsync(entityName, entityId, relationship, relatedEntities);
     public void Associate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities) =>
-        service.Associate(entityName, entityId, relationship, relatedEntities);
-    public Guid Create(Entity entity) => service.Create(entity);
+        _service.Associate(entityName, entityId, relationship, relatedEntities);
+    public Guid Create(Entity entity) => _service.Create(entity);
     public Task<Guid> CreateAsync(Entity entity, CancellationToken cancellationToken)
     {
         EnsureProviderWriteAllowed(entity);
         if (entity is not PluginPackage package)
         {
-            return service.CreateAsync(entity, cancellationToken);
+            return _service.CreateAsync(entity, cancellationToken);
         }
 
         var fileId = Guid.NewGuid();
@@ -173,60 +173,60 @@ internal sealed class PackageUploadService : IOrganizationServiceAsync2
     private async Task<Guid> CreatePackageAsync(PluginPackage package, byte[] content, CancellationToken cancellationToken)
     {
         EnsureUploadAllowed();
-        var id = await service.CreateAsync(package, cancellationToken);
+        var id = await _service.CreateAsync(package, cancellationToken);
         UploadCount++;
         _packageFiles.Add(id, content);
-        if (materializeOnUpload)
+        if (_materializeOnUpload)
         {
-            Materialize(id, target);
+            Materialize(id, _target);
         }
 
         return id;
     }
 
-    public Task<Entity> CreateAndReturnAsync(Entity entity, CancellationToken cancellationToken) => service.CreateAndReturnAsync(entity, cancellationToken);
-    public Task DeleteAsync(string entityName, Guid id, CancellationToken cancellationToken) => service.DeleteAsync(entityName, id, cancellationToken);
-    public Task DeleteAsync(string entityName, Guid id) => service.DeleteAsync(entityName, id);
-    public void Delete(string entityName, Guid id) => service.Delete(entityName, id);
+    public Task<Entity> CreateAndReturnAsync(Entity entity, CancellationToken cancellationToken) => _service.CreateAndReturnAsync(entity, cancellationToken);
+    public Task DeleteAsync(string entityName, Guid id, CancellationToken cancellationToken) => _service.DeleteAsync(entityName, id, cancellationToken);
+    public Task DeleteAsync(string entityName, Guid id) => _service.DeleteAsync(entityName, id);
+    public void Delete(string entityName, Guid id) => _service.Delete(entityName, id);
     public Task DisassociateAsync(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities, CancellationToken cancellationToken) =>
-        service.DisassociateAsync(entityName, entityId, relationship, relatedEntities, cancellationToken);
+        _service.DisassociateAsync(entityName, entityId, relationship, relatedEntities, cancellationToken);
     public Task DisassociateAsync(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities) =>
-        service.DisassociateAsync(entityName, entityId, relationship, relatedEntities);
+        _service.DisassociateAsync(entityName, entityId, relationship, relatedEntities);
     public void Disassociate(string entityName, Guid entityId, Relationship relationship, EntityReferenceCollection relatedEntities) =>
-        service.Disassociate(entityName, entityId, relationship, relatedEntities);
+        _service.Disassociate(entityName, entityId, relationship, relatedEntities);
     public Task<OrganizationResponse> ExecuteAsync(OrganizationRequest request, CancellationToken cancellationToken) =>
-        service.ExecuteAsync(request, cancellationToken);
-    public Task<OrganizationResponse> ExecuteAsync(OrganizationRequest request) => service.ExecuteAsync(request);
-    public OrganizationResponse Execute(OrganizationRequest request) => service.Execute(request);
-    public Entity Retrieve(string entityName, Guid id, ColumnSet columnSet) => service.Retrieve(entityName, id, columnSet);
+        _service.ExecuteAsync(request, cancellationToken);
+    public Task<OrganizationResponse> ExecuteAsync(OrganizationRequest request) => _service.ExecuteAsync(request);
+    public OrganizationResponse Execute(OrganizationRequest request) => _service.Execute(request);
+    public Entity Retrieve(string entityName, Guid id, ColumnSet columnSet) => _service.Retrieve(entityName, id, columnSet);
     public Task<Entity> RetrieveAsync(string entityName, Guid id, ColumnSet columnSet, CancellationToken cancellationToken) =>
-        service.RetrieveAsync(entityName, id, columnSet, cancellationToken);
-    public Task<Entity> RetrieveAsync(string entityName, Guid id, ColumnSet columnSet) => service.RetrieveAsync(entityName, id, columnSet);
-    public EntityCollection RetrieveMultiple(QueryBase query) => service.RetrieveMultiple(query);
+        _service.RetrieveAsync(entityName, id, columnSet, cancellationToken);
+    public Task<Entity> RetrieveAsync(string entityName, Guid id, ColumnSet columnSet) => _service.RetrieveAsync(entityName, id, columnSet);
+    public EntityCollection RetrieveMultiple(QueryBase query) => _service.RetrieveMultiple(query);
     public Task<EntityCollection> RetrieveMultipleAsync(QueryBase query, CancellationToken cancellationToken) =>
-        service.RetrieveMultipleAsync(query, cancellationToken);
-    public Task<EntityCollection> RetrieveMultipleAsync(QueryBase query) => service.RetrieveMultipleAsync(query);
-    public void Update(Entity entity) => service.Update(entity);
+        _service.RetrieveMultipleAsync(query, cancellationToken);
+    public Task<EntityCollection> RetrieveMultipleAsync(QueryBase query) => _service.RetrieveMultipleAsync(query);
+    public void Update(Entity entity) => _service.Update(entity);
 
     public async Task UpdateAsync(Entity entity, CancellationToken cancellationToken)
     {
         EnsureProviderWriteAllowed(entity);
         if (entity is not PluginPackage package)
         {
-            await service.UpdateAsync(entity, cancellationToken);
+            await _service.UpdateAsync(entity, cancellationToken);
             return;
         }
 
         var fileId = Guid.NewGuid();
         var content = Convert.FromBase64String(package.Content!);
         EnsureUploadAllowed();
-        await service.UpdateAsync(package, cancellationToken);
+        await _service.UpdateAsync(package, cancellationToken);
         UploadCount++;
-        await service.UpdateAsync(new PluginPackage(package.Id) { Attributes = { [PluginPackage.LogicalNames.Package] = fileId } }, cancellationToken);
+        await _service.UpdateAsync(new PluginPackage(package.Id) { Attributes = { [PluginPackage.LogicalNames.Package] = fileId } }, cancellationToken);
         _packageFiles[package.Id] = content;
-        if (materializeOnUpload)
+        if (_materializeOnUpload)
         {
-            Materialize(package.Id, target);
+            Materialize(package.Id, _target);
         }
     }
 

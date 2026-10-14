@@ -3,7 +3,6 @@
 
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 
 namespace dgt.power.plugin.tests.Deployment.Local;
 

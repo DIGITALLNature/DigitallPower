@@ -8,7 +8,6 @@ using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Deployment.Output;
 using dgt.power.plugin.Deployment.Reconciliation;
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
@@ -141,6 +140,8 @@ public class PackageDeploymentTests
         var service = new PackageUploadService(store, desired);
         var deployment = new PluginDeployment(service);
 
+        // The callback deliberately interrupts a write; it is not an argument precondition.
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         await Assert.That(async () => await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"), progress =>
         {
             if (progress.Resource == "data provider")
@@ -322,10 +323,11 @@ public class PackageDeploymentTests
         var service = new PackageUploadService(store, desired);
         var deployment = new PluginDeployment(service);
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
         async Task Apply()
         {
-            await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", "target"), progress =>
+            await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", "target", token), progress =>
             {
                 if (progress.Operation != PluginDeploymentOperation.AddedToSolution)
                 {
@@ -333,13 +335,15 @@ public class PackageDeploymentTests
                 }
                 if (cancel)
                 {
+                    // The assertion is awaited before the cancellation source is disposed.
+                    // ReSharper disable once AccessToDisposedClosure
                     cancellation.Cancel();
                 }
                 else
                 {
                     throw new InvalidOperationException("Interrupted after membership write.");
                 }
-            }, cancellation.Token);
+            }, token);
         }
 
         if (cancel)
@@ -351,10 +355,10 @@ public class PackageDeploymentTests
             await Assert.That(Apply).ThrowsExactly<InvalidOperationException>();
         }
         await Assert.That(membership.Requests).Count().IsEqualTo(1);
-        var retry = await deployment.PreparePackageAsync(desired, "new", "target");
+        var retry = await deployment.PreparePackageAsync(desired, "new", "target", CancellationToken.None);
         await Assert.That(retry.Solution!.AddPackage).IsFalse();
         await Assert.That(retry.Solution.Steps).Count().IsEqualTo(1);
-        await deployment.ApplyPackageAsync(retry);
+        await deployment.ApplyPackageAsync(retry, cancellationToken: CancellationToken.None);
 
         await Assert.That(membership.Requests).Count().IsEqualTo(2);
         await Assert.That(service.UploadCount).IsEqualTo(1);
@@ -489,6 +493,8 @@ public class PackageDeploymentTests
         var service = new PackageUploadService(store, desired);
         var deployment = new PluginDeployment(service);
 
+        // The callback deliberately interrupts a write; it is not an argument precondition.
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         await Assert.That(async () => await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"), progress =>
         {
             if (progress.Resource == "Custom API")
@@ -755,7 +761,7 @@ public class PackageDeploymentTests
 
         await deployment.ApplyPackageAsync(changes, progress.Add);
 
-        await Assert.That(progress.Any(item => item.Resource == "step" && item.Operation == PluginDeploymentOperation.Deleted)).IsTrue();
+        await Assert.That(progress.Any(item => item is { Resource: "step", Operation: PluginDeploymentOperation.Deleted })).IsTrue();
         await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
@@ -802,7 +808,7 @@ public class PackageDeploymentTests
         var progress = new List<PluginDeploymentProgress>();
         await deployment.ApplyPackageAsync(changes, progress.Add);
 
-        await Assert.That(progress.Any(item => item.Resource == "step" && item.Operation == PluginDeploymentOperation.Deleted)).IsTrue();
+        await Assert.That(progress.Any(item => item is { Resource: "step", Operation: PluginDeploymentOperation.Deleted })).IsTrue();
         await Assert.That(progress.Any(item => item.Resource == "plugin type")).IsFalse();
         await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(0);
@@ -903,6 +909,8 @@ public class PackageDeploymentTests
         var deployment = new PluginDeployment(service);
         var changes = await deployment.PreparePackageAsync(desired, "new");
 
+        // The callback deliberately interrupts a write; it is not an argument precondition.
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         await Assert.That(async () => await deployment.ApplyPackageAsync(changes, progress =>
         {
             if (progress.Resource == resource)
@@ -939,18 +947,22 @@ public class PackageDeploymentTests
         var deployment = new PluginDeployment(service);
         var changes = await deployment.PreparePackageAsync(desired, "new");
         using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
 
         await Assert.That(async () => await deployment.ApplyPackageAsync(changes, progress =>
         {
             if (progress.Resource == "step")
             {
+                // The assertion is awaited before the cancellation source is disposed.
+                // ReSharper disable once AccessToDisposedClosure
                 cancellation.Cancel();
             }
-        }, cancellation.Token)).Throws<OperationCanceledException>();
+        }, token)).Throws<OperationCanceledException>();
 
         var stepId = All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id;
         await Assert.That(All(store, SdkMessageProcessingStepImage.EntityLogicalName)).Count().IsEqualTo(0);
-        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
+        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new", cancellationToken: CancellationToken.None),
+            cancellationToken: CancellationToken.None);
         await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName).Single().Id).IsEqualTo(stepId);
         await Assert.That(All(store, SdkMessageProcessingStepImage.EntityLogicalName)).Count().IsEqualTo(1);
         await Assert.That(service.UploadCount).IsEqualTo(1);

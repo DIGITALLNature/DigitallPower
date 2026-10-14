@@ -38,7 +38,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
     // Unchanged nodes carry no marker; <paramref name="text"/> must already be markup-escaped.
     private static string Label(string text, string action) => action == Unchanged ? text : $"{text} {Tag(action)}";
 
-    internal static string UpToDate(string text) => $"[green]{Emoji.Known.CheckMark}[/] {text}";
+    private static string UpToDate(string text) => $"[green]{Emoji.Known.CheckMark}[/] {text}";
 
     internal void Render(StandaloneDeploymentChanges changes)
     {
@@ -187,7 +187,7 @@ internal sealed class DeploymentRenderer(IAnsiConsole console)
         }
     }
 
-    private static void AddCustomApiUnlinks(IHasTreeNodes parent, IReadOnlyList<CustomApiChange> changes, ISet<Guid> rendered)
+    private static void AddCustomApiUnlinks(IHasTreeNodes parent, IReadOnlyList<CustomApiChange> changes, HashSet<Guid> rendered)
     {
         foreach (var change in changes.Where(api => api.Handler is null && !rendered.Contains(api.Id)))
         {

@@ -8,6 +8,8 @@ namespace dgt.power.plugin.Repositories;
 /// handler type has no <c>sdkmessageprocessingstep</c> - Dataverse invokes it directly via this
 /// link instead.
 /// </summary>
+// Public repository contract; the deployment core uses the sealed implementations directly.
+// ReSharper disable UnusedMemberInSuper.Global
 public interface ICustomApiRepository
 {
     /// <summary>Finds the id of a <c>customapi</c> record by its unique name, if any.</summary>
