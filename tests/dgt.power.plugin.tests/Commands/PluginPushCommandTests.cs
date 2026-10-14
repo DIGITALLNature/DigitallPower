@@ -37,7 +37,9 @@ public sealed class PluginPushCommandTests : CommandTestsBase<PluginPushCommand,
         File.Copy(typeof(object).Assembly.Location, Path.Combine(_root, "runtime.dll"));
 
         await Assert.That(Run(_root)).IsFalse();
-        await Assert.That(TestConsole.Output).Contains("2 file(s) matched").And.Contains("Narrow the target");
+        // The console soft-wraps at its width, and the wrap point depends on the temp path length.
+        var output = string.Join(' ', TestConsole.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        await Assert.That(output).Contains("2 file(s) matched").And.Contains("Narrow the target");
     }
 
     [Test]
