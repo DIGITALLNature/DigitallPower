@@ -13,5 +13,5 @@ Clearing the plugin type link of a Custom API in Dev, through `plugin push` or m
 - Removing a package type that still has a step downstream fails on managed import with "Unable to delete plugintype due to 1 step(s) registered on it". Remove the step in an earlier release or manually downstream.
 - Package assemblies are updated in place: `pluginassemblyid` stayed identical across versions 1.1.0.0, 1.2.0.0 and 2.0.0.0, so a major or minor bump never replaces a package assembly and does not help removals.
 - Standalone assembly removal is not supported by the CLI: deleting the assembly in Dev and importing fails while steps or the Custom API link still exist downstream.
-- Changing a step's identity fields (stage, mode, rank) creates a new step and deletes the old one; changing filtering attributes or images updates in place.
+- Changing a step's identity fields (message, entity, stage, mode) creates a new step and deletes the old one; changing rank, filtering attributes or images updates in place.
 - The preview's destructive count includes the Custom API relink in addition to the listed deletions.

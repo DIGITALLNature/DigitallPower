@@ -81,15 +81,6 @@ Deliberately out of scope for the plugin rewrite: it changes shared settings and
 
 ---
 
-## `plugin step enable` / `plugin step disable`
-
-Idea: toggle `sdkmessageprocessingstep` state from the CLI, for example when isolating a step
-during debugging or before a staged removal. Open question: `plugin push` must not treat a
-disabled step as drift, or the next push would re-enable it silently. Decide how the declarative
-registration and the runtime state interact before building it.
-
----
-
 ## Package replacement for removals
 
 Idea: mirror the standalone replacement path for plugin packages. A removal would require a new

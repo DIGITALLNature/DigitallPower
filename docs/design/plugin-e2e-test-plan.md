@@ -52,7 +52,7 @@ Status: `V` verified, `F` failed, `-` not run, `?` open.
 | S2 | Unchanged re-push | Up to date | n/a | V |
 | S3 | Content change (build or revision bump) | Update assembly | Upgrade in place; steps survive | V |
 | S4 | Add a type with step | Create type and step | Type and step appear | V |
-| S5 | Change step (stage, mode, filtering attributes, rank) | Update step | Step updated | V (filtering attributes update in place; stage or rank change replaces the step) |
+| S5 | Change step (stage, mode, filtering attributes, rank) | Update step | Step updated | V (rank and filtering attributes update in place; a stage change replaces the step) |
 | S6 | Change image | Update image | Image updated | V |
 | S7 | Remove a step, keep the type | Delete step | Step removed, no leftovers | V |
 | S8 | Remove a type with steps, same version | Rejected at prepare with version bump hint | n/a | V |
@@ -108,7 +108,7 @@ changing the tool.
 
 | ID | Scenario | Expectation | Status |
 |----|----------|-------------|--------|
-| X1 | Several targets in one run | One preview, one confirmation, one apply | - |
+| X1 | Several targets in one run | Each target is previewed, confirmed and applied in turn; one confirmation per target with changes | - |
 | X2 | Two targets conflict on the same assembly or package | Preflight reports the conflict | - |
 | X3 | Declined confirmation | No writes | - |
 | X4 | Destructive count in the preview | Counts steps, types and assemblies | - |
