@@ -3,6 +3,7 @@
 
 using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
+using dgt.power.plugin.tests.Extensions;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
@@ -60,7 +61,7 @@ public class CustomApiRepositoryTests
         service.AddRequests(executor);
 
         await Assert.That(async () => await new CustomApiRepository(service).FindIdByUniqueNameAsync("new_Api")).ThrowsExactly<InvalidOperationException>();
-        await Assert.That(executor.Requests).IsEquivalentTo([(1, null, 5000), (2, "next-page", 5000)]);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, string.Null, 5000), (2, "next-page", 5000)]);
     }
 
     [Test]
@@ -73,7 +74,7 @@ public class CustomApiRepositoryTests
         var result = await new CustomApiRepository(service).ListLinkedToPluginTypeAsync(Guid.NewGuid());
 
         await Assert.That(result).Count().IsEqualTo(2);
-        await Assert.That(executor.Requests).IsEquivalentTo([(1, null, 5000), (2, "next-page", 5000)]);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, string.Null, 5000), (2, "next-page", 5000)]);
     }
 
     [Test]
