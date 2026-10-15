@@ -16,6 +16,7 @@ public class TestServiceCollection : ServiceCollection
     public TestServiceCollection()
     {
         this.AddSingleton<ITracer, TestTracer>();
+        this.AddSingleton<ICommandSpanFactory, TestSpanFactory>();
         this.AddSingleton<IDataverseConnection, TestConnection>();
         this.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
         {

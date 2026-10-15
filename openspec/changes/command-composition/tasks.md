@@ -20,10 +20,10 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 ## 3. Migrate modules already close to the target
 
-- [ ] 3.1 Migrate solution commands (`SolutionVersion`, `SolutionLint`, `CopyComponents`) to `PowerCommand` with `IDataverseConnection`, removing the casts, and verify `dgt.power.solution.tests` pass
-- [ ] 3.2 Migrate plugin commands (`PluginPush`, `PluginStep*`) the same way, keeping repositories constructed after connecting, and verify `dgt.power.plugin.tests` pass
-- [ ] 3.3 Migrate `WebResourcePushCommand` and verify `dgt.power.webresource.tests` pass
-- [ ] 3.4 Update `TestConnection`/`TestServiceCollection`/`CommandTestContextBuilder` so migrated commands resolve `IDataverseConnection` only, and verify migrated and not-yet-migrated tests both pass
+- [x] 3.1 Migrate solution commands (`SolutionVersion`, `SolutionLint`, `CopyComponents`) to `PowerCommand` with `IDataverseConnection`, removing the casts, and verify `dgt.power.solution.tests` pass
+- [x] 3.2 Migrate plugin commands (`PluginPush`, `PluginStep*`) the same way, keeping repositories constructed after connecting, and verify `dgt.power.plugin.tests` pass
+- [x] 3.3 Migrate `WebResourcePushCommand` and verify `dgt.power.webresource.tests` pass
+- [x] 3.4 Update `TestConnection`/`TestServiceCollection`/`CommandTestContextBuilder` so migrated commands resolve `IDataverseConnection` only, and verify migrated and not-yet-migrated tests both pass
 
 ## 4. Migrate maintenance, analyze, export and import
 

@@ -12,21 +12,14 @@ namespace dgt.power.plugin.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class PluginStepConfigSetCommand(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IAnsiConsole console)
-    : PowerLogic<PluginStepConfigSetSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<PluginStepConfigSetSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
 
         // Read file contents if specified
         var unsecureValue = settings.UnsecureConfig;
@@ -41,7 +34,7 @@ public class PluginStepConfigSetCommand(
             secureValue = await File.ReadAllTextAsync(settings.SecureConfigFile.FullName, cancellationToken);
         }
 
-        var service = (IOrganizationServiceAsync2)Connection;
+        var service = await connection.GetServiceAsync();
 
         // Create repositories
         var stepRepository = new SdkMessageProcessingStepRepository(service);
@@ -67,11 +60,11 @@ public class PluginStepConfigSetCommand(
             switch (matches.Count)
             {
                 case 0:
-                    Console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
-                    return Tracer.End(this, false);
+                    console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
+                    return false;
                 case > 1:
                     PrintMultipleMatches(matches);
-                    return Tracer.End(this, false);
+                    return false;
                 default:
                     stepId = matches[0].Id;
                     break;
@@ -81,25 +74,25 @@ public class PluginStepConfigSetCommand(
         if (unsecureValue is not null)
         {
             await stepRepository.UpdateConfigurationAsync(stepId, unsecureValue, cancellationToken);
-            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated unsecure configuration");
+            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated unsecure configuration");
         }
 
         if (secureValue is not null)
         {
             await secureConfigRepository.UpsertAsync(stepId, secureValue, cancellationToken);
-            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated secure configuration");
+            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated secure configuration");
         }
 
-        return Tracer.End(this, true);
+        return true;
     }
 
     private void PrintMultipleMatches(IReadOnlyList<RemotePluginStep> matches)
     {
-        Console.MarkupLine("[yellow]Multiple plugin steps match. Refine the criteria or use --step-id.[/]");
+        console.MarkupLine("[yellow]Multiple plugin steps match. Refine the criteria or use --step-id.[/]");
 
         foreach (var step in matches)
         {
-            Console.WriteLine($"  {step.Name} ({step.Id})");
+            console.WriteLine($"  {step.Name} ({step.Id})");
         }
     }
 }

@@ -13,29 +13,22 @@ namespace dgt.power.solution;
 
 // ReSharper disable once ClassNeverInstantiated.Global — instantiated by the DI container via Spectre.Console.Cli
 public class SolutionVersionCommand(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IAnsiConsole console)
-    : PowerLogic<SolutionVersionSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<SolutionVersionSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(SolutionVersionSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(SolutionVersionSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(SolutionVersionSettings settings, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(settings.Solution))
         {
-            Console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
-            return Tracer.End(this, false);
+            console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
+            return false;
         }
 
-        var orgService = (IOrganizationServiceAsync2)Connection;
+        var orgService = await connection.GetServiceAsync();
 
         var query = new QueryExpression(Solution.EntityLogicalName)
         {
@@ -50,17 +43,17 @@ public class SolutionVersionCommand(
 
         if (solution == null)
         {
-            Console.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
-            return Tracer.End(this, false);
+            console.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
+            return false;
         }
 
         if (!Version.TryParse(solution.Version, out var version))
         {
-            Console.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
-            return Tracer.End(this, false);
+            console.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
+            return false;
         }
 
-        Console.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
+        console.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
 
         Version incrementedVersion;
         if (settings.Major)
@@ -81,16 +74,16 @@ public class SolutionVersionCommand(
         }
         else
         {
-            Console.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
-            return Tracer.End(this, false);
+            console.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
+            return false;
         }
 
         await orgService.UpdateAsync(new Solution(solution.Id)
         {
             Version = incrementedVersion.ToString()
         }, cancellationToken);
-        Console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
+        console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
 
-        return Tracer.End(this, true);
+        return true;
     }
 }

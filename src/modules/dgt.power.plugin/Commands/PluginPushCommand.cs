@@ -17,22 +17,16 @@ using Spectre.Console;
 namespace dgt.power.plugin.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PluginPushCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console)
-    : PowerLogic<PluginPushSettings>(tracer, connection, configResolver, console)
+public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console)
+    : PowerCommand<PluginPushSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(PluginPushSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginPushSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(PluginPushSettings settings, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
 
         if (settings.DryRun)
         {
-            Console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
+            console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
             {
                 Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
             });
@@ -41,29 +35,30 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         var targets = ResolveTargets(settings.Target);
         if (targets is null)
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (targets.Count == 0)
         {
-            Console.MarkupLine(CultureInfo.InvariantCulture, "[yellow]No plugin assemblies (*.dll) or packages (*.nupkg) found in '{0}'[/]", settings.Target);
-            return Tracer.End(this, true);
+            console.MarkupLine(CultureInfo.InvariantCulture, "[yellow]No plugin assemblies (*.dll) or packages (*.nupkg) found in '{0}'[/]", settings.Target);
+            return true;
         }
 
         if (targets.Exists(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrWhiteSpace(settings.PublisherPrefix))
         {
-            Console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
-            return Tracer.End(this, false);
+            console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
+            return false;
         }
 
         var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix, settings.Confirm, settings.NonInteractive);
+        var service = await connection.GetServiceAsync();
 
         var hadFailure = false;
         foreach (var target in targets)
         {
             try
             {
-                if (!await ProcessTargetAsync(target, options, cancellationToken))
+                if (!await                 ProcessTargetAsync(service, target, options, cancellationToken))
                 {
                     hadFailure = true;
                 }
@@ -71,18 +66,17 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
             catch (Exception e) when (ShouldContinueAfterTargetFailure(e))
             {
                 hadFailure = true;
-                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target}': {e.DiagnosticMessage()}[/]");
+                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target}': {e.DiagnosticMessage()}[/]");
             }
         }
 
-        return Tracer.End(this, !hadFailure);
+                        return !hadFailure;
     }
 
     internal static bool ShouldContinueAfterTargetFailure(Exception exception) => exception is not OutOfMemoryException and not StackOverflowException and not OperationCanceledException;
 
-    private async Task<bool> ProcessTargetAsync(string target, PluginPushOptions options, CancellationToken cancellationToken)
+    private async Task<bool> ProcessTargetAsync(IOrganizationServiceAsync2 service, string target, PluginPushOptions options, CancellationToken cancellationToken)
     {
-        var service = (IOrganizationServiceAsync2)Connection;
         var assemblyRepository = new PluginAssemblyRepository(service);
         var packageRepository = new PluginPackageRepository(service);
         var solutionRepository = new SolutionComponentRepository(service);
@@ -107,14 +101,14 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         var executor = new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
             new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository, dataProviderRepository),
             new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository));
-        var renderer = new PluginPlanRenderer(Console);
+        var renderer = new PluginPlanRenderer(console);
 
         if (target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
         {
-            var package = new PluginPackageReader(Console).Read(target);
+            var package = new PluginPackageReader(console).Read(target);
             if (package is null)
             {
-                Console.MarkupLine("[red]Failed to read package - aborting[/]");
+                console.MarkupLine("[red]Failed to read package - aborting[/]");
                 return false;
             }
 
@@ -127,10 +121,10 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         var targetDirectory = Path.GetDirectoryName(fullTargetPath)!;
         using var loadContext = MetadataLoadContextFactory.Create(targetDirectory);
 
-        var assembly = new AssemblyReflectionReader(Console).Read(fullTargetPath, loadContext);
+        var assembly =         new AssemblyReflectionReader(console).Read(fullTargetPath, loadContext);
         if (assembly is null)
         {
-            Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
+                    console.MarkupLine("[red]Failed to read assembly - aborting[/]");
             return false;
         }
 
@@ -146,33 +140,33 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
     private async Task BuildRenderAndExecuteAsync(string targetName, Func<Task<PluginDeploymentPlan>> buildPlan, PluginPlanRenderer renderer, PluginPushExecutor executor, PluginPushOptions options,
         CancellationToken cancellationToken)
     {
-        Console.MarkupLine("[bold blue]Plan[/]");
-        var plan = await Console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold")).StartAsync($"Processing {targetName}...", _ => buildPlan());
+        console.MarkupLine("[bold blue]Plan[/]");
+        var plan = await console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold")).StartAsync($"Processing {targetName}...", _ => buildPlan());
         renderer.Render(plan);
         if (options.DryRun)
         {
             return;
         }
 
-        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !PluginPushConfirmation.Confirm(Console, targetName))
+        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !        PluginPushConfirmation.Confirm(console, targetName))
         {
-            Console.MarkupLine("[yellow]Deployment cancelled.[/]");
+                    console.MarkupLine("[yellow]Deployment cancelled.[/]");
             return;
         }
 
-        Console.MarkupLine("[bold green]Execution[/]");
+        console.MarkupLine("[bold green]Execution[/]");
         var completedOperationCount = 0;
 
         void ReportCompletedOperation(PluginDeploymentProgress progress)
         {
             completedOperationCount++;
-            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
         }
 
-        await Console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold"))
+        await console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold"))
             .StartAsync("Applying deployment plan...", _ => executor.ExecuteAsync(plan, ReportCompletedOperation, cancellationToken));
 
-        Console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+        console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
     }
 
     private List<string>? ResolveTargets(string target)
@@ -181,7 +175,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         {
             if (!target.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
             {
-                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported file '{0}' - expected a .dll or .nupkg file[/]", target);
+                console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported file '{0}' - expected a .dll or .nupkg file[/]", target);
                 return null;
             }
 
@@ -195,7 +189,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
                 .ToList();
         }
 
-        Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Path '{0}' not found[/]", target);
+        console.MarkupLine(CultureInfo.InvariantCulture, "[red]Path '{0}' not found[/]", target);
         return null;
     }
 }
