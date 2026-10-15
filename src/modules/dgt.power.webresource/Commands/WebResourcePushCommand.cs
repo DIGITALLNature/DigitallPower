@@ -21,10 +21,7 @@ public sealed class WebResourcePushCommand(ICommandSpanFactory spans, IDataverse
 
         if (settings.DryRun)
         {
-            console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
-            {
-                Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
-            });
+            DryRunBanner.Write(console);
         }
 
         var mapping = settings.MappingFile is null ? null : WebResourceMappingFile.Load(settings.MappingFile);

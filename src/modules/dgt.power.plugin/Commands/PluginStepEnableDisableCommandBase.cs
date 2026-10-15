@@ -32,7 +32,7 @@ public abstract class PluginStepEnableDisableCommandBase(
 
         if (settings.DryRun)
         {
-            PluginStepStateHandler.WriteDryRunBanner(console);
+            DryRunBanner.Write(console);
         }
 
         var service = await connection.GetServiceAsync();

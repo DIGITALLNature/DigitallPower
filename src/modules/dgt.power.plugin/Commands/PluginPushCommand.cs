@@ -26,10 +26,7 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
 
         if (settings.DryRun)
         {
-            console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
-            {
-                Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
-            });
+            DryRunBanner.Write(console);
         }
 
         var targets = ResolveTargets(settings.Target);
