@@ -8,7 +8,7 @@ Commands derived from `PowerLogic<T>`, which injected a tracer, a configuration 
 
 - `PowerCommand<TSettings>` is a thin lifecycle base. It owns exactly one telemetry span and the end console line, and maps `RunAsync` results to exit codes `0`/`1`. Exceptions are recorded on the span and rethrown.
 - Everything else is composed. Commands request `IDataverseConnection` and call `GetServiceAsync()` inside `RunAsync`; `IConfigResolver` and other services are requested only where used.
-- `IDataverseConnection.GetServiceAsync()` caches the connected service: concurrent first calls share one connect, and failures are not cached.
+- `IDataverseConnection.GetServiceAsync()` caches the connected service behind a `SemaphoreSlim`: concurrent first calls connect once, and failed connects are not cached, so the next call retries.
 - `IOrganizationService` is no longer registered in DI. Synchronous code receives the same instance through a cast, because `ServiceClient` implements both interfaces.
 - User-facing messages go to `IAnsiConsole`; telemetry is recorded only by the span. Escaped exceptions are reported by `FatalExceptionReporter` unless the run already recorded them.
 

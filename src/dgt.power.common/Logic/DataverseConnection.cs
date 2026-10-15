@@ -18,39 +18,27 @@ public sealed partial class DataverseConnection(
     CredentialFactory credentialFactory,
     ConnectionInvocationContext invocationContext,
     IAnsiConsole console)
-    : IDataverseConnection
+    : IDataverseConnection, IDisposable
 {
-    private readonly Lock _gate = new();
-    private Task<IOrganizationServiceAsync2>? _service;
+    private readonly SemaphoreSlim _gate = new(1, 1);
+    private IOrganizationServiceAsync2? _service;
 
     /// <inheritdoc />
-    public Task<IOrganizationServiceAsync2> GetServiceAsync()
+    public async Task<IOrganizationServiceAsync2> GetServiceAsync()
     {
-        lock (_gate)
-        {
-            return _service ??= ConnectAndCacheAsync();
-        }
-    }
-
-    private async Task<IOrganizationServiceAsync2> ConnectAndCacheAsync()
-    {
+        await _gate.WaitAsync();
         try
         {
-            // Yield so a synchronous failure cannot run before the task is stored in the cache.
-            await Task.Yield();
-            return await ConnectCoreAsync();
+            // Only a successful connect is cached, so a failed one is retried on the next call.
+            return _service ??= await ConnectCoreAsync();
         }
-        catch
+        finally
         {
-            // Failed connects are not cached so a later call can retry.
-            lock (_gate)
-            {
-                _service = null;
-            }
-
-            throw;
+            _gate.Release();
         }
     }
+
+    public void Dispose() => _gate.Dispose();
 
     private async Task<IOrganizationServiceAsync2> ConnectCoreAsync()
     {

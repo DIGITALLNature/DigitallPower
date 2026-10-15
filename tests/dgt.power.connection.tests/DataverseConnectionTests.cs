@@ -23,7 +23,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
             ClientId = "client",
             ServiceConnectionId = "service-connection"
         });
-        var connection = new DataverseConnection(
+        using var connection = new DataverseConnection(
             ConnectionStore,
             new CredentialFactory(SecretStore, TestConsole),
             new ConnectionInvocationContext(),
@@ -45,35 +45,20 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
     [Test]
     public async Task GetServiceAsync_FailedConnect_IsNotCachedAndRetries()
     {
-        var connection = new DataverseConnection(
+        var invocationContext = new ConnectionInvocationContext();
+        using var connection = new DataverseConnection(
             ConnectionStore,
             new CredentialFactory(SecretStore, TestConsole),
-            new ConnectionInvocationContext(),
+            invocationContext,
             TestConsole);
 
-        var first = connection.GetServiceAsync();
-        await Assert.That(first).Throws<MissingConnectionException>();
+        await Assert.That(connection.GetServiceAsync()).Throws<MissingConnectionException>()
+            .WithMessageContaining("No connection is selected");
 
-        var second = connection.GetServiceAsync();
+        invocationContext.Capture(new ConnectionSettings { Connection = "Missing" });
 
-        await Assert.That(ReferenceEquals(second, first)).IsFalse();
-        await Assert.That(second).Throws<MissingConnectionException>();
-    }
-
-    [Test]
-    public async Task GetServiceAsync_ConcurrentFirstCalls_ShareOneAttempt()
-    {
-        var connection = new DataverseConnection(
-            ConnectionStore,
-            new CredentialFactory(SecretStore, TestConsole),
-            new ConnectionInvocationContext(),
-            TestConsole);
-
-        var first = connection.GetServiceAsync();
-        var second = connection.GetServiceAsync();
-
-        await Assert.That(ReferenceEquals(second, first)).IsTrue();
-        await Assert.That(first).Throws<MissingConnectionException>();
+        await Assert.That(connection.GetServiceAsync()).Throws<MissingConnectionException>()
+            .WithMessageContaining("'Missing' was not found");
     }
 
     [Test]
