@@ -58,7 +58,7 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
         {
             try
             {
-                if (!await                 ProcessTargetAsync(service, target, options, cancellationToken))
+                if (!await ProcessTargetAsync(service, target, options, cancellationToken))
                 {
                     hadFailure = true;
                 }
@@ -66,11 +66,11 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
             catch (Exception e) when (ShouldContinueAfterTargetFailure(e))
             {
                 hadFailure = true;
-                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target}': {e.DiagnosticMessage()}[/]");
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target}': {e.DiagnosticMessage()}[/]");
             }
         }
 
-                        return !hadFailure;
+        return !hadFailure;
     }
 
     internal static bool ShouldContinueAfterTargetFailure(Exception exception) => exception is not OutOfMemoryException and not StackOverflowException and not OperationCanceledException;
@@ -121,7 +121,7 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
         var targetDirectory = Path.GetDirectoryName(fullTargetPath)!;
         using var loadContext = MetadataLoadContextFactory.Create(targetDirectory);
 
-        var assembly =         new AssemblyReflectionReader(console).Read(fullTargetPath, loadContext);
+        var assembly = new AssemblyReflectionReader(console).Read(fullTargetPath, loadContext);
         if (assembly is null)
         {
                     console.MarkupLine("[red]Failed to read assembly - aborting[/]");
@@ -148,7 +148,7 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
             return;
         }
 
-        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !        PluginPushConfirmation.Confirm(console, targetName))
+        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !PluginPushConfirmation.Confirm(console, targetName))
         {
                     console.MarkupLine("[yellow]Deployment cancelled.[/]");
             return;
