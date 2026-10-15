@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common.Extensions;
 using dgt.power.common;
@@ -11,7 +12,6 @@ using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Planning;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
@@ -20,13 +20,13 @@ namespace dgt.power.plugin.Commands;
 public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console)
     : PowerCommand<PluginPushSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync(PluginPushSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] PluginPushSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
         if (settings.DryRun)
         {
-            DryRunBanner.Write(console);
+            DryRunBanner.Write(Console);
         }
 
         var targets = ResolveTargets(settings.Target);
@@ -37,13 +37,13 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
 
         if (targets.Count == 0)
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[yellow]No plugin assemblies (*.dll) or packages (*.nupkg) found in '{0}'[/]", settings.Target);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[yellow]No plugin assemblies (*.dll) or packages (*.nupkg) found in '{0}'[/]", settings.Target);
             return true;
         }
 
         if (targets.Exists(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrWhiteSpace(settings.PublisherPrefix))
         {
-            console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
+            Console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
             return false;
         }
 
@@ -63,7 +63,7 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
             catch (Exception e) when (ShouldContinueAfterTargetFailure(e))
             {
                 hadFailure = true;
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target}': {e.DiagnosticMessage()}[/]");
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed processing '{target}': {e.DiagnosticMessage()}[/]");
             }
         }
 
@@ -98,14 +98,14 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
         var executor = new PluginPushExecutor(assemblyRepository, packageRepository, solutionRepository, new ManagedIdentityRepository(service),
             new PluginTypeDeploymentExecutor(typeRepository, stepRepository, imageRepository, customApiRepository, solutionRepository, dataProviderRepository),
             new OutdatedAssemblyMigrator(assemblyRepository, typeRepository, stepRepository, customApiRepository));
-        var renderer = new PluginPlanRenderer(console);
+        var renderer = new PluginPlanRenderer(Console);
 
         if (target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
         {
-            var package = new PluginPackageReader(console).Read(target);
+            var package = new PluginPackageReader(Console).Read(target);
             if (package is null)
             {
-                console.MarkupLine("[red]Failed to read package - aborting[/]");
+                Console.MarkupLine("[red]Failed to read package - aborting[/]");
                 return false;
             }
 
@@ -118,10 +118,10 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
         var targetDirectory = Path.GetDirectoryName(fullTargetPath)!;
         using var loadContext = MetadataLoadContextFactory.Create(targetDirectory);
 
-        var assembly = new AssemblyReflectionReader(console).Read(fullTargetPath, loadContext);
+        var assembly = new AssemblyReflectionReader(Console).Read(fullTargetPath, loadContext);
         if (assembly is null)
         {
-                    console.MarkupLine("[red]Failed to read assembly - aborting[/]");
+                    Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
             return false;
         }
 
@@ -137,33 +137,33 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
     private async Task BuildRenderAndExecuteAsync(string targetName, Func<Task<PluginDeploymentPlan>> buildPlan, PluginPlanRenderer renderer, PluginPushExecutor executor, PluginPushOptions options,
         CancellationToken cancellationToken)
     {
-        console.MarkupLine("[bold blue]Plan[/]");
-        var plan = await console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold")).StartAsync($"Processing {targetName}...", _ => buildPlan());
+        Console.MarkupLine("[bold blue]Plan[/]");
+        var plan = await Console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold")).StartAsync($"Processing {targetName}...", _ => buildPlan());
         renderer.Render(plan);
         if (options.DryRun)
         {
             return;
         }
 
-        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !PluginPushConfirmation.Confirm(console, targetName))
+        if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !PluginPushConfirmation.Confirm(Console, targetName))
         {
-                    console.MarkupLine("[yellow]Deployment cancelled.[/]");
+                    Console.MarkupLine("[yellow]Deployment cancelled.[/]");
             return;
         }
 
-        console.MarkupLine("[bold green]Execution[/]");
+        Console.MarkupLine("[bold green]Execution[/]");
         var completedOperationCount = 0;
 
         void ReportCompletedOperation(PluginDeploymentProgress progress)
         {
             completedOperationCount++;
-            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {progress.Operation} {Markup.Escape(progress.Resource)} {Markup.Escape(progress.Name)}");
         }
 
-        await console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold"))
+        await Console.Status().Spinner(Spinner.Known.Dots).SpinnerStyle(Style.Parse("green bold"))
             .StartAsync("Applying deployment plan...", _ => executor.ExecuteAsync(plan, ReportCompletedOperation, cancellationToken));
 
-        console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+        Console.MarkupLine(completedOperationCount == 0 ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied" : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
     }
 
     private List<string>? ResolveTargets(string target)
@@ -172,7 +172,7 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
         {
             if (!target.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase))
             {
-                console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported file '{0}' - expected a .dll or .nupkg file[/]", target);
+                Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported file '{0}' - expected a .dll or .nupkg file[/]", target);
                 return null;
             }
 
@@ -186,7 +186,7 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
                 .ToList();
         }
 
-        console.MarkupLine(CultureInfo.InvariantCulture, "[red]Path '{0}' not found[/]", target);
+        Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Path '{0}' not found[/]", target);
         return null;
     }
 }

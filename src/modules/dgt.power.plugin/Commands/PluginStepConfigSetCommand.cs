@@ -1,11 +1,10 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
-using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
@@ -17,7 +16,7 @@ public class PluginStepConfigSetCommand(
     IAnsiConsole console)
     : PowerCommand<PluginStepConfigSetSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
@@ -60,7 +59,7 @@ public class PluginStepConfigSetCommand(
             switch (matches.Count)
             {
                 case 0:
-                    console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
+                    Console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
                     return false;
                 case > 1:
                     PrintMultipleMatches(matches);
@@ -74,13 +73,13 @@ public class PluginStepConfigSetCommand(
         if (unsecureValue is not null)
         {
             await stepRepository.UpdateConfigurationAsync(stepId, unsecureValue, cancellationToken);
-            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated unsecure configuration");
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated unsecure configuration");
         }
 
         if (secureValue is not null)
         {
             await secureConfigRepository.UpsertAsync(stepId, secureValue, cancellationToken);
-            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated secure configuration");
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated secure configuration");
         }
 
         return true;
@@ -88,11 +87,11 @@ public class PluginStepConfigSetCommand(
 
     private void PrintMultipleMatches(IReadOnlyList<RemotePluginStep> matches)
     {
-        console.MarkupLine("[yellow]Multiple plugin steps match. Refine the criteria or use --step-id.[/]");
+        Console.MarkupLine("[yellow]Multiple plugin steps match. Refine the criteria or use --step-id.[/]");
 
         foreach (var step in matches)
         {
-            console.WriteLine($"  {step.Name} ({step.Id})");
+            Console.WriteLine($"  {step.Name} ({step.Id})");
         }
     }
 }

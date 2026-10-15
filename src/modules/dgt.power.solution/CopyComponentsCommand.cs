@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using dgt.power.common;
 using dgt.power.dataverse;
@@ -22,20 +23,20 @@ public class CopyComponentsCommand(
 {
     private const int PageSize = 5000;
 
-    protected override async Task<bool> RunAsync(CopyComponentsSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] CopyComponentsSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
         if (string.IsNullOrWhiteSpace(settings.Target))
         {
-            console.MarkupLine("[red]Invalid or empty target solution name[/]");
+            Console.MarkupLine("[red]Invalid or empty target solution name[/]");
             return false;
         }
 
         var sourceNames = settings.Source.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (sourceNames.Length == 0)
         {
-            console.MarkupLine("[red]--source is required and must contain at least one solution unique name[/]");
+            Console.MarkupLine("[red]--source is required and must contain at least one solution unique name[/]");
             return false;
         }
 
@@ -44,13 +45,13 @@ public class CopyComponentsCommand(
         var target = await RetrieveSolutionAsync(orgService, settings.Target, cancellationToken);
         if (target == null)
         {
-            console.MarkupLine($"[red]Target solution '{settings.Target}' not found[/]");
+            Console.MarkupLine($"[red]Target solution '{settings.Target}' not found[/]");
             return false;
         }
 
         if (target.IsManaged == true)
         {
-            console.MarkupLine($"[red]Target solution '{settings.Target}' is managed - components can only be added to an unmanaged solution[/]");
+            Console.MarkupLine($"[red]Target solution '{settings.Target}' is managed - components can only be added to an unmanaged solution[/]");
             return false;
         }
 
@@ -61,7 +62,7 @@ public class CopyComponentsCommand(
 
         if (missingSourceNames.Count > 0)
         {
-            console.MarkupLine($"[red]Source solution(s) not found: {string.Join(", ", missingSourceNames)}[/]");
+            Console.MarkupLine($"[red]Source solution(s) not found: {string.Join(", ", missingSourceNames)}[/]");
             return false;
         }
 
@@ -73,7 +74,7 @@ public class CopyComponentsCommand(
 
         if (settings.DryRun)
         {
-            console.MarkupLine("[yellow]--dry-run: no changes were made[/]");
+            Console.MarkupLine("[yellow]--dry-run: no changes were made[/]");
             return true;
         }
 
@@ -121,7 +122,7 @@ public class CopyComponentsCommand(
 
         string DescribeKey((int ComponentType, Guid ObjectId) key) => $"{TypeNameOf(definitionsByType, key.ComponentType)} {key.ObjectId}";
 
-        await console.Status()
+        await Console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
             .StartAsync($"Adding {orderedDecisions.Count} component(s) to solution '{targetUniqueName}'...", async status =>
@@ -197,19 +198,19 @@ public class CopyComponentsCommand(
 
         await ReportLateAdditionsAsync(orgService, target.Id, membershipBeforeAppPhase, plannedKeys, definitionsByType, stripReports, cancellationToken);
 
-        console.MarkupLine($"Added [green]{orderedDecisions.Count}[/] component(s) to solution [green]{targetUniqueName}[/]");
+        Console.MarkupLine($"Added [green]{orderedDecisions.Count}[/] component(s) to solution [green]{targetUniqueName}[/]");
 
         foreach (var report in stripReports)
         {
-            console.MarkupLine($"[grey]--apps strip: {report}[/]");
+            Console.MarkupLine($"[grey]--apps strip: {report}[/]");
         }
 
         if (removedSubcomponents.Count > 0)
         {
-            console.MarkupLine($"[yellow]Removed {removedSubcomponents.Count} subcomponent(s) that Dataverse added together with a model-driven app (--apps strip):[/]");
+            Console.MarkupLine($"[yellow]Removed {removedSubcomponents.Count} subcomponent(s) that Dataverse added together with a model-driven app (--apps strip):[/]");
             foreach (var key in removedSubcomponents)
             {
-                console.MarkupLine($"  [grey]{Markup.Escape(TypeNameOf(definitionsByType, key.ComponentType))}: {key.ObjectId}[/]");
+                Console.MarkupLine($"  [grey]{Markup.Escape(TypeNameOf(definitionsByType, key.ComponentType))}: {key.ObjectId}[/]");
             }
         }
     }
@@ -304,7 +305,7 @@ public class CopyComponentsCommand(
 
     private void RenderPlan(List<ComponentCopyDecision> decisions, bool bestPractices)
     {
-        console.MarkupLine(bestPractices
+        Console.MarkupLine(bestPractices
             ? "Best-practice mode: managed tables/components are added as skeleton/delta only, unmanaged ones completely"
                         : "[yellow]--raw: tables keep only their complete/non-complete distinction (shell-only sources become non-complete); " +
                             "other components are copied as-is, no managed/active-layer filtering[/]");
@@ -328,10 +329,10 @@ public class CopyComponentsCommand(
             table.AddRow(decision.ComponentTypeName, decision.ObjectId.ToString(), includeMarkup, behavior, decision.Reason);
         }
 
-        console.Write(table);
+        Console.Write(table);
 
         var includedCount = decisions.Count(static decision => decision.Include);
-        console.MarkupLine($"Plan: [green]{includedCount}[/] to include, [grey]{decisions.Count - includedCount}[/] to skip (of {decisions.Count} total)");
+        Console.MarkupLine($"Plan: [green]{includedCount}[/] to include, [grey]{decisions.Count - includedCount}[/] to skip (of {decisions.Count} total)");
     }
 
     private static async Task<Solution?> RetrieveSolutionAsync(IOrganizationServiceAsync2 orgService, string uniqueName, CancellationToken cancellationToken)

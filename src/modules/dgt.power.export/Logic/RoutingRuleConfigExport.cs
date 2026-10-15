@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
@@ -19,10 +20,8 @@ public sealed class RoutingRuleConfigExport(
     IAnsiConsole console)
     : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ExportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
@@ -54,7 +53,7 @@ public sealed class RoutingRuleConfigExport(
 
         var json = ExportJson.GetJson(export);
 
-        console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
+        Console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
         return true;
     }
 

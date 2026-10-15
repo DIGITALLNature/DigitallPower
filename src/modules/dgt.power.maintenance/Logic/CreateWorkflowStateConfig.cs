@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -24,10 +25,8 @@ public class CreateWorkflowStateConfig(
     private readonly JsonSerializerOptions _jsonSerializerOptions = new(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     private readonly WorkflowStateTracker _workflowStateTracker = new();
 
-    protected override async Task<bool> RunAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         var solutions = args.Solutions?.Split(',');
         var publishers = args.Publishers?.Split(',');
 
@@ -39,7 +38,7 @@ public class CreateWorkflowStateConfig(
         // Print table report if requested
         if (args.TableReport)
         {
-            _workflowStateTracker.WriteToConsole(console);
+            _workflowStateTracker.WriteToConsole(Console);
         }
 
         return true;
@@ -47,7 +46,7 @@ public class CreateWorkflowStateConfig(
 
     private async Task CollectWorkflowStatesAsync(IOrganizationServiceAsync2 service, string[]? solutions, string[]? publishers, string configFile, bool detailed, bool overwrite)
     {
-        await console.Progress()
+        await Console.Progress()
             .StartAsync(async ctx =>
             {
                 Dictionary<string, ProgressTask> progressTasks = new();
@@ -67,20 +66,20 @@ public class CreateWorkflowStateConfig(
                     ctx.Refresh();
                 };
 
-                var workflowStateManager = new WorkflowStateManager(service, solutions ?? [], publishers ?? [], console, progress);
+                var workflowStateManager = new WorkflowStateManager(service, solutions ?? [], publishers ?? [], Console, progress);
 
-                console.WriteLine("Loading all workflows");
+                Console.WriteLine("Loading all workflows");
                 var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
                 _workflowStateTracker.AddWorkflows(workflows);
 
-                console.WriteLine($"Found {workflows.Length} workflows");
+                Console.WriteLine($"Found {workflows.Length} workflows");
 
                 // group all workflows by owner and select max occurence as default owner
                 var groupedFlows = workflows.GroupBy(f => f.OwnerId!.Id).ToList();
                 var defaultOwnerId = groupedFlows.OrderByDescending(g => g.Count()).FirstOrDefault()?.Key;
                 var defaultOwner = defaultOwnerId != null ? workflows.First(w => w.OwnerId!.Id == defaultOwnerId).GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                console.WriteLine($"Default owner will be '{defaultOwner}' ({defaultOwnerId})");
+                Console.WriteLine($"Default owner will be '{defaultOwner}' ({defaultOwnerId})");
 
                 // prepare config
                 var prepareConfigTask = ctx.AddTask("Preparing config", false);
@@ -152,7 +151,7 @@ public class CreateWorkflowStateConfig(
                 }
 
                 // Write config to file
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Writing config to {configFile}[/]");
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Writing config to {configFile}[/]");
 
                 var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
                 using var fileStream = new FileStream(configFile, fileMode, FileAccess.Write, FileShare.None);

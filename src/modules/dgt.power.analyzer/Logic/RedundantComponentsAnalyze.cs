@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using dgt.power.analyzer.Base;
@@ -25,18 +26,16 @@ public sealed class RedundantComponentsAnalyze(
 {
     private const int PageSize = 5000;
 
-    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] AnalyzeVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         if (string.IsNullOrWhiteSpace(args.InlineData))
         {
-            console.MarkupLine("[red]--inline requires a comma separated list of solution unique names.[/]");
+            Console.MarkupLine("[red]--inline requires a comma separated list of solution unique names.[/]");
             return false;
         }
 
         var service = await connection.GetServiceAsync();
-        return Run(args, (IOrganizationService)service);
+        return Run(args, service);
     }
 
     private bool Run(AnalyzeVerb args, IOrganizationService service)
@@ -61,12 +60,12 @@ public sealed class RedundantComponentsAnalyze(
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
             solutionTag.LeftJustified();
 
-            console.Write(solutionTag);
+            Console.Write(solutionTag);
 
             var components = reader.GetSolutionComponents(service, context, uniqueName);
 
             var table = new Table();
-            console.Live(Align.Center(table))
+            Console.Live(Align.Center(table))
                 .Start(ctx =>
                 {
                     table.AddColumn("Component");
@@ -126,8 +125,8 @@ public sealed class RedundantComponentsAnalyze(
 
             var groupedMetrics = resultTable.Where(r => r.OriginSolution == uniqueName).GroupBy(rc => rc.AlsoInSolution).ToList();
 
-            console.WriteLine();
-            console.WriteLine($"Found {resultTable.Count(r => r.OriginSolution == uniqueName)} potential redudant components in {groupedMetrics.Count} unique Solutions:");
+            Console.WriteLine();
+            Console.WriteLine($"Found {resultTable.Count(r => r.OriginSolution == uniqueName)} potential redudant components in {groupedMetrics.Count} unique Solutions:");
             var summaryTable = new Table();
 
 
@@ -139,7 +138,7 @@ public sealed class RedundantComponentsAnalyze(
                 summaryTable.AddRow(groupedMetric.Key!, $"[green]{groupedMetric.Count()}[/]");
             }
 
-            console.Write(summaryTable);
+            Console.Write(summaryTable);
         }
 
         if (args.GenerateSummaryFile)

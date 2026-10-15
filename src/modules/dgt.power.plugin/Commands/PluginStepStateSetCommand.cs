@@ -1,12 +1,11 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common.Extensions;
 using dgt.power.common;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.StepManagement;
-using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
@@ -19,29 +18,29 @@ public class PluginStepStateSetCommand(
     IAnsiConsole console)
     : PowerCommand<PluginStepStateSetSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync(PluginStepStateSetSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] PluginStepStateSetSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
         if (!configResolver.TryGetConfigFile<PluginStepStateConfigRoot>(settings.Config, out var config))
         {
-            console.MarkupLine("[red]Failed to load or parse config file.[/]");
+            Console.MarkupLine("[red]Failed to load or parse config file.[/]");
             return false;
         }
 
         if (config.Steps is not { Count: > 0 })
         {
-            console.MarkupLine("[yellow]No steps defined in config file.[/]");
+            Console.MarkupLine("[yellow]No steps defined in config file.[/]");
             return true;
         }
 
         if (settings.DryRun)
         {
-            DryRunBanner.Write(console);
+            DryRunBanner.Write(Console);
         }
 
         var service = await connection.GetServiceAsync();
-        var handler = new PluginStepStateHandler(console, new SdkMessageProcessingStepRepository(service), settings.DryRun);
+        var handler = new PluginStepStateHandler(Console, new SdkMessageProcessingStepRepository(service), settings.DryRun);
 
         for (var index = 0; index < config.Steps.Count; index++)
         {

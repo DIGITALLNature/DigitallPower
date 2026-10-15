@@ -1,13 +1,13 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.Json;
 using dgt.power.common;
 using dgt.power.solution.Base;
 using dgt.power.solution.Reporting;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.solution;
@@ -20,31 +20,29 @@ public sealed class SolutionLintCommand(
     IAnsiConsole console)
     : PowerCommand<SolutionLintSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync(SolutionLintSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] SolutionLintSettings args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         if (args.UpdateBaseline && string.IsNullOrWhiteSpace(args.Baseline))
         {
-            console.MarkupLine("[red]--update-baseline requires --baseline <path>.[/]");
+            Console.MarkupLine("[red]--update-baseline requires --baseline <path>.[/]");
             return false;
         }
 
         if (!TryParseFailOnThreshold(args.FailOn, out var threshold))
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[red]Invalid --fail-on value '{0}'. Expected None, Info, Warning or Error.[/]", args.FailOn);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Invalid --fail-on value '{0}'. Expected None, Info, Warning or Error.[/]", args.FailOn);
             return false;
         }
 
         if (!configResolver.TryGetConfigFile<LintConfig>(args.Config, out var config))
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unable to read lint config from {0}[/]", args.Config);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unable to read lint config from {0}[/]", args.Config);
             return false;
         }
 
         if (config.Version != 1)
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported lint config version {0}. Only version 1 is supported.[/]", config.Version);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported lint config version {0}. Only version 1 is supported.[/]", config.Version);
             return false;
         }
 
@@ -53,7 +51,7 @@ public sealed class SolutionLintCommand(
         var unknownConfiguredRuleIds = config.Rules.Keys.Where(ruleId => !knownRuleIds.Contains(ruleId)).ToList();
         if (unknownConfiguredRuleIds.Count > 0)
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in {0}: {1}[/]", args.Config, string.Join(", ", unknownConfiguredRuleIds));
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in {0}: {1}[/]", args.Config, string.Join(", ", unknownConfiguredRuleIds));
             return false;
         }
 
@@ -63,7 +61,7 @@ public sealed class SolutionLintCommand(
             .ToList();
         if (invalidOptionRuleIds.Count > 0)
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[red]Rule(s) with invalid 'options' (expected a JSON object) in {0}: {1}[/]", args.Config, string.Join(", ", invalidOptionRuleIds));
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Rule(s) with invalid 'options' (expected a JSON object) in {0}: {1}[/]", args.Config, string.Join(", ", invalidOptionRuleIds));
             return false;
         }
 
@@ -71,23 +69,23 @@ public sealed class SolutionLintCommand(
         var unknownRequestedRuleIds = requestedRuleIds.Where(ruleId => !knownRuleIds.Contains(ruleId)).ToList();
         if (unknownRequestedRuleIds.Count > 0)
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in --rules: {0}[/]", string.Join(", ", unknownRequestedRuleIds));
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in --rules: {0}[/]", string.Join(", ", unknownRequestedRuleIds));
             return false;
         }
 
         var orgService = await connection.GetServiceAsync();
-        var (findings, missingSolutionNames) = await EvaluateRulesAsync(console, orgService, config, [args.Solution], requestedRuleIds, cancellationToken);
+        var (findings, missingSolutionNames) = await EvaluateRulesAsync(Console, orgService, config, [args.Solution], requestedRuleIds, cancellationToken);
 
         if (missingSolutionNames.Count > 0)
         {
-            console.MarkupLine(CultureInfo.InvariantCulture, "[red]Solution(s) not found: {0}[/]", string.Join(", ", missingSolutionNames));
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Solution(s) not found: {0}[/]", string.Join(", ", missingSolutionNames));
             return false;
         }
 
         if (args.UpdateBaseline)
         {
             await SarifWriter.WriteAsync(args.Baseline, findings, suppressedKeys: null, cancellationToken);
-            console.MarkupLine(CultureInfo.InvariantCulture, "[green]Baseline updated: {0} finding(s) written to {1}[/]", findings.Count, args.Baseline);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[green]Baseline updated: {0} finding(s) written to {1}[/]", findings.Count, args.Baseline);
             await WriteJsonReportAsync(args.Report, findings, baselinedKeys: new HashSet<string>(StringComparer.Ordinal), cancellationToken);
 
             if (!string.IsNullOrWhiteSpace(args.SarifOutput))
@@ -201,7 +199,7 @@ public sealed class SolutionLintCommand(
     {
         if (findings.Count == 0)
         {
-            console.MarkupLine("[green]No lint findings found.[/]");
+            Console.MarkupLine("[green]No lint findings found.[/]");
             return;
         }
 
@@ -215,10 +213,10 @@ public sealed class SolutionLintCommand(
             };
 
             var baselinedSuffix = baselinedKeys.Contains(finding.BaselineKey) ? " [grey](baselined)[/]" : string.Empty;
-            console.MarkupLine(CultureInfo.InvariantCulture, "[{0}]({1}) {2}[/] {3}{4}", color, finding.Severity, finding.RuleId, finding.Message, baselinedSuffix);
+            Console.MarkupLine(CultureInfo.InvariantCulture, "[{0}]({1}) {2}[/] {3}{4}", color, finding.Severity, finding.RuleId, finding.Message, baselinedSuffix);
             if (!string.IsNullOrWhiteSpace(finding.ComponentLogicalName))
             {
-                console.MarkupLine(CultureInfo.InvariantCulture, "  component: {0}", finding.ComponentLogicalName);
+                Console.MarkupLine(CultureInfo.InvariantCulture, "  component: {0}", finding.ComponentLogicalName);
             }
         }
     }

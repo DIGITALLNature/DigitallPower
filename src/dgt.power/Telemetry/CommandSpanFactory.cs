@@ -12,13 +12,13 @@ internal sealed class CommandSpanFactory(TelemetryState state) : ICommandSpanFac
     {
         if (!state.IsActive)
         {
-            return NoOpSpan.Instance;
+            return NoOpSpan.s_instance;
         }
 
         var activity = DgtpActivitySource.Instance.StartActivity($"command.{commandName}");
         if (activity is null)
         {
-            return NoOpSpan.Instance;
+            return NoOpSpan.s_instance;
         }
 
         activity.SetTag("dgtp.command", commandName);
@@ -50,7 +50,7 @@ internal sealed class CommandSpanFactory(TelemetryState state) : ICommandSpanFac
 
     private sealed class NoOpSpan : ICommandSpan
     {
-        internal static readonly NoOpSpan Instance = new();
+        internal static readonly NoOpSpan s_instance = new();
 
         public void Complete(bool success)
         {

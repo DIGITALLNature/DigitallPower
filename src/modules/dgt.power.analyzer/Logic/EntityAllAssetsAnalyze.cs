@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Base.Config;
@@ -23,10 +24,8 @@ public sealed class EntityAllAssetsAnalyze(
     IAnsiConsole console)
     : PowerCommand<AnalyzeVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] AnalyzeVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         //read config
         if (!configResolver.TryGetConfigFile<List<EntityAllAssets>>(args.Config, out var entitiesAllAssets))
         {
@@ -36,12 +35,12 @@ public sealed class EntityAllAssetsAnalyze(
         //anything to do?
         if (entitiesAllAssets.Count == 0)
         {
-            console.MarkupLine("[red]No entity all assets configuration found.[/]");
+            Console.MarkupLine("[red]No entity all assets configuration found.[/]");
             return false;
         }
 
         var service = await connection.GetServiceAsync();
-        return Run(args, entitiesAllAssets, (IOrganizationService)service);
+        return Run(args, entitiesAllAssets, service);
     }
 
     private bool Run(AnalyzeVerb args, List<EntityAllAssets> entitiesAllAssets, IOrganizationService service)
@@ -68,7 +67,7 @@ public sealed class EntityAllAssetsAnalyze(
             var solutionTag = new Rule($"solution unique name: [lime]{entityAllAssets.Solution}[/]");
             solutionTag.LeftJustified();
 
-            console.Write(solutionTag);
+            Console.Write(solutionTag);
 
             using var context = new DataContext(service);
             var solution = GetSolution(context, entityAllAssets);
@@ -79,12 +78,12 @@ public sealed class EntityAllAssetsAnalyze(
             foreach (var component in components)
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId);
-                console.WriteLine($"{entity.LogicalName + " (" + entity.DisplayName.UserLocalizedLabel?.Label + ")"}:");
+                Console.WriteLine($"{entity.LogicalName + " (" + entity.DisplayName.UserLocalizedLabel?.Label + ")"}:");
 
                 //check whitelist
                 if (component.RootComponentBehavior?.Value == SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents)
                 {
-                    console.WriteLine("  -> AllAssets");
+                    Console.WriteLine("  -> AllAssets");
                     var approved = false;
                     foreach (var entryWl in entityAllAssets.WhiteList)
                     {
@@ -123,7 +122,7 @@ public sealed class EntityAllAssetsAnalyze(
 
                     if (approved)
                     {
-                        console.WriteLine("  -> approved: true");
+                        Console.WriteLine("  -> approved: true");
                         resultTable.Add(new AllAssetLine
                         {
                             Solution = entityAllAssets.Solution,
@@ -136,11 +135,11 @@ public sealed class EntityAllAssetsAnalyze(
                         if (entityAllAssets.Strict)
                         {
                             result = false;
-                            console.MarkupLine("[red]        -> approved: false[/]");
+                            Console.MarkupLine("[red]        -> approved: false[/]");
                         }
                         else
                         {
-                            console.MarkupLine("[yellow]      -> approved: false[/]");
+                            Console.MarkupLine("[yellow]      -> approved: false[/]");
                         }
 
                         summary.Anomalies++;
@@ -193,7 +192,7 @@ public sealed class EntityAllAssetsAnalyze(
 
                     if (good)
                     {
-                        console.WriteLine("  -> good");
+                        Console.WriteLine("  -> good");
                         resultTable.Add(new AllAssetLine
                         {
                             Solution = entityAllAssets.Solution,
@@ -203,7 +202,7 @@ public sealed class EntityAllAssetsAnalyze(
                     }
                     else
                     {
-                        console.MarkupLine("[yellow]      -> suspicious[/]");
+                        Console.MarkupLine("[yellow]      -> suspicious[/]");
 
                         resultTable.Add(new AllAssetLine
                         {
@@ -216,7 +215,7 @@ public sealed class EntityAllAssetsAnalyze(
                 }
                 else
                 {
-                    console.WriteLine("  -> shell only");
+                    Console.WriteLine("  -> shell only");
                 }
             }
         }

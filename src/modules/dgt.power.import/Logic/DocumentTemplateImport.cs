@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -29,22 +30,21 @@ public sealed class DocumentTemplateImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "documenttemplate.json" : args.FileName;
 
 
         if (!configResolver.TryGetConfigFile<DocumentTemplates>(args.FileDir, fileName, out var templates))
         {
-            console.MarkupLine("[red]Document template configuration not found.[/]");
+            Console.MarkupLine("[red]Document template configuration not found.[/]");
             return false;
         }
 
         //anything to do?
         if (templates.Templates.Count == 0)
         {
-            console.MarkupLine("[red]Document template configuration is empty.[/]");
+            Console.MarkupLine("[red]Document template configuration is empty.[/]");
             return false;
         }
 
@@ -59,7 +59,7 @@ public sealed class DocumentTemplateImport(
             select dt).ToList();
 
         //find document template which need to be disabled (missing)
-        console.WriteLine("disable check");
+        Console.WriteLine("disable check");
         foreach (var deleteTemplate in documentTemplates.Where(e =>
                      templates.Templates.All(c => (e.Name, e.DocumentType?.Value) != (c.Name, (int)c.DocumentType))))
         {
@@ -67,7 +67,7 @@ public sealed class DocumentTemplateImport(
         }
 
         //find queues need to be updated
-        console.WriteLine("update check");
+        Console.WriteLine("update check");
         foreach (var updateTemplate in documentTemplates.Where(e =>
                      templates.Templates.Any(c => (e.Name, e.DocumentType?.Value) == (c.Name, (int)c.DocumentType))))
         {
@@ -75,7 +75,7 @@ public sealed class DocumentTemplateImport(
         }
 
         //find bulk deletes which need to be created
-        console.WriteLine("create check");
+        Console.WriteLine("create check");
         foreach (var createTemplate in templates.Templates.Where(e =>
                      documentTemplates.TrueForAll(c => (c.Name, c.DocumentType?.Value) != (e.Name, (int)e.DocumentType))))
         {
@@ -87,9 +87,9 @@ public sealed class DocumentTemplateImport(
 
     private bool CreateTemplate(IOrganizationService service, ImportVerb args, DocumentTemplate createTemplate)
     {
-        console.MarkupLine("[grey]--->[/]");
+        Console.MarkupLine("[grey]--->[/]");
         var name = createTemplate.Name.Trim().Replace(".xlsx", "", StringComparison.Ordinal).Replace(".docx", "", StringComparison.Ordinal);
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create document template: {name}[/]");
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create document template: {name}[/]");
         //create
         var template = new dataverse.DocumentTemplate
         {
@@ -128,17 +128,17 @@ public sealed class DocumentTemplateImport(
 
     private bool DisableTemplate(IOrganizationService service, DocumentTemplates templates, dataverse.DocumentTemplate deleteTemplate)
     {
-        console.MarkupLine("[grey]--->[/]");
+        Console.MarkupLine("[grey]--->[/]");
         var result = true;
         if (!templates.IgnoreMissing ?? false)
         {
             //disable document template
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]disable document template: {deleteTemplate.Name}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]disable document template: {deleteTemplate.Name}[/]");
             result = service.TrySetStateDocumentTemplate(deleteTemplate.ToEntityReference(), Status.Draft);
         }
         else
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]skip not listed document template: {deleteTemplate.Name}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]skip not listed document template: {deleteTemplate.Name}[/]");
         }
 
         return result;
@@ -146,20 +146,20 @@ public sealed class DocumentTemplateImport(
 
     private bool UpdateTemplate(IOrganizationService service, ImportVerb args, DocumentTemplates templates, dataverse.DocumentTemplate updateTemplate)
     {
-        console.MarkupLine("[grey]--->[/]");
+        Console.MarkupLine("[grey]--->[/]");
         var existingTemplate = templates.Templates.Single(e =>
             (updateTemplate.Name, updateTemplate.DocumentType?.Value) == (e.Name, (int)e.DocumentType));
         var currentStatus = updateTemplate.Status.GetValueOrDefault(Status.Draft);
         if (currentStatus != existingTemplate.DocumentStatus && currentStatus == Status.Activated) //disable
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]disable document template: {updateTemplate.Name}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]disable document template: {updateTemplate.Name}[/]");
             return service.TrySetStateDocumentTemplate(updateTemplate.ToEntityReference(), Status.Draft);
         }
 
         var result = true;
         if (existingTemplate.ForceUpdate ?? false)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update document template: {updateTemplate.Name}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update document template: {updateTemplate.Name}[/]");
             //delete old
             result = service.TryDelete(dataverse.DocumentTemplate.EntityLogicalName, updateTemplate.Id);
 
@@ -183,7 +183,7 @@ public sealed class DocumentTemplateImport(
         {
             if (updateTemplate.Description != existingTemplate.Description)
             {
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update document template: {updateTemplate.Name}[/]");
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update document template: {updateTemplate.Name}[/]");
                 var template = new dataverse.DocumentTemplate(updateTemplate.Id)
                 {
                     Description = existingTemplate.Description
@@ -258,7 +258,7 @@ public sealed class DocumentTemplateImport(
                             {
                                 if (capture.Value != replacement)
                                 {
-                                    console.WriteLine($"Replace InnerXml etc: {capture} -> {replacement}");
+                                    Console.WriteLine($"Replace InnerXml etc: {capture} -> {replacement}");
                                     mainDocumentPart.Document.InnerXml =
                                         mainDocumentPart.Document.InnerXml.Replace(capture.Value, replacement, StringComparison.Ordinal);
                                 }
@@ -287,7 +287,7 @@ public sealed class DocumentTemplateImport(
 #pragma warning disable CA1031 // Intentional: log any error before rethrowing to preserve original exception
         catch (Exception e)
         {
-            console.MarkupLine($"[red]{Spectre.Console.Markup.Escape(e.Message)}[/]");
+            Console.MarkupLine($"[red]{Spectre.Console.Markup.Escape(e.Message)}[/]");
             throw;
         }
 #pragma warning restore CA1031
@@ -308,7 +308,7 @@ public sealed class DocumentTemplateImport(
                 {
                     if (capture.Value != replacement)
                     {
-                        console.WriteLine($"Replace '${part.Uri}' etc: {capture} -> {replacement}");
+                        Console.WriteLine($"Replace '${part.Uri}' etc: {capture} -> {replacement}");
                         xml = xml.Replace(capture.Value, replacement, StringComparison.Ordinal);
                         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
                         part.FeedData(stream);
@@ -324,12 +324,12 @@ public sealed class DocumentTemplateImport(
     {
         if (File.Exists(file))
         {
-            console.WriteLine($"Read file {file}");
+            Console.WriteLine($"Read file {file}");
             obj = File.ReadAllBytes(file);
             return true;
         }
 
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]File {file} not found[/]");
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]File {file} not found[/]");
         obj = Array.Empty<byte>();
         return false;
     }

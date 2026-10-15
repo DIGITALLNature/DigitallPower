@@ -20,7 +20,7 @@ public sealed partial class DataverseConnection(
     IAnsiConsole console)
     : IDataverseConnection
 {
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
     private Task<IOrganizationServiceAsync2>? _service;
 
     /// <inheritdoc />

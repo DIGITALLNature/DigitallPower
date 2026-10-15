@@ -39,8 +39,6 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
         return _command.ExecuteAsync(GetCommandContext(), settings,CancellationToken.None).GetAwaiter().GetResult() == 0;
     }
 
-    public ValidationResult Validate(TCommandSettings settings) => _command.Validate(GetCommandContext(), settings);
-
     private static CommandContext GetCommandContext()
     {
         var commandContext = new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "test", null);

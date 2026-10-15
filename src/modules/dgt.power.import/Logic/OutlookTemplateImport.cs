@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Xml.Linq;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -11,7 +10,6 @@ using dgt.power.import.Base;
 using Microsoft.Crm.Sdk;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
@@ -30,14 +28,13 @@ public sealed class OutlookTemplateImport(
 {
     private static readonly TimeSpan s_savedQueryUpdateDelay = TimeSpan.FromSeconds(5);
 
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
 
         if (!configResolver.TryGetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
         {
-            console.MarkupLine("[red]Outlook template configuration not found.[/]");
+            Console.MarkupLine("[red]Outlook template configuration not found.[/]");
             return false;
         }
 
@@ -65,7 +62,7 @@ public sealed class OutlookTemplateImport(
         {
             if (queries.DisabledOutlookTemplates.Contains(savedQuery.Name!) && savedQuery.IsDefault == true)
             {
-                console.WriteLine($"Deactivate OutlookTemplate {savedQuery.Name}");
+                Console.WriteLine($"Deactivate OutlookTemplate {savedQuery.Name}");
                 result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = false
@@ -74,7 +71,7 @@ public sealed class OutlookTemplateImport(
 
             if (!queries.DisabledOutlookTemplates.Contains(savedQuery.Name!) && savedQuery.IsDefault == false)
             {
-                console.WriteLine($"Activate OutlookTemplate {savedQuery.Name}");
+                Console.WriteLine($"Activate OutlookTemplate {savedQuery.Name}");
                 result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = true
@@ -105,7 +102,7 @@ public sealed class OutlookTemplateImport(
         var savedQuery = savedQueries.Find(e => e.Name == outlookTemplate.Name);
         if (savedQuery == null)
         {
-            console.WriteLine($"Create OutlookTemplate {outlookTemplate.Name}");
+            Console.WriteLine($"Create OutlookTemplate {outlookTemplate.Name}");
             result = await orgAsync.TryCreateAsync(new SavedQuery
             {
                 FetchXml = outlookTemplate.FetchXml,
@@ -124,8 +121,8 @@ public sealed class OutlookTemplateImport(
 
             if (!XmlCompare(XElement.Parse(current), XElement.Parse(update)))
             {
-                console.WriteLine($"Update OutlookTemplate {savedQuery.Name}");
-                console.MarkupLine("[yellow]Update OutlookTemplate does not affect existing rule for users![/]");
+                Console.WriteLine($"Update OutlookTemplate {savedQuery.Name}");
+                Console.MarkupLine("[yellow]Update OutlookTemplate does not affect existing rule for users![/]");
                 result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = false
@@ -146,7 +143,7 @@ public sealed class OutlookTemplateImport(
             }
             else
             {
-                console.WriteLine($"Skip OutlookTemplate {savedQuery.Name}");
+                Console.WriteLine($"Skip OutlookTemplate {savedQuery.Name}");
             }
         }
 

@@ -1,12 +1,12 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
 using Spectre.Console;
-using Spectre.Console.Cli;
 
 namespace dgt.power.codegeneration;
 
@@ -19,18 +19,16 @@ public class CodeGenerationCommand(
     IAnsiConsole console)
     : PowerCommand<CodeGenerationVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(CodeGenerationVerb verb, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(verb);
-
-        var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, console);
+        var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, Console);
 
         // The synchronous metadata service reads the connection's cached service; connect before it is used.
         await connection.GetServiceAsync();
 
         var success = true;
 
-        console.Status()
+        Console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", _ =>

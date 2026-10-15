@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
@@ -20,16 +21,15 @@ public sealed class SecureConfigImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "secureconfig.json" : args.FileName;
 
 
         if (!configResolver.TryGetConfigFile<SecureConfig>(args.FileDir, fileName, out var config) &&
             string.IsNullOrWhiteSpace(args.InlineData))
         {
-            console.MarkupLine("[red]Secure config not found.[/]");
+            Console.MarkupLine("[red]Secure config not found.[/]");
             return false;
         }
 
@@ -43,7 +43,7 @@ public sealed class SecureConfigImport(
 
         if (pluginStep == null)
         {
-            console.MarkupLine("[yellow]Can't find PluginStep...[/]");
+            Console.MarkupLine("[yellow]Can't find PluginStep...[/]");
             return false;
         }
 
@@ -64,8 +64,8 @@ public sealed class SecureConfigImport(
                     service.Delete(SdkMessageProcessingStepSecureConfig.EntityLogicalName, secureConfig.Id);
                 }
 
-                console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
-                console.MarkupLine("[red]ERROR: Could not create SecureConfig![/]");
+                Console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
+                Console.MarkupLine("[red]ERROR: Could not create SecureConfig![/]");
                 return false;
             }
         }
@@ -81,12 +81,12 @@ public sealed class SecureConfigImport(
                 try
                 {
                     service.Update(secureConfig);
-                    console.WriteLine("updated SecureConfig!");
+                    Console.WriteLine("updated SecureConfig!");
                 }
                 catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
-                    console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
-                    console.MarkupLine("[red]ERROR: Could not update SecureConfig![/]");
+                    Console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
+                    Console.MarkupLine("[red]ERROR: Could not update SecureConfig![/]");
                     return false;
                 }
             }
@@ -107,6 +107,6 @@ public sealed class SecureConfigImport(
         });
 
 
-        console.WriteLine("created SecureConfig!");
+        Console.WriteLine("created SecureConfig!");
     }
 }

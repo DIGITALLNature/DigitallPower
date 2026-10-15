@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -21,22 +22,21 @@ public sealed class QueueImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "queue.json" : args.FileName;
 
 
         if (!configResolver.TryGetConfigFile<Queues>(args.FileDir, fileName, out var queuesToTransport))
         {
-            console.MarkupLine("[red]Queue configuration not found.[/]");
+            Console.MarkupLine("[red]Queue configuration not found.[/]");
             return false;
         }
 
         //anything to do?
         if (queuesToTransport.QueuesToTransport.Count == 0)
         {
-            console.MarkupLine("[red]Queue configuration is empty.[/]");
+            Console.MarkupLine("[red]Queue configuration is empty.[/]");
             return false;
         }
 
@@ -49,14 +49,14 @@ public sealed class QueueImport(
 
         //TODO: delete vs. deactivate
         //find queues which need to be removed
-        console.WriteLine("delete check");
+        Console.WriteLine("delete check");
         foreach (var deleteQueue in queues.Where(e => queuesToTransport.QueuesToTransport.All(c => e.Id != c.QueueId)))
         {
             DeleteQueue(deleteQueue);
         }
 
         //find queues need to be updated
-        console.WriteLine("update check");
+        Console.WriteLine("update check");
         foreach (var updateQueue in queuesToTransport.QueuesToTransport.Where(c => queues.Exists(e => e.Id == c.QueueId)))
         {
             result = UpdateQueue(service, queues, updateQueue, alternativeOwner) && result;
@@ -64,7 +64,7 @@ public sealed class QueueImport(
 
         //find queues which need to be created
         //create
-        console.WriteLine("create check");
+        Console.WriteLine("create check");
         foreach (var newQueue in queuesToTransport.QueuesToTransport.Where(c => queues.TrueForAll(e => e.Id != c.QueueId)))
         {
             var isCreated = CreateQueue(service, newQueue, out var id);
@@ -85,9 +85,9 @@ public sealed class QueueImport(
 
     private bool CreateQueue(IOrganizationService service, Queue newQueue, out Guid id)
     {
-        console.MarkupLine("[grey]--->[/]");
+        Console.MarkupLine("[grey]--->[/]");
         //create queue
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create queue: {newQueue.Name}[/]");
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create queue: {newQueue.Name}[/]");
         var isCreated = service.TryCreate(new dataverse.Queue(newQueue.QueueId)
         {
             Name = newQueue.Name,
@@ -102,16 +102,15 @@ public sealed class QueueImport(
 
     private void DeleteQueue(dataverse.Queue deleteQueue)
     {
-        console.MarkupLine("[grey]--->[/]");
+        Console.MarkupLine("[grey]--->[/]");
         //delete queue
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]obsolete/unknown queue: {deleteQueue.Name}[/]");
-        // TODO: Why is queue deletion deactivated?
-        //result = XrmWorker.Delete(tracer, service, Model.Queue.EntityLogicalName, deleteQueue.Id, dryRun) & result;
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]obsolete/unknown queue: {deleteQueue.Name}[/]");
+        // Deleting obsolete queues is intentionally deactivated.
     }
 
     private bool UpdateQueue(IOrganizationService service, IEnumerable<dataverse.Queue> queues, Queue updateQueue, SystemUser? alternativeOwner)
     {
-        console.MarkupLine("[grey]--->[/]");
+        Console.MarkupLine("[grey]--->[/]");
         var existingQueue = queues.Single(e => e.Id == updateQueue.QueueId);
 
         //check the owner
@@ -128,12 +127,12 @@ public sealed class QueueImport(
 
         if (unchangedRule)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unchanged queue: {updateQueue.Name}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unchanged queue: {updateQueue.Name}[/]");
         }
         else
         {
             //update queue
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update queue: {updateQueue.Name}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update queue: {updateQueue.Name}[/]");
             result = service.TryUpdate(new dataverse.Queue(existingQueue.Id)
             {
                 Name = updateQueue.Name,

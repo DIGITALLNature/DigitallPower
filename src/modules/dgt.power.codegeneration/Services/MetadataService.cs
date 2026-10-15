@@ -28,7 +28,9 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
 
     // The generators are synchronous. The command acquires the service first (see CodeGenerationCommand),
     // so this resolves from the connection cache and does not block on I/O.
-    private IOrganizationService Service => (IOrganizationService)connection.GetServiceAsync().GetAwaiter().GetResult();
+#pragma warning disable VSTHRD002 // the connection is already established and cached, so this does not block
+    private IOrganizationService Service => connection.GetServiceAsync().GetAwaiter().GetResult();
+#pragma warning restore VSTHRD002
 
 
     public Solution? FetchSolution(string uniqueName) =>

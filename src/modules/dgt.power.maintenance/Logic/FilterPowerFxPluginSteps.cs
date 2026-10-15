@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
@@ -18,10 +19,8 @@ public class FilterPowerFxPluginSteps(
     IAnsiConsole console)
     : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         // Inline arguments are not yet supported so throw error if supplied
         if (!string.IsNullOrWhiteSpace(args.InlineData))
         {
@@ -39,13 +38,13 @@ public class FilterPowerFxPluginSteps(
 
     private bool Run(IOrganizationService service, List<PowerFxPluginsConfig> powerfxpluginConfig)
     {
-        console.Status()
+        Console.Status()
             .Start("Working on PowerFX Plugin Steps...", ctx =>
             {
                 ctx.Spinner(Spinner.Known.Smiley);
                 ctx.SpinnerStyle(Style.Parse("green"));
 
-                console.MarkupLine("Working on PowerFX Plugin Steps...");
+                Console.MarkupLine("Working on PowerFX Plugin Steps...");
                 // Do the actual work
                 foreach (var config in powerfxpluginConfig)
                 {
@@ -61,7 +60,7 @@ public class FilterPowerFxPluginSteps(
 
                     ctx.Status($"Update {config.Name}");
                     service.Update(step);
-                    console.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
+                    Console.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
                 }
 
                 ctx.Status("Finishing");

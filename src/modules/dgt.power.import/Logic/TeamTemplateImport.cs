@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -21,21 +22,20 @@ public sealed class TeamTemplateImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "teamtemplate.json" : args.FileName;
 
         if (!configResolver.TryGetConfigFile<List<TeamTemplate>>(args.FileDir, fileName, out var templates))
         {
-            console.MarkupLine("[red]Team template configuration not found.[/]");
+            Console.MarkupLine("[red]Team template configuration not found.[/]");
             return false;
         }
 
         //anything to do?
         if (templates.Count == 0)
         {
-            console.MarkupLine("[red]Team template configuration is empty.[/]");
+            Console.MarkupLine("[red]Team template configuration is empty.[/]");
             return false;
         }
 
@@ -55,21 +55,21 @@ public sealed class TeamTemplateImport(
             select tt).ToList();
 
         //find templates which need to be removed
-        console.WriteLine("delete check");
+        Console.WriteLine("delete check");
         foreach (var teamTemplate in teamTemplates.Where(e => templates.TrueForAll(c => e.Id != c.TeamTemplateId)))
         {
             result = DeleteTeamTemplate(service, teamTemplate) && result;
         }
 
         //find templates which need to be updated
-        console.WriteLine("update check");
+        Console.WriteLine("update check");
         foreach (var updateTemplate in templates.Where(c => teamTemplates.Exists(e => e.Id == c.TeamTemplateId)))
         {
             result = UpdateTeamTemplate(service, teamTemplates, updateTemplate, entities) && result;
         }
 
         //find templates which need to be created
-        console.WriteLine("create check");
+        Console.WriteLine("create check");
         foreach (var newTemplate in templates.Where(c => teamTemplates.TrueForAll(e => e.Id != c.TeamTemplateId)))
         {
             result = CreateTeamTemplate(service, entities, newTemplate) && result;
@@ -84,18 +84,18 @@ public sealed class TeamTemplateImport(
 
         if (entity?.ObjectTypeCode == null)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unknown template entity: {newTemplate.Entity}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unknown template entity: {newTemplate.Entity}[/]");
             return false;
         }
 
         if (entity.AutoCreateAccessTeams == null)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]access teams not enabled template entity: {newTemplate.Entity}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]access teams not enabled template entity: {newTemplate.Entity}[/]");
             return false;
         }
 
         //create template
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create template: {newTemplate.TeamTemplateName}[/]");
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create template: {newTemplate.TeamTemplateName}[/]");
         return service.TryCreate(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
         {
             TeamTemplateName = newTemplate.TeamTemplateName,
@@ -114,7 +114,7 @@ public sealed class TeamTemplateImport(
 
         if (entity == null)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unknown template entity: {updateTemplate.Entity}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unknown template entity: {updateTemplate.Entity}[/]");
             return false;
         }
 
@@ -123,12 +123,12 @@ public sealed class TeamTemplateImport(
         var result = true;
         if (unchangedRule)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unchanged template: {updateTemplate.TeamTemplateName}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unchanged template: {updateTemplate.TeamTemplateName}[/]");
         }
         else
         {
             //update template
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update template: {updateTemplate.TeamTemplateName}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update template: {updateTemplate.TeamTemplateName}[/]");
             result = service.TryUpdate(new dataverse.TeamTemplate(existingTemplate.Id)
             {
                 TeamTemplateName = updateTemplate.TeamTemplateName,
@@ -145,7 +145,7 @@ public sealed class TeamTemplateImport(
     private bool DeleteTeamTemplate(IOrganizationService service, dataverse.TeamTemplate teamTemplate)
     {
         //delete template
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]delete template: {teamTemplate.TeamTemplateName}[/]");
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]delete template: {teamTemplate.TeamTemplateName}[/]");
         return service.TryDelete(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id);
     }
 

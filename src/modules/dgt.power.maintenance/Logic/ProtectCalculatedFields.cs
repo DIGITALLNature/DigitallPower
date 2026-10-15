@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.maintenance.Base;
 using Microsoft.Xrm.Sdk;
@@ -16,10 +17,8 @@ public sealed class ProtectCalculatedFields(
     IAnsiConsole console)
     : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         var service = (IOrganizationService)await connection.GetServiceAsync();
         return Run(service);
     }
@@ -31,13 +30,13 @@ public sealed class ProtectCalculatedFields(
     {
         var updated = 0;
 
-        console.Status()
+        Console.Status()
             .Start("Retrieve Metadata...", ctx =>
             {
                 ctx.Spinner(Spinner.Known.Smiley);
                 ctx.SpinnerStyle(Style.Parse("green"));
 
-                console.MarkupLine("Retrieve Metadata");
+                Console.MarkupLine("Retrieve Metadata");
 
                 var request = new RetrieveAllEntitiesRequest
                 {
@@ -61,7 +60,7 @@ public sealed class ProtectCalculatedFields(
 
                     if (attributeMetadata.IsCustomizable.Value && attributeMetadata.IsCustomizable.CanBeChanged)
                     {
-                        console.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
+                        Console.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
                         attributeMetadata.IsCustomizable = new BooleanManagedProperty(false);
                         service.Execute(new UpdateAttributeRequest
                         {
@@ -75,7 +74,7 @@ public sealed class ProtectCalculatedFields(
             });
 
 
-        console.MarkupLine($"Protected {updated} fields");
+        Console.MarkupLine($"Protected {updated} fields");
 
 
         return true;

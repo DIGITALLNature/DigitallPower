@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -20,22 +21,21 @@ public class SlaConfigImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
 
         if (!configResolver.TryGetConfigFile<List<SlaConfig>>(args.FileDir, fileName, out var slaConfigs))
         {
-            console.MarkupLine("[red]SLA configuration not found.[/]");
+            Console.MarkupLine("[red]SLA configuration not found.[/]");
             return false;
         }
 
         //anything to do?
         if (slaConfigs.Count == 0)
         {
-            console.MarkupLine("[red]SLA configuration is empty.[/]");
+            Console.MarkupLine("[red]SLA configuration is empty.[/]");
             return false;
         }
 
@@ -47,11 +47,11 @@ public class SlaConfigImport(
         {
             var slaCrm = context.SLASet.SingleOrDefault(s => s.Id == sla.SlaId);
 
-            console.WriteLine($"Check Sla {sla.Name}({sla.SlaId:D})");
+            Console.WriteLine($"Check Sla {sla.Name}({sla.SlaId:D})");
 
             if (slaCrm == null)
             {
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Sla {sla.Name}({sla.SlaId:D}) is not in the system --> skip[/]");
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Sla {sla.Name}({sla.SlaId:D}) is not in the system --> skip[/]");
                 continue;
             }
 
@@ -64,7 +64,7 @@ public class SlaConfigImport(
 
             if (RequiresUpdate(sla, slaCrm, systemuser))
             {
-                console.WriteLine($"Update Sla {sla.Name}({sla.SlaId:D})");
+                Console.WriteLine($"Update Sla {sla.Name}({sla.SlaId:D})");
 
                 if (slaCrm.StatusCode?.Value != SLA.Options.StatusCode.Draft)
                 {

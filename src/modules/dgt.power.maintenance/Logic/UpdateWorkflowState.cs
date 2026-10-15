@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using dgt.power.common;
@@ -26,10 +27,8 @@ public class UpdateWorkflowState(
     private readonly Dictionary<string, SystemUser> _userTable = new();
     private readonly WorkflowStateTracker _workflowStateTracker = new();
 
-    protected override async Task<bool> RunAsync(UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         // Check if required config is available
         if (!configResolver.TryGetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
         {
@@ -44,7 +43,7 @@ public class UpdateWorkflowState(
         // Print table report if requested
         if (args.TableReport)
         {
-            _workflowStateTracker.WriteToConsole(console);
+            _workflowStateTracker.WriteToConsole(Console);
         }
 
         return result;
@@ -64,7 +63,7 @@ public class UpdateWorkflowState(
         IReadOnlyList<string>? solutions,
         IReadOnlyList<string>? publishers)
     {
-        return await console.Progress()
+        return await Console.Progress()
             .StartAsync(async ctx =>
             {
                 Dictionary<string, ProgressTask> progressTasks = new();
@@ -88,16 +87,16 @@ public class UpdateWorkflowState(
                     (IOrganizationServiceAsync2)service,
                     solutions?.ToArray() ?? [],
                     publishers?.ToArray() ?? [],
-                    console,
+                    Console,
                     progress);
 
-                console.WriteLine("Loading all workflows");
+                Console.WriteLine("Loading all workflows");
                 var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
                 _workflowStateTracker.AddWorkflows(workflows);
 
-                console.WriteLine($"Found {workflows.Length} workflows");
+                Console.WriteLine($"Found {workflows.Length} workflows");
 
-                console.WriteLine("Updating workflows");
+                Console.WriteLine("Updating workflows");
 
                 var result = await TryUpdateWorkflowsAsync(service, workflows, workflowConfig, progress);
 
@@ -118,7 +117,7 @@ public class UpdateWorkflowState(
         {
             previousFailures = currentFailures;
             currentFailures = 0;
-            console.WriteLine($"Updating workflows - round {round} ({previousFailures} failures)");
+            Console.WriteLine($"Updating workflows - round {round} ({previousFailures} failures)");
             progress?.Invoke($"Updating workflows - round {round}", $"{currentFailures} failures", 0, previousFailures);
 
             // traverse all workflows that were marked as failures in the last round (initially all are marked as failures)
@@ -133,12 +132,12 @@ public class UpdateWorkflowState(
                 }
                 catch (InvalidDataException e)
                 {
-                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message}[/]");
+                    Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message}[/]");
                     updateResult = true;
                 }
                 catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
-                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message}[/]");
+                    Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message}[/]");
                     updateResult = false;
                 }
 
@@ -155,7 +154,7 @@ public class UpdateWorkflowState(
             }
 
             round++;
-            console.WriteLine($"Updating workflows - round {round} end: current_failures={currentFailures};previous_failures:{previousFailures}");
+            Console.WriteLine($"Updating workflows - round {round} end: current_failures={currentFailures};previous_failures:{previousFailures}");
         } while (currentFailures > 0 && currentFailures < previousFailures);
 
         return currentFailures <= 0;
@@ -166,11 +165,11 @@ public class UpdateWorkflowState(
         var workflowCategory = workflow.Category?.Value;
         if (workflowCategory is null)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to process workflow {workflow.Id} category: <null>[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to process workflow {workflow.Id} category: <null>[/]");
             return false;
         }
 
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Workflow {workflow.Id} (category={workflowCategory}): checking against config[/]");
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Workflow {workflow.Id} (category={workflowCategory}): checking against config[/]");
 
         string workflowName;
         WorkflowBaseConfig? baseWorkflowConfig = null;
@@ -183,8 +182,9 @@ public class UpdateWorkflowState(
                 workflowName = workflow.Name ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflowCategory}) has no name");
                 if (workflowConfig.Flows?.TryGetValue(workflowName, out var flowConfig) == true)
                 {
-                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-                        $"[grey]Workflow {workflow.Id} (category={workflowCategory};name='{workflowName}'): found config entries - disabled={flowConfig.Disabled};owner={flowConfig.Owner};impersonate={flowConfig.Impersonate};[/]");
+                    var configLabel = $"Workflow {workflow.Id} (category={workflowCategory};name='{workflowName}')";
+                    Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+                        $"[grey]{configLabel}: found config entries - disabled={flowConfig.Disabled};owner={flowConfig.Owner};impersonate={flowConfig.Impersonate};[/]");
                     baseWorkflowConfig = flowConfig;
                 }
                 break;
@@ -193,24 +193,26 @@ public class UpdateWorkflowState(
                 workflowName = workflow.UniqueName ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflowCategory}) has no unique name");
                 if (workflowConfig.Actions?.TryGetValue(workflowName, out baseWorkflowConfig) == true)
                 {
-                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-                        $"[grey]Workflow {workflow.Id} (category={workflowCategory};name='{workflowName}'): found config entries - disabled={baseWorkflowConfig.Disabled};owner={baseWorkflowConfig.Owner};[/]");
+                    var configLabel = $"Workflow {workflow.Id} (category={workflowCategory};name='{workflowName}')";
+                    Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+                        $"[grey]{configLabel}: found config entries - disabled={baseWorkflowConfig.Disabled};owner={baseWorkflowConfig.Owner};[/]");
                 }
                 break;
             case Workflow.Options.Category.BusinessRule:
                 workflowName = workflow.Name ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflowCategory};table={workflow.PrimaryEntity}) has no name");
                 if (workflowConfig.BusinessRules?.TryGetValue(workflow.PrimaryEntity!, out var table) == true && table.TryGetValue(workflowName, out baseWorkflowConfig))
                 {
-                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-                        $"[grey]Workflow {workflow.Id} (category={workflowCategory};table={workflow.PrimaryEntity};name='{workflowName}'): found config entries - disabled={baseWorkflowConfig.Disabled};owner={baseWorkflowConfig.Owner};[/]");
+                    var configLabel = $"Workflow {workflow.Id} (category={workflowCategory};table={workflow.PrimaryEntity};name='{workflowName}')";
+                    Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+                        $"[grey]{configLabel}: found config entries - disabled={baseWorkflowConfig.Disabled};owner={baseWorkflowConfig.Owner};[/]");
                 }
                 break;
             default:
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to process workflow {workflow.Id} category: {workflowCategory}[/]");
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to process workflow {workflow.Id} category: {workflowCategory}[/]");
                 return false;
         }
 
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
             $"[grey]Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): collecting desired values[/]");
         var desiredDisabled = baseWorkflowConfig?.Disabled ?? false; // default to enable workflow if nothing is set in config
         var desiredOwnerDomainName = baseWorkflowConfig?.Owner ?? workflowConfig.DefaultOwner; // owner specified on workflow level overrides default (empty string also triggers override)
@@ -229,21 +231,22 @@ public class UpdateWorkflowState(
         var updateNeeded = false;
 
         var currentDisabled = workflow.StateCode?.Value != Workflow.Options.StateCode.Activated;
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
             $"[grey]Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): desired disabled - desired={desiredDisabled};current={currentDisabled};[/]");
 
         var currentOwner = workflow.OwnerId;
         workflow.TryGetAttributeValue<AliasedValue>("owner.domainname", out var currentOwnerDomainNameAliased);
         var currentOwnerDomainName = currentOwnerDomainNameAliased?.Value as string;
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-            $"[grey]Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): desired owner - desired={desiredOwnerDomainName}({desiredOwner?.Id});current={currentOwnerDomainName}'({workflow.OwnerId?.Id});[/]");
+        var workflowLabel = $"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}')";
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+            $"[grey]{workflowLabel}: desired owner - desired={desiredOwnerDomainName}({desiredOwner?.Id});current={currentOwnerDomainName}'({workflow.OwnerId?.Id});[/]");
 
         // if owner needs to be changed we first want to disable the workflow to avoid any issues
         // this is not necessary for modern flows but also does not hurt
         // > additionally this might help to detect issues with connection references
         if (desiredOwner != null && desiredOwner.SystemUserId != currentOwner?.Id && !currentDisabled)
         {
-            console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): disabling workflow for owner update");
+            Console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): disabling workflow for owner update");
             var disableWorkflowRequest = new UpdateRequest
             {
                 Target = new Workflow(workflow.Id)
@@ -268,7 +271,7 @@ public class UpdateWorkflowState(
                 updateWorkflow.StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft);
                 updateNeeded = true;
 
-                console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): marking update - disabled={desiredDisabled}");
+                Console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): marking update - disabled={desiredDisabled}");
                 break;
             // workflow should be enabled but is disabled try activate it
             case false when currentDisabled:
@@ -276,14 +279,14 @@ public class UpdateWorkflowState(
                 updateWorkflow.StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated);
                 updateNeeded = true;
 
-                console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): marking update - disabled={desiredDisabled}");
+                Console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): marking update - disabled={desiredDisabled}");
                 break;
         }
 
         // check if owner needs to be changed and also skip any update if workflow is still active
         if (desiredOwner != null && desiredOwner.SystemUserId != currentOwner?.Id)
         {
-            console.WriteLine(
+            Console.WriteLine(
                 $"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): " +
                 $"chaging owner from {currentOwnerDomainName}'({currentOwner?.Id}) to owner={desiredOwnerDomainName}({desiredOwner.Id})");
             service.Execute(new AssignRequest{ Assignee = desiredOwner.ToEntityReference(), Target = updateWorkflow.ToEntityReference() });
@@ -291,11 +294,11 @@ public class UpdateWorkflowState(
 
         if (!updateNeeded)
         {
-            console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): no update needed");
+            Console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): no update needed");
             return true;
         }
 
-        console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): performing update");
+        Console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): performing update");
         var updateRequest = new UpdateRequest { Target = updateWorkflow };
 
         if (desiredImpersonateUser != null)
@@ -305,13 +308,14 @@ public class UpdateWorkflowState(
             // Check if used service supports impersonation. This should be the case in real scenarios, but might fail with unit tests
             if (callerId == null)
             {
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-                    $"[yellow]Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): Service '{service.GetType().Name}' does not support impersonation. Continuing without[/]");
+                var noImpersonationLabel = $"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}')";
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+                    $"[yellow]{noImpersonationLabel}: Service '{service.GetType().Name}' does not support impersonation. Continuing without[/]");
                 service.Execute(updateRequest);
             }
             else
             {
-                console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
                     $"[grey]Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): Using impersonation of {desiredImpersonateUser.Id}[/]");
 
                 // Store current caller id and restore it since we want to reuse the connection
@@ -342,6 +346,7 @@ public class UpdateWorkflowState(
     /// <summary>
     /// Take a username and look for a systemuser with a corresponding domain name
     /// </summary>
+    /// <param name="service">Organization service to query with</param>
     /// <param name="username">Domain name to look for</param>
     /// <returns>Found user or default object if not found</returns>
     private Task<SystemUser?> ResolveSystemUserAsync(IOrganizationService service, string? username)
@@ -377,7 +382,7 @@ public class UpdateWorkflowState(
         // If we do not find a user return default
         if (user == null)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]No user found for '{username}'[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]No user found for '{username}'[/]");
             return Task.FromResult<SystemUser?>(null);
         }
 

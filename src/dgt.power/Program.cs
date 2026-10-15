@@ -25,7 +25,6 @@ using dgt.power.common.Storage;
 using dgt.power.Completion;
 using dgt.power.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xrm.Sdk;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using OpenTelemetry;

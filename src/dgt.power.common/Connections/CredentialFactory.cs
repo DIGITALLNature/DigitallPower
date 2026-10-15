@@ -41,6 +41,7 @@ public sealed class CredentialFactory(ISecretStore secretStore, IAnsiConsole con
 
     public Task<JsonElement> AuthenticateAsync(
         ConnectionDefinition connection,
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Global
         bool nonInteractive,
         bool allowUnencryptedStorage,
         CancellationToken cancellationToken)

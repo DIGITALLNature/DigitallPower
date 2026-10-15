@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -19,10 +20,8 @@ public sealed class AutoNumberFormatAction(
     IAnsiConsole console)
     : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         //read config
         if (!configResolver.TryGetConfigFile<List<AutoNumberFormat>>(args.Config, out var autoNumberFormats))
         {
@@ -32,7 +31,7 @@ public sealed class AutoNumberFormatAction(
         //anything to do?
         if (autoNumberFormats.Count == 0)
         {
-            console.MarkupLine("[red]Not configured.[/]");
+            Console.MarkupLine("[red]Not configured.[/]");
             return false;
         }
 
@@ -50,7 +49,7 @@ public sealed class AutoNumberFormatAction(
 
     private bool Process(IOrganizationService service, AutoNumberFormat autoNumberFormat)
     {
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
             $"[grey]Check the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field}[/]");
 
         var attributeRequest = new RetrieveAttributeRequest
@@ -68,7 +67,7 @@ public sealed class AutoNumberFormatAction(
             return true;
         }
 
-        console.WriteLine(
+        Console.WriteLine(
             $"Update the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field} from {format} to {autoNumberFormat.Format}");
 
         // Modify the retrieved attribute

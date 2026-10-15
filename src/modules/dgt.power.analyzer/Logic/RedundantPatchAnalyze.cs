@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
@@ -19,18 +20,16 @@ public class RedundantPatchAnalyze(
     IAnsiConsole console)
     : PowerCommand<AnalyzeVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] AnalyzeVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         if (string.IsNullOrWhiteSpace(args.InlineData))
         {
-            console.MarkupLine("[red]--inline requires the unique name of a managed solution.[/]");
+            Console.MarkupLine("[red]--inline requires the unique name of a managed solution.[/]");
             return false;
         }
 
         var service = await connection.GetServiceAsync();
-        return Run(args, (IOrganizationService)service);
+        return Run(args, service);
     }
 
     private bool Run(AnalyzeVerb args, IOrganizationService service)
@@ -48,20 +47,20 @@ public class RedundantPatchAnalyze(
         var solution = SolutionComponentReader.GetSolution(context, args.InlineData);
         if (!solution.IsManaged.GetValueOrDefault(false))
         {
-            console.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
+            Console.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
             return false;
         }
 
         Guid parentSolutionId = solution.Id;
         if (solution.ParentSolutionId != null)
         {
-            console.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
+            Console.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
             parentSolutionId = solution.ParentSolutionId!.Id;
         }
         var patches = GetPatchSolutions(context, parentSolutionId);
 
         var table = new Table();
-        console.Live(Align.Center(table))
+        Console.Live(Align.Center(table))
             .Start(ctx =>
             {
                 table.AddColumn("Solution");

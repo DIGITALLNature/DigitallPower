@@ -9,7 +9,7 @@ namespace dgt.power.export.Base;
 
 internal static class ExportJson
 {
-    private static readonly JsonSerializerOptions Options = new()
+    private static readonly JsonSerializerOptions s_options = new()
     {
         Converters =
         {
@@ -18,5 +18,5 @@ internal static class ExportJson
     };
 
     public static string GetJson(object obj) =>
-        Regex.Unescape(JsonSerializer.Serialize(JsonSerializer.Serialize(obj, Options))).Trim('"');
+        Regex.Unescape(JsonSerializer.Serialize(JsonSerializer.Serialize(obj, s_options))).Trim('"');
 }

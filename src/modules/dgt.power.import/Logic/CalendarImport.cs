@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -19,22 +20,21 @@ public sealed class CalendarImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "calendar.json" : args.FileName;
 
 
         if (!configResolver.TryGetConfigFile<List<dto.Calendar>>(args.FileDir, fileName, out var calendars))
         {
-            console.MarkupLine("[red]Calendar configuration not found.[/]");
+            Console.MarkupLine("[red]Calendar configuration not found.[/]");
             return false;
         }
 
         //anything to do?
         if (calendars.Count == 0)
         {
-            console.MarkupLine("[red]Calendar configuration is empty.[/]");
+            Console.MarkupLine("[red]Calendar configuration is empty.[/]");
             return false;
         }
 
@@ -48,24 +48,24 @@ public sealed class CalendarImport(
 
         foreach (var calendar in calendars.OrderByDescending(c => c.Type))
         {
-            console.WriteLine($"Check {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
+            Console.WriteLine($"Check {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
             var calendarCurrent = context.CalendarSet.SingleOrDefault(c => c.Id == calendar.CalendarId);
 
             if (calendarCurrent == null)
             {
-                console.WriteLine($"Create {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
+                Console.WriteLine($"Create {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = CreateCalendarStructure(calendar, defaultBusinessUnit);
                 result = service.TryCreate(calendarEntity, out _);
             }
             else if (calendar.IsVaryByDay)
             {
-                console.WriteLine($"Skip {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
+                Console.WriteLine($"Skip {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
             }
             else
             {
-                console.WriteLine($"Update {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
+                Console.WriteLine($"Update {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = UpdateCalendarStructure(calendar);
                 result = service.TryUpdate(calendarEntity);

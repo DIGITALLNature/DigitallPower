@@ -18,13 +18,22 @@ public abstract class PowerCommand<TSettings>(ICommandSpanFactory spans, IAnsiCo
     : AsyncCommand<TSettings>
     where TSettings : BaseProgramSettings
 {
-    public sealed override async Task<int> ExecuteAsync(
+    /// <summary>The console the command writes its messages to; the end line goes there as well.</summary>
+    protected IAnsiConsole Console { get; } = console;
+
+    public sealed override Task<int> ExecuteAsync(
         CommandContext context,
         [NotNull] TSettings settings,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(settings);
 
+        return ExecuteCoreAsync(settings, cancellationToken);
+    }
+
+    private async Task<int> ExecuteCoreAsync(TSettings settings, CancellationToken cancellationToken)
+    {
         var stopwatch = Stopwatch.StartNew();
         var success = false;
         using var span = spans.Start(GetType().Name);
@@ -60,6 +69,6 @@ public abstract class PowerCommand<TSettings>(ICommandSpanFactory spans, IAnsiCo
             ? string.Create(CultureInfo.InvariantCulture, $"{duration.TotalMilliseconds:0}ms")
             : string.Create(CultureInfo.InvariantCulture, $"{duration.TotalSeconds:0.0}s");
         var title = $"{symbol} Command {word} in {elapsed}";
-        console.Write(new Rule($"[{color}]{title}[/]") { Justification = Justify.Left });
+        Console.Write(new Rule($"[{color}]{title}[/]") { Justification = Justify.Left });
     }
 }

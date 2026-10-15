@@ -160,7 +160,7 @@ public class PowerCommandTests
 
     private sealed class RemainingArguments : IRemainingArguments
     {
-        public ILookup<string, string?> Parsed { get; } = Array.Empty<string>().ToLookup(x => x, x => (string?)null);
+        public ILookup<string, string?> Parsed { get; } = Array.Empty<string>().ToLookup(_ => string.Empty, _ => (string?)null);
 
         public IReadOnlyList<string> Raw { get; } = [];
     }

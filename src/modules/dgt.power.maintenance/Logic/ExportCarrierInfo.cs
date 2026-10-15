@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -26,9 +27,9 @@ public class ExportCarrierInfo(
     private const string Ec4UCarrierEntityName = "ec4u_carrier";
     private const string DgtCarrierEntityName = "dgt_carrier";
 
-    public static readonly string ValidationErrorMessage = $"Carrier entity '{Ec4UCarrierEntityName}' or  '{DgtCarrierEntityName}' isn't installed in the current environment.";
+    private const string ValidationErrorMessage = $"Carrier entity '{Ec4UCarrierEntityName}' or  '{DgtCarrierEntityName}' isn't installed in the current environment.";
 
-    protected override async Task<bool> RunAsync(CarrierInfoSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] CarrierInfoSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
@@ -52,7 +53,7 @@ public class ExportCarrierInfo(
 
         if (!isSuccessfulDgt && !isSuccessfulOld)
         {
-            console.MarkupLine($"[red]{Markup.Escape(ValidationErrorMessage)}[/]");
+            Console.MarkupLine($"[red]{Markup.Escape(ValidationErrorMessage)}[/]");
             return false;
         }
 
@@ -72,7 +73,7 @@ public class ExportCarrierInfo(
 
         if (carriers.Count == 0)
         {
-            console.MarkupLine("[red]No active carrier[/]");
+            Console.MarkupLine("[red]No active carrier[/]");
             return false;
         }
 
@@ -146,7 +147,7 @@ public class ExportCarrierInfo(
             return true;
         }
 
-        console.MarkupLine($"[yellow]Solution '{carrier.SolutionUniqueName}' has invalid solutionid '{carrier.SolutionId}'[/]");
+        Console.MarkupLine($"[yellow]Solution '{carrier.SolutionUniqueName}' has invalid solutionid '{carrier.SolutionId}'[/]");
         return false;
     }
 
@@ -164,7 +165,7 @@ public class ExportCarrierInfo(
             })
             .SingleOrDefault();
 
-        console.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{solutionId}' not found[/]");
+        Console.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{solutionId}' not found[/]");
 
         return solution;
     }

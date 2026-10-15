@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.dataverse;
@@ -9,7 +10,6 @@ using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.StepManagement;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
@@ -26,17 +26,17 @@ public abstract class PluginStepEnableDisableCommandBase(
     /// <summary>The desired state: <c>true</c> enables the resolved steps, <c>false</c> disables them.</summary>
     protected abstract bool Enable { get; }
 
-    protected override async Task<bool> RunAsync(PluginStepEnableDisableSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] PluginStepEnableDisableSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
         if (settings.DryRun)
         {
-            DryRunBanner.Write(console);
+            DryRunBanner.Write(Console);
         }
 
         var service = await connection.GetServiceAsync();
-        var handler = new PluginStepStateHandler(console, new SdkMessageProcessingStepRepository(service), settings.DryRun);
+        var handler = new PluginStepStateHandler(Console, new SdkMessageProcessingStepRepository(service), settings.DryRun);
 
         if (!string.IsNullOrWhiteSpace(settings.Solution))
         {
@@ -62,7 +62,7 @@ public abstract class PluginStepEnableDisableCommandBase(
 
         if (resolution.Step is null)
         {
-            console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
+            Console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
             return false;
         }
 
@@ -86,7 +86,7 @@ public abstract class PluginStepEnableDisableCommandBase(
             var componentType = await solutions.GetComponentTypeAsync(SdkMessageProcessingStep.EntityLogicalName, cancellationToken);
             if (componentType is null)
             {
-                console.MarkupLine("[red]The solution component type of plugin steps could not be resolved.[/]");
+                Console.MarkupLine("[red]The solution component type of plugin steps could not be resolved.[/]");
                 return false;
             }
 
@@ -95,13 +95,13 @@ public abstract class PluginStepEnableDisableCommandBase(
         }
         catch (MissingSolutionException e)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{e.Message}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{e.Message}[/]");
             return false;
         }
 
         if (steps.Count == 0)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]No plugin steps found in solution '{solutionName}'[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]No plugin steps found in solution '{solutionName}'[/]");
             return true;
         }
 

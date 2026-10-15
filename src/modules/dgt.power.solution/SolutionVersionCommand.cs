@@ -1,11 +1,10 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.solution.Base;
-using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -18,13 +17,13 @@ public class SolutionVersionCommand(
     IAnsiConsole console)
     : PowerCommand<SolutionVersionSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync(SolutionVersionSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] SolutionVersionSettings settings, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(settings);
 
         if (string.IsNullOrWhiteSpace(settings.Solution))
         {
-            console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
+            Console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");
             return false;
         }
 
@@ -43,17 +42,17 @@ public class SolutionVersionCommand(
 
         if (solution == null)
         {
-            console.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
+            Console.MarkupLine($"[red]Solution with unique name '{settings.Solution}' not found[/]");
             return false;
         }
 
         if (!Version.TryParse(solution.Version, out var version))
         {
-            console.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
+            Console.MarkupLine($"[red]Couldn't parse solution version '{solution.Version}'[/]");
             return false;
         }
 
-        console.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
+        Console.MarkupLine($"Retrieved solution [green]{solution.UniqueName}[/] with version [green]{version}[/]");
 
         Version incrementedVersion;
         if (settings.Major)
@@ -74,7 +73,7 @@ public class SolutionVersionCommand(
         }
         else
         {
-            console.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
+            Console.MarkupLine("[red]Invalid version strategy. Try --major,--minor,--build or --revision[/]");
             return false;
         }
 
@@ -82,7 +81,7 @@ public class SolutionVersionCommand(
         {
             Version = incrementedVersion.ToString()
         }, cancellationToken);
-        console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
+        Console.MarkupLine($"Updated solution version [yellow]{version}[/] --> [green]{incrementedVersion}[/]");
 
         return true;
     }

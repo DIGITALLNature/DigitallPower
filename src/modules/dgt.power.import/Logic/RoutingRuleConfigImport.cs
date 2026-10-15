@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -21,22 +22,21 @@ public sealed class RoutingRuleConfigImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
 
         if (!configResolver.TryGetConfigFile<List<RoutingRuleConfig>>(args.FileDir, fileName, out var rules))
         {
-            console.MarkupLine("[red]Routing rule configuration not found.[/]");
+            Console.MarkupLine("[red]Routing rule configuration not found.[/]");
             return false;
         }
 
         //anything to do?
         if (rules.Count == 0)
         {
-            console.MarkupLine("[red]Routing rule configuration is empty.[/]");
+            Console.MarkupLine("[red]Routing rule configuration is empty.[/]");
             return false;
         }
 
@@ -57,13 +57,13 @@ public sealed class RoutingRuleConfigImport(
     {
         var ruleInTarget = context.RoutingRuleSet.SingleOrDefault(rr => rr.Id == rule.RoutingRuleId);
 
-        console.WriteLine($"Check Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
+        Console.WriteLine($"Check Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
         var isDeactivatedToUpdate = false;
 
         if (ruleInTarget == null)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Routing Rule {rule.Name}({rule.RoutingRuleId:D}) does not exist[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Routing Rule {rule.Name}({rule.RoutingRuleId:D}) does not exist[/]");
             return false;
         }
 
@@ -104,7 +104,7 @@ public sealed class RoutingRuleConfigImport(
         if ((isDeactivatedToUpdate && rule.Active) ||
             (rule.Active && ruleInTarget.StatusCode?.Value != RoutingRule.Options.StatusCode.Active))
         {
-            console.WriteLine($"Activate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
+            Console.WriteLine($"Activate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
             result &= service.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Active,
                 RoutingRule.Options.StatusCode.Active);
@@ -112,7 +112,7 @@ public sealed class RoutingRuleConfigImport(
         else if (!isDeactivatedToUpdate && !rule.Active &&
                  ruleInTarget.StatusCode?.Value == RoutingRule.Options.StatusCode.Active)
         {
-            console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
+            Console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
             result &= service.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
                 RoutingRule.Options.StatusCode.Draft);
@@ -130,7 +130,7 @@ public sealed class RoutingRuleConfigImport(
 
         if (ruleItemInTarget == null)
         {
-            console.MarkupLineInterpolated(
+            Console.MarkupLineInterpolated(
                 CultureInfo.InvariantCulture,
                 $"[yellow]Routing Rule  {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) does not exist[/]");
             return false;
@@ -161,7 +161,7 @@ public sealed class RoutingRuleConfigImport(
 
                 if (systemuser == null)
                 {
-                    console.MarkupLineInterpolated(
+                    Console.MarkupLineInterpolated(
                         CultureInfo.InvariantCulture,
                         $"[yellow]Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) for User {item.AssignObjectIdName} does not exist[/]");
                     return result;
@@ -186,7 +186,7 @@ public sealed class RoutingRuleConfigImport(
 
                 if (team == null)
                 {
-                    console.MarkupLineInterpolated(
+                    Console.MarkupLineInterpolated(
                         CultureInfo.InvariantCulture,
                         $"[yellow]Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) for Team {item.AssignObjectIdName} does not exist[/]");
                     return result;
@@ -216,7 +216,7 @@ public sealed class RoutingRuleConfigImport(
 
         if (rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active && !isDeactivatedToUpdate)
         {
-            console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
+            Console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
             result &= service.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
                 RoutingRule.Options.StatusCode.Draft);
@@ -224,7 +224,7 @@ public sealed class RoutingRuleConfigImport(
             isDeactivatedToUpdate = true;
         }
 
-        console.WriteLine(
+        Console.WriteLine(
             $"Update: Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D})");
 
         result &= service.TryUpdate(item);
@@ -246,13 +246,13 @@ public sealed class RoutingRuleConfigImport(
 
         if (ownerSystemUser == null)
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Cannot find Assignee: {owner}[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Cannot find Assignee: {owner}[/]");
             return true;
         }
 
         if (rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active)
         {
-            console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
+            Console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
             result &= service.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
                 RoutingRule.Options.StatusCode.Draft);
@@ -260,7 +260,7 @@ public sealed class RoutingRuleConfigImport(
             isDeactivatedToUpdate = true;
         }
 
-        console.WriteLine($"Assign: {rule.Name}({rule.RoutingRuleId:D}) to {ownerSystemUser.DomainName}");
+        Console.WriteLine($"Assign: {rule.Name}({rule.RoutingRuleId:D}) to {ownerSystemUser.DomainName}");
         result &= service.TryAssign(rule.ToEntityReference(), ownerSystemUser);
         return result;
     }

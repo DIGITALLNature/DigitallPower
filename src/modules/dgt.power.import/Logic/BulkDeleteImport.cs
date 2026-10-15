@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -21,22 +22,21 @@ public sealed class BulkDeleteImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "bulkdelete.json" : args.FileName;
 
 
         if (!configResolver.TryGetConfigFile<BulkDeletes>(args.FileDir, fileName, out var bulkDeletes))
         {
-            console.MarkupLine("[red]Bulk delete configuration not found.[/]");
+            Console.MarkupLine("[red]Bulk delete configuration not found.[/]");
             return false;
         }
 
         //anything to do?
         if (bulkDeletes.Deletes.Count == 0)
         {
-            console.MarkupLine("[red]Bulk delete configuration is empty.[/]");
+            Console.MarkupLine("[red]Bulk delete configuration is empty.[/]");
             return false;
         }
 
@@ -49,10 +49,10 @@ public sealed class BulkDeleteImport(
 
 
         //find bulk deletes which are missing
-        console.WriteLine("missing check");
+        Console.WriteLine("missing check");
         foreach (var missing in operations.Where(e => bulkDeletes.Deletes.TrueForAll(c => e.Name != c.Name)))
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]bulk delete {missing.Name} not configured[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]bulk delete {missing.Name} not configured[/]");
             result = false;
         }
 
@@ -62,21 +62,21 @@ public sealed class BulkDeleteImport(
         }
 
         //find bulk deletes which need to be disabled
-        console.WriteLine("disable check");
+        Console.WriteLine("disable check");
         foreach (var disable in operations.Where(e => bulkDeletes.Deletes.Exists(c => e.Name == c.Name && c.Disable)))
         {
             result = DisableBulkDeleteJobs(service, disable) && result;
         }
 
         //find bulk deletes which need to be updated
-        console.WriteLine("update check");
+        Console.WriteLine("update check");
         foreach (var xupdate in operations.Where(e => bulkDeletes.Deletes.Exists(c => e.Name == c.Name && !c.Disable)))
         {
             result = UpdateBulkDeleteJobs(service, xupdate, bulkDeletes, context, system, techUser) && result;
         }
 
         //find bulk deletes which need to be created
-        console.WriteLine("create check");
+        Console.WriteLine("create check");
         foreach (var create in bulkDeletes.Deletes.Where(e => operations.All(c => e.Name != c.Name)))
         {
             result = DeleteBulkDeleteJobs(service, create) && result;
@@ -119,7 +119,7 @@ public sealed class BulkDeleteImport(
 
         if (string.IsNullOrWhiteSpace(create.FetchXml))
         {
-            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]bulk delete '{create.Name}' has no fetch xml ...[/]");
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]bulk delete '{create.Name}' has no fetch xml ...[/]");
             return false;
         }
 
@@ -142,7 +142,7 @@ public sealed class BulkDeleteImport(
             ToRecipients = [],
             CCRecipients = []
         };
-        console.WriteLine(
+        Console.WriteLine(
             $"create bulk delete '{create.Name}'; StartTime:{create.RecurrenceStartTime}; Pattern:{create.RecurrencePattern}");
         return service.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
             out _);
@@ -158,16 +158,16 @@ public sealed class BulkDeleteImport(
         if (!bulkDelete.RecurrencePattern.Equals(update.RecurrencePattern, StringComparison.Ordinal) ||
             !bulkDelete.RecurrenceStartTime.Equals($"{update.RecurrenceStartTime:HH:mm}", StringComparison.Ordinal))
         {
-            console.WriteLine(
+            Console.WriteLine(
                 $"update bulk delete '{update.Name}'; StartTime:{bulkDelete.RecurrenceStartTime}; Pattern:{bulkDelete.RecurrencePattern}!");
-            console.WriteLine("HINT: update of fetch-xml is neither checked nor supported!");
+            Console.WriteLine("HINT: update of fetch-xml is neither checked nor supported!");
             var startTime = DateTime
                 .ParseExact($"{DateTime.UtcNow.AddDays(1):yyyy-MM-dd} {bulkDelete.RecurrenceStartTime}:00 UTC",
                     "yyyy-MM-dd HH:mm:ss UTC", CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal)
                 .ToUniversalTime();
             if (string.IsNullOrWhiteSpace(update.RecurrencePattern))
             {
-                console.WriteLine("disabled once cannot be reactivated, but copied!");
+                Console.WriteLine("disabled once cannot be reactivated, but copied!");
                 result = CopyBulkDeleteJob(service, update, startTime, bulkDelete.RecurrencePattern);
             }
             else
@@ -191,11 +191,11 @@ public sealed class BulkDeleteImport(
 
         if (update.OwnerId!.Id != system.Id && update.OwnerId.Id != techUser.Id)
         {
-            console.WriteLine($"update bulk delete {update.Name}; new owner: {techUser.FullName}!");
+            Console.WriteLine($"update bulk delete {update.Name}; new owner: {techUser.FullName}!");
 
             if (!string.IsNullOrWhiteSpace(update.RecurrencePattern))
             {
-                console.WriteLine("bulk deletes cannot be assigned, but copied!");
+                Console.WriteLine("bulk deletes cannot be assigned, but copied!");
                 result = service.TryUpdate(new AsyncOperation(update.Id)
                 {
                     RecurrencePattern = "",
@@ -205,7 +205,7 @@ public sealed class BulkDeleteImport(
             }
         }
 
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]bulk delete '{update.Name}' checked![/]");
+        Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]bulk delete '{update.Name}' checked![/]");
         return result;
     }
 
@@ -215,7 +215,7 @@ public sealed class BulkDeleteImport(
         if (!string.IsNullOrEmpty(disable.RecurrencePattern))
         {
             //set to run once, delete afterwards, nice hack
-            console.WriteLine($"disable bulk delete '{disable.Name}'");
+            Console.WriteLine($"disable bulk delete '{disable.Name}'");
             result = service.TryUpdate(new AsyncOperation(disable.Id)
             {
                 RecurrencePattern = "",
@@ -224,7 +224,7 @@ public sealed class BulkDeleteImport(
         }
         else
         {
-            console.WriteLine($"bulk delete '{disable.Name}' already disabled");
+            Console.WriteLine($"bulk delete '{disable.Name}' already disabled");
         }
 
         return result;
@@ -256,8 +256,8 @@ public sealed class BulkDeleteImport(
         if (service.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
                 out _))
         {
-            console.WriteLine($"bulk delete '{bulkDeleteJob.Name}' copied!");
-            console.WriteLine($"delete old bulk delete '{bulkDeleteJob.Name}'!");
+            Console.WriteLine($"bulk delete '{bulkDeleteJob.Name}' copied!");
+            Console.WriteLine($"delete old bulk delete '{bulkDeleteJob.Name}'!");
             if (service.TryRetrieve(AsyncOperation.EntityLogicalName, bulkDeleteJob.Id,
                     new ColumnSet(AsyncOperation.LogicalNames.AsyncOperationId),
                     out AsyncOperation reloaded))
