@@ -14,19 +14,19 @@ Telemetry and diagnostics are the priority; the current shape makes them unrelia
 ## What Changes
 
 - Replace `PowerLogic<T>` and the `Base*` command classes with composition: commands are `AsyncCommand<T>` (or derive from one thin lifecycle base) and receive only the services they use through constructor injection.
-- Introduce a thin lifecycle base class that owns the run: it opens one telemetry span, records success or failure and exceptions on it, prints a quiet start line and an end line (command path, result, duration), and maps the result to an exit code. It carries no services except a span factory (telemetry only) and the console it prints to.
+- Introduce a thin lifecycle base class that owns the run: it opens one telemetry span, records success or failure and exceptions on it, prints a quiet end line (result, duration), and maps the result to an exit code. It carries no services except a span factory (telemetry only) and the console it prints to.
 - Split `ITracer` into a run/span concern and a diagnostics concern (`Log`, `Exception`) that records onto `Activity.Current`. Remove `IPowerLogic` and the `Start<T>/End<T>` generics.
 - Make `IDataverseConnection` the single entry point to Dataverse: rename `ConnectAsync` to `GetServiceAsync`, make it a process-wide singleton that connects on first call and caches the result (safe under concurrent first calls). Remove the eager `IOrganizationService` registration; nothing in DI exposes an organization service directly.
 - Services, repositories and helpers that need Dataverse receive `IDataverseConnection` and resolve the service inside methods. Short-lived helpers created after connecting (for example `LintContext`) continue to take the resolved `IOrganizationServiceAsync2`.
 - Register `IConfigResolver`, `IFileService` and shared export/import/analyze helpers as plain DI services; commands request only what they need.
 - Keep exit code semantics: `0` success, `1` failure, `2` authentication required (via the existing exception path). "Not configured" stays a failure (`1`) and "skipped" stays `0`; they are no longer separate lifecycle outcomes.
-- **BREAKING (internal only):** the abstract signature `InvokeAsync(args, ct)` and the `PowerLogic` constructor contract disappear; all command constructors change. No user-facing break is intended. The class-name start/end rules (`<Class> - Start/End:OK`) are replaced by command-path start and end lines; this is the only intentional output change.
+- **BREAKING (internal only):** the abstract signature `InvokeAsync(args, ct)` and the `PowerLogic` constructor contract disappear; all command constructors change. No user-facing break is intended. The class-name start/end rules (`<Class> - Start/End:OK`) are replaced by a single end line; this is the only intentional output change.
 - Add a developer guideline: constructors and field initializers MUST NOT perform I/O or block on tasks (`GetAwaiter().GetResult()`, `.Result`, `.Wait()`); Dataverse access happens only inside async methods.
 
 ## Capabilities
 
 ### New Capabilities
-- `command-execution`: How a command run is executed and observed: Dataverse connection is acquired on demand rather than at command construction, one telemetry span per run, start and end status lines, and the exit code contract (`0`, `1`, `2`).
+- `command-execution`: How a command run is executed and observed: Dataverse connection is acquired on demand rather than at command construction, one telemetry span per run, an end status line, and the exit code contract (`0`, `1`, `2`).
 
 ### Modified Capabilities
 <!-- None. Existing connection-management requirements (selection precedence, non-interactive exit code 2) are preserved unchanged. -->

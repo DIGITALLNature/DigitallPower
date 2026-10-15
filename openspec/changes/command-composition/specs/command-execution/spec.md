@@ -48,14 +48,14 @@ When telemetry is enabled and not suppressed with `--no-telemetry`, a command ru
 - **WHEN** `--no-telemetry` is passed
 - **THEN** no span is produced
 
-### Requirement: Each run is announced at start and end
+### Requirement: Each run ends with a result line
 
-A traced command run MUST print a start line and an end line that identify the command by the path the user typed and state the result and duration at the end. Telemetry settings MUST NOT affect these lines, and they MUST NOT be mixed into the command's data output.
+A traced command run MUST print an end line that states the result and the duration. Telemetry settings MUST NOT affect this line, and it MUST NOT be mixed into the command's data output.
 
 #### Scenario: Consecutive commands in a script
 
 - **WHEN** two commands run one after another
-- **THEN** each run shows its own start line and an end line with result and duration, so the runs can be told apart in the log
+- **THEN** each run ends with its own line stating result and duration, which separates the runs in the log
 
 #### Scenario: A command fails
 
@@ -65,7 +65,7 @@ A traced command run MUST print a start line and an end line that identify the c
 #### Scenario: A command's output is redirected
 
 - **WHEN** a command's data output is redirected to a file
-- **THEN** the file contains no start or end lines
+- **THEN** the file contains no end line
 
 ### Requirement: Exit code contract
 

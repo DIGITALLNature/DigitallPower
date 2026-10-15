@@ -10,8 +10,8 @@ using Spectre.Console.Cli;
 namespace dgt.power.common;
 
 /// <summary>
-/// Base class of all commands that run as one traced unit: one telemetry span plus one start and one
-/// end line on the console. Subclasses implement <see cref="RunAsync" /> and acquire everything else
+/// Base class of all commands that run as one traced unit: one telemetry span plus one end line
+/// (result and duration) on the console. Subclasses implement <see cref="RunAsync" /> and acquire everything else
 /// themselves.
 /// </summary>
 public abstract class PowerCommand<TSettings>(ICommandSpanFactory spans, IAnsiConsole console)
@@ -27,8 +27,6 @@ public abstract class PowerCommand<TSettings>(ICommandSpanFactory spans, IAnsiCo
 
         var stopwatch = Stopwatch.StartNew();
         var success = false;
-        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]{Emoji.Known.RightArrow}[/] {context.Name}");
-        // The span name is telemetry and keeps the type name; the console label is the command name.
         using var span = spans.Start(GetType().Name);
         try
         {
@@ -43,7 +41,7 @@ public abstract class PowerCommand<TSettings>(ICommandSpanFactory spans, IAnsiCo
         }
         finally
         {
-            WriteEnd(context.Name, success, stopwatch.Elapsed);
+            WriteEnd(success, stopwatch.Elapsed);
         }
     }
 
@@ -53,15 +51,15 @@ public abstract class PowerCommand<TSettings>(ICommandSpanFactory spans, IAnsiCo
     /// </summary>
     protected abstract Task<bool> RunAsync(TSettings settings, CancellationToken cancellationToken);
 
-    private void WriteEnd(string name, bool success, TimeSpan duration)
+    private void WriteEnd(bool success, TimeSpan duration)
     {
         var (symbol, color, word) = success
-            ? (Emoji.Known.CheckMark, "lime", string.Empty)
-            : (Emoji.Known.CrossMark, "red", " failed");
+            ? (Emoji.Known.CheckMark, "lime", "finished")
+            : (Emoji.Known.CrossMark, "red", "failed");
         var elapsed = duration.TotalSeconds < 1
             ? string.Create(CultureInfo.InvariantCulture, $"{duration.TotalMilliseconds:0}ms")
             : string.Create(CultureInfo.InvariantCulture, $"{duration.TotalSeconds:0.0}s");
-        var title = $"{symbol} {Markup.Escape(name)}{word} · {elapsed}";
+        var title = $"{symbol} Command {word} in {elapsed}";
         console.Write(new Rule($"[{color}]{title}[/]") { Justification = Justify.Left });
     }
 }

@@ -35,8 +35,7 @@ public class PowerCommandTests
         await Assert.That(stopped[0].OperationName).IsEqualTo("command.ProbeCommand");
         await Assert.That((bool?)stopped[0].GetTagItem("dgtp.success")).IsTrue();
         await Assert.That(stopped[0].Status).IsEqualTo(ActivityStatusCode.Ok);
-        await Assert.That(console.Output).Contains($"{Emoji.Known.RightArrow} probe");
-        await Assert.That(console.Output).Contains($"{Emoji.Known.CheckMark} probe");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CheckMark} Command finished in");
     }
 
     [Test]
@@ -52,7 +51,7 @@ public class PowerCommandTests
         await Assert.That(stopped).Count().IsEqualTo(1);
         await Assert.That((bool?)stopped[0].GetTagItem("dgtp.success")).IsFalse();
         await Assert.That(stopped[0].Status).IsEqualTo(ActivityStatusCode.Error);
-        await Assert.That(console.Output).Contains($"{Emoji.Known.CrossMark} probe failed");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CrossMark} Command failed in");
     }
 
     [Test]
@@ -68,7 +67,7 @@ public class PowerCommandTests
         await Assert.That(stopped[0].Status).IsEqualTo(ActivityStatusCode.Error);
         await Assert.That(stopped[0].StatusDescription).IsEqualTo("boom");
         await Assert.That(stopped[0].Events.Any(e => e.Name == "exception")).IsTrue();
-        await Assert.That(console.Output).Contains($"{Emoji.Known.CrossMark} probe failed");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CrossMark} Command failed in");
     }
 
     [Test]
@@ -116,7 +115,7 @@ public class PowerCommandTests
 
         await Assert.That(exitCode).IsEqualTo(0);
         await Assert.That(stopped).IsEmpty();
-        await Assert.That(console.Output).Contains($"{Emoji.Known.CheckMark} probe");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CheckMark} Command finished in");
     }
 
     private static (ProbeCommand Command, TestConsole Console) Create(

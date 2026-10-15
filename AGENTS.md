@@ -100,7 +100,7 @@ Qodana runs on every PR. New findings (not in `baseline.sarif.json`) block the m
 
 ### Command Conventions (MANDATORY for command changes)
 
-Commands derive from `PowerCommand<TSettings>` and implement `RunAsync`. The base class owns only the telemetry span and the start/end console lines; everything else is injected explicitly.
+Commands derive from `PowerCommand<TSettings>` and implement `RunAsync`. The base class owns only the telemetry span and the end console line; everything else is injected explicitly.
 
 - Request `IDataverseConnection` in the constructor and acquire the service inside `RunAsync` with `var service = await connection.GetServiceAsync();`, after validation that needs no Dataverse. Commands that never touch Dataverse do not request it, so they never authenticate.
 - Prefer `IOrganizationServiceAsync2` (`ExecuteAsync`, `RetrieveMultipleAsync`) for new code. Existing synchronous code may receive the same instance via `(IOrganizationService)service`; do not rewrite it unrelated to your change.

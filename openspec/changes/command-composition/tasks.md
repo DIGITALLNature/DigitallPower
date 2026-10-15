@@ -1,6 +1,6 @@
 # Tasks
 
-Assumptions: the class-name start/end rules are replaced by command-path status lines (design D2a); `CodeGenerationCommand` is migrated in group 5. Each group lands on `refactor/command-composition` as its own buildable, green commit(s).
+Assumptions: the class-name start/end rules are replaced by a single end status line (design D2a); `CodeGenerationCommand` is migrated in group 5. Each group lands on `refactor/command-composition` as its own buildable, green commit(s).
 
 ## 1. Connection foundation
 
@@ -12,11 +12,11 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 - [x] 2.1 Introduce the span factory and `IDiagnostics` (`Log`, `Exception` recording onto `Activity.Current`), moving telemetry gating from `Tracer` without changing span name or tags, and verify ported `TracerTests` pass for span name, tags (`dgtp.command`, `dgtp.success`), suppression and anonymization
 - [x] 2.2 Add a `CommandAppTester` test that records what `CommandContext.Name` holds for top-level and nested commands; if it is not the full path, attach the path with `WithData` in `CommandTree.Register` and verify the test asserts the path for every registered command
-- [x] 2.3 Print the start line and the left-aligned end `Rule` with result and duration (Spectre `Emoji.Known` symbols, normal console) from the lifecycle base class, with no separate writer class, and verify tests cover success, failure and thrown exception
+- [x] 2.3 Print the left-aligned end `Rule` with result and duration (Spectre `Emoji.Known` symbols, normal console) from the lifecycle base class, with no separate writer class, and verify tests cover success, failure and thrown exception
 - [x] 2.4 Add `PowerCommand<TSettings>` (span via `using`, `RunAsync` returning `Task<bool>` mapped to `0`/`1`, exceptions recorded then rethrown, status lines printed in `finally`) and verify tests cover success, failure, thrown exception and that the span is closed in every case
 - [x] 2.5 Mark exceptions already recorded by a run and skip them in `TrackFatalException`; verify with a test that an escaping exception produces one span and the exception handler still returns `1` or `2`
 - [x] 2.6 Register the new services in `Program.cs` next to the existing `ITracer` (legacy path stays functional) and verify `rtk dotnet test` for `dgt.power.cli.tests` passes
-- [x] 2.7 Update `README.md` for the changed start/end output and verify the README exit code table is unchanged
+- [x] 2.7 Update `README.md` for the changed end-line output and verify the README exit code table is unchanged
 
 ## 3. Migrate modules already close to the target
 
