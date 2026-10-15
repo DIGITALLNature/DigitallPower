@@ -38,7 +38,14 @@ public sealed partial class DataverseConnection(
         }
     }
 
-    public void Dispose() => _gate.Dispose();
+    public void Dispose()
+    {
+        if(_service is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+        _gate.Dispose();
+    }
 
     private async Task<IOrganizationServiceAsync2> ConnectCoreAsync()
     {
