@@ -3,15 +3,15 @@
 
 using System.Diagnostics;
 using dgt.power.common;
-using dgt.power.common.Logic;
 using dgt.power.Telemetry;
+using Spectre.Console;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
 
 namespace dgt.power.cli.tests;
 
 [NotInParallel(nameof(TracerTests))]
-public class TracedCommandTests
+public class PowerCommandTests
 {
     [Before(Test)]
     [After(Test)]
@@ -35,8 +35,8 @@ public class TracedCommandTests
         await Assert.That(stopped[0].OperationName).IsEqualTo("command.ProbeCommand");
         await Assert.That((bool?)stopped[0].GetTagItem("dgtp.success")).IsTrue();
         await Assert.That(stopped[0].Status).IsEqualTo(ActivityStatusCode.Ok);
-        await Assert.That(console.Output).Contains("▶ probe");
-        await Assert.That(console.Output).Contains("✔ probe");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.RightArrow} probe");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CheckMark} probe");
     }
 
     [Test]
@@ -52,7 +52,7 @@ public class TracedCommandTests
         await Assert.That(stopped).Count().IsEqualTo(1);
         await Assert.That((bool?)stopped[0].GetTagItem("dgtp.success")).IsFalse();
         await Assert.That(stopped[0].Status).IsEqualTo(ActivityStatusCode.Error);
-        await Assert.That(console.Output).Contains("✖ probe failed");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CrossMark} probe failed");
     }
 
     [Test]
@@ -68,7 +68,7 @@ public class TracedCommandTests
         await Assert.That(stopped[0].Status).IsEqualTo(ActivityStatusCode.Error);
         await Assert.That(stopped[0].StatusDescription).IsEqualTo("boom");
         await Assert.That(stopped[0].Events.Any(e => e.Name == "exception")).IsTrue();
-        await Assert.That(console.Output).Contains("✖ probe failed");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CrossMark} probe failed");
     }
 
     [Test]
@@ -116,7 +116,7 @@ public class TracedCommandTests
 
         await Assert.That(exitCode).IsEqualTo(0);
         await Assert.That(stopped).IsEmpty();
-        await Assert.That(console.Output).Contains("✔ probe");
+        await Assert.That(console.Output).Contains($"{Emoji.Known.CheckMark} probe");
     }
 
     [Test]
@@ -145,7 +145,7 @@ public class TracedCommandTests
         var console = new TestConsole();
         var command = new ProbeCommand(
             new CommandSpanFactory(state ?? new TelemetryState(true, "id")),
-            new CommandStatusWriter(console),
+            console,
             run);
         return (command, console);
     }
@@ -172,8 +172,8 @@ public class TracedCommandTests
 
     private sealed class ProbeCommand(
         ICommandSpanFactory spans,
-        ICommandStatusWriter status,
-        Func<ProbeSettings, Task<bool>> run) : TracedCommand<ProbeSettings>(spans, status)
+        IAnsiConsole console,
+        Func<ProbeSettings, Task<bool>> run) : PowerCommand<ProbeSettings>(spans, console)
     {
         protected override Task<bool> RunAsync(ProbeSettings settings, CancellationToken cancellationToken) => run(settings);
     }

@@ -12,15 +12,15 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 - [x] 2.1 Introduce the span factory and `IDiagnostics` (`Log`, `Exception` recording onto `Activity.Current`), moving telemetry gating from `Tracer` without changing span name or tags, and verify ported `TracerTests` pass for span name, tags (`dgtp.command`, `dgtp.success`), suppression and anonymization
 - [x] 2.2 Add a `CommandAppTester` test that records what `CommandContext.Name` holds for top-level and nested commands; if it is not the full path, attach the path with `WithData` in `CommandTree.Register` and verify the test asserts the path for every registered command
-- [x] 2.3 Add the status writer (plain start line, left-aligned end `Rule` with result and duration, ASCII fallback, stderr) and verify tests cover success, failure, redirected output and non-Unicode console
-- [x] 2.4 Add `TracedCommand<TSettings>` (span via `using`, `RunAsync` returning `Task<bool>` mapped to `0`/`1`, exceptions recorded then rethrown, status lines printed in `finally`) and verify tests cover success, failure, thrown exception and that the span is closed in every case
+- [x] 2.3 Print the start line and the left-aligned end `Rule` with result and duration (Spectre `Emoji.Known` symbols, normal console) from the lifecycle base class, with no separate writer class, and verify tests cover success, failure and thrown exception
+- [x] 2.4 Add `PowerCommand<TSettings>` (span via `using`, `RunAsync` returning `Task<bool>` mapped to `0`/`1`, exceptions recorded then rethrown, status lines printed in `finally`) and verify tests cover success, failure, thrown exception and that the span is closed in every case
 - [x] 2.5 Mark exceptions already recorded by a run and skip them in `TrackFatalException`; verify with a test that an escaping exception produces one span and the exception handler still returns `1` or `2`
 - [x] 2.6 Register the new services in `Program.cs` next to the existing `ITracer` (legacy path stays functional) and verify `rtk dotnet test` for `dgt.power.cli.tests` passes
 - [ ] 2.7 Update `README.md` for the changed start/end output and verify the README exit code table is unchanged
 
 ## 3. Migrate modules already close to the target
 
-- [ ] 3.1 Migrate solution commands (`SolutionVersion`, `SolutionLint`, `CopyComponents`) to `TracedCommand` with `IDataverseConnection`, removing the casts, and verify `dgt.power.solution.tests` pass
+- [ ] 3.1 Migrate solution commands (`SolutionVersion`, `SolutionLint`, `CopyComponents`) to `PowerCommand` with `IDataverseConnection`, removing the casts, and verify `dgt.power.solution.tests` pass
 - [ ] 3.2 Migrate plugin commands (`PluginPush`, `PluginStep*`) the same way, keeping repositories constructed after connecting, and verify `dgt.power.plugin.tests` pass
 - [ ] 3.3 Migrate `WebResourcePushCommand` and verify `dgt.power.webresource.tests` pass
 - [ ] 3.4 Update `TestConnection`/`TestServiceCollection`/`CommandTestContextBuilder` so migrated commands resolve `IDataverseConnection` only, and verify migrated and not-yet-migrated tests both pass
@@ -35,8 +35,8 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 ## 5. Remove legacy and finish
 
-- [ ] 5.1 Migrate `CodeGenerationCommand` off `IPowerLogic` (async on `TracedCommand`, or an explicit run in a sync path) and verify `dgt.power.codegeneration.tests` pass
-- [ ] 5.2 Delete `PowerLogic`, `IPowerLogic`, the `Base*` classes, the old `ITracer` lifecycle members and the eager `IOrganizationService` registration in `Program.cs`, and verify `rtk dotnet build` has zero warnings-as-errors and no references remain (search)
+- [ ] 5.1 Migrate `CodeGenerationCommand` off `IPowerLogic` (async on `PowerCommand`, or an explicit run in a sync path) and verify `dgt.power.codegeneration.tests` pass
+- [ ] 5.2 Delete `PowerLogic`, `IPowerLogic`, the `Base*` classes, the old `ITracer` lifecycle members and the eager `IOrganizationService` registration in `Program.cs`; the remaining `Tracer` (only `TrackFatalException`) is renamed to a specific name such as `FatalExceptionReporter`; verify `rtk dotnet build` has zero warnings-as-errors and no references remain (search)
 - [ ] 5.3 Update `todo.md` (remove both TODO sections), the `AGENTS.md` async checklist (no `(IOrganizationServiceAsync2)Connection` pattern), the `NoOpCommand` doc comment and `README.md` project structure, and verify no stale references to `PowerLogic` remain in docs
 - [ ] 5.4 Add an ADR under `docs/architecture/decisions/` for composition with a thin lifecycle base and a cached `IDataverseConnection`, link it in the ADR index, and verify the index lists it
 - [ ] 5.5 Run `rtk dotnet test`, `pnpm exec openspec validate --all`, and a manual `dgtp connection list` run showing no authentication attempt; verify all pass and exit codes `0`, `1`, `2` behave as specified

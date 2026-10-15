@@ -106,9 +106,6 @@ registrations.AddSingleton<ITracer>(tracer);
 registrations.AddSingleton(telemetryState);
 registrations.AddSingleton<ICommandSpanFactory, CommandSpanFactory>();
 registrations.AddSingleton<IDiagnostics>(_ => new CommandDiagnostics(telemetryState, appConsole));
-// Status lines go to stderr so redirected data output stays clean.
-registrations.AddSingleton<ICommandStatusWriter>(_ => new CommandStatusWriter(
-    AnsiConsole.Create(new AnsiConsoleSettings { Out = new AnsiConsoleOutput(Console.Error) })));
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
 {

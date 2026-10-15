@@ -3,15 +3,18 @@
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.common;
 
 /// <summary>
-/// Owns the lifecycle of one command run: one telemetry span, one start and one end status line.
-/// Subclasses implement <see cref="RunAsync" /> and acquire everything else themselves.
+/// Base class of all commands that run as one traced unit: one telemetry span plus one start and one
+/// end line on the console. Subclasses implement <see cref="RunAsync" /> and acquire everything else
+/// themselves.
 /// </summary>
-public abstract class TracedCommand<TSettings>(ICommandSpanFactory spans, ICommandStatusWriter status)
+public abstract class PowerCommand<TSettings>(ICommandSpanFactory spans, IAnsiConsole console)
     : AsyncCommand<TSettings>
     where TSettings : BaseProgramSettings
 {
@@ -24,8 +27,8 @@ public abstract class TracedCommand<TSettings>(ICommandSpanFactory spans, IComma
 
         var stopwatch = Stopwatch.StartNew();
         var success = false;
-        status.WriteStart(context.Name);
-        // The span name is telemetry and keeps the type name; the console label is the command path.
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]{Emoji.Known.RightArrow}[/] {context.Name}");
+        // The span name is telemetry and keeps the type name; the console label is the command name.
         using var span = spans.Start(GetType().Name);
         try
         {
@@ -40,7 +43,7 @@ public abstract class TracedCommand<TSettings>(ICommandSpanFactory spans, IComma
         }
         finally
         {
-            status.WriteEnd(context.Name, success, stopwatch.Elapsed);
+            WriteEnd(context.Name, success, stopwatch.Elapsed);
         }
     }
 
@@ -49,4 +52,16 @@ public abstract class TracedCommand<TSettings>(ICommandSpanFactory spans, IComma
     /// Throw for unexpected failures; <c>InteractiveLoginRequiredException</c> maps to exit code 2.
     /// </summary>
     protected abstract Task<bool> RunAsync(TSettings settings, CancellationToken cancellationToken);
+
+    private void WriteEnd(string name, bool success, TimeSpan duration)
+    {
+        var (symbol, color, word) = success
+            ? (Emoji.Known.CheckMark, "lime", string.Empty)
+            : (Emoji.Known.CrossMark, "red", " failed");
+        var elapsed = duration.TotalSeconds < 1
+            ? string.Create(CultureInfo.InvariantCulture, $"{duration.TotalMilliseconds:0}ms")
+            : string.Create(CultureInfo.InvariantCulture, $"{duration.TotalSeconds:0.0}s");
+        var title = $"{symbol} {Markup.Escape(name)}{word} · {elapsed}";
+        console.Write(new Rule($"[{color}]{title}[/]") { Justification = Justify.Left });
+    }
 }

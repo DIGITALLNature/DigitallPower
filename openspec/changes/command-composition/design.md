@@ -29,7 +29,7 @@ See proposal.md for motivation. Current state relevant to the approach:
 
 Commands are plain `AsyncCommand<T>` classes with primary-constructor dependencies. `PowerLogic`, `BaseMaintenance`, `BaseImport`, `BaseExport`, `BaseAnalyze` and `IPowerLogic` are removed. Helpers formerly in the bases become injected services (for example an export writer for JSON/file output, a solution-component reader), created when their first command is migrated.
 
-One abstract class `TracedCommand<TSettings>` remains, because it enforces an invariant that composition cannot: every run starts and ends exactly once.
+One abstract class `PowerCommand<TSettings>` remains, because it enforces an invariant that composition cannot: every run starts and ends exactly once.
 
 ```csharp
 public sealed override async Task<int> ExecuteAsync(CommandContext ctx, TSettings settings, CancellationToken ct)
@@ -56,19 +56,19 @@ public sealed override async Task<int> ExecuteAsync(CommandContext ctx, TSetting
 }
 ```
 
-`RunAsync` returns `Task<bool>`, matching today's `InvokeAsync`, which keeps the migration mechanical. The base holds no services other than the span factory and the status writer, which are independent collaborators: the span factory never touches the console and the status writer never touches `Activity`. There is no `NotConfigured`/`Skipped` outcome; commands print why they failed or did nothing, and the result is success or failure.
+`RunAsync` returns `Task<bool>`, matching today's `InvokeAsync`, which keeps the migration mechanical. The base holds no services other than the span factory and the console it prints its start and end lines to. The span factory never touches the console and the status lines never touch `Activity`. There is no `NotConfigured`/`Skipped` outcome; commands print why they failed or did nothing, and the result is success or failure.
 
 Alternatives considered:
 - *Spectre interceptor*: works for every command, but `InterceptResult` only sees an integer exit code and is not invoked when the command throws. Rejected as the primary mechanism.
 - *Explicit calls in each command* (status quo): keeps the leak and forgotten-`End` risk.
 - *Two-tier `PowerLogic` / `DataverseLogic`*: no consumer today; commands without Dataverse already skip `PowerLogic`.
 
-Commands that need no span (`connection/*`, `Complete*`) stay plain `AsyncCommand<T>`. They may adopt `TracedCommand` later.
+Commands that need no span (`connection/*`, `Complete*`) stay plain `AsyncCommand<T>`. They may adopt `PowerCommand` later.
 
 ### D2. Split `ITracer`
 
 - **Span** (`ICommandSpanFactory` or similar): the only code that starts an `Activity`, owns telemetry gating (`--no-telemetry`, install id) and sets `dgtp.command` and `dgtp.success`. The telemetry structure is deliberately unchanged: span name stays `command.<TypeName>` and no new tags are added.
-- **Status writer** (`ICommandStatusWriter` or similar): the only code that prints the run's start and end lines; see D2a. Telemetry and console output are separate concerns and share nothing but the result.
+- **Status lines**: printed by `PowerCommand` itself to its console, see D2a. Output is the command's responsibility, so there is no separate writer class. Telemetry and console output are separate concerns and share nothing but the result.
 - **Diagnostics** (`IDiagnostics`: `Log`, `Exception`): records onto `Activity.Current` instead of a field, so it follows async context. `ConfigResolver` and other services depend on it.
 - `TrackFatalException` stays for exceptions that escape before or outside a run. The lifecycle base marks an exception as already recorded (for example via `Exception.Data`) so the global handler does not create a second span for it.
 
@@ -79,15 +79,15 @@ Alternative considered: keep `ITracer` as is and only drop the marker. Rejected 
 Scripts often run several `dgtp` commands in a row, so each run is announced, but quietly:
 
 ```
-▶ solution lint
+➡ solution lint
 … command output …
-── ✔ solution lint · 3.2s ───────────────────────────────
+── ✅ solution lint · 3.2s ───────────────────────────────
 ```
 
-- The start is a plain line. The end is a left-aligned Spectre `Rule` that separates consecutive commands in a log: green with `✔` on success, red with `✖` and `failed` on failure, plus the duration. It replaces today's `<ClassName> - Start` and `<ClassName> - End:OK|ERROR` rules.
-- The label is the command path as the user typed it, not the class name, so renaming a class never changes output. First attempt: `CommandContext.Name`. It is documented only as "the name of the command" and is believed to hold the leaf (`lint`) rather than the full path; a test over `CommandAppTester` records what it holds for nested commands. If it is insufficient, the fallback is attaching the full path at registration with `WithData` (rejected as the first choice because it must be maintained per command).
-- Symbols have an ASCII fallback (`>`, `OK`, `FAIL`) when the console profile has no Unicode support. The line must stay readable without colour.
-- Default stream is stderr so redirected data output (`dgtp ... > out.json`) stays clean. This and the wording are expected to be iterated on; they are not a long-term contract beyond "each run is announced at start and end with result and duration".
+- The start is a plain line. The end is a left-aligned Spectre `Rule` that separates consecutive commands in a log: green with `Emoji.Known.CheckMark` on success, red with `Emoji.Known.CrossMark` and `failed` on failure, plus the duration. It replaces today's `<ClassName> - Start` and `<ClassName> - End:OK|ERROR` rules.
+- The label is the command name as registered, not the class name, so renaming a class never changes output. Task 2.2 verified that `CommandContext.Name` holds only the leaf name; see Open Questions.
+- Symbols are Spectre's known emojis (`Emoji.Known`), as in the newer modules. There is no ASCII fallback.
+- Lines go to the command's normal console (stdout); no separate stderr console. The wording is expected to be iterated on; it is not a long-term contract beyond "each run is announced at start and end with result and duration".
 - Only the lifecycle base prints these lines. Commands never print them.
 - Alternatives considered: `Status`/`Progress`/`Live` (interactive terminals only, clash with command output), `Panel` (three extra lines and a border), a single end line only (the start is useful for long-running commands), a figlet banner (too many lines for scripted use; branding, if wanted, belongs in the no-argument/help path).
 
@@ -125,7 +125,7 @@ Commands return `0` or `1` (or throw). The global exception handler keeps mappin
 
 `PowerLogic` subclasses and composed commands are both Spectre commands, so they coexist. Order:
 
-1. Foundation: `IDataverseConnection` rename/caching, run/diagnostics types, `TracedCommand`, test doubles. `Program.cs` keeps the eager registration only until the last `PowerLogic` subclass moves.
+1. Foundation: `IDataverseConnection` rename/caching, run/diagnostics types, `PowerCommand`, test doubles. `Program.cs` keeps the eager registration only until the last `PowerLogic` subclass moves.
 2. Modules already close to the target: solution, plugin, webresource.
 3. Maintenance, analyze, export, import (introducing injected helpers replacing `Base*`).
 4. Delete `PowerLogic`, `IPowerLogic`, the eager registration and obsolete tests; update docs.
@@ -149,6 +149,6 @@ Implement on `refactor/command-composition` in per-module commits that each buil
 
 ## Open Questions
 
-- Exact appearance, stream (default stderr) and an opt-out (`--quiet`/`DGTP_QUIET`) of the status lines; to be iterated after first use.
+- Exact appearance and an opt-out (`--quiet`/`DGTP_QUIET`) of the status lines; to be iterated after first use.
 - The status line label: task 2.2 verified that `CommandContext.Name` is the leaf name only (`set` for `plugin step config set`), pinned by `CommandContextNameTests`. For now the leaf name is used knowingly as an interim label. Candidates for the final solution: a required display name/label on the lifecycle base class (every command must provide one), or deriving the path from the command tree registration; `WithData` per command and process-args parsing were rejected as first choices.
-- Whether `CodeGenerationCommand` (sync `Command<T>`, calls `Tracer` and implements `IPowerLogic`) becomes async on `TracedCommand` or keeps a sync path that opens a run explicitly; either way it must stop using `IPowerLogic` before step 4.
+- Whether `CodeGenerationCommand` (sync `Command<T>`, calls `Tracer` and implements `IPowerLogic`) becomes async on `PowerCommand` or keeps a sync path that opens a run explicitly; either way it must stop using `IPowerLogic` before step 4.
