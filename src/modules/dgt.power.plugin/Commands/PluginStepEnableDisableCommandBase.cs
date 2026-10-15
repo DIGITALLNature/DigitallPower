@@ -23,8 +23,6 @@ public abstract class PluginStepEnableDisableCommandBase(
     IAnsiConsole console)
     : PowerCommand<PluginStepEnableDisableSettings>(spans, console)
 {
-    private readonly IAnsiConsole _console = console;
-
     /// <summary>The desired state: <c>true</c> enables the resolved steps, <c>false</c> disables them.</summary>
     protected abstract bool Enable { get; }
 
@@ -34,11 +32,11 @@ public abstract class PluginStepEnableDisableCommandBase(
 
         if (settings.DryRun)
         {
-            PluginStepStateHandler.WriteDryRunBanner(_console);
+            PluginStepStateHandler.WriteDryRunBanner(console);
         }
 
         var service = await connection.GetServiceAsync();
-        var handler = new PluginStepStateHandler(_console, new SdkMessageProcessingStepRepository(service), settings.DryRun);
+        var handler = new PluginStepStateHandler(console, new SdkMessageProcessingStepRepository(service), settings.DryRun);
 
         if (!string.IsNullOrWhiteSpace(settings.Solution))
         {
@@ -64,7 +62,7 @@ public abstract class PluginStepEnableDisableCommandBase(
 
         if (resolution.Step is null)
         {
-            _console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
+            console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
             return false;
         }
 
@@ -88,7 +86,7 @@ public abstract class PluginStepEnableDisableCommandBase(
             var componentType = await solutions.GetComponentTypeAsync(SdkMessageProcessingStep.EntityLogicalName, cancellationToken);
             if (componentType is null)
             {
-                _console.MarkupLine("[red]The solution component type of plugin steps could not be resolved.[/]");
+                console.MarkupLine("[red]The solution component type of plugin steps could not be resolved.[/]");
                 return false;
             }
 
@@ -97,13 +95,13 @@ public abstract class PluginStepEnableDisableCommandBase(
         }
         catch (MissingSolutionException e)
         {
-            _console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{e.Message}[/]");
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{e.Message}[/]");
             return false;
         }
 
         if (steps.Count == 0)
         {
-            _console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]No plugin steps found in solution '{solutionName}'[/]");
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]No plugin steps found in solution '{solutionName}'[/]");
             return true;
         }
 
