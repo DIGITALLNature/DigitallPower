@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using dgt.power.common;
@@ -40,10 +39,8 @@ public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsV
         }
     }
 
-    protected override async Task<bool> RunAsync([NotNull] RemoveRedundantComponentsVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(RemoveRedundantComponentsVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-
         var service = (IOrganizationService)await _connection.GetServiceAsync();
         return Run(service, args);
     }

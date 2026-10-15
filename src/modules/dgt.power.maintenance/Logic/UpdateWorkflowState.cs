@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using dgt.power.common;
@@ -27,7 +26,7 @@ public class UpdateWorkflowState(
     private readonly Dictionary<string, SystemUser> _userTable = new();
     private readonly WorkflowStateTracker _workflowStateTracker = new();
 
-    protected override async Task<bool> RunAsync([NotNull] UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
     {
         // Check if required config is available
         if (!configResolver.TryGetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))

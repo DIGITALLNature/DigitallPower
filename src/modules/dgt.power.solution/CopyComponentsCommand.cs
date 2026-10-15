@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using dgt.power.common;
 using dgt.power.dataverse;
@@ -23,10 +22,8 @@ public class CopyComponentsCommand(
 {
     private const int PageSize = 5000;
 
-    protected override async Task<bool> RunAsync([NotNull] CopyComponentsSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(CopyComponentsSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         if (string.IsNullOrWhiteSpace(settings.Target))
         {
             Console.MarkupLine("[red]Invalid or empty target solution name[/]");

@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.Json;
 using dgt.power.common;
@@ -20,7 +19,7 @@ public sealed class SolutionLintCommand(
     IAnsiConsole console)
     : PowerCommand<SolutionLintSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] SolutionLintSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(SolutionLintSettings args, CancellationToken cancellationToken)
     {
         if (args.UpdateBaseline && string.IsNullOrWhiteSpace(args.Baseline))
         {

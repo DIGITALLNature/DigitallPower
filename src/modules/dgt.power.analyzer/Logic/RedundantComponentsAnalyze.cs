@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using dgt.power.analyzer.Base;
@@ -26,7 +25,7 @@ public sealed class RedundantComponentsAnalyze(
 {
     private const int PageSize = 5000;
 
-    protected override async Task<bool> RunAsync([NotNull] AnalyzeVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(args.InlineData))
         {

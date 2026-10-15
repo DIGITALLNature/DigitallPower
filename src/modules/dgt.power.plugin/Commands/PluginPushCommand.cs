@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common.Extensions;
 using dgt.power.common;
@@ -20,10 +19,8 @@ namespace dgt.power.plugin.Commands;
 public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console)
     : PowerCommand<PluginPushSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] PluginPushSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginPushSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         if (settings.DryRun)
         {
             DryRunBanner.Write(Console);

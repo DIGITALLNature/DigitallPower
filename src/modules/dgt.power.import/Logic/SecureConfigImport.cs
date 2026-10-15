@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
@@ -21,7 +20,7 @@ public sealed class SecureConfigImport(
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "secureconfig.json" : args.FileName;
 

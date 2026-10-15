@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.solution.Base;
@@ -17,10 +16,8 @@ public class SolutionVersionCommand(
     IAnsiConsole console)
     : PowerCommand<SolutionVersionSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] SolutionVersionSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(SolutionVersionSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         if (string.IsNullOrWhiteSpace(settings.Solution))
         {
             Console.MarkupLine($"[red]Invalid or empty solution name '{settings.Solution}'[/]");

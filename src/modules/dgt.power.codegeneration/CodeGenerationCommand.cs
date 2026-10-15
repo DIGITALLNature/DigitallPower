@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
@@ -19,7 +18,7 @@ public class CodeGenerationCommand(
     IAnsiConsole console)
     : PowerCommand<CodeGenerationVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] CodeGenerationVerb verb, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
         var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, Console);
 

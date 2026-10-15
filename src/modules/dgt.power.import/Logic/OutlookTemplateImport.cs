@@ -28,7 +28,7 @@ public sealed class OutlookTemplateImport(
 {
     private static readonly TimeSpan s_savedQueryUpdateDelay = TimeSpan.FromSeconds(5);
 
-    protected override async Task<bool> RunAsync([NotNull] ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
 

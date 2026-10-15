@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.dataverse;
@@ -26,10 +25,8 @@ public abstract class PluginStepEnableDisableCommandBase(
     /// <summary>The desired state: <c>true</c> enables the resolved steps, <c>false</c> disables them.</summary>
     protected abstract bool Enable { get; }
 
-    protected override async Task<bool> RunAsync([NotNull] PluginStepEnableDisableSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginStepEnableDisableSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         if (settings.DryRun)
         {
             DryRunBanner.Write(Console);

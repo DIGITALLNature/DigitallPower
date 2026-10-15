@@ -78,15 +78,8 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
 
     private static async Task<bool> Fails(Task task)
     {
-        try
-        {
-            await task;
-            return false;
-        }
-        catch (MissingConnectionException)
-        {
-            return true;
-        }
+        await Task.WhenAny(task);
+        return task.IsFaulted && task.Exception.InnerException is MissingConnectionException;
     }
 
     [Test]

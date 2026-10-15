@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -23,7 +22,7 @@ public sealed class UserRoleExport(
     IAnsiConsole console)
     : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] ExportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
         var service = (IOrganizationService)await connection.GetServiceAsync();
         var fileDir = args.FileDir;

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.maintenance.Base;
 using Microsoft.Xrm.Sdk;
@@ -17,7 +16,7 @@ public sealed class ProtectCalculatedFields(
     IAnsiConsole console)
     : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] MaintenanceVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
     {
         var service = (IOrganizationService)await connection.GetServiceAsync();
         return Run(service);

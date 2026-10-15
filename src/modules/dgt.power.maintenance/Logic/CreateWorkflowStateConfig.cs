@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -25,7 +24,7 @@ public class CreateWorkflowStateConfig(
     private readonly JsonSerializerOptions _jsonSerializerOptions = new(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     private readonly WorkflowStateTracker _workflowStateTracker = new();
 
-    protected override async Task<bool> RunAsync([NotNull] CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
     {
         var solutions = args.Solutions?.Split(',');
         var publishers = args.Publishers?.Split(',');

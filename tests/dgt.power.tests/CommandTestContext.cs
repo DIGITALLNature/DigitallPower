@@ -7,7 +7,6 @@ using dgt.power.dataverse;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.tests;

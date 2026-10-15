@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.webresource.Execution;
 using dgt.power.webresource.Local;
@@ -16,10 +15,8 @@ namespace dgt.power.webresource.Commands;
 public sealed class WebResourcePushCommand(ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console)
     : PowerCommand<WebResourcePushSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] WebResourcePushSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(WebResourcePushSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         if (settings.DryRun)
         {
             DryRunBanner.Write(Console);

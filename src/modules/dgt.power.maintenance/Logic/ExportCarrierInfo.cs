@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -29,10 +28,8 @@ public class ExportCarrierInfo(
 
     private const string ValidationErrorMessage = $"Carrier entity '{Ec4UCarrierEntityName}' or  '{DgtCarrierEntityName}' isn't installed in the current environment.";
 
-    protected override async Task<bool> RunAsync([NotNull] CarrierInfoSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(CarrierInfoSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         var service = (IOrganizationService)await connection.GetServiceAsync();
         return Run(service, settings);
     }

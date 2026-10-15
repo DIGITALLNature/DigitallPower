@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common.Extensions;
 using dgt.power.common;
 using dgt.power.plugin.Repositories;
@@ -18,10 +17,8 @@ public class PluginStepStateSetCommand(
     IAnsiConsole console)
     : PowerCommand<PluginStepStateSetSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] PluginStepStateSetSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginStepStateSetSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         if (!configResolver.TryGetConfigFile<PluginStepStateConfigRoot>(settings.Config, out var config))
         {
             Console.MarkupLine("[red]Failed to load or parse config file.[/]");

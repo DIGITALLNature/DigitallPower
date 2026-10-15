@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
@@ -20,7 +19,7 @@ public sealed class AutoNumberFormatAction(
     IAnsiConsole console)
     : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] MaintenanceVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
     {
         //read config
         if (!configResolver.TryGetConfigFile<List<AutoNumberFormat>>(args.Config, out var autoNumberFormats))

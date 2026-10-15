@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics.CodeAnalysis;
 using dgt.power.common;
 using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
@@ -16,10 +15,8 @@ public class PluginStepConfigSetCommand(
     IAnsiConsole console)
     : PowerCommand<PluginStepConfigSetSettings>(spans, console)
 {
-    protected override async Task<bool> RunAsync([NotNull] PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-
         // Read file contents if specified
         var unsecureValue = settings.UnsecureConfig;
         if (settings.UnsecureConfigFile != null)
