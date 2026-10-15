@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
@@ -16,21 +16,15 @@ using Spectre.Console;
 namespace dgt.power.export.Logic;
 
 public sealed class UserRoleExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
-
+        var service = (IOrganizationService)await connection.GetServiceAsync();
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
@@ -46,15 +40,15 @@ public sealed class UserRoleExport(
             }
         }
 
-        if (!GetQueryExpression(Tracer, Connection, filter, out var query))
+        if (!GetQueryExpression(Console, service, filter, out var query))
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
-        var json = GetJson(GetUsers(Connection, query!.Criteria, separator));
+        var json = ExportJson.GetJson(GetUsers(service, query!.Criteria, separator));
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
-        return Tracer.End(this, true);
+        Console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
+        return true;
     }
 
     private static List<UserRole> GetUsers(IOrganizationService service, FilterExpression filter, string separator)
@@ -161,7 +155,7 @@ public sealed class UserRoleExport(
         where T : class =>
         entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : null;
 
-    private static bool GetQueryExpression(ITracer tracer, IOrganizationService service, string filter, out QueryExpression? query)
+    private static bool GetQueryExpression(IAnsiConsole console, IOrganizationService service, string filter, out QueryExpression? query)
     {
         var fetchXml = string.Empty;
         query = null;
@@ -185,7 +179,7 @@ public sealed class UserRoleExport(
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            tracer.Log($"Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}", TraceEventType.Error);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}[/]");
             return false;
         }
     }

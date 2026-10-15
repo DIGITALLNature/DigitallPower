@@ -143,16 +143,16 @@ public class ActiveLayerAnalyzeTest : AnalyzeTestsBase<ActiveLayerAnalyze>
             })).IsTrue();
 
         var output = TestConsole.Output;
-        await Assert.That(output).StartsWith("── solution unique name: customizations ──");
-        await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-summary.json"))).IsTrue();
-        await Assert.That(File.Exists(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-result.csv"))).IsTrue();
+        await Assert.That(output).Contains("── solution unique name: customizations ──");
+        await Assert.That(File.Exists(Path.Combine(AnalyzeResultWriter.ResultFolder, "ActiveLayer-summary.json"))).IsTrue();
+        await Assert.That(File.Exists(Path.Combine(AnalyzeResultWriter.ResultFolder, "ActiveLayer-result.csv"))).IsTrue();
 
         // Check Summary
-        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(await File.ReadAllBytesAsync(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-summary.json")));
+        var summary = JsonSerializer.Deserialize<AnalyzerSummary>(await File.ReadAllBytesAsync(Path.Combine(AnalyzeResultWriter.ResultFolder, "ActiveLayer-summary.json")));
         await Assert.That(summary.Anomalies).IsEqualTo(1);
 
         // Check Result
-        using var reader = new StreamReader(Path.Combine(BaseAnalyze.ResultFolder, "ActiveLayer-result.csv"));
+        using var reader = new StreamReader(Path.Combine(AnalyzeResultWriter.ResultFolder, "ActiveLayer-result.csv"));
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
         var results = csv.GetRecords<ActiveLayerLine>().ToArray();
         await Assert.That(results.Length).IsEqualTo(1);

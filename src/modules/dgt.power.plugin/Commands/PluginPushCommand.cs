@@ -11,59 +11,48 @@ using dgt.power.plugin.Deployment.Planning.Plans;
 using dgt.power.plugin.Deployment.Planning;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PluginPushCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console)
-    : PowerLogic<PluginPushSettings>(tracer, connection, configResolver, console)
+public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console)
+    : PowerCommand<PluginPushSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(PluginPushSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginPushSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(PluginPushSettings settings, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
-
         if (settings.DryRun)
         {
-            Console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
-            {
-                Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
-            });
+            DryRunBanner.Write(Console);
         }
 
         var targets = ResolveTargets(settings.Target);
         if (targets is null)
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (targets.Count == 0)
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[yellow]No plugin assemblies (*.dll) or packages (*.nupkg) found in '{0}'[/]", settings.Target);
-            return Tracer.End(this, true);
+            return true;
         }
 
         if (targets.Exists(target => target.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrWhiteSpace(settings.PublisherPrefix))
         {
             Console.MarkupLine("[red]--publisher-prefix is required when processing a plugin package (.nupkg)[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         var options = new PluginPushOptions(settings.Solution, settings.DryRun, settings.PublisherPrefix, settings.Confirm, settings.NonInteractive);
+        var service = await connection.GetServiceAsync();
 
         var hadFailure = false;
         foreach (var target in targets)
         {
             try
             {
-                if (!await ProcessTargetAsync(target, options, cancellationToken))
+                if (!await ProcessTargetAsync(service, target, options, cancellationToken))
                 {
                     hadFailure = true;
                 }
@@ -75,14 +64,13 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
             }
         }
 
-        return Tracer.End(this, !hadFailure);
+        return !hadFailure;
     }
 
     internal static bool ShouldContinueAfterTargetFailure(Exception exception) => exception is not OutOfMemoryException and not StackOverflowException and not OperationCanceledException;
 
-    private async Task<bool> ProcessTargetAsync(string target, PluginPushOptions options, CancellationToken cancellationToken)
+    private async Task<bool> ProcessTargetAsync(IOrganizationServiceAsync2 service, string target, PluginPushOptions options, CancellationToken cancellationToken)
     {
-        var service = (IOrganizationServiceAsync2)Connection;
         var assemblyRepository = new PluginAssemblyRepository(service);
         var packageRepository = new PluginPackageRepository(service);
         var solutionRepository = new SolutionComponentRepository(service);
@@ -130,7 +118,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
         var assembly = new AssemblyReflectionReader(Console).Read(fullTargetPath, loadContext);
         if (assembly is null)
         {
-            Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
+                    Console.MarkupLine("[red]Failed to read assembly - aborting[/]");
             return false;
         }
 
@@ -156,7 +144,7 @@ public class PluginPushCommand(ITracer tracer, IOrganizationService connection, 
 
         if (PluginPushConfirmation.ShouldPrompt(options.Confirm, options.NonInteractive, ExecutionEnvironment.IsCiAgent) && plan.HasChanges() && !PluginPushConfirmation.Confirm(Console, targetName))
         {
-            Console.MarkupLine("[yellow]Deployment cancelled.[/]");
+                    Console.MarkupLine("[yellow]Deployment cancelled.[/]");
             return;
         }
 

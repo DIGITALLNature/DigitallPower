@@ -7,4 +7,4 @@ using dgt.power.tests;
 
 namespace dgt.power.export.tests.Base;
 
-public abstract class ExportTestBase<TCommand> : CommandTestsBase<TCommand, ExportVerb> where TCommand : PowerLogic<ExportVerb>;
+public abstract class ExportTestBase<TCommand> : CommandTestsBase<TCommand, ExportVerb> where TCommand : PowerCommand<ExportVerb>;

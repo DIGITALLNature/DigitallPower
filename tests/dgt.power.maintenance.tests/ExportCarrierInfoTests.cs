@@ -27,7 +27,7 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
     }
 
     [Test]
-    public async Task ShouldFailValidationOnNotExistingCarrierEntity()
+    public async Task ShouldFailOnNotExistingCarrierEntity()
     {
         // Arrange
         var context = GetBuilder()
@@ -37,22 +37,8 @@ public class ExportCarrierInfoTests : CommandTestsBase<ExportCarrierInfo, Carrie
             }) // don't load earlybound metadata.
             .Build();
 
-        // Act
-        var validationResult = context.Validate(new CarrierInfoSettings());
-
-        // Assert
-        await Assert.That(validationResult.Successful).IsFalse();
-        await Assert.That(validationResult.Message).IsEqualTo(ExportCarrierInfo.ValidationErrorMessage);
-    }
-
-    [Test]
-    public async Task ShouldSucceedValidation()
-    {
-        var context = GetContext();
-
-        var validationResult = context.Validate(new CarrierInfoSettings());
-
-        await Assert.That(validationResult.Successful).IsTrue();
+        // Act & Assert
+        await context.Execute(new CarrierInfoSettings()).Fail();
     }
 
     [Test]

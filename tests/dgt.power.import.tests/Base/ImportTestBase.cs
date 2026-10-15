@@ -8,4 +8,4 @@ using dgt.power.tests;
 namespace dgt.power.import.tests.Base;
 
 public abstract class ImportTestBase<TCommand> : CommandTestsBase<TCommand, ImportVerb>
-    where TCommand : PowerLogic<ImportVerb>;
+    where TCommand : PowerCommand<ImportVerb>;

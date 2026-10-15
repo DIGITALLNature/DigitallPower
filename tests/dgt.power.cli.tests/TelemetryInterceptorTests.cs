@@ -7,20 +7,20 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.cli.tests;
 
-[NotInParallel(nameof(TracerTests))]
+[NotInParallel(nameof(PowerCommandTests))]
 public class TelemetryInterceptorTests
 {
     [Before(Test)]
     public Task ResetSuppression()
     {
-        Tracer.SuppressForInvocation = false;
+        TelemetryState.SuppressForInvocation = false;
         return Task.CompletedTask;
     }
 
     [After(Test)]
     public Task CleanupSuppression()
     {
-        Tracer.SuppressForInvocation = false;
+        TelemetryState.SuppressForInvocation = false;
         return Task.CompletedTask;
     }
 
@@ -34,7 +34,7 @@ public class TelemetryInterceptorTests
 
         interceptor.Intercept(context, settings);
 
-        await Assert.That(Tracer.SuppressForInvocation).IsTrue();
+        await Assert.That(TelemetryState.SuppressForInvocation).IsTrue();
         await Assert.That(initialized).IsFalse();
     }
 
@@ -48,7 +48,7 @@ public class TelemetryInterceptorTests
 
         interceptor.Intercept(context, settings);
 
-        await Assert.That(Tracer.SuppressForInvocation).IsFalse();
+        await Assert.That(TelemetryState.SuppressForInvocation).IsFalse();
         await Assert.That(initialized).IsTrue();
     }
 
@@ -61,7 +61,7 @@ public class TelemetryInterceptorTests
 
         interceptor.Intercept(context, settings);
 
-        await Assert.That(Tracer.SuppressForInvocation).IsFalse();
+        await Assert.That(TelemetryState.SuppressForInvocation).IsFalse();
     }
 
     private static CommandContext CreateCommandContext()

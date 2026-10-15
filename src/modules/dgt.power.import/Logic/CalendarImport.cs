@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -14,67 +13,65 @@ using CalendarRule = dgt.power.dataverse.CalendarRule;
 namespace dgt.power.import.Logic;
 
 public sealed class CalendarImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "calendar.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<List<dto.Calendar>>(args.FileDir, fileName, out var calendars))
+        if (!configResolver.TryGetConfigFile<List<dto.Calendar>>(args.FileDir, fileName, out var calendars))
         {
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[red]Calendar configuration not found.[/]");
+            return false;
         }
 
         //anything to do?
         if (calendars.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[red]Calendar configuration is empty.[/]");
+            return false;
         }
 
         var result = true;
 
-        using var context = new DataContext(Connection);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service);
 
         var defaultBusinessUnit = context.BusinessUnitSet.SingleOrDefault(bu => bu.ParentBusinessUnitId == null)
             ?.ToEntityReference();
 
         foreach (var calendar in calendars.OrderByDescending(c => c.Type))
         {
-            Tracer.Log($"Check {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+            Console.WriteLine($"Check {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
             var calendarCurrent = context.CalendarSet.SingleOrDefault(c => c.Id == calendar.CalendarId);
 
             if (calendarCurrent == null)
             {
-                Tracer.Log($"Create {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+                Console.WriteLine($"Create {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = CreateCalendarStructure(calendar, defaultBusinessUnit);
-                result = Connection.TryCreate(calendarEntity, out _);
+                result = service.TryCreate(calendarEntity, out _);
             }
             else if (calendar.IsVaryByDay)
             {
-                Tracer.Log($"Skip {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+                Console.WriteLine($"Skip {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
             }
             else
             {
-                Tracer.Log($"Update {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+                Console.WriteLine($"Update {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = UpdateCalendarStructure(calendar);
-                result = Connection.TryUpdate(calendarEntity);
+                result = service.TryUpdate(calendarEntity);
             }
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
     private static Calendar UpdateCalendarStructure(dto.Calendar calendar)

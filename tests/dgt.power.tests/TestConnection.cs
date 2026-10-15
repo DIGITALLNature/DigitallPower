@@ -9,7 +9,7 @@ namespace dgt.power.tests;
 
 public class TestConnection(IOrganizationServiceAsync2 service) : IDataverseConnection
 {
-    public Task<IOrganizationServiceAsync2> ConnectAsync()
+    public Task<IOrganizationServiceAsync2> GetServiceAsync()
     {
         var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
         Console.WriteLine($"WhoAmI: [bold]{userId:D}[/]");

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
@@ -15,39 +14,36 @@ using Spectre.Console;
 namespace dgt.power.import.Logic;
 
 public sealed class SecureConfigImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "secureconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<SecureConfig>(args.FileDir, fileName, out var config) &&
+        if (!configResolver.TryGetConfigFile<SecureConfig>(args.FileDir, fileName, out var config) &&
             string.IsNullOrWhiteSpace(args.InlineData))
         {
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[red]Secure config not found.[/]");
+            return false;
         }
 
         var data = config.Data ?? args.InlineData;
 
-        using var context = new DataContext(Connection);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service);
         var pluginStep = (from ps in context.SdkMessageProcessingStepSet
             where ps.Name == config.PluginStep
             select ps).SingleOrDefault();
 
         if (pluginStep == null)
         {
-            Tracer.Log("Can't find PluginStep...", TraceEventType.Warning);
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[yellow]Can't find PluginStep...[/]");
+            return false;
         }
 
         SdkMessageProcessingStepSecureConfig secureConfig;
@@ -58,23 +54,23 @@ public sealed class SecureConfigImport(
             var created = false;
             try
             {
-                CreateSecureConfig(secureConfig, pluginStep, out created);
+                CreateSecureConfig(service, secureConfig, pluginStep, out created);
             }
             catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
             {
                 if (created)
                 {
-                    Connection.Delete(SdkMessageProcessingStepSecureConfig.EntityLogicalName, secureConfig.Id);
+                    service.Delete(SdkMessageProcessingStepSecureConfig.EntityLogicalName, secureConfig.Id);
                 }
 
-                Tracer.Log(e.Message, TraceEventType.Error);
-                Tracer.Log("ERROR: Could not create SecureConfig!", TraceEventType.Error);
-                return Tracer.End(this, false);
+                Console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
+                Console.MarkupLine("[red]ERROR: Could not create SecureConfig![/]");
+                return false;
             }
         }
         else if (pluginStep.SdkMessageProcessingStepSecureConfigId != null)
         {
-            secureConfig = Connection.Retrieve(
+            secureConfig = service.Retrieve(
                 pluginStep.SdkMessageProcessingStepSecureConfigId.LogicalName,
                 pluginStep.SdkMessageProcessingStepSecureConfigId.Id,
                 new ColumnSet(true)).ToEntity<SdkMessageProcessingStepSecureConfig>();
@@ -83,32 +79,33 @@ public sealed class SecureConfigImport(
                 secureConfig.SecureConfig = data;
                 try
                 {
-                    Connection.Update(secureConfig);
-                    Tracer.Log("updated SecureConfig!", TraceEventType.Information);
+                    service.Update(secureConfig);
+                    Console.WriteLine("updated SecureConfig!");
                 }
                 catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
-                    Tracer.Log(e.Message, TraceEventType.Error);
-                    Tracer.Log("ERROR: Could not update SecureConfig!", TraceEventType.Error);
-                    return Tracer.End(this, false);
+                    Console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
+                    Console.MarkupLine("[red]ERROR: Could not update SecureConfig![/]");
+                    return false;
                 }
             }
         }
 
-        return Tracer.End(this, true);
+        return true;
     }
 
-    private void CreateSecureConfig(SdkMessageProcessingStepSecureConfig secureConfig, SdkMessageProcessingStep pluginStep, out bool created)
+    private void CreateSecureConfig(IOrganizationService service, SdkMessageProcessingStepSecureConfig secureConfig, SdkMessageProcessingStep pluginStep,
+        out bool created)
     {
         created = false;
-        secureConfig.Id = Connection.Create(secureConfig);
+        secureConfig.Id = service.Create(secureConfig);
         created = true;
-        Connection.Update(new SdkMessageProcessingStep(pluginStep.Id)
+        service.Update(new SdkMessageProcessingStep(pluginStep.Id)
         {
             SdkMessageProcessingStepSecureConfigId = secureConfig.ToEntityReference()
         });
 
 
-        Tracer.Log("created SecureConfig!", TraceEventType.Information);
+        Console.WriteLine("created SecureConfig!");
     }
 }

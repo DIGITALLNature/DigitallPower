@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common.Connections;
+using dgt.power.common.Exceptions;
 using dgt.power.common.Logic;
 using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
@@ -22,7 +23,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
             ClientId = "client",
             ServiceConnectionId = "service-connection"
         });
-        var connection = new DataverseConnection(
+        using var connection = new DataverseConnection(
             ConnectionStore,
             new CredentialFactory(SecretStore, TestConsole),
             new ConnectionInvocationContext(),
@@ -39,6 +40,25 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
         {
             Environment.SetEnvironmentVariable("SYSTEM_ACCESSTOKEN", original);
         }
+    }
+
+    [Test]
+    public async Task GetServiceAsync_FailedConnect_IsNotCachedAndRetries()
+    {
+        var invocationContext = new ConnectionInvocationContext();
+        using var connection = new DataverseConnection(
+            ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole),
+            invocationContext,
+            TestConsole);
+
+        await Assert.That(connection.GetServiceAsync()).Throws<MissingConnectionException>()
+            .WithMessageContaining("No connection is selected");
+
+        invocationContext.Capture(new ConnectionSettings { Connection = "Missing" });
+
+        await Assert.That(connection.GetServiceAsync()).Throws<MissingConnectionException>()
+            .WithMessageContaining("'Missing' was not found");
     }
 
     [Test]

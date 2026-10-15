@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using dgt.power;
+using dgt.power.analyzer.Base;
 using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services;
@@ -24,7 +25,6 @@ using dgt.power.common.Storage;
 using dgt.power.Completion;
 using dgt.power.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Xrm.Sdk;
 using NuGet.Protocol;
 using NuGet.Protocol.Core.Types;
 using OpenTelemetry;
@@ -32,7 +32,6 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using Tracer = dgt.power.Tracer;
 
 // ── SUGGEST MODE: early exit before any I/O, telemetry or network calls ──────
 // dotnet-suggest invokes the app as: dgtp [suggest:<position>] "<command-line>"
@@ -59,7 +58,8 @@ registrations.AddSingleton<VersionCheckInterceptor>();
 registrations.AddSingleton<DeprecationInterceptor>();
 
 // Telemetry setup
-var tracer = new Tracer(console: appConsole);
+var telemetryState = new TelemetryState();
+var fatalExceptions = new FatalExceptionReporter(telemetryState);
 TracerProvider? tracerProvider = null;
 void FlushAndDisposeTelemetryProvider()
 {
@@ -98,22 +98,23 @@ void InitializeTelemetry()
             .Build();
     }
 
-    tracer.EnableTelemetry(installId);
+    telemetryState.Enable(installId);
 }
 
-registrations.AddSingleton<ITracer>(tracer);
+registrations.AddSingleton(telemetryState);
+registrations.AddSingleton<ICommandSpanFactory, CommandSpanFactory>();
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
 {
     if (e.ExceptionObject is Exception ex)
     {
-        tracer.TrackFatalException(ex);
+        fatalExceptions.Report(ex);
     }
 };
 
 EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler = (_, e) =>
 {
-    tracer.TrackFatalException(e.Exception);
+    fatalExceptions.Report(e.Exception);
     e.SetObserved();
 };
 
@@ -148,9 +149,9 @@ registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
 registrations.AddScoped<ITypeScriptGenerator, TypeScriptGenerator>();
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<IFileService, FileService>();
+registrations.AddSingleton<SolutionComponentReader>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();
-registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IDataverseConnection>().ConnectAsync().GetAwaiter().GetResult());
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
@@ -170,7 +171,7 @@ app.Configure(config =>
 
     config.SetExceptionHandler((exception, _) =>
     {
-        tracer.TrackFatalException(exception);
+        fatalExceptions.Report(exception);
         var inner = exception.IsDerivedFrom<AbstractPowerException>()
             ? exception.GetInnerException<AbstractPowerException>()
             : null;

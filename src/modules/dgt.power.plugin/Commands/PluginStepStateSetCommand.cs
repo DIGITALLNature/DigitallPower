@@ -5,48 +5,39 @@ using dgt.power.common.Extensions;
 using dgt.power.common;
 using dgt.power.plugin.Repositories;
 using dgt.power.plugin.StepManagement;
-using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class PluginStepStateSetCommand(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : PowerLogic<PluginStepStateSetSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<PluginStepStateSetSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(PluginStepStateSetSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginStepStateSetSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(PluginStepStateSetSettings settings, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
-
-        if (!ConfigResolver.TryGetConfigFile<PluginStepStateConfigRoot>(settings.Config, out var config))
+        if (!configResolver.TryGetConfigFile<PluginStepStateConfigRoot>(settings.Config, out var config))
         {
             Console.MarkupLine("[red]Failed to load or parse config file.[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (config.Steps is not { Count: > 0 })
         {
             Console.MarkupLine("[yellow]No steps defined in config file.[/]");
-            return Tracer.End(this, true);
+            return true;
         }
 
         if (settings.DryRun)
         {
-            PluginStepStateHandler.WriteDryRunBanner(Console);
+            DryRunBanner.Write(Console);
         }
 
-        var handler = new PluginStepStateHandler(Console, new SdkMessageProcessingStepRepository((IOrganizationServiceAsync2)Connection), settings.DryRun);
+        var service = await connection.GetServiceAsync();
+        var handler = new PluginStepStateHandler(Console, new SdkMessageProcessingStepRepository(service), settings.DryRun);
 
         for (var index = 0; index < config.Steps.Count; index++)
         {
@@ -55,7 +46,7 @@ public class PluginStepStateSetCommand(
         }
 
         handler.PrintSummary();
-        return Tracer.End(this, handler.FailedCount == 0);
+        return handler.FailedCount == 0;
     }
 
     private static async Task ProcessEntryAsync(PluginStepStateHandler handler,     PluginStepStateConfig? entry, int position, CancellationToken cancellationToken)

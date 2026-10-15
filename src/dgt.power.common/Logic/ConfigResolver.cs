@@ -1,16 +1,17 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.Caching;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-public class ConfigResolver(ITracer tracer) : IConfigResolver
+public class ConfigResolver(IAnsiConsole console) : IConfigResolver
 {
     private readonly JsonSerializerOptions _options = new()
     {
@@ -33,13 +34,13 @@ public class ConfigResolver(ITracer tracer) : IConfigResolver
 
         try
         {
-            tracer.Log($"Read {file} ", TraceEventType.Information);
+            console.WriteLine($"Read {file}");
             obj = JsonSerializer.Deserialize<T>(File.ReadAllText(file, Encoding.UTF8), _options) ?? throw new InvalidOperationException();
             return true;
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            tracer.Log(e.Message, TraceEventType.Error);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{e.Message}[/]");
             obj = new T();
             return false;
         }

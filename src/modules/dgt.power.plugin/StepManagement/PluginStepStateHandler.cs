@@ -21,16 +21,6 @@ internal sealed class PluginStepStateHandler(IAnsiConsole console, SdkMessagePro
     private int UnchangedCount { get; set; }
     public int FailedCount { get; private set; }
 
-    public static void WriteDryRunBanner(IAnsiConsole console)
-    {
-        ArgumentNullException.ThrowIfNull(console);
-
-        console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
-        {
-            Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
-        });
-    }
-
     public Task<PluginStepResolution> ResolveAsync(PluginStepSelector selector, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(selector);

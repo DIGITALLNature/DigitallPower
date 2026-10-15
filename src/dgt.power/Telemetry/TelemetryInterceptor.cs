@@ -15,7 +15,7 @@ internal sealed class TelemetryInterceptor(Action? initialize = null) : ICommand
     {
         if (settings is BaseProgramSettings { NoTelemetry: true })
         {
-            Tracer.SuppressForInvocation = true;
+            TelemetryState.SuppressForInvocation = true;
             return;
         }
 

@@ -4,30 +4,19 @@
 using dgt.power.common;
 using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
-using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class PluginStepConfigSetCommand(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IAnsiConsole console)
-    : PowerLogic<PluginStepConfigSetSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<PluginStepConfigSetSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(PluginStepConfigSetSettings settings, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
-
         // Read file contents if specified
         var unsecureValue = settings.UnsecureConfig;
         if (settings.UnsecureConfigFile != null)
@@ -41,7 +30,7 @@ public class PluginStepConfigSetCommand(
             secureValue = await File.ReadAllTextAsync(settings.SecureConfigFile.FullName, cancellationToken);
         }
 
-        var service = (IOrganizationServiceAsync2)Connection;
+        var service = await connection.GetServiceAsync();
 
         // Create repositories
         var stepRepository = new SdkMessageProcessingStepRepository(service);
@@ -68,10 +57,10 @@ public class PluginStepConfigSetCommand(
             {
                 case 0:
                     Console.MarkupLine("[red]No plugin step matches the supplied criteria.[/]");
-                    return Tracer.End(this, false);
+                    return false;
                 case > 1:
                     PrintMultipleMatches(matches);
-                    return Tracer.End(this, false);
+                    return false;
                 default:
                     stepId = matches[0].Id;
                     break;
@@ -90,7 +79,7 @@ public class PluginStepConfigSetCommand(
             Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Updated secure configuration");
         }
 
-        return Tracer.End(this, true);
+        return true;
     }
 
     private void PrintMultipleMatches(IReadOnlyList<RemotePluginStep> matches)

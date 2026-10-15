@@ -7,13 +7,12 @@ using dgt.power.dataverse;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace dgt.power.tests;
 
 /// <summary>
-/// This context can be used to test <see cref="PowerLogic{TConfig}"/> commands and is build with <see cref="CommandTestContextBuilder{TCommand,TCommandSettings}"/>
+/// This context can be used to test <see cref="PowerCommand{TSettings}"/> commands and is build with <see cref="CommandTestContextBuilder{TCommand,TCommandSettings}"/>
 /// </summary>
 /// <typeparam name="TCommand"></typeparam>
 /// <typeparam name="TCommandSettings"></typeparam>
@@ -38,8 +37,6 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
         // Intentional sync-over-async: test infrastructure requires a synchronous entry point
         return _command.ExecuteAsync(GetCommandContext(), settings,CancellationToken.None).GetAwaiter().GetResult() == 0;
     }
-
-    public ValidationResult Validate(TCommandSettings settings) => _command.Validate(GetCommandContext(), settings);
 
     private static CommandContext GetCommandContext()
     {
