@@ -13,7 +13,7 @@ using Spectre.Console.Cli;
 namespace dgt.power.tests;
 
 /// <summary>
-/// This context can be used to test <see cref="PowerLogic{TConfig}"/> commands and is build with <see cref="CommandTestContextBuilder{TCommand,TCommandSettings}"/>
+/// This context can be used to test <see cref="PowerCommand{TSettings}"/> commands and is build with <see cref="CommandTestContextBuilder{TCommand,TCommandSettings}"/>
 /// </summary>
 /// <typeparam name="TCommand"></typeparam>
 /// <typeparam name="TCommandSettings"></typeparam>

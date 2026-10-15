@@ -35,8 +35,8 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 ## 5. Remove legacy and finish
 
-- [ ] 5.1 Migrate `CodeGenerationCommand` off `IPowerLogic` (async on `PowerCommand`, or an explicit run in a sync path) and verify `dgt.power.codegeneration.tests` pass
-- [ ] 5.2 Delete `PowerLogic`, `IPowerLogic`, the `Base*` classes, the old `ITracer` lifecycle members and the eager `IOrganizationService` registration in `Program.cs`; the remaining `Tracer` (only `TrackFatalException`) is renamed to a specific name such as `FatalExceptionReporter`; verify `rtk dotnet build` has zero warnings-as-errors and no references remain (search)
+- [x] 5.1 Migrate `CodeGenerationCommand` off `IPowerLogic` (async on `PowerCommand`, or an explicit run in a sync path) and verify `dgt.power.codegeneration.tests` pass
+- [x] 5.2 Delete `PowerLogic`, `IPowerLogic`, the `Base*` classes, the old `ITracer` lifecycle members and the eager `IOrganizationService` registration in `Program.cs`; the remaining `Tracer` (only `TrackFatalException`) is renamed to a specific name such as `FatalExceptionReporter`; verify `rtk dotnet build` has zero warnings-as-errors and no references remain (search)
 - [ ] 5.3 Update `todo.md` (remove both TODO sections), the `AGENTS.md` async checklist (no `(IOrganizationServiceAsync2)Connection` pattern), the `NoOpCommand` doc comment and `README.md` project structure, and verify no stale references to `PowerLogic` remain in docs
 - [ ] 5.4 Add an ADR under `docs/architecture/decisions/` for composition with a thin lifecycle base and a cached `IDataverseConnection`, link it in the ADR index, and verify the index lists it
 - [ ] 5.5 Run `rtk dotnet test`, `pnpm exec openspec validate --all`, and a manual `dgtp connection list` run showing no authentication attempt; verify all pass and exit codes `0`, `1`, `2` behave as specified

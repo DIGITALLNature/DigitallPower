@@ -11,19 +11,22 @@ using Spectre.Console.Cli;
 namespace dgt.power.codegeneration;
 
 public class CodeGenerationCommand(
-    ITracer tracer,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IDotNetGenerator dotNetGenerator,
     ITypeScriptGenerator typeScriptGenerator,
     IMetadataService metadataService,
     IAnsiConsole console)
-    : Command<CodeGenerationVerb>, IPowerLogic
+    : PowerCommand<CodeGenerationVerb>(spans, console)
 {
-    public override int Execute(CommandContext context, CodeGenerationVerb verb, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(verb);
-        tracer.Start(this);
 
         var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, console);
+
+        // The synchronous metadata service reads the connection's cached service; connect before it is used.
+        await connection.GetServiceAsync();
 
         var success = true;
 
@@ -41,7 +44,7 @@ public class CodeGenerationCommand(
                 }
             );
 
-        return tracer.End(this, success) ? 0 : -1;
+        return success;
     }
 
     private bool ExecuteV2(CodeGenerationVerb verb, CodeGenerationConfigBase config)

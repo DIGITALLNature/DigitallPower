@@ -10,6 +10,7 @@ using dgt.power.codegeneration.Logic;
 using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.Templates;
+using dgt.power.common;
 using dgt.power.dataverse;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Xrm.Sdk;
@@ -20,14 +21,18 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services;
 
-public partial class MetadataService(IOrganizationService connection, ObjectCache metadataCache, IAnsiConsole console)
+public partial class MetadataService(IDataverseConnection connection, ObjectCache metadataCache, IAnsiConsole console)
     : IMetadataService
 {
     private readonly Dictionary<string, List<string>> _usedTokens = new();
 
+    // The generators are synchronous. The command acquires the service first (see CodeGenerationCommand),
+    // so this resolves from the connection cache and does not block on I/O.
+    private IOrganizationService Service => (IOrganizationService)connection.GetServiceAsync().GetAwaiter().GetResult();
+
 
     public Solution? FetchSolution(string uniqueName) =>
-        connection.RetrieveMultiple(new QueryExpression(Solution.EntityLogicalName)
+        Service.RetrieveMultiple(new QueryExpression(Solution.EntityLogicalName)
         {
             NoLock = true,
             ColumnSet = new ColumnSet(Solution.LogicalNames.SolutionId, Solution.LogicalNames.FriendlyName, Solution.LogicalNames.UniqueName, Solution.LogicalNames.Version, Solution.LogicalNames.IsManaged),
@@ -47,7 +52,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
         var key = $"{entity.ToLowerInvariant()}_{filter:D}";
         if (!metadataCache.Contains(key))
         {
-            var metadata = (RetrieveEntityResponse)connection.Execute(new RetrieveEntityRequest
+            var metadata = (RetrieveEntityResponse)Service.Execute(new RetrieveEntityRequest
             {
                 EntityFilters = filter, LogicalName = entity, RetrieveAsIfPublished = true
             });
@@ -66,7 +71,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
         {
             NoLock = true, ColumnSet = new ColumnSet(Organization.LogicalNames.LanguageCode)
         };
-        var organization = connection.RetrieveMultiple(query);
+        var organization = Service.RetrieveMultiple(query);
 
         return organization.Entities.Single().ToEntity<Organization>().LanguageCode!.Value;
     }
@@ -82,8 +87,8 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
     {
         try
         {
-            var userId = ((WhoAmIResponse)connection.Execute(new WhoAmIRequest())).UserId;
-            var userSettings = connection.Retrieve("usersettings", userId, new ColumnSet("uilanguageid"));
+            var userId = ((WhoAmIResponse)Service.Execute(new WhoAmIRequest())).UserId;
+            var userSettings = Service.Retrieve("usersettings", userId, new ColumnSet("uilanguageid"));
             return userSettings.GetAttributeValue<int?>("uilanguageid") ?? RetrieveOrganizationLanguage();
         }
         catch (Exception)
@@ -111,7 +116,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             Orders = {new OrderExpression(ProcessStage.LogicalNames.StageName, OrderType.Ascending)}
         };
 
-        var stages = (connection.RetrieveMultiple(query)
+        var stages = (Service.RetrieveMultiple(query)
                          ?.Entities?.Select(x => x.ToEntity<ProcessStage>()) ??
                      Enumerable.Empty<ProcessStage>()).ToArray();
 
@@ -228,7 +233,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             entityComponentToSolutionLink.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
         }
 
-        var systemForms = connection.RetrieveMultiple(querySystemForm);
+        var systemForms = Service.RetrieveMultiple(querySystemForm);
 
         return ParseSystemFormsCollectionToFormDetails(systemForms, entityLogicalName, bpfControls);
     }
@@ -273,7 +278,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
         query.Criteria.AddCondition(SystemForm.LogicalNames.FormActivationState, ConditionOperator.Equal,
             SystemForm.Options.FormActivationState.Active);
 
-        return connection.RetrieveMultiple(query);
+        return Service.RetrieveMultiple(query);
     }
 
     private string Unique(string value, string scope)
@@ -316,7 +321,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
     public void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config)
     {
         ArgumentNullException.ThrowIfNull(config);
-        var entities = (RetrieveAllEntitiesResponse)connection.Execute(new RetrieveAllEntitiesRequest
+        var entities = (RetrieveAllEntitiesResponse)Service.Execute(new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity, RetrieveAsIfPublished = true
         });
@@ -363,7 +368,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
                     ConditionOperator.Equal,
                     solutionId));
 
-                var entityComponents = connection.RetrieveMultiple(componentsQuery).Entities;
+                var entityComponents = Service.RetrieveMultiple(componentsQuery).Entities;
                 foreach (var entityComponent in entityComponents)
                 {
                     entitySet.Add(
@@ -442,7 +447,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
                 Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, allNames.Cast<object>().ToArray()) }
             }
         };
-        var sdkMessages = connection.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
+        var sdkMessages = Service.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
                           Enumerable.Empty<SdkMessage>();
         var result = new List<(string Name, string Message)>();
         var hashSet = new HashSet<string>();
@@ -478,7 +483,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
         foreach (var globalOptionSet in globalOptionSets)
         {
             var request = new RetrieveOptionSetRequest { Name = globalOptionSet };
-            var response = (RetrieveOptionSetResponse)connection.Execute(request);
+            var response = (RetrieveOptionSetResponse)Service.Execute(request);
             var metadata = (OptionSetMetadata)response.OptionSetMetadata;
             result.Add(globalOptionSet, new List<Option>());
             foreach (var option in metadata.Options)
@@ -510,7 +515,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             },
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
         };
-        var bpfs = connection.RetrieveMultiple(query)?.Entities?.Select(x => x.ToEntity<Workflow>()) ?? Enumerable.Empty<Workflow>();
+        var bpfs = Service.RetrieveMultiple(query)?.Entities?.Select(x => x.ToEntity<Workflow>()) ?? Enumerable.Empty<Workflow>();
 
         foreach (var bpf in bpfs)
         {
@@ -548,7 +553,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
         };
 
-        List<Workflow> returnList = connection.RetrieveMultiple(queryWorkflow)?
+        List<Workflow> returnList = Service.RetrieveMultiple(queryWorkflow)?
             .Entities.Select(x => x.ToEntity<Workflow>()).OrderBy(x => x.Name).ToList() ?? [];
 
         if (returnList.Count == 0) return [];
@@ -581,7 +586,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray()) }
         };
 
-        var customApis = connection.RetrieveMultiple(query);
+        var customApis = Service.RetrieveMultiple(query);
         var result = new List<WfAction>();
 
         foreach (var customApi in customApis.Entities)
@@ -612,7 +617,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
                     Conditions = { new ConditionExpression(CustomAPIRequestParameter.LogicalNames.CustomAPIId, ConditionOperator.Equal, customApi[CustomAPI.LogicalNames.CustomAPIId]) }
                 }
             };
-            foreach (var inparam in connection.RetrieveMultiple(inquery).Entities)
+            foreach (var inparam in Service.RetrieveMultiple(inquery).Entities)
             {
                 ia.InParameters.Add(new WfParameter
                 {
@@ -639,7 +644,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
                     Conditions = { new ConditionExpression(CustomAPIResponseProperty.LogicalNames.CustomAPIId, ConditionOperator.Equal, customApi[CustomAPI.LogicalNames.CustomAPIId]) }
                 }
             };
-            foreach (var outparam in connection.RetrieveMultiple(outquery).Entities)
+            foreach (var outparam in Service.RetrieveMultiple(outquery).Entities)
             {
                 ia.OutParameters.Add(new WfParameter
                 {
@@ -683,7 +688,7 @@ public partial class MetadataService(IOrganizationService connection, ObjectCach
             Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray()) }
         };
 
-        var actions = connection.RetrieveMultiple(query);
+        var actions = Service.RetrieveMultiple(query);
         var result = new List<WfAction>();
         XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
 

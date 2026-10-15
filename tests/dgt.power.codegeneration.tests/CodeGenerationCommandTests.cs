@@ -4,7 +4,9 @@
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
+using dgt.power.common;
 using dgt.power.tests;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -18,8 +20,6 @@ public class CodeGenerationCommandTests
 
     public CodeGenerationCommandTests()
     {
-        var tracer = new TestTracer();
-
         var dotNetGeneratorMock = Mock.Of<IDotNetGenerator>();
         dotNetGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<DotNetCodeGenerationConfig>()).Returns(true);
 
@@ -29,9 +29,18 @@ public class CodeGenerationCommandTests
 
         var metadataServiceMock = Mock.Of<IMetadataService>();
 
-        _command = new CodeGenerationCommand(tracer,
+        _command = new CodeGenerationCommand(new TestSpanFactory(), new StubConnection(),
             dotNetGeneratorMock.Object, typeScriptGeneratorMock.Object,
             metadataServiceMock.Object, AnsiConsole.Console);
+    }
+
+    private sealed class StubConnection : IDataverseConnection
+    {
+        public Task<IOrganizationServiceAsync2> GetServiceAsync() => Task.FromResult(Mock.Of<IOrganizationServiceAsync2>().Object);
+
+        public Task<bool> CheckAuthAsync() => Task.FromResult(true);
+
+        public Task RefreshAuthAsync() => Task.CompletedTask;
     }
 
     [Test]

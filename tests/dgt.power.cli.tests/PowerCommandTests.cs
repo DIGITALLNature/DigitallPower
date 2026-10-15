@@ -10,7 +10,7 @@ using Spectre.Console.Testing;
 
 namespace dgt.power.cli.tests;
 
-[NotInParallel(nameof(TracerTests))]
+[NotInParallel(nameof(PowerCommandTests))]
 public class PowerCommandTests
 {
     [Before(Test)]
@@ -88,7 +88,7 @@ public class PowerCommandTests
             escaped = exception;
         }
 
-        new Tracer(state: state).TrackFatalException(escaped!);
+        new FatalExceptionReporter(state).Report(escaped!);
 
         await Assert.That(stopped).Count().IsEqualTo(1);
     }
@@ -99,7 +99,7 @@ public class PowerCommandTests
         var stopped = new List<Activity>();
         using var listener = CreateListener(stopped);
 
-        new Tracer(state: new TelemetryState(true, "id")).TrackFatalException(new InvalidOperationException("boom"));
+        new FatalExceptionReporter(new TelemetryState(true, "id")).Report(new InvalidOperationException("boom"));
 
         await Assert.That(stopped).Count().IsEqualTo(1);
     }

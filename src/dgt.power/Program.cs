@@ -33,7 +33,6 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using Tracer = dgt.power.Tracer;
 
 // ── SUGGEST MODE: early exit before any I/O, telemetry or network calls ──────
 // dotnet-suggest invokes the app as: dgtp [suggest:<position>] "<command-line>"
@@ -61,7 +60,7 @@ registrations.AddSingleton<DeprecationInterceptor>();
 
 // Telemetry setup
 var telemetryState = new TelemetryState();
-var tracer = new Tracer(console: appConsole, state: telemetryState);
+var fatalExceptions = new FatalExceptionReporter(telemetryState);
 TracerProvider? tracerProvider = null;
 void FlushAndDisposeTelemetryProvider()
 {
@@ -100,10 +99,9 @@ void InitializeTelemetry()
             .Build();
     }
 
-    tracer.EnableTelemetry(installId);
+    telemetryState.Enable(installId);
 }
 
-registrations.AddSingleton<ITracer>(tracer);
 registrations.AddSingleton(telemetryState);
 registrations.AddSingleton<ICommandSpanFactory, CommandSpanFactory>();
 
@@ -111,13 +109,13 @@ UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
 {
     if (e.ExceptionObject is Exception ex)
     {
-        tracer.TrackFatalException(ex);
+        fatalExceptions.Report(ex);
     }
 };
 
 EventHandler<UnobservedTaskExceptionEventArgs> unobservedTaskExceptionHandler = (_, e) =>
 {
-    tracer.TrackFatalException(e.Exception);
+    fatalExceptions.Report(e.Exception);
     e.SetObserved();
 };
 
@@ -155,7 +153,6 @@ registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton<SolutionComponentReader>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();
-registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IDataverseConnection>().GetServiceAsync().GetAwaiter().GetResult());
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 
@@ -175,7 +172,7 @@ app.Configure(config =>
 
     config.SetExceptionHandler((exception, _) =>
     {
-        tracer.TrackFatalException(exception);
+        fatalExceptions.Report(exception);
         var inner = exception.IsDerivedFrom<AbstractPowerException>()
             ? exception.GetInnerException<AbstractPowerException>()
             : null;

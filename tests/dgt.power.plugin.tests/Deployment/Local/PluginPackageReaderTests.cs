@@ -75,7 +75,7 @@ public class PluginPackageReaderTests
     public async Task Read_PackageWithNonPluginDependencyDll_OnlyReturnsTheAssemblyContainingPlugins()
     {
         var pluginDllPath = typeof(SamplePlugin).Assembly.Location;
-        var nonPluginDllPath = typeof(IPowerLogic).Assembly.Location;
+        var nonPluginDllPath = typeof(ICommandSpanFactory).Assembly.Location;
 
         var nupkgPath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.nupkg");
         try
