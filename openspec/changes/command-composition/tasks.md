@@ -10,12 +10,12 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 ## 2. Run lifecycle and diagnostics
 
-- [ ] 2.1 Introduce the span factory and `IDiagnostics` (`Log`, `Exception` recording onto `Activity.Current`), moving telemetry gating from `Tracer` without changing span name or tags, and verify ported `TracerTests` pass for span name, tags (`dgtp.command`, `dgtp.success`), suppression and anonymization
-- [ ] 2.2 Add a `CommandAppTester` test that records what `CommandContext.Name` holds for top-level and nested commands; if it is not the full path, attach the path with `WithData` in `CommandTree.Register` and verify the test asserts the path for every registered command
-- [ ] 2.3 Add the status writer (plain start line, left-aligned end `Rule` with result and duration, ASCII fallback, stderr) and verify tests cover success, failure, redirected output and non-Unicode console
-- [ ] 2.4 Add `TracedCommand<TSettings>` (span via `using`, `RunAsync` returning `Task<bool>` mapped to `0`/`1`, exceptions recorded then rethrown, status lines printed in `finally`) and verify tests cover success, failure, thrown exception and that the span is closed in every case
-- [ ] 2.5 Mark exceptions already recorded by a run and skip them in `TrackFatalException`; verify with a test that an escaping exception produces one span and the exception handler still returns `1` or `2`
-- [ ] 2.6 Register the new services in `Program.cs` next to the existing `ITracer` (legacy path stays functional) and verify `rtk dotnet test` for `dgt.power.cli.tests` passes
+- [x] 2.1 Introduce the span factory and `IDiagnostics` (`Log`, `Exception` recording onto `Activity.Current`), moving telemetry gating from `Tracer` without changing span name or tags, and verify ported `TracerTests` pass for span name, tags (`dgtp.command`, `dgtp.success`), suppression and anonymization
+- [x] 2.2 Add a `CommandAppTester` test that records what `CommandContext.Name` holds for top-level and nested commands; if it is not the full path, attach the path with `WithData` in `CommandTree.Register` and verify the test asserts the path for every registered command
+- [x] 2.3 Add the status writer (plain start line, left-aligned end `Rule` with result and duration, ASCII fallback, stderr) and verify tests cover success, failure, redirected output and non-Unicode console
+- [x] 2.4 Add `TracedCommand<TSettings>` (span via `using`, `RunAsync` returning `Task<bool>` mapped to `0`/`1`, exceptions recorded then rethrown, status lines printed in `finally`) and verify tests cover success, failure, thrown exception and that the span is closed in every case
+- [x] 2.5 Mark exceptions already recorded by a run and skip them in `TrackFatalException`; verify with a test that an escaping exception produces one span and the exception handler still returns `1` or `2`
+- [x] 2.6 Register the new services in `Program.cs` next to the existing `ITracer` (legacy path stays functional) and verify `rtk dotnet test` for `dgt.power.cli.tests` passes
 - [ ] 2.7 Update `README.md` for the changed start/end output and verify the README exit code table is unchanged
 
 ## 3. Migrate modules already close to the target

@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Globalization;
@@ -59,7 +59,8 @@ registrations.AddSingleton<VersionCheckInterceptor>();
 registrations.AddSingleton<DeprecationInterceptor>();
 
 // Telemetry setup
-var tracer = new Tracer(console: appConsole);
+var telemetryState = new TelemetryState();
+var tracer = new Tracer(console: appConsole, state: telemetryState);
 TracerProvider? tracerProvider = null;
 void FlushAndDisposeTelemetryProvider()
 {
@@ -102,6 +103,12 @@ void InitializeTelemetry()
 }
 
 registrations.AddSingleton<ITracer>(tracer);
+registrations.AddSingleton(telemetryState);
+registrations.AddSingleton<ICommandSpanFactory, CommandSpanFactory>();
+registrations.AddSingleton<IDiagnostics>(_ => new CommandDiagnostics(telemetryState, appConsole));
+// Status lines go to stderr so redirected data output stays clean.
+registrations.AddSingleton<ICommandStatusWriter>(_ => new CommandStatusWriter(
+    AnsiConsole.Create(new AnsiConsoleSettings { Out = new AnsiConsoleOutput(Console.Error) })));
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
 {

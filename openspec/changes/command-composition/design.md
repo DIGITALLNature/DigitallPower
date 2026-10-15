@@ -150,4 +150,5 @@ Implement on `refactor/command-composition` in per-module commits that each buil
 ## Open Questions
 
 - Exact appearance, stream (default stderr) and an opt-out (`--quiet`/`DGTP_QUIET`) of the status lines; to be iterated after first use.
+- The status line label: task 2.2 verified that `CommandContext.Name` is the leaf name only (`set` for `plugin step config set`), pinned by `CommandContextNameTests`. For now the leaf name is used knowingly as an interim label. Candidates for the final solution: a required display name/label on the lifecycle base class (every command must provide one), or deriving the path from the command tree registration; `WithData` per command and process-args parsing were rejected as first choices.
 - Whether `CodeGenerationCommand` (sync `Command<T>`, calls `Tracer` and implements `IPowerLogic`) becomes async on `TracedCommand` or keeps a sync path that opens a run explicitly; either way it must stop using `IPowerLogic` before step 4.
