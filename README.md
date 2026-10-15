@@ -1294,9 +1294,9 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
                   ┌──────────────────────────┐
                   │     dgt.power.common     │
                   │  (Dataverse connection,  │
-                  │   file access, tracer,   │
-                  │   connection management, │
-                  │   shared base commands)  │
+                  │   file access, command   │
+                  │   lifecycle, connection  │
+                  │   management)            │
                   └──────────────────────────┘
                                │
                                ▼
@@ -1309,8 +1309,9 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 Key design principles:
 
 - **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
-- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers, base commands, tracing and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
-- **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped; the `IOrganizationService` is lazily resolved from the active connection via `IDataverseConnection.GetServiceAsync()`.
+- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
+- **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
+- **Command output.** Every command prints a start line (`→ <command>`) and ends with a rule showing the result and duration (for example `✔ plugin push · 2.3s` or `✘ plugin push failed · 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
 - **Stable connection storage.** `connections.json` and `state.json` live under the per-user dgtp home; secrets and the Azure.Identity token cache use OS-protected persistence.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
 
@@ -1322,7 +1323,7 @@ The working specifications and active change proposals live in `openspec/`; conc
 DigitallPower/
 ├── src/
 │   ├── dgt.power/                # CLI host project (produces the `dgtp` tool)
-│   ├── dgt.power.common/         # Shared infrastructure (typed connections, IO, tracer)
+│   ├── dgt.power.common/         # Shared infrastructure (typed connections, IO, command lifecycle)
 │   ├── models/                   # Shared DTOs / data contracts
 │   └── modules/
 │       ├── dgt.power.analyzer/        # `analyze` commands

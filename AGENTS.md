@@ -98,26 +98,23 @@ Qodana runs on every PR. New findings (not in `baseline.sarif.json`) block the m
 - **I/O-free construction:** Constructors and field initializers must not perform I/O (network, disk, authentication) and must never block on tasks (`GetAwaiter().GetResult()`, `.Result`, `.Wait()`). Acquire resources inside async methods, e.g. `await connection.GetServiceAsync()`. Analyzer `VSTHRD002` flags synchronous waits in `src/`; it only covers blocking, not I/O, so review constructors for the rest.
 - **Tests:** Use TUnit framework with TUnit.Assertions and TUnit.Mocks
 
-### Async Migration Checklist (MANDATORY for Logic changes)
+### Command Conventions (MANDATORY for command changes)
 
-When **modifying or adding** any `PowerLogic<T>` subclass, **always check**:
+Commands derive from `PowerCommand<TSettings>` and implement `RunAsync`. The base class owns only the telemetry span and the start/end console lines; everything else is injected explicitly.
 
-> ❓ Can this class be migrated from `Task.FromResult(InvokeCore(...))` to a true `async/await` implementation using `IOrganizationServiceAsync2`?
+- Request `IDataverseConnection` in the constructor and acquire the service inside `RunAsync` with `var service = await connection.GetServiceAsync();`, after validation that needs no Dataverse. Commands that never touch Dataverse do not request it, so they never authenticate.
+- Prefer `IOrganizationServiceAsync2` (`ExecuteAsync`, `RetrieveMultipleAsync`) for new code. Existing synchronous code may receive the same instance via `(IOrganizationService)service`; do not rewrite it unrelated to your change.
+- Request `IConfigResolver` only in commands that read config files. Write user-facing messages to the injected `IAnsiConsole`.
 
-- If **yes**: migrate in the same PR. Replace `((IOrganizationService)Connection).Execute(...)` with `await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(...)`, replace LINQ `DataContext` queries with `QueryExpression` + `RetrieveMultipleAsync`.
-- If **no** (e.g., touching unrelated logic, or migration is too large for the current scope): leave a `// TODO(async): migrate to IOrganizationServiceAsync2` comment and add an entry to `todo.md`.
-
-**Pattern for truly async logic:**
 ```csharp
-protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken cancellationToken)
+protected override async Task<bool> RunAsync(TVerb args, CancellationToken cancellationToken)
 {
-    var orgAsync = (IOrganizationServiceAsync2)Connection;
-    var response = await orgAsync.ExecuteAsync(new RetrieveMultipleRequest { Query = query }, cancellationToken);
+    var service = await connection.GetServiceAsync();
+    var response = await service.ExecuteAsync(new RetrieveMultipleRequest { Query = query }, cancellationToken);
     // ...
+    return true;
 }
 ```
-
-See `todo.md` for full migration backlog and module-by-module scope.
 
 ### JSON Schema Maintenance (MANDATORY for Config changes)
 
@@ -234,7 +231,7 @@ public async Task MethodName_Scenario_ExpectedResult()
 ### CLI Command-Tree & Settings-Parsing Tests (MANDATORY when changing commands)
 
 The dgtp command tree is registered in `src/dgt.power/CommandTree.cs` and covered by two test
-layers in `tests/dgt.power.cli.tests/`, independent from the `PowerLogic`/business-logic tests in
+layers in `tests/dgt.power.cli.tests/`, independent from the business-logic tests in
 `CommandTestContext`:
 
 - `CommandTreeTests.cs` — structural wiring test (`CommandTree.Register` + `ValidateExamples()`

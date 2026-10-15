@@ -16,7 +16,7 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 - [x] 2.4 Add `PowerCommand<TSettings>` (span via `using`, `RunAsync` returning `Task<bool>` mapped to `0`/`1`, exceptions recorded then rethrown, status lines printed in `finally`) and verify tests cover success, failure, thrown exception and that the span is closed in every case
 - [x] 2.5 Mark exceptions already recorded by a run and skip them in `TrackFatalException`; verify with a test that an escaping exception produces one span and the exception handler still returns `1` or `2`
 - [x] 2.6 Register the new services in `Program.cs` next to the existing `ITracer` (legacy path stays functional) and verify `rtk dotnet test` for `dgt.power.cli.tests` passes
-- [ ] 2.7 Update `README.md` for the changed start/end output and verify the README exit code table is unchanged
+- [x] 2.7 Update `README.md` for the changed start/end output and verify the README exit code table is unchanged
 
 ## 3. Migrate modules already close to the target
 
@@ -37,9 +37,9 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 - [x] 5.1 Migrate `CodeGenerationCommand` off `IPowerLogic` (async on `PowerCommand`, or an explicit run in a sync path) and verify `dgt.power.codegeneration.tests` pass
 - [x] 5.2 Delete `PowerLogic`, `IPowerLogic`, the `Base*` classes, the old `ITracer` lifecycle members and the eager `IOrganizationService` registration in `Program.cs`; the remaining `Tracer` (only `TrackFatalException`) is renamed to a specific name such as `FatalExceptionReporter`; verify `rtk dotnet build` has zero warnings-as-errors and no references remain (search)
-- [ ] 5.3 Update `todo.md` (remove both TODO sections), the `AGENTS.md` async checklist (no `(IOrganizationServiceAsync2)Connection` pattern), the `NoOpCommand` doc comment and `README.md` project structure, and verify no stale references to `PowerLogic` remain in docs
-- [ ] 5.4 Add an ADR under `docs/architecture/decisions/` for composition with a thin lifecycle base and a cached `IDataverseConnection`, link it in the ADR index, and verify the index lists it
-- [ ] 5.5 Run `rtk dotnet test`, `pnpm exec openspec validate --all`, and a manual `dgtp connection list` run showing no authentication attempt; verify all pass and exit codes `0`, `1`, `2` behave as specified
+- [x] 5.3 Update `todo.md` (remove both TODO sections), the `AGENTS.md` async checklist (no `(IOrganizationServiceAsync2)Connection` pattern), the `NoOpCommand` doc comment and `README.md` project structure, and verify no stale references to `PowerLogic` remain in docs
+- [x] 5.4 Add an ADR under `docs/architecture/decisions/` for composition with a thin lifecycle base and a cached `IDataverseConnection`, link it in the ADR index, and verify the index lists it
+- [x] 5.5 Run `rtk dotnet test`, `pnpm exec openspec validate --all`, and a manual `dgtp connection list` run showing no authentication attempt; verify all pass and exit codes `0`, `1`, `2` behave as specified
 
 ## Workflow follow-up
 
