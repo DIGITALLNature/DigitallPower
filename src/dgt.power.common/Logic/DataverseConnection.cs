@@ -20,8 +20,39 @@ public sealed partial class DataverseConnection(
     IAnsiConsole console)
     : IDataverseConnection
 {
+    private readonly object _gate = new();
+    private Task<IOrganizationServiceAsync2>? _service;
+
     /// <inheritdoc />
-    public async Task<IOrganizationServiceAsync2> ConnectAsync()
+    public Task<IOrganizationServiceAsync2> GetServiceAsync()
+    {
+        lock (_gate)
+        {
+            return _service ??= ConnectAndCacheAsync();
+        }
+    }
+
+    private async Task<IOrganizationServiceAsync2> ConnectAndCacheAsync()
+    {
+        try
+        {
+            // Yield so a synchronous failure cannot run before the task is stored in the cache.
+            await Task.Yield();
+            return await ConnectCoreAsync();
+        }
+        catch
+        {
+            // Failed connects are not cached so a later call can retry.
+            lock (_gate)
+            {
+                _service = null;
+            }
+
+            throw;
+        }
+    }
+
+    private async Task<IOrganizationServiceAsync2> ConnectCoreAsync()
     {
         if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {

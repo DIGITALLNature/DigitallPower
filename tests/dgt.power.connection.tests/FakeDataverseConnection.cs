@@ -16,7 +16,7 @@ internal sealed class FakeDataverseConnection : IDataverseConnection
 
     public int RefreshCalls { get; private set; }
 
-    public Task<IOrganizationServiceAsync2> ConnectAsync() =>
+    public Task<IOrganizationServiceAsync2> GetServiceAsync() =>
         Task.FromException<IOrganizationServiceAsync2>(new NotSupportedException());
 
     public Task<bool> CheckAuthAsync() => Task.FromResult(CheckAuthResult);

@@ -4,9 +4,9 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 ## 1. Connection foundation
 
-- [ ] 1.1 Rename `IDataverseConnection.ConnectAsync` to `GetServiceAsync` (interface, `DataverseConnection`, `TestConnection`, `FakeDataverseConnection`, callers) and verify `rtk dotnet build` succeeds
-- [ ] 1.2 Cache the connected service in `DataverseConnection` so concurrent first calls share one connect and verification, and failures are not cached; add tests for single connect under concurrency, reuse on later calls and retry after a failure, and verify they pass
-- [ ] 1.3 Add an `AGENTS.md` rule that constructors and field initializers perform no I/O and never block on tasks (`GetAwaiter().GetResult()`, `.Result`, `.Wait()`), and verify whether an existing analyzer rule can enforce it (record the result in the rule text)
+- [x] 1.1 Rename `IDataverseConnection.ConnectAsync` to `GetServiceAsync` (interface, `DataverseConnection`, `TestConnection`, `FakeDataverseConnection`, callers) and verify `rtk dotnet build` succeeds
+- [x] 1.2 Cache the connected service in `DataverseConnection` so concurrent first calls share one connect and verification, and failures are not cached; add tests for single connect under concurrency, reuse on later calls and retry after a failure, and verify they pass
+- [x] 1.3 Add an `AGENTS.md` rule that constructors and field initializers perform no I/O and never block on tasks (`GetAwaiter().GetResult()`, `.Result`, `.Wait()`), and verify whether an existing analyzer rule can enforce it (record the result in the rule text)
 
 ## 2. Run lifecycle and diagnostics
 

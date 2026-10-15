@@ -11,9 +11,10 @@ namespace dgt.power.common;
 public interface IDataverseConnection
 {
     /// <summary>
-    /// Creates a connection to the selected Dataverse environment.
+    /// Returns the service for the selected Dataverse environment. The first call connects and
+    /// authenticates; later calls in the same process reuse the connected service.
     /// </summary>
-    Task<IOrganizationServiceAsync2> ConnectAsync();
+    Task<IOrganizationServiceAsync2> GetServiceAsync();
 
     /// <summary>
     /// Checks whether the current connection can acquire a token silently without opening a browser.

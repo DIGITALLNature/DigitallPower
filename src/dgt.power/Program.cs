@@ -150,7 +150,7 @@ registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();
-registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IDataverseConnection>().ConnectAsync().GetAwaiter().GetResult());
+registrations.AddSingleton<IOrganizationService>(provider => provider.GetRequiredService<IDataverseConnection>().GetServiceAsync().GetAwaiter().GetResult());
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);
 

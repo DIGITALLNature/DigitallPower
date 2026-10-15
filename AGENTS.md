@@ -95,6 +95,7 @@ Qodana runs on every PR. New findings (not in `baseline.sarif.json`) block the m
 - **Naming:** Follow standard .NET naming conventions (PascalCase for public members)
 - **File naming:** Each `.cs` file must contain exactly one top-level type, and the file name must match the type name (e.g. `MyService.cs` → `class MyService`). When renaming a type, rename the file too.
 - **Licensing header:** All source files start with `// Copyright (c) DIGITALL Nature. All rights reserved`
+- **I/O-free construction:** Constructors and field initializers must not perform I/O (network, disk, authentication) and must never block on tasks (`GetAwaiter().GetResult()`, `.Result`, `.Wait()`). Acquire resources inside async methods, e.g. `await connection.GetServiceAsync()`. Analyzer `VSTHRD002` flags synchronous waits in `src/`; it only covers blocking, not I/O, so review constructors for the rest.
 - **Tests:** Use TUnit framework with TUnit.Assertions and TUnit.Mocks
 
 ### Async Migration Checklist (MANDATORY for Logic changes)
