@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -16,7 +15,6 @@ namespace dgt.power.import.Logic;
 public sealed class CalendarImport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
@@ -50,24 +48,24 @@ public sealed class CalendarImport(
 
         foreach (var calendar in calendars.OrderByDescending(c => c.Type))
         {
-            diagnostics.Log($"Check {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+            console.WriteLine($"Check {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
             var calendarCurrent = context.CalendarSet.SingleOrDefault(c => c.Id == calendar.CalendarId);
 
             if (calendarCurrent == null)
             {
-                diagnostics.Log($"Create {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+                console.WriteLine($"Create {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = CreateCalendarStructure(calendar, defaultBusinessUnit);
                 result = service.TryCreate(calendarEntity, out _);
             }
             else if (calendar.IsVaryByDay)
             {
-                diagnostics.Log($"Skip {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+                console.WriteLine($"Skip {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
             }
             else
             {
-                diagnostics.Log($"Update {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}", TraceEventType.Information);
+                console.WriteLine($"Update {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = UpdateCalendarStructure(calendar);
                 result = service.TryUpdate(calendarEntity);

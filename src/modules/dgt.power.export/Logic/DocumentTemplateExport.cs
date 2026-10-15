@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
@@ -18,7 +18,6 @@ namespace dgt.power.export.Logic;
 public sealed class DocumentTemplateExport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
     : PowerCommand<ExportVerb>(spans, console)
@@ -63,7 +62,7 @@ public sealed class DocumentTemplateExport(
         }
 
         var service = (IOrganizationService)await connection.GetServiceAsync();
-        if (!GetQueryExpression(diagnostics, service, filter, out var query))
+        if (!GetQueryExpression(console, service, filter, out var query))
         {
             return false;
         }
@@ -92,8 +91,7 @@ public sealed class DocumentTemplateExport(
                 ForceUpdate = force
             };
             export.Add(template);
-            diagnostics.Log($"Export {fileService.ExportFile(fileDir, templateName, Convert.FromBase64String(documentTemplate.Content!))} ",
-                TraceEventType.Information);
+            console.WriteLine($"Export {fileService.ExportFile(fileDir, templateName, Convert.FromBase64String(documentTemplate.Content!))} ");
         }
 
         var json = ExportJson.GetJson(new DocumentTemplates
@@ -102,11 +100,11 @@ public sealed class DocumentTemplateExport(
             Templates = export
         });
 
-        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
         return true;
     }
 
-    private static bool GetQueryExpression(IDiagnostics diagnostics, IOrganizationService service, string filter, out QueryExpression? query)
+    private static bool GetQueryExpression(IAnsiConsole console, IOrganizationService service, string filter, out QueryExpression? query)
     {
         var fetchXml = string.Empty;
         query = null;
@@ -131,7 +129,7 @@ public sealed class DocumentTemplateExport(
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            diagnostics.Log($"Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}", TraceEventType.Error);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}[/]");
             return false;
         }
     }

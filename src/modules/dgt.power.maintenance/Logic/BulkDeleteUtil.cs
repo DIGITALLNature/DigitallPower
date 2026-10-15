@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -17,7 +17,6 @@ namespace dgt.power.maintenance.Logic;
 public sealed class BulkDeleteUtil(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     TimeProvider timeProvider,
     IAnsiConsole console)
     : PowerCommand<BulkDeleteSettings>(spans, console)
@@ -36,14 +35,14 @@ public sealed class BulkDeleteUtil(
         var (success, query) = await GetQueryExpressionAsync(orgAsync, args.InlineData, cancellationToken);
         if (success)
         {
-            diagnostics.Log("Retrieved query expression from inlineData", TraceEventType.Information);
+            console.WriteLine("Retrieved query expression from inlineData");
 
             var asyncOperationId = await ExecuteBulkDeleteJobAsync(orgAsync, query!, cancellationToken);
-            diagnostics.Log($"bulk delete job '{asyncOperationId}' started.", TraceEventType.Information);
+            console.WriteLine($"bulk delete job '{asyncOperationId}' started.");
 
             if (await WaitAsync(orgAsync, asyncOperationId, args.PollInterval, cancellationToken))
             {
-                diagnostics.Log($"bulk delete job '{asyncOperationId}' finished.", TraceEventType.Information);
+                console.WriteLine($"bulk delete job '{asyncOperationId}' finished.");
                 return true;
             }
         }
@@ -67,7 +66,7 @@ public sealed class BulkDeleteUtil(
                 ColumnSet = new ColumnSet(AsyncOperation.LogicalNames.StatusCode)
             }, cancellationToken);
             asyncOperation = retrieveResponse.Entity.ToEntity<AsyncOperation>();
-            diagnostics.Log($"bulk delete job '{asyncOperationId}' running...", TraceEventType.Information);
+            console.WriteLine($"bulk delete job '{asyncOperationId}' running...");
         } while (IsInExecution(asyncOperation));
 
         if (asyncOperation.StatusCode!.Value == AsyncOperation.Options.StatusCode.Succeeded)
@@ -75,7 +74,7 @@ public sealed class BulkDeleteUtil(
             return true;
         }
 
-        diagnostics.Log($"bulk delete job '{asyncOperationId}' failed!", TraceEventType.Error);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]bulk delete job '{asyncOperationId}' failed![/]");
         return false;
     }
 
@@ -112,7 +111,7 @@ public sealed class BulkDeleteUtil(
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            diagnostics.Log($"Invalid fetch-xml: {e.RootMessage()}", TraceEventType.Error);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Invalid fetch-xml: {e.RootMessage()}[/]");
             return (false, null);
         }
     }

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -16,7 +16,6 @@ namespace dgt.power.import.Logic;
 public sealed class UserRoleImport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
@@ -42,9 +41,8 @@ public sealed class UserRoleImport(
         var result = true;
         foreach (var userRole in userRoles)
         {
-            diagnostics.Log(
-                $"UserName: {userRole.UserName}; BusinessUnit:{userRole.BusinessUnit}; SecurityRoles:[{string.Join("|", userRole.SecurityRoles)}]",
-                TraceEventType.Information);
+            console.WriteLine(
+                $"UserName: {userRole.UserName}; BusinessUnit:{userRole.BusinessUnit}; SecurityRoles:[{string.Join("|", userRole.SecurityRoles)}]");
 
             using var context = new DataContext(service);
             // SystemUser
@@ -53,7 +51,7 @@ public sealed class UserRoleImport(
                 select su).SingleOrDefault();
             if (user == null)
             {
-                diagnostics.Log($"Can't find User '{userRole.UserName}' ...", TraceEventType.Warning);
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Can't find User '{userRole.UserName}' ...[/]");
                 continue;
             }
 
@@ -61,9 +59,9 @@ public sealed class UserRoleImport(
             var businessUnits = userRole.BusinessUnit.Split(userRole.BusinessUnitSeparator);
             if (businessUnits.Length < 1 || businessUnits.Length > 2)
             {
-                diagnostics.Log(
-                    $"Could not parse {userRole.BusinessUnit}; expected 'businessUnit[{userRole.BusinessUnitSeparator}parentBusinessUnit]'",
-                    TraceEventType.Error);
+                console.MarkupLineInterpolated(
+                    CultureInfo.InvariantCulture,
+                    $"[red]Could not parse {userRole.BusinessUnit}; expected 'businessUnit[[{userRole.BusinessUnitSeparator}parentBusinessUnit]]'[/]");
                 return false;
             }
 
@@ -71,9 +69,9 @@ public sealed class UserRoleImport(
 
             if (businessUnit == null)
             {
-                diagnostics.Log(
-                    $"Can't find BusinessUnit. Try 'businessUnit[{userRole.BusinessUnitSeparator}parentBusinessUnit]'",
-                    TraceEventType.Error);
+                console.MarkupLineInterpolated(
+                    CultureInfo.InvariantCulture,
+                    $"[red]Can't find BusinessUnit. Try 'businessUnit[[{userRole.BusinessUnitSeparator}parentBusinessUnit]]'[/]");
                 return false;
             }
 
@@ -84,7 +82,7 @@ public sealed class UserRoleImport(
                 securityRoles = GetSecurityRoles(service, businessUnit, userRole.SecurityRoles);
                 if (securityRoles.Count != userRole.SecurityRoles.Count)
                 {
-                    diagnostics.Log("Not all SecurityRoles found, please check manually", TraceEventType.Error);
+                    console.MarkupLine("[red]Not all SecurityRoles found, please check manually[/]");
                     return false;
                 }
             }
@@ -109,9 +107,8 @@ public sealed class UserRoleImport(
                 select new EntityReference(Role.EntityLogicalName, role.Id) { Name = role.Name }).ToList();
             if (missingRoles.Count > 0)
             {
-                diagnostics.Log(
-                    $"Associate SecurityRoles:[{string.Join("|", missingRoles.Select(r => r.Name).ToList())}]",
-                    TraceEventType.Information);
+                console.WriteLine(
+                    $"Associate SecurityRoles:[{string.Join("|", missingRoles.Select(r => r.Name).ToList())}]");
                 result = service.TryAssociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation),
                     new EntityReferenceCollection(missingRoles)) && result;
@@ -122,9 +119,8 @@ public sealed class UserRoleImport(
                 select new EntityReference(Role.EntityLogicalName, role.Id) { Name = role.Name }).ToList();
             if (spareRoles.Count > 0)
             {
-                diagnostics.Log(
-                    $"Disassociate SecurityRoles:[{string.Join("|", spareRoles.Select(r => r.Name).ToList())}]",
-                    TraceEventType.Information);
+                console.WriteLine(
+                    $"Disassociate SecurityRoles:[{string.Join("|", spareRoles.Select(r => r.Name).ToList())}]");
                 result = service.TryDisassociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship($"{SystemUserRoles.EntityLogicalName}_association"),
                     new EntityReferenceCollection(spareRoles)) && result;

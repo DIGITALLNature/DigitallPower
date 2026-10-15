@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
 using dgt.power.dto;
@@ -16,7 +15,6 @@ namespace dgt.power.export.Logic;
 public sealed class QueueExport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
     : PowerCommand<ExportVerb>(spans, console)
@@ -101,7 +99,7 @@ public sealed class QueueExport(
 
         var json = ExportJson.GetJson(export);
 
-        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
         return true;
     }
 }

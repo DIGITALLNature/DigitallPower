@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.maintenance.Base;
@@ -15,7 +15,6 @@ namespace dgt.power.maintenance.Logic;
 public sealed class AutoNumberFormatAction(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<MaintenanceVerb>(spans, console)
@@ -51,8 +50,8 @@ public sealed class AutoNumberFormatAction(
 
     private bool Process(IOrganizationService service, AutoNumberFormat autoNumberFormat)
     {
-        diagnostics.Log($"Check the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field}",
-            TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+            $"[grey]Check the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field}[/]");
 
         var attributeRequest = new RetrieveAttributeRequest
         {
@@ -69,9 +68,8 @@ public sealed class AutoNumberFormatAction(
             return true;
         }
 
-        diagnostics.Log(
-            $"Update the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field} from {format} to {autoNumberFormat.Format}",
-            TraceEventType.Information);
+        console.WriteLine(
+            $"Update the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field} from {format} to {autoNumberFormat.Format}");
 
         // Modify the retrieved attribute
         var retrievedAttributeMetadata = attributeResponse.AttributeMetadata;

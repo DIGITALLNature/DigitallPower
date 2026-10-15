@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -17,7 +17,6 @@ namespace dgt.power.import.Logic;
 public sealed class TeamTemplateImport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
@@ -56,21 +55,21 @@ public sealed class TeamTemplateImport(
             select tt).ToList();
 
         //find templates which need to be removed
-        diagnostics.Log("delete check", TraceEventType.Information);
+        console.WriteLine("delete check");
         foreach (var teamTemplate in teamTemplates.Where(e => templates.TrueForAll(c => e.Id != c.TeamTemplateId)))
         {
             result = DeleteTeamTemplate(service, teamTemplate) && result;
         }
 
         //find templates which need to be updated
-        diagnostics.Log("update check", TraceEventType.Information);
+        console.WriteLine("update check");
         foreach (var updateTemplate in templates.Where(c => teamTemplates.Exists(e => e.Id == c.TeamTemplateId)))
         {
             result = UpdateTeamTemplate(service, teamTemplates, updateTemplate, entities) && result;
         }
 
         //find templates which need to be created
-        diagnostics.Log("create check", TraceEventType.Information);
+        console.WriteLine("create check");
         foreach (var newTemplate in templates.Where(c => teamTemplates.TrueForAll(e => e.Id != c.TeamTemplateId)))
         {
             result = CreateTeamTemplate(service, entities, newTemplate) && result;
@@ -85,18 +84,18 @@ public sealed class TeamTemplateImport(
 
         if (entity?.ObjectTypeCode == null)
         {
-            diagnostics.Log($"unknown template entity: {newTemplate.Entity}", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unknown template entity: {newTemplate.Entity}[/]");
             return false;
         }
 
         if (entity.AutoCreateAccessTeams == null)
         {
-            diagnostics.Log($"access teams not enabled template entity: {newTemplate.Entity}", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]access teams not enabled template entity: {newTemplate.Entity}[/]");
             return false;
         }
 
         //create template
-        diagnostics.Log($"create template: {newTemplate.TeamTemplateName}", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create template: {newTemplate.TeamTemplateName}[/]");
         return service.TryCreate(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
         {
             TeamTemplateName = newTemplate.TeamTemplateName,
@@ -115,7 +114,7 @@ public sealed class TeamTemplateImport(
 
         if (entity == null)
         {
-            diagnostics.Log($"unknown template entity: {updateTemplate.Entity}", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unknown template entity: {updateTemplate.Entity}[/]");
             return false;
         }
 
@@ -124,12 +123,12 @@ public sealed class TeamTemplateImport(
         var result = true;
         if (unchangedRule)
         {
-            diagnostics.Log($"unchanged template: {updateTemplate.TeamTemplateName}", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unchanged template: {updateTemplate.TeamTemplateName}[/]");
         }
         else
         {
             //update template
-            diagnostics.Log($"update template: {updateTemplate.TeamTemplateName}", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update template: {updateTemplate.TeamTemplateName}[/]");
             result = service.TryUpdate(new dataverse.TeamTemplate(existingTemplate.Id)
             {
                 TeamTemplateName = updateTemplate.TeamTemplateName,
@@ -146,7 +145,7 @@ public sealed class TeamTemplateImport(
     private bool DeleteTeamTemplate(IOrganizationService service, dataverse.TeamTemplate teamTemplate)
     {
         //delete template
-        diagnostics.Log($"delete template: {teamTemplate.TeamTemplateName}", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]delete template: {teamTemplate.TeamTemplateName}[/]");
         return service.TryDelete(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id);
     }
 

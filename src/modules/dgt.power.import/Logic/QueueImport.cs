@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -17,7 +17,6 @@ namespace dgt.power.import.Logic;
 public sealed class QueueImport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
@@ -50,14 +49,14 @@ public sealed class QueueImport(
 
         //TODO: delete vs. deactivate
         //find queues which need to be removed
-        diagnostics.Log("delete check", TraceEventType.Information);
+        console.WriteLine("delete check");
         foreach (var deleteQueue in queues.Where(e => queuesToTransport.QueuesToTransport.All(c => e.Id != c.QueueId)))
         {
             DeleteQueue(deleteQueue);
         }
 
         //find queues need to be updated
-        diagnostics.Log("update check", TraceEventType.Information);
+        console.WriteLine("update check");
         foreach (var updateQueue in queuesToTransport.QueuesToTransport.Where(c => queues.Exists(e => e.Id == c.QueueId)))
         {
             result = UpdateQueue(service, queues, updateQueue, alternativeOwner) && result;
@@ -65,7 +64,7 @@ public sealed class QueueImport(
 
         //find queues which need to be created
         //create
-        diagnostics.Log("create check", TraceEventType.Information);
+        console.WriteLine("create check");
         foreach (var newQueue in queuesToTransport.QueuesToTransport.Where(c => queues.TrueForAll(e => e.Id != c.QueueId)))
         {
             var isCreated = CreateQueue(service, newQueue, out var id);
@@ -86,9 +85,9 @@ public sealed class QueueImport(
 
     private bool CreateQueue(IOrganizationService service, Queue newQueue, out Guid id)
     {
-        diagnostics.Log("--->", TraceEventType.Verbose);
+        console.MarkupLine("[grey]--->[/]");
         //create queue
-        diagnostics.Log($"create queue: {newQueue.Name}", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create queue: {newQueue.Name}[/]");
         var isCreated = service.TryCreate(new dataverse.Queue(newQueue.QueueId)
         {
             Name = newQueue.Name,
@@ -103,17 +102,16 @@ public sealed class QueueImport(
 
     private void DeleteQueue(dataverse.Queue deleteQueue)
     {
-        diagnostics.Log("--->", TraceEventType.Verbose);
+        console.MarkupLine("[grey]--->[/]");
         //delete queue
-        diagnostics.Log($"obsolete/unknown queue: {deleteQueue.Name}", TraceEventType.Verbose);
-        //tracer.Log($"delete queue: {deleteQueue.Name}", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]obsolete/unknown queue: {deleteQueue.Name}[/]");
         // TODO: Why is queue deletion deactivated?
         //result = XrmWorker.Delete(tracer, service, Model.Queue.EntityLogicalName, deleteQueue.Id, dryRun) & result;
     }
 
     private bool UpdateQueue(IOrganizationService service, IEnumerable<dataverse.Queue> queues, Queue updateQueue, SystemUser? alternativeOwner)
     {
-        diagnostics.Log("--->", TraceEventType.Verbose);
+        console.MarkupLine("[grey]--->[/]");
         var existingQueue = queues.Single(e => e.Id == updateQueue.QueueId);
 
         //check the owner
@@ -130,12 +128,12 @@ public sealed class QueueImport(
 
         if (unchangedRule)
         {
-            diagnostics.Log($"unchanged queue: {updateQueue.Name}", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]unchanged queue: {updateQueue.Name}[/]");
         }
         else
         {
             //update queue
-            diagnostics.Log($"update queue: {updateQueue.Name}", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update queue: {updateQueue.Name}[/]");
             result = service.TryUpdate(new dataverse.Queue(existingQueue.Id)
             {
                 Name = updateQueue.Name,

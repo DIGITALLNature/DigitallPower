@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.dto;
@@ -17,7 +16,6 @@ namespace dgt.power.import.Logic;
 public sealed class SecureConfigImport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
@@ -45,7 +43,7 @@ public sealed class SecureConfigImport(
 
         if (pluginStep == null)
         {
-            diagnostics.Log("Can't find PluginStep...", TraceEventType.Warning);
+            console.MarkupLine("[yellow]Can't find PluginStep...[/]");
             return false;
         }
 
@@ -66,8 +64,8 @@ public sealed class SecureConfigImport(
                     service.Delete(SdkMessageProcessingStepSecureConfig.EntityLogicalName, secureConfig.Id);
                 }
 
-                diagnostics.Log(e.Message, TraceEventType.Error);
-                diagnostics.Log("ERROR: Could not create SecureConfig!", TraceEventType.Error);
+                console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
+                console.MarkupLine("[red]ERROR: Could not create SecureConfig![/]");
                 return false;
             }
         }
@@ -83,12 +81,12 @@ public sealed class SecureConfigImport(
                 try
                 {
                     service.Update(secureConfig);
-                    diagnostics.Log("updated SecureConfig!", TraceEventType.Information);
+                    console.WriteLine("updated SecureConfig!");
                 }
                 catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
-                    diagnostics.Log(e.Message, TraceEventType.Error);
-                    diagnostics.Log("ERROR: Could not update SecureConfig!", TraceEventType.Error);
+                    console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
+                    console.MarkupLine("[red]ERROR: Could not update SecureConfig![/]");
                     return false;
                 }
             }
@@ -109,6 +107,6 @@ public sealed class SecureConfigImport(
         });
 
 
-        diagnostics.Log("created SecureConfig!", TraceEventType.Information);
+        console.WriteLine("created SecureConfig!");
     }
 }

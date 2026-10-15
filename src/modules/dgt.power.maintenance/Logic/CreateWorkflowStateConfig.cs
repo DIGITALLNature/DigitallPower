@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using dgt.power.common;
@@ -17,7 +17,6 @@ namespace dgt.power.maintenance.Logic;
 public class CreateWorkflowStateConfig(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     JsonSerializerOptions jsonSerializerOptions,
     IAnsiConsole console)
     : PowerCommand<CreateWorkflowStateConfigSettings>(spans, console)
@@ -68,20 +67,20 @@ public class CreateWorkflowStateConfig(
                     ctx.Refresh();
                 };
 
-                var workflowStateManager = new WorkflowStateManager(service, solutions ?? [], publishers ?? [], diagnostics, progress);
+                var workflowStateManager = new WorkflowStateManager(service, solutions ?? [], publishers ?? [], console, progress);
 
-                diagnostics.Log("Loading all workflows", TraceEventType.Information);
+                console.WriteLine("Loading all workflows");
                 var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
                 _workflowStateTracker.AddWorkflows(workflows);
 
-                diagnostics.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
+                console.WriteLine($"Found {workflows.Length} workflows");
 
                 // group all workflows by owner and select max occurence as default owner
                 var groupedFlows = workflows.GroupBy(f => f.OwnerId!.Id).ToList();
                 var defaultOwnerId = groupedFlows.OrderByDescending(g => g.Count()).FirstOrDefault()?.Key;
                 var defaultOwner = defaultOwnerId != null ? workflows.First(w => w.OwnerId!.Id == defaultOwnerId).GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                diagnostics.Log($"Default owner will be '{defaultOwner}' ({defaultOwnerId})", TraceEventType.Information);
+                console.WriteLine($"Default owner will be '{defaultOwner}' ({defaultOwnerId})");
 
                 // prepare config
                 var prepareConfigTask = ctx.AddTask("Preparing config", false);
@@ -153,7 +152,7 @@ public class CreateWorkflowStateConfig(
                 }
 
                 // Write config to file
-                diagnostics.Log($"Writing config to {configFile}", TraceEventType.Verbose);
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Writing config to {configFile}[/]");
 
                 var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
                 using var fileStream = new FileStream(configFile, fileMode, FileAccess.Write, FileShare.None);

@@ -119,25 +119,6 @@ public class PowerCommandTests
         await Assert.That(console.Output).Contains($"{Emoji.Known.CheckMark} probe");
     }
 
-    [Test]
-    public async Task Diagnostics_Exception_RecordsOnCurrentSpanWithoutEscape()
-    {
-        var stopped = new List<Activity>();
-        using var listener = CreateListener(stopped);
-        var state = new TelemetryState(true, "id");
-        var diagnostics = new CommandDiagnostics(state, new TestConsole());
-        var (command, _) = Create(_ =>
-        {
-            diagnostics.Exception(new InvalidOperationException("handled"), TraceEventType.Error);
-            return Task.FromResult(false);
-        }, state);
-
-        await Execute(command);
-
-        var exceptionEvent = stopped[0].Events.Single(e => e.Name == "exception");
-        await Assert.That(exceptionEvent.Tags.Single(t => t.Key == "exception.escaped").Value).IsEqualTo(false);
-    }
-
     private static (ProbeCommand Command, TestConsole Console) Create(
         Func<ProbeSettings, Task<bool>> run,
         TelemetryState? state = null)

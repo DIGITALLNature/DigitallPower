@@ -106,7 +106,6 @@ void InitializeTelemetry()
 registrations.AddSingleton<ITracer>(tracer);
 registrations.AddSingleton(telemetryState);
 registrations.AddSingleton<ICommandSpanFactory, CommandSpanFactory>();
-registrations.AddSingleton<IDiagnostics>(_ => new CommandDiagnostics(telemetryState, appConsole));
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
 {

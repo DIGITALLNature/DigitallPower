@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
@@ -15,7 +14,6 @@ namespace dgt.power.export.Logic;
 public sealed class SlaConfigExport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
     : PowerCommand<ExportVerb>(spans, console)
@@ -44,7 +42,7 @@ public sealed class SlaConfigExport(
 
         var json = ExportJson.GetJson(configs);
 
-        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
 
         return true;
     }

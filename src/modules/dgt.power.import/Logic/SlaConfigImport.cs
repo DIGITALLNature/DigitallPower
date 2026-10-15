@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -16,7 +16,6 @@ namespace dgt.power.import.Logic;
 public class SlaConfigImport(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<ImportVerb>(spans, console)
@@ -48,11 +47,11 @@ public class SlaConfigImport(
         {
             var slaCrm = context.SLASet.SingleOrDefault(s => s.Id == sla.SlaId);
 
-            diagnostics.Log($"Check Sla {sla.Name}({sla.SlaId:D})", TraceEventType.Information);
+            console.WriteLine($"Check Sla {sla.Name}({sla.SlaId:D})");
 
             if (slaCrm == null)
             {
-                diagnostics.Log($"Sla {sla.Name}({sla.SlaId:D}) is not in the system --> skip", TraceEventType.Warning);
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Sla {sla.Name}({sla.SlaId:D}) is not in the system --> skip[/]");
                 continue;
             }
 
@@ -65,7 +64,7 @@ public class SlaConfigImport(
 
             if (RequiresUpdate(sla, slaCrm, systemuser))
             {
-                diagnostics.Log($"Update Sla {sla.Name}({sla.SlaId:D})", TraceEventType.Information);
+                console.WriteLine($"Update Sla {sla.Name}({sla.SlaId:D})");
 
                 if (slaCrm.StatusCode?.Value != SLA.Options.StatusCode.Draft)
                 {

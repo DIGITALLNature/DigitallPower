@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Base.Config;
@@ -20,7 +19,6 @@ namespace dgt.power.analyzer.Logic;
 public sealed class EntityAllAssetsAnalyze(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
-    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
     : PowerCommand<AnalyzeVerb>(spans, console)
@@ -81,12 +79,12 @@ public sealed class EntityAllAssetsAnalyze(
             foreach (var component in components)
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId);
-                diagnostics.Log($"{entity.LogicalName + " (" + entity.DisplayName.UserLocalizedLabel?.Label + ")"}:", TraceEventType.Information);
+                console.WriteLine($"{entity.LogicalName + " (" + entity.DisplayName.UserLocalizedLabel?.Label + ")"}:");
 
                 //check whitelist
                 if (component.RootComponentBehavior?.Value == SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents)
                 {
-                    diagnostics.Log("  -> AllAssets", TraceEventType.Information);
+                    console.WriteLine("  -> AllAssets");
                     var approved = false;
                     foreach (var entryWl in entityAllAssets.WhiteList)
                     {
@@ -125,7 +123,7 @@ public sealed class EntityAllAssetsAnalyze(
 
                     if (approved)
                     {
-                        diagnostics.Log("  -> approved: true", TraceEventType.Information);
+                        console.WriteLine("  -> approved: true");
                         resultTable.Add(new AllAssetLine
                         {
                             Solution = entityAllAssets.Solution,
@@ -138,11 +136,11 @@ public sealed class EntityAllAssetsAnalyze(
                         if (entityAllAssets.Strict)
                         {
                             result = false;
-                            diagnostics.Log("        -> approved: false", TraceEventType.Error);
+                            console.MarkupLine("[red]        -> approved: false[/]");
                         }
                         else
                         {
-                            diagnostics.Log("      -> approved: false", TraceEventType.Warning);
+                            console.MarkupLine("[yellow]      -> approved: false[/]");
                         }
 
                         summary.Anomalies++;
@@ -195,7 +193,7 @@ public sealed class EntityAllAssetsAnalyze(
 
                     if (good)
                     {
-                        diagnostics.Log("  -> good", TraceEventType.Information);
+                        console.WriteLine("  -> good");
                         resultTable.Add(new AllAssetLine
                         {
                             Solution = entityAllAssets.Solution,
@@ -205,7 +203,7 @@ public sealed class EntityAllAssetsAnalyze(
                     }
                     else
                     {
-                        diagnostics.Log("      -> suspicious", TraceEventType.Warning);
+                        console.MarkupLine("[yellow]      -> suspicious[/]");
 
                         resultTable.Add(new AllAssetLine
                         {
@@ -218,7 +216,7 @@ public sealed class EntityAllAssetsAnalyze(
                 }
                 else
                 {
-                    diagnostics.Log("  -> shell only", TraceEventType.Information);
+                    console.WriteLine("  -> shell only");
                 }
             }
         }

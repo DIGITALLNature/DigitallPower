@@ -69,7 +69,7 @@ Commands that need no span (`connection/*`, `Complete*`) stay plain `AsyncComman
 
 - **Span** (`ICommandSpanFactory` or similar): the only code that starts an `Activity`, owns telemetry gating (`--no-telemetry`, install id) and sets `dgtp.command` and `dgtp.success`. The telemetry structure is deliberately unchanged: span name stays `command.<TypeName>` and no new tags are added.
 - **Status lines**: printed by `PowerCommand` itself to its console, see D2a. Output is the command's responsibility, so there is no separate writer class. Telemetry and console output are separate concerns and share nothing but the result.
-- **Diagnostics** (`IDiagnostics`: `Log`, `Exception`): records onto `Activity.Current` instead of a field, so it follows async context. `ConfigResolver` and other services depend on it.
+- **Console messages**: commands write user-facing messages directly to `IAnsiConsole` (grey for verbose, yellow for warnings, red for errors). There is no diagnostics abstraction; telemetry is recorded only by the span in `PowerCommand`.
 - `TrackFatalException` stays for exceptions that escape before or outside a run. The lifecycle base marks an exception as already recorded (for example via `Exception.Data`) so the global handler does not create a second span for it.
 
 Alternative considered: keep `ITracer` as is and only drop the marker. Rejected because the hidden `_currentActivity` state is the actual defect.
@@ -136,7 +136,6 @@ Until step 4, legacy `PowerLogic` subclasses keep using the eager registration u
 
 - [Behavior drift in tracing: spans now close on exceptions or after early returns that previously leaked] → Port `TracerTests` to the new types and add tests for success, failure and exception paths; compare tag sets with today's.
 - [Duplicate span for escaping exceptions (run records it, global handler tracks it again)] → Mark recorded exceptions and skip them in `TrackFatalException`; cover with a test.
-- [`Activity.Current` is null when a diagnostics call happens outside a run] → Diagnostics write to the console regardless and only attach to a span when one exists.
 - [Caching a connect task under concurrency] → Share one in-flight task; do not cache failures; unit-test concurrent first calls and retry after failure.
 - [Large mechanical diff (~46 classes) hides regressions] → Migrate per module, keep each commit buildable and green, run each module's test project before moving on.
 - [Start/end lines change visible output] → Limited to replacing the class-name rules with the command-path lines of D2a; error and status messages are untouched. Called out in the release notes.
