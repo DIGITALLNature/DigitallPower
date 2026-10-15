@@ -16,21 +16,18 @@ using Spectre.Console;
 namespace dgt.power.export.Logic;
 
 public sealed class UserRoleExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
@@ -46,15 +43,15 @@ public sealed class UserRoleExport(
             }
         }
 
-        if (!GetQueryExpression(Tracer, Connection, filter, out var query))
+        if (!GetQueryExpression(diagnostics, service, filter, out var query))
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
-        var json = GetJson(GetUsers(Connection, query!.Criteria, separator));
+        var json = ExportJson.GetJson(GetUsers(service, query!.Criteria, separator));
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
-        return Tracer.End(this, true);
+        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        return true;
     }
 
     private static List<UserRole> GetUsers(IOrganizationService service, FilterExpression filter, string separator)
@@ -161,7 +158,7 @@ public sealed class UserRoleExport(
         where T : class =>
         entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : null;
 
-    private static bool GetQueryExpression(ITracer tracer, IOrganizationService service, string filter, out QueryExpression? query)
+    private static bool GetQueryExpression(IDiagnostics diagnostics, IOrganizationService service, string filter, out QueryExpression? query)
     {
         var fetchXml = string.Empty;
         query = null;
@@ -185,7 +182,7 @@ public sealed class UserRoleExport(
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            tracer.Log($"Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}", TraceEventType.Error);
+            diagnostics.Log($"Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}", TraceEventType.Error);
             return false;
         }
     }

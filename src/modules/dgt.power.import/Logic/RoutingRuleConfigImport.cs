@@ -15,56 +15,56 @@ using RoutingRuleItem = dgt.power.dataverse.RoutingRuleItem;
 namespace dgt.power.import.Logic;
 
 public sealed class RoutingRuleConfigImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<List<RoutingRuleConfig>>(args.FileDir, fileName, out var rules))
+        if (!configResolver.TryGetConfigFile<List<RoutingRuleConfig>>(args.FileDir, fileName, out var rules))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Routing rule configuration not found.[/]");
+            return false;
         }
 
         //anything to do?
         if (rules.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Routing rule configuration is empty.[/]");
+            return false;
         }
 
         var result = true;
 
-        using var context = new DataContext(Connection);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service);
 
         foreach (var rule in rules)
         {
-            result = HandleRoutingRule(args, context, rule) && result;
+            result = HandleRoutingRule(service, args, context, rule) && result;
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
-    private bool HandleRoutingRule(ImportVerb args, DataContext context, RoutingRuleConfig rule)
+    private bool HandleRoutingRule(IOrganizationService service, ImportVerb args, DataContext context, RoutingRuleConfig rule)
     {
         var ruleInTarget = context.RoutingRuleSet.SingleOrDefault(rr => rr.Id == rule.RoutingRuleId);
 
-        Tracer.Log($"Check Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
+        diagnostics.Log($"Check Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
 
         var isDeactivatedToUpdate = false;
 
         if (ruleInTarget == null)
         {
-            Tracer.Log($"Routing Rule {rule.Name}({rule.RoutingRuleId:D}) does not exist", TraceEventType.Warning);
+            diagnostics.Log($"Routing Rule {rule.Name}({rule.RoutingRuleId:D}) does not exist", TraceEventType.Warning);
             return false;
         }
 
@@ -82,7 +82,7 @@ public sealed class RoutingRuleConfigImport(
                 AssignObjectId = rri.AssignObjectId
             });
 
-        var owner = GetAssignee(args.Assignee, rule);
+        var owner = ImportAssignee.GetAssignee(args.Assignee, rule);
 
         if (!string.IsNullOrWhiteSpace(owner))
         {
@@ -91,13 +91,13 @@ public sealed class RoutingRuleConfigImport(
 
             if (systemUser?.DomainName != owner)
             {
-                result = AssignRule(ruleInTarget, owner, ref isDeactivatedToUpdate) && result;
+                result = AssignRule(service, ruleInTarget, owner, ref isDeactivatedToUpdate) && result;
             }
         }
 
         foreach (var item in rule.RoutingRuleItems)
         {
-            result = HandleRoutingRuleItem(context, rule, ruleItemsInTarget, item, ruleInTarget,
+            result = HandleRoutingRuleItem(service, context, rule, ruleItemsInTarget, item, ruleInTarget,
                 ref isDeactivatedToUpdate) && result;
         }
 
@@ -105,24 +105,24 @@ public sealed class RoutingRuleConfigImport(
         if ((isDeactivatedToUpdate && rule.Active) ||
             (rule.Active && ruleInTarget.StatusCode?.Value != RoutingRule.Options.StatusCode.Active))
         {
-            Tracer.Log($"Activate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
+            diagnostics.Log($"Activate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
 
-            result &= Connection.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Active,
+            result &= service.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Active,
                 RoutingRule.Options.StatusCode.Active);
         }
         else if (!isDeactivatedToUpdate && !rule.Active &&
                  ruleInTarget.StatusCode?.Value == RoutingRule.Options.StatusCode.Active)
         {
-            Tracer.Log($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
+            diagnostics.Log($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
 
-            result &= Connection.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
+            result &= service.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
                 RoutingRule.Options.StatusCode.Draft);
         }
 
         return result;
     }
 
-    private bool HandleRoutingRuleItem(DataContext context, RoutingRuleConfig rule,
+    private bool HandleRoutingRuleItem(IOrganizationService service, DataContext context, RoutingRuleConfig rule,
         IQueryable<RoutingRuleItem> ruleItemsInTarget, common.DTO.RoutingRuleItem item, RoutingRule ruleInTarget,
         ref bool isDeactivatedToUpdate)
     {
@@ -131,7 +131,7 @@ public sealed class RoutingRuleConfigImport(
 
         if (ruleItemInTarget == null)
         {
-            Tracer.Log(
+            diagnostics.Log(
                 $"Routing Rule  {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) does not exist",
                 TraceEventType.Warning);
             return false;
@@ -143,7 +143,7 @@ public sealed class RoutingRuleConfigImport(
             if (item.RoutedQueueId != ruleItemInTarget.RoutedQueueId?.Id ||
                 item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
             {
-                result = UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
+                result = UpdateRoutingRuleItem(service, new RoutingRuleItem(item.RoutingRuleItemId)
                     {
                         RoutedQueueId = new EntityReference(Queue.EntityLogicalName,
                             item.RoutedQueueId ?? Guid.Empty),
@@ -162,7 +162,7 @@ public sealed class RoutingRuleConfigImport(
 
                 if (systemuser == null)
                 {
-                    Tracer.Log(
+                    diagnostics.Log(
                         $"Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) for User {item.AssignObjectIdName} does not exist",
                         TraceEventType.Warning);
                     return result;
@@ -171,7 +171,7 @@ public sealed class RoutingRuleConfigImport(
                 if (systemuser.Id != ruleItemInTarget.AssignObjectId?.Id ||
                     item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
                 {
-                    result = UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
+                    result = UpdateRoutingRuleItem(service, new RoutingRuleItem(item.RoutingRuleItemId)
                         {
                             AssignObjectId = systemuser.ToEntityReference(),
                             MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
@@ -187,7 +187,7 @@ public sealed class RoutingRuleConfigImport(
 
                 if (team == null)
                 {
-                    Tracer.Log(
+                    diagnostics.Log(
                         $"Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) for Team {item.AssignObjectIdName} does not exist",
                         TraceEventType.Warning);
                     return result;
@@ -196,7 +196,7 @@ public sealed class RoutingRuleConfigImport(
                 if (team.Id != ruleItemInTarget.AssignObjectId?.Id ||
                     item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
                 {
-                    result = UpdateRoutingRuleItem(new RoutingRuleItem(item.RoutingRuleItemId)
+                    result = UpdateRoutingRuleItem(service, new RoutingRuleItem(item.RoutingRuleItemId)
                         {
                             AssignObjectId = team.ToEntityReference(),
                             MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
@@ -210,37 +210,37 @@ public sealed class RoutingRuleConfigImport(
         return result;
     }
 
-    private bool UpdateRoutingRuleItem(RoutingRuleItem item, RoutingRule rule,
+    private bool UpdateRoutingRuleItem(IOrganizationService service, RoutingRuleItem item, RoutingRule rule,
         ref bool isDeactivatedToUpdate)
     {
         var result = true;
 
         if (rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active && !isDeactivatedToUpdate)
         {
-            Tracer.Log($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
+            diagnostics.Log($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})", TraceEventType.Information);
 
-            result &= Connection.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
+            result &= service.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
                 RoutingRule.Options.StatusCode.Draft);
 
             isDeactivatedToUpdate = true;
         }
 
-        Tracer.Log(
+        diagnostics.Log(
             $"Update: Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D})",
             TraceEventType.Information);
 
-        result &= Connection.TryUpdate(item);
+        result &= service.TryUpdate(item);
 
         return result;
     }
 
-    private bool AssignRule(RoutingRule rule, string owner, ref bool isDeactivatedToUpdate)
+    private bool AssignRule(IOrganizationService service, RoutingRule rule, string owner, ref bool isDeactivatedToUpdate)
     {
         var result = true;
 
         SystemUser? ownerSystemUser;
 
-        using (var context = new DataContext(Connection))
+        using (var context = new DataContext(service))
         {
             ownerSystemUser =
                 context.SystemUserSet.SingleOrDefault(sysU => sysU.DomainName != null && sysU.DomainName == owner);
@@ -248,24 +248,24 @@ public sealed class RoutingRuleConfigImport(
 
         if (ownerSystemUser == null)
         {
-            Tracer.Log($"Cannot find Assignee: {owner}", TraceEventType.Warning);
+            diagnostics.Log($"Cannot find Assignee: {owner}", TraceEventType.Warning);
             return true;
         }
 
         if (rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active)
         {
-            Tracer.Log($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})",
+            diagnostics.Log($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})",
                 TraceEventType.Information);
 
-            result &= Connection.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
+            result &= service.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
                 RoutingRule.Options.StatusCode.Draft);
 
             isDeactivatedToUpdate = true;
         }
 
-        Tracer.Log($"Assign: {rule.Name}({rule.RoutingRuleId:D}) to {ownerSystemUser.DomainName}",
+        diagnostics.Log($"Assign: {rule.Name}({rule.RoutingRuleId:D}) to {ownerSystemUser.DomainName}",
             TraceEventType.Information);
-        result &= Connection.TryAssign(rule.ToEntityReference(), ownerSystemUser);
+        result &= service.TryAssign(rule.ToEntityReference(), ownerSystemUser);
         return result;
     }
 }

@@ -15,34 +15,31 @@ using Calendar = dgt.power.dto.Calendar;
 namespace dgt.power.export.Logic;
 
 public sealed class CalendarExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "calendar.json" : args.FileName;
 
-        using var context = new DataContext(Connection);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service);
         var scheduleIds = GetCalendarIds(context);
 
-        var calendars = scheduleIds.Select(RetrieveCalendarStructure);
+        var calendars = scheduleIds.Select(id => RetrieveCalendarStructure(service, id));
 
-        var json = GetJson(calendars);
+        var json = ExportJson.GetJson(calendars);
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
 
-        return Tracer.End(this, true);
+        return true;
     }
 
     private static List<Guid> GetCalendarIds(DataContext context)
@@ -57,9 +54,9 @@ public sealed class CalendarExport(
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 
-    private Calendar RetrieveCalendarStructure(Guid calendarid)
+    private static Calendar RetrieveCalendarStructure(IOrganizationService service, Guid calendarid)
     {
-        var calendar = GetCalendarWithRules(calendarid);
+        var calendar = GetCalendarWithRules(service, calendarid);
         var calendarRules = calendar
             .RelatedEntities[new Relationship(dataverse.Calendar.Relations.OneToMany.CalendarCalendarRules)]?.Entities
             .Select(e => e.ToEntity<CalendarRule>()).ToList();
@@ -87,7 +84,7 @@ public sealed class CalendarExport(
         foreach (var calendarRule in calendarRules)
         {
             var innerCalendar = calendarRule.InnerCalendarId != null
-                ? RetrieveCalendarStructure(calendarRule.InnerCalendarId.Id)
+                ? RetrieveCalendarStructure(service, calendarRule.InnerCalendarId.Id)
                 : null;
 
             export.Rules.Add(new dto.CalendarRule
@@ -119,7 +116,7 @@ public sealed class CalendarExport(
         return export;
     }
 
-    private dataverse.Calendar GetCalendarWithRules(Guid calendarid)
+    private static dataverse.Calendar GetCalendarWithRules(IOrganizationService service, Guid calendarid)
     {
         var request = new RetrieveRequest
         {
@@ -137,7 +134,7 @@ public sealed class CalendarExport(
             }
         };
 
-        var response = (RetrieveResponse)Connection.Execute(request);
+        var response = (RetrieveResponse)service.Execute(request);
         var calendar = response.Entity.ToEntity<dataverse.Calendar>();
         return calendar;
     }

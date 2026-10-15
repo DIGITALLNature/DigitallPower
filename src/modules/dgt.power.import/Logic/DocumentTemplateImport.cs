@@ -18,40 +18,41 @@ using Microsoft.Xrm.Sdk.Metadata;
 using static dgt.power.dataverse.DocumentTemplate.Options;
 using DocumentTemplate = dgt.power.dto.DocumentTemplate;
 using IAnsiConsole = Spectre.Console.IAnsiConsole;
+using static Spectre.Console.AnsiConsoleExtensions;
 
 namespace dgt.power.import.Logic;
 
 public sealed class DocumentTemplateImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "documenttemplate.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<DocumentTemplates>(args.FileDir, fileName, out var templates))
+        if (!configResolver.TryGetConfigFile<DocumentTemplates>(args.FileDir, fileName, out var templates))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Document template configuration not found.[/]");
+            return false;
         }
 
         //anything to do?
         if (templates.Templates.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Document template configuration is empty.[/]");
+            return false;
         }
 
         var result = true;
 
-        using var context = new DataContext(Connection) { MergeOption = MergeOption.NoTracking };
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service) { MergeOption = MergeOption.NoTracking };
 
         var documentTemplates = (from dt in context.DocumentTemplateSet
             //where dt.Status == Model.DocumentTemplate.Options.Status.On
@@ -59,37 +60,37 @@ public sealed class DocumentTemplateImport(
             select dt).ToList();
 
         //find document template which need to be disabled (missing)
-        Tracer.Log("disable check", TraceEventType.Information);
+        diagnostics.Log("disable check", TraceEventType.Information);
         foreach (var deleteTemplate in documentTemplates.Where(e =>
                      templates.Templates.All(c => (e.Name, e.DocumentType?.Value) != (c.Name, (int)c.DocumentType))))
         {
-            result = DisableTemplate(templates, deleteTemplate) && result;
+            result = DisableTemplate(service, templates, deleteTemplate) && result;
         }
 
         //find queues need to be updated
-        Tracer.Log("update check", TraceEventType.Information);
+        diagnostics.Log("update check", TraceEventType.Information);
         foreach (var updateTemplate in documentTemplates.Where(e =>
                      templates.Templates.Any(c => (e.Name, e.DocumentType?.Value) == (c.Name, (int)c.DocumentType))))
         {
-            result = UpdateTemplate(args, templates, updateTemplate) && result;
+            result = UpdateTemplate(service, args, templates, updateTemplate) && result;
         }
 
         //find bulk deletes which need to be created
-        Tracer.Log("create check", TraceEventType.Information);
+        diagnostics.Log("create check", TraceEventType.Information);
         foreach (var createTemplate in templates.Templates.Where(e =>
                      documentTemplates.TrueForAll(c => (c.Name, c.DocumentType?.Value) != (e.Name, (int)e.DocumentType))))
         {
-            result = CreateTemplate(args, createTemplate)&& result;
+            result = CreateTemplate(service, args, createTemplate)&& result;
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
-    private bool CreateTemplate(ImportVerb args, DocumentTemplate createTemplate)
+    private bool CreateTemplate(IOrganizationService service, ImportVerb args, DocumentTemplate createTemplate)
     {
-        Tracer.Log("--->", TraceEventType.Verbose);
+        diagnostics.Log("--->", TraceEventType.Verbose);
         var name = createTemplate.Name.Trim().Replace(".xlsx", "", StringComparison.Ordinal).Replace(".docx", "", StringComparison.Ordinal);
-        Tracer.Log($"create document template: {name}", TraceEventType.Verbose);
+        diagnostics.Log($"create document template: {name}", TraceEventType.Verbose);
         //create
         var template = new dataverse.DocumentTemplate
         {
@@ -100,25 +101,25 @@ public sealed class DocumentTemplateImport(
                 : new OptionSetValue(DocumentType.MicrosoftWord),
             Description = createTemplate.Description,
             LanguageCode = createTemplate.LanguageCode ?? 1033,
-            Content = GetContent(args, createTemplate.File, createTemplate.DocumentType,
+            Content = GetContent(service, args, createTemplate.File, createTemplate.DocumentType,
                 createTemplate.AssociatedEntityTypeCode)
         };
-        var result = Connection.TryCreate(template, out var id);
-        return SetTemplateStatus(createTemplate, id) && result;
+        var result = service.TryCreate(template, out var id);
+        return SetTemplateStatus(service, createTemplate, id) && result;
     }
 
-    private bool SetTemplateStatus(DocumentTemplate template, Guid id)
+    private static bool SetTemplateStatus(IOrganizationService service, DocumentTemplate template, Guid id)
     {
         var result = true;
         if ((template.DocumentStatus ?? false) == Status.Activated) //enable
         {
-            result = Connection.TrySetStateDocumentTemplate(
+            result = service.TrySetStateDocumentTemplate(
                 new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
                 Status.Activated);
         }
         else if ((template.DocumentStatus ?? false) == Status.Draft) //disable
         {
-            result = Connection.TrySetStateDocumentTemplate(
+            result = service.TrySetStateDocumentTemplate(
                 new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
                 Status.Draft);
         }
@@ -126,42 +127,42 @@ public sealed class DocumentTemplateImport(
         return result;
     }
 
-    private bool DisableTemplate(DocumentTemplates templates, dataverse.DocumentTemplate deleteTemplate)
+    private bool DisableTemplate(IOrganizationService service, DocumentTemplates templates, dataverse.DocumentTemplate deleteTemplate)
     {
-        Tracer.Log("--->", TraceEventType.Verbose);
+        diagnostics.Log("--->", TraceEventType.Verbose);
         var result = true;
         if (!templates.IgnoreMissing ?? false)
         {
             //disable document template
-            Tracer.Log($"disable document template: {deleteTemplate.Name}", TraceEventType.Verbose);
-            result = Connection.TrySetStateDocumentTemplate(deleteTemplate.ToEntityReference(), Status.Draft);
+            diagnostics.Log($"disable document template: {deleteTemplate.Name}", TraceEventType.Verbose);
+            result = service.TrySetStateDocumentTemplate(deleteTemplate.ToEntityReference(), Status.Draft);
         }
         else
         {
-            Tracer.Log($"skip not listed document template: {deleteTemplate.Name}", TraceEventType.Verbose);
+            diagnostics.Log($"skip not listed document template: {deleteTemplate.Name}", TraceEventType.Verbose);
         }
 
         return result;
     }
 
-    private bool UpdateTemplate(ImportVerb args, DocumentTemplates templates, dataverse.DocumentTemplate updateTemplate)
+    private bool UpdateTemplate(IOrganizationService service, ImportVerb args, DocumentTemplates templates, dataverse.DocumentTemplate updateTemplate)
     {
-        Tracer.Log("--->", TraceEventType.Verbose);
+        diagnostics.Log("--->", TraceEventType.Verbose);
         var existingTemplate = templates.Templates.Single(e =>
             (updateTemplate.Name, updateTemplate.DocumentType?.Value) == (e.Name, (int)e.DocumentType));
         var currentStatus = updateTemplate.Status.GetValueOrDefault(Status.Draft);
         if (currentStatus != existingTemplate.DocumentStatus && currentStatus == Status.Activated) //disable
         {
-            Tracer.Log($"disable document template: {updateTemplate.Name}", TraceEventType.Verbose);
-            return Connection.TrySetStateDocumentTemplate(updateTemplate.ToEntityReference(), Status.Draft);
+            diagnostics.Log($"disable document template: {updateTemplate.Name}", TraceEventType.Verbose);
+            return service.TrySetStateDocumentTemplate(updateTemplate.ToEntityReference(), Status.Draft);
         }
 
         var result = true;
         if (existingTemplate.ForceUpdate ?? false)
         {
-            Tracer.Log($"update document template: {updateTemplate.Name}", TraceEventType.Verbose);
+            diagnostics.Log($"update document template: {updateTemplate.Name}", TraceEventType.Verbose);
             //delete old
-            result = Connection.TryDelete(dataverse.DocumentTemplate.EntityLogicalName, updateTemplate.Id);
+            result = service.TryDelete(dataverse.DocumentTemplate.EntityLogicalName, updateTemplate.Id);
 
             //create
             var template = new dataverse.DocumentTemplate
@@ -173,37 +174,37 @@ public sealed class DocumentTemplateImport(
                     : new OptionSetValue(DocumentType.MicrosoftWord),
                 Description = existingTemplate.Description ?? updateTemplate.Description,
                 LanguageCode = existingTemplate.LanguageCode ?? updateTemplate.LanguageCode,
-                Content = GetContent(args, existingTemplate.File, existingTemplate.DocumentType,
+                Content = GetContent(service, args, existingTemplate.File, existingTemplate.DocumentType,
                     existingTemplate.AssociatedEntityTypeCode)
             };
-            result = Connection.TryCreate(template, out var id) && result;
+            result = service.TryCreate(template, out var id) && result;
             updateTemplate.Id = id;
         }
         else
         {
             if (updateTemplate.Description != existingTemplate.Description)
             {
-                Tracer.Log($"update document template: {updateTemplate.Name}", TraceEventType.Verbose);
+                diagnostics.Log($"update document template: {updateTemplate.Name}", TraceEventType.Verbose);
                 var template = new dataverse.DocumentTemplate(updateTemplate.Id)
                 {
                     Description = existingTemplate.Description
                 };
-                result = Connection.TryUpdate(template);
+                result = service.TryUpdate(template);
             }
         }
 
-        return SetTemplateStatus(existingTemplate, updateTemplate.Id) && result;
+        return SetTemplateStatus(service, existingTemplate, updateTemplate.Id) && result;
     }
 
-    private int GetEntityTypeCode(string entity)
+    private static int GetEntityTypeCode(IOrganizationService service, string entity)
     {
-        Connection.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(
+        service.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(
             new RetrieveEntityRequest { LogicalName = entity, EntityFilters = EntityFilters.Entity }, out var response);
         // ReSharper disable once PossibleInvalidOperationException
         return response.EntityMetadata.ObjectTypeCode!.Value;
     }
 
-    private string GetContent(ImportVerb args, string templateFile, DocumentTemplate.DocumentTemplateType type,
+    private string GetContent(IOrganizationService service, ImportVerb args, string templateFile, DocumentTemplate.DocumentTemplateType type,
         string entity)
     {
         var fileName = Path.GetFileName(templateFile);
@@ -244,7 +245,7 @@ public sealed class DocumentTemplateImport(
                         throw new InvalidDataException("Word template does not contain a main document part.");
                     }
 
-                    var etc = GetEntityTypeCode(entity);
+                    var etc = GetEntityTypeCode(service, entity);
                     var matcher = $"({entity}/" + @"\d{1,5})";
                     var replacement = $"{entity}/{etc}";
                     var match = Regex.Match(mainDocumentPart.Document.InnerXml, matcher,
@@ -258,7 +259,7 @@ public sealed class DocumentTemplateImport(
                             {
                                 if (capture.Value != replacement)
                                 {
-                                    Tracer.Log($"Replace InnerXml etc: {capture} -> {replacement}",
+                                    diagnostics.Log($"Replace InnerXml etc: {capture} -> {replacement}",
                                         TraceEventType.Information);
                                     mainDocumentPart.Document.InnerXml =
                                         mainDocumentPart.Document.InnerXml.Replace(capture.Value, replacement, StringComparison.Ordinal);
@@ -288,7 +289,7 @@ public sealed class DocumentTemplateImport(
 #pragma warning disable CA1031 // Intentional: log any error before rethrowing to preserve original exception
         catch (Exception e)
         {
-            Tracer.Log(e.Message, TraceEventType.Error);
+            diagnostics.Log(e.Message, TraceEventType.Error);
             throw;
         }
 #pragma warning restore CA1031
@@ -309,7 +310,7 @@ public sealed class DocumentTemplateImport(
                 {
                     if (capture.Value != replacement)
                     {
-                        Tracer.Log($"Replace '${part.Uri}' etc: {capture} -> {replacement}",
+                        diagnostics.Log($"Replace '${part.Uri}' etc: {capture} -> {replacement}",
                             TraceEventType.Information);
                         xml = xml.Replace(capture.Value, replacement, StringComparison.Ordinal);
                         using var stream = new MemoryStream(Encoding.UTF8.GetBytes(xml));
@@ -326,12 +327,12 @@ public sealed class DocumentTemplateImport(
     {
         if (File.Exists(file))
         {
-            Tracer.Log($"Read file {file}", TraceEventType.Information);
+            diagnostics.Log($"Read file {file}", TraceEventType.Information);
             obj = File.ReadAllBytes(file);
             return true;
         }
 
-        Tracer.Log($"File {file} not found", TraceEventType.Warning);
+        diagnostics.Log($"File {file} not found", TraceEventType.Warning);
         obj = Array.Empty<byte>();
         return false;
     }

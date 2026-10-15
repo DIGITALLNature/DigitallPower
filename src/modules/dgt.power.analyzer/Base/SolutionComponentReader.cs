@@ -1,25 +1,24 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Collections;
 using System.Diagnostics;
-using System.Globalization;
-using System.Text.Json;
-using CsvHelper;
-using dgt.power.common;
 using dgt.power.common.DTO;
 using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
-using Spectre.Console;
 
 namespace dgt.power.analyzer.Base;
 
-#pragma warning disable S1200
-public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
+/// <summary>
+/// Reads solution components, their layers and solutions for the analyzers. Holds no Dataverse
+/// connection; every method receives the service or data context it should use.
+/// </summary>
+public sealed class SolutionComponentReader
 {
-    protected BaseAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
+    private const int PageSize = 5000;
+
+    public SolutionComponentReader()
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
         var fields = type.GetFields();
@@ -31,31 +30,34 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         }
     }
 
-    protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
-    internal  static string ResultFolder { get; } = "Analyze";
+    public Dictionary<int, string> ComponentTypeLookup { get; } = new();
 
     /// <summary>
     /// Retrieves the solution components for a given solution.
     /// </summary>
+    /// <param name="service">The organization service.</param>
     /// <param name="context">The data context.</param>
     /// <param name="uniqueName">The unique name of the solution.</param>
     /// <returns>A list of solution components.</returns>
-    protected IList<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
+    public IList<SolutionComponent> GetSolutionComponents(IOrganizationService service, DataContext context, string uniqueName)
     {
         // Get the solution using the provided unique name
         var solution = GetSolution(context, uniqueName);
 
         // Retrieve the solution components using the solution ID
-        return GetSolutionComponents(solution.Id);
+        return GetSolutionComponents(service, solution.Id);
     }
 
     /// <summary>
     /// Retrieves solution components based on the provided solution Id.
     /// </summary>
+    /// <param name="service">The organization service.</param>
     /// <param name="solutionId">The Id of the solution to retrieve components for.</param>
     /// <returns>A list of SolutionComponent objects.</returns>
-    protected IList<SolutionComponent> GetSolutionComponents(Guid solutionId)
+    public IList<SolutionComponent> GetSolutionComponents(IOrganizationService service, Guid solutionId)
     {
+        ArgumentNullException.ThrowIfNull(service);
+
         // Create query expression to retrieve solution components
         var pagequery = new QueryExpression
         {
@@ -131,7 +133,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         while (moreRecords)
         {
             // Retrieve the page.
-            var results = Connection.RetrieveMultiple(pagequery);
+            var results = service.RetrieveMultiple(pagequery);
             components.AddRange(results.Entities.Select(e => e.ToEntity<SolutionComponent>()));
             if (results.MoreRecords)
             {
@@ -152,7 +154,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
     /// </summary>
     /// <param name="layers">The list of component layers to search through.</param>
     /// <returns>The top component layer that is not active.</returns>
-    protected static MsdynComponentlayer GetTopNotActiveLayer(IList<MsdynComponentlayer> layers)
+    public static MsdynComponentlayer GetTopNotActiveLayer(IList<MsdynComponentlayer> layers)
     {
         ArgumentNullException.ThrowIfNull(layers);
         // If there is only one layer, return it
@@ -169,8 +171,9 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         return first.MsdynSolutionname == "Active" ? GetTopNotActiveLayer(layers.Skip(1).ToList()) : first;
     }
 
-    protected IList<MsdynComponentlayer> GetSolutionLayers(SolutionComponent component)
+    public IList<MsdynComponentlayer> GetSolutionLayers(IOrganizationService service, SolutionComponent component)
     {
+        ArgumentNullException.ThrowIfNull(service);
         Debug.Assert(component != null, nameof(component) + " != null");
 
         var query = new QueryExpression
@@ -204,11 +207,11 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         query.Criteria = filter;
 
         query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
-        var layers = Connection.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<MsdynComponentlayer>()).ToList();
+        var layers = service.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<MsdynComponentlayer>()).ToList();
         return layers;
     }
 
-    protected static Solution GetSolution(DataContext context, string uniqueName)
+    public static Solution GetSolution(DataContext context, string uniqueName)
     {
         ArgumentNullException.ThrowIfNull(context);
         var solution = (from su in context.SolutionSet
@@ -217,59 +220,7 @@ public abstract class BaseAnalyze : PowerLogic<AnalyzeVerb>
         return solution;
     }
 
-    protected static void WriteSummaryFile(string name, AnalyzerSummary summary)
-    {
-        var content = JsonSerializer.SerializeToUtf8Bytes(summary);
-
-        if (!Directory.Exists(ResultFolder))
-        {
-            Directory.CreateDirectory(ResultFolder);
-        }
-
-
-        var work = Path.Combine(ResultFolder, $"{Guid.NewGuid():N}-{name}-summary");
-        var file = Path.Combine(ResultFolder, $"{name}-summary.json");
-
-
-        File.WriteAllBytes(work, content);
-        if (File.Exists(file))
-        {
-            File.Replace(work, file, null, false);
-        }
-        else
-        {
-            File.Move(work, file);
-        }
-    }
-
-    protected static void WriteReportFile<T>(string name, T resultTable) where T : IEnumerable
-    {
-        if (!Directory.Exists(ResultFolder))
-        {
-            Directory.CreateDirectory(ResultFolder);
-        }
-
-        var work = Path.Combine(ResultFolder, $"{Guid.NewGuid():N}-{name}-result");
-        var file = Path.Combine(ResultFolder, $"{name}-result.csv");
-
-        using (var writer = new StreamWriter(work))
-        using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-        {
-            csv.WriteRecords(resultTable);
-        }
-
-        if (File.Exists(file))
-        {
-            File.Replace(work, file, null, false);
-        }
-        else
-        {
-            File.Move(work, file);
-        }
-    }
-
-
-    protected static string GetComponentName(SolutionComponent component, IEnumerable<EntityMetadata> entities, MsdynComponentlayer first)
+    public static string GetComponentName(SolutionComponent component, IEnumerable<EntityMetadata> entities, MsdynComponentlayer first)
     {
         ArgumentNullException.ThrowIfNull(component);
         ArgumentNullException.ThrowIfNull(first);

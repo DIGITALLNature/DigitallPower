@@ -16,79 +16,79 @@ using Spectre.Console;
 namespace dgt.power.import.Logic;
 
 public sealed class BulkDeleteImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "bulkdelete.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<BulkDeletes>(args.FileDir, fileName, out var bulkDeletes))
+        if (!configResolver.TryGetConfigFile<BulkDeletes>(args.FileDir, fileName, out var bulkDeletes))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Bulk delete configuration not found.[/]");
+            return false;
         }
 
         //anything to do?
         if (bulkDeletes.Deletes.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Bulk delete configuration is empty.[/]");
+            return false;
         }
 
         var result = true;
 
-        using var context = new DataContext(Connection);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service);
 
-        var (system, techUser, operations) = GetUserAndExistingBulkDeleteJobs(context);
+        var (system, techUser, operations) = GetUserAndExistingBulkDeleteJobs(service, context);
 
 
         //find bulk deletes which are missing
-        Tracer.Log("missing check", TraceEventType.Information);
+        diagnostics.Log("missing check", TraceEventType.Information);
         foreach (var missing in operations.Where(e => bulkDeletes.Deletes.TrueForAll(c => e.Name != c.Name)))
         {
-            Tracer.Log($"bulk delete {missing.Name} not configured", TraceEventType.Error);
+            diagnostics.Log($"bulk delete {missing.Name} not configured", TraceEventType.Error);
             result = false;
         }
 
         if (!result)
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
         //find bulk deletes which need to be disabled
-        Tracer.Log("disable check", TraceEventType.Information);
+        diagnostics.Log("disable check", TraceEventType.Information);
         foreach (var disable in operations.Where(e => bulkDeletes.Deletes.Exists(c => e.Name == c.Name && c.Disable)))
         {
-            result = DisableBulkDeleteJobs(disable) && result;
+            result = DisableBulkDeleteJobs(service, disable) && result;
         }
 
         //find bulk deletes which need to be updated
-        Tracer.Log("update check", TraceEventType.Information);
+        diagnostics.Log("update check", TraceEventType.Information);
         foreach (var xupdate in operations.Where(e => bulkDeletes.Deletes.Exists(c => e.Name == c.Name && !c.Disable)))
         {
-            result = UpdateBulkDeleteJobs(xupdate, bulkDeletes, context, system, techUser) && result;
+            result = UpdateBulkDeleteJobs(service, xupdate, bulkDeletes, context, system, techUser) && result;
         }
 
         //find bulk deletes which need to be created
-        Tracer.Log("create check", TraceEventType.Information);
+        diagnostics.Log("create check", TraceEventType.Information);
         foreach (var create in bulkDeletes.Deletes.Where(e => operations.All(c => e.Name != c.Name)))
         {
-            result = DeleteBulkDeleteJobs(create) && result;
+            result = DeleteBulkDeleteJobs(service, create) && result;
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
-    private (SystemUser system, SystemUser techUser, ICollection<AsyncOperation> operations)
-        GetUserAndExistingBulkDeleteJobs(DataContext context)
+    private static (SystemUser system, SystemUser techUser, ICollection<AsyncOperation> operations)
+        GetUserAndExistingBulkDeleteJobs(IOrganizationService service, DataContext context)
     {
         var system = (from su in context.SystemUserSet
             where su.LastName == "SYSTEM"
@@ -96,7 +96,7 @@ public sealed class BulkDeleteImport(
             where su.FirstName == null || su.FirstName == ""
             select su).Single();
 
-        var userId = ((WhoAmIResponse)Connection.Execute(new WhoAmIRequest())).UserId;
+        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
         var techUser = (from su in context.SystemUserSet
             where su.Id == userId
             select su).Single();
@@ -112,7 +112,7 @@ public sealed class BulkDeleteImport(
         return (system, techUser, operations);
     }
 
-    private bool DeleteBulkDeleteJobs(BulkDelete create)
+    private bool DeleteBulkDeleteJobs(IOrganizationService service, BulkDelete create)
     {
         if (create.Disable)
         {
@@ -121,7 +121,7 @@ public sealed class BulkDeleteImport(
 
         if (string.IsNullOrWhiteSpace(create.FetchXml))
         {
-            Tracer.Log($"bulk delete '{create.Name}' has no fetch xml ...", TraceEventType.Error);
+            diagnostics.Log($"bulk delete '{create.Name}' has no fetch xml ...", TraceEventType.Error);
             return false;
         }
 
@@ -133,7 +133,7 @@ public sealed class BulkDeleteImport(
         {
             FetchXml = create.FetchXml
         };
-        var response = (FetchXmlToQueryExpressionResponse)Connection.Execute(request);
+        var response = (FetchXmlToQueryExpressionResponse)service.Execute(request);
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = create.Name,
@@ -144,14 +144,15 @@ public sealed class BulkDeleteImport(
             ToRecipients = [],
             CCRecipients = []
         };
-        Tracer.Log(
+        diagnostics.Log(
             $"create bulk delete '{create.Name}'; StartTime:{create.RecurrenceStartTime}; Pattern:{create.RecurrencePattern}",
             TraceEventType.Information);
-        return Connection.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
+        return service.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
             out _);
     }
 
-    private bool UpdateBulkDeleteJobs(AsyncOperation xupdate, BulkDeletes bulkDeletes, DataContext context, SystemUser system, SystemUser techUser)
+    private bool UpdateBulkDeleteJobs(IOrganizationService service, AsyncOperation xupdate, BulkDeletes bulkDeletes, DataContext context, SystemUser system,
+        SystemUser techUser)
     {
         var update = xupdate;
         var bulkDelete = bulkDeletes.Deletes.Single(e => e.Name == update.Name);
@@ -160,22 +161,22 @@ public sealed class BulkDeleteImport(
         if (!bulkDelete.RecurrencePattern.Equals(update.RecurrencePattern, StringComparison.Ordinal) ||
             !bulkDelete.RecurrenceStartTime.Equals($"{update.RecurrenceStartTime:HH:mm}", StringComparison.Ordinal))
         {
-            Tracer.Log(
+            diagnostics.Log(
                 $"update bulk delete '{update.Name}'; StartTime:{bulkDelete.RecurrenceStartTime}; Pattern:{bulkDelete.RecurrencePattern}!",
                 TraceEventType.Information);
-            Tracer.Log("HINT: update of fetch-xml is neither checked nor supported!", TraceEventType.Information);
+            diagnostics.Log("HINT: update of fetch-xml is neither checked nor supported!", TraceEventType.Information);
             var startTime = DateTime
                 .ParseExact($"{DateTime.UtcNow.AddDays(1):yyyy-MM-dd} {bulkDelete.RecurrenceStartTime}:00 UTC",
                     "yyyy-MM-dd HH:mm:ss UTC", CultureInfo.CurrentCulture, DateTimeStyles.AssumeUniversal)
                 .ToUniversalTime();
             if (string.IsNullOrWhiteSpace(update.RecurrencePattern))
             {
-                Tracer.Log("disabled once cannot be reactivated, but copied!", TraceEventType.Information);
-                result = CopyBulkDeleteJob(update, startTime, bulkDelete.RecurrencePattern);
+                diagnostics.Log("disabled once cannot be reactivated, but copied!", TraceEventType.Information);
+                result = CopyBulkDeleteJob(service, update, startTime, bulkDelete.RecurrencePattern);
             }
             else
             {
-                result = Connection.TryUpdate(new AsyncOperation(update.Id)
+                result = service.TryUpdate(new AsyncOperation(update.Id)
                 {
                     RecurrencePattern = bulkDelete.RecurrencePattern,
                     RecurrenceStartTime = startTime
@@ -194,33 +195,33 @@ public sealed class BulkDeleteImport(
 
         if (update.OwnerId!.Id != system.Id && update.OwnerId.Id != techUser.Id)
         {
-            Tracer.Log($"update bulk delete {update.Name}; new owner: {techUser.FullName}!",
+            diagnostics.Log($"update bulk delete {update.Name}; new owner: {techUser.FullName}!",
                 TraceEventType.Information);
 
             if (!string.IsNullOrWhiteSpace(update.RecurrencePattern))
             {
-                Tracer.Log("bulk deletes cannot be assigned, but copied!", TraceEventType.Information);
-                result = Connection.TryUpdate(new AsyncOperation(update.Id)
+                diagnostics.Log("bulk deletes cannot be assigned, but copied!", TraceEventType.Information);
+                result = service.TryUpdate(new AsyncOperation(update.Id)
                 {
                     RecurrencePattern = "",
                     RecurrenceStartTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(-10))
                 }) && result;
-                result = CopyBulkDeleteJob(update, update.RecurrenceStartTime.GetValueOrDefault(DateTime.UtcNow.AddDays(1)), update.RecurrencePattern) && result;
+                result = CopyBulkDeleteJob(service, update, update.RecurrenceStartTime.GetValueOrDefault(DateTime.UtcNow.AddDays(1)), update.RecurrencePattern) && result;
             }
         }
 
-        Tracer.Log($"bulk delete '{update.Name}' checked!", TraceEventType.Verbose);
+        diagnostics.Log($"bulk delete '{update.Name}' checked!", TraceEventType.Verbose);
         return result;
     }
 
-    private bool DisableBulkDeleteJobs(AsyncOperation disable)
+    private bool DisableBulkDeleteJobs(IOrganizationService service, AsyncOperation disable)
     {
         var result = true;
         if (!string.IsNullOrEmpty(disable.RecurrencePattern))
         {
             //set to run once, delete afterwards, nice hack
-            Tracer.Log($"disable bulk delete '{disable.Name}'", TraceEventType.Information);
-            result = Connection.TryUpdate(new AsyncOperation(disable.Id)
+            diagnostics.Log($"disable bulk delete '{disable.Name}'", TraceEventType.Information);
+            result = service.TryUpdate(new AsyncOperation(disable.Id)
             {
                 RecurrencePattern = "",
                 RecurrenceStartTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(10))
@@ -228,13 +229,13 @@ public sealed class BulkDeleteImport(
         }
         else
         {
-            Tracer.Log($"bulk delete '{disable.Name}' already disabled", TraceEventType.Information);
+            diagnostics.Log($"bulk delete '{disable.Name}' already disabled", TraceEventType.Information);
         }
 
         return result;
     }
 
-    private bool CopyBulkDeleteJob(AsyncOperation bulkDeleteJob, DateTime startTime, string recurrencePattern)
+    private bool CopyBulkDeleteJob(IOrganizationService service, AsyncOperation bulkDeleteJob, DateTime startTime, string recurrencePattern)
     {
         var result = true;
         var data = bulkDeleteJob.Data!;
@@ -246,7 +247,7 @@ public sealed class BulkDeleteImport(
             FetchXml = fetchXml
         };
         var fetchXmlToQueryExpressionResponse = (FetchXmlToQueryExpressionResponse)
-            Connection.Execute(fetchXmlToQueryExpressionRequest);
+            service.Execute(fetchXmlToQueryExpressionRequest);
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = bulkDeleteJob.Name,
@@ -257,16 +258,16 @@ public sealed class BulkDeleteImport(
             ToRecipients = [],
             CCRecipients = []
         };
-        if (Connection.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
+        if (service.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
                 out _))
         {
-            Tracer.Log($"bulk delete '{bulkDeleteJob.Name}' copied!", TraceEventType.Information);
-            Tracer.Log($"delete old bulk delete '{bulkDeleteJob.Name}'!", TraceEventType.Information);
-            if (Connection.TryRetrieve(AsyncOperation.EntityLogicalName, bulkDeleteJob.Id,
+            diagnostics.Log($"bulk delete '{bulkDeleteJob.Name}' copied!", TraceEventType.Information);
+            diagnostics.Log($"delete old bulk delete '{bulkDeleteJob.Name}'!", TraceEventType.Information);
+            if (service.TryRetrieve(AsyncOperation.EntityLogicalName, bulkDeleteJob.Id,
                     new ColumnSet(AsyncOperation.LogicalNames.AsyncOperationId),
                     out AsyncOperation reloaded))
             {
-                result = Connection.TryDelete(AsyncOperation.EntityLogicalName, reloaded.Id);
+                result = service.TryDelete(AsyncOperation.EntityLogicalName, reloaded.Id);
             }
         }
         else

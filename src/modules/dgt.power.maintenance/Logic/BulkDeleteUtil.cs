@@ -15,52 +15,48 @@ using Spectre.Console;
 namespace dgt.power.maintenance.Logic;
 
 public sealed class BulkDeleteUtil(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     TimeProvider timeProvider,
     IAnsiConsole console)
-    : PowerLogic<BulkDeleteSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<BulkDeleteSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(BulkDeleteSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(BulkDeleteSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
-        return InvokeCoreAsync(args, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(BulkDeleteSettings args, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))
         {
-            return Tracer.Skipped(this);
+            return true;
         }
 
-        var (success, query) = await GetQueryExpressionAsync(args.InlineData, cancellationToken);
+        var orgAsync = await connection.GetServiceAsync();
+
+        var (success, query) = await GetQueryExpressionAsync(orgAsync, args.InlineData, cancellationToken);
         if (success)
         {
-            Tracer.Log("Retrieved query expression from inlineData", TraceEventType.Information);
+            diagnostics.Log("Retrieved query expression from inlineData", TraceEventType.Information);
 
-            var asyncOperationId = await ExecuteBulkDeleteJobAsync(query!, cancellationToken);
-            Tracer.Log($"bulk delete job '{asyncOperationId}' started.", TraceEventType.Information);
+            var asyncOperationId = await ExecuteBulkDeleteJobAsync(orgAsync, query!, cancellationToken);
+            diagnostics.Log($"bulk delete job '{asyncOperationId}' started.", TraceEventType.Information);
 
-            if (await WaitAsync(asyncOperationId, args.PollInterval, cancellationToken))
+            if (await WaitAsync(orgAsync, asyncOperationId, args.PollInterval, cancellationToken))
             {
-                Tracer.Log($"bulk delete job '{asyncOperationId}' finished.", TraceEventType.Information);
-                return Tracer.End(this, true);
+                diagnostics.Log($"bulk delete job '{asyncOperationId}' finished.", TraceEventType.Information);
+                return true;
             }
         }
 
-        return Tracer.End(this, false);
+        return false;
     }
 
     private async Task<bool> WaitAsync(
+        IOrganizationServiceAsync2 orgAsync,
         Guid asyncOperationId,
         int pollIntervalSeconds,
         CancellationToken cancellationToken)
     {
-        var orgAsync = (IOrganizationServiceAsync2)Connection;
         AsyncOperation asyncOperation;
         do
         {
@@ -71,7 +67,7 @@ public sealed class BulkDeleteUtil(
                 ColumnSet = new ColumnSet(AsyncOperation.LogicalNames.StatusCode)
             }, cancellationToken);
             asyncOperation = retrieveResponse.Entity.ToEntity<AsyncOperation>();
-            Tracer.Log($"bulk delete job '{asyncOperationId}' running...", TraceEventType.Information);
+            diagnostics.Log($"bulk delete job '{asyncOperationId}' running...", TraceEventType.Information);
         } while (IsInExecution(asyncOperation));
 
         if (asyncOperation.StatusCode!.Value == AsyncOperation.Options.StatusCode.Succeeded)
@@ -79,7 +75,7 @@ public sealed class BulkDeleteUtil(
             return true;
         }
 
-        Tracer.Log($"bulk delete job '{asyncOperationId}' failed!", TraceEventType.Error);
+        diagnostics.Log($"bulk delete job '{asyncOperationId}' failed!", TraceEventType.Error);
         return false;
     }
 
@@ -88,9 +84,8 @@ public sealed class BulkDeleteUtil(
         && asyncOperation.StatusCode.Value != AsyncOperation.Options.StatusCode.Failed
         && asyncOperation.StatusCode.Value != AsyncOperation.Options.StatusCode.Succeeded;
 
-    private async Task<Guid> ExecuteBulkDeleteJobAsync(QueryExpression query, CancellationToken cancellationToken)
+    private async Task<Guid> ExecuteBulkDeleteJobAsync(IOrganizationServiceAsync2 orgAsync, QueryExpression query, CancellationToken cancellationToken)
     {
-        var orgAsync = (IOrganizationServiceAsync2)Connection;
         var response = (BulkDeleteResponse)await orgAsync.ExecuteAsync(new BulkDeleteRequest
         {
             JobName = "Maintenance BulkDelete job",
@@ -105,11 +100,10 @@ public sealed class BulkDeleteUtil(
         return response.JobId;
     }
 
-    private async Task<(bool Success, QueryExpression? Query)> GetQueryExpressionAsync(string fetchXml, CancellationToken cancellationToken)
+    private async Task<(bool Success, QueryExpression? Query)> GetQueryExpressionAsync(IOrganizationServiceAsync2 orgAsync, string fetchXml, CancellationToken cancellationToken)
     {
         try
         {
-            var orgAsync = (IOrganizationServiceAsync2)Connection;
             var response = (FetchXmlToQueryExpressionResponse)await orgAsync.ExecuteAsync(new FetchXmlToQueryExpressionRequest
             {
                 FetchXml = fetchXml
@@ -118,7 +112,7 @@ public sealed class BulkDeleteUtil(
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            Tracer.Log($"Invalid fetch-xml: {e.RootMessage()}", TraceEventType.Error);
+            diagnostics.Log($"Invalid fetch-xml: {e.RootMessage()}", TraceEventType.Error);
             return (false, null);
         }
     }

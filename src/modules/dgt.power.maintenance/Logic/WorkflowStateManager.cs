@@ -14,7 +14,7 @@ namespace dgt.power.maintenance.Logic;
 
 public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService,
     string[] solutions, string[] publishers,
-    ITracer? tracer = null,
+    IDiagnostics? tracer = null,
     WorkflowStateManager.TaskStatusCallback? taskStatusCallback = null)
 {
     public delegate void TaskStatusCallback(string taskName, string message, int progress, double? total = null);

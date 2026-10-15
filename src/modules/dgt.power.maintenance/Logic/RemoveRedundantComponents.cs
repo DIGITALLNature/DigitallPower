@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using dgt.power.common;
@@ -16,12 +15,20 @@ using Spectre.Console;
 
 namespace dgt.power.maintenance.Logic;
 
-public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVerb>
+public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsVerb>
 {
+    private const int PageSize = 5000;
+
+    private readonly IDataverseConnection _connection;
+    private readonly IAnsiConsole _console;
+
     protected Dictionary<int, string> ComponentTypeLookup { get; } = new();
 
-    public RemoveRedundantComponents(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : base(tracer, connection, configResolver, console)
+    public RemoveRedundantComponents(ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console) : base(spans, console)
     {
+        _connection = connection;
+        _console = console;
+
         var type = typeof(SolutionComponent.Options.ComponentType);
         var fields = type.GetFields();
 
@@ -32,30 +39,32 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         }
     }
 
-    protected override Task<bool> InvokeAsync(RemoveRedundantComponentsVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(RemoveRedundantComponentsVerb args)
+    protected override async Task<bool> RunAsync(RemoveRedundantComponentsVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
+        var service = (IOrganizationService)await _connection.GetServiceAsync();
+        return Run(service, args);
+    }
+
+    private bool Run(IOrganizationService service, RemoveRedundantComponentsVerb args)
+    {
         var request = new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(Connection);
+        using var context = new DataContext(service);
         var sourceComponents = new HashSet<Guid?>();
         foreach (var sourceSolution in args.SourceSolutions.Split(','))
         {
-            Console.WriteLine($"Fetch components for source {sourceSolution}");
-            sourceComponents.UnionWith(GetSolutionComponents(context, sourceSolution).Select(s => s.ObjectId));
+            _console.WriteLine($"Fetch components for source {sourceSolution}");
+            sourceComponents.UnionWith(GetSolutionComponents(service, context, sourceSolution).Select(s => s.ObjectId));
         }
-        Console.WriteLine($"Fetch components for target {args.TargetSolution}");
-        var targetComponents = GetSolutionComponents(context, args.TargetSolution);
+        _console.WriteLine($"Fetch components for target {args.TargetSolution}");
+        var targetComponents = GetSolutionComponents(service, context, args.TargetSolution);
 
         var componentsToProcess = targetComponents
             .Where(component => component.ComponentType?.Value != null)
@@ -67,7 +76,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
             if (component.ComponentType?.Value == SolutionComponent.Options.ComponentType.Entity && !args.Entities)
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId!.Value);
-                Console.WriteLine($"Found entity {entity.LogicalName} - ignore");
+                _console.WriteLine($"Found entity {entity.LogicalName} - ignore");
                 continue;
             }
 
@@ -97,24 +106,25 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
                 typeColumn = component.ComponentType.Value.ToString(CultureInfo.InvariantCulture);
             }
 
-            Console.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
+            _console.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
             if (!args.DryRun)
             {
-                Connection.Execute(new RemoveSolutionComponentRequest
+                service.Execute(new RemoveSolutionComponentRequest
                 {
                     ComponentId = component.ObjectId!.Value,
                     ComponentType = component.ComponentType.Value,
                     SolutionUniqueName = args.TargetSolution
                 });
-                Console.WriteLine(" - removed");
+                _console.WriteLine(" - removed");
             }
         }
 
         return true;
     }
 
-    protected IList<SolutionComponent> GetSolutionComponents(DataContext context, string uniqueName)
+    protected IList<SolutionComponent> GetSolutionComponents(IOrganizationService service, DataContext context, string uniqueName)
     {
+        ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(context);
         var solution = GetSolution(context, uniqueName);
 
@@ -183,7 +193,7 @@ public class RemoveRedundantComponents : PowerLogic<RemoveRedundantComponentsVer
         while (moreRecords)
         {
             // Retrieve the page.
-            var results = Connection.RetrieveMultiple(pagequery);
+            var results = service.RetrieveMultiple(pagequery);
             components.AddRange(results.Entities.Select(e => e.ToEntity<SolutionComponent>()));
             if (results.MoreRecords)
             {

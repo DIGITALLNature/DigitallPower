@@ -15,81 +15,81 @@ using Queue = dgt.power.dto.Queue;
 namespace dgt.power.import.Logic;
 
 public sealed class QueueImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "queue.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<Queues>(args.FileDir, fileName, out var queuesToTransport))
+        if (!configResolver.TryGetConfigFile<Queues>(args.FileDir, fileName, out var queuesToTransport))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Queue configuration not found.[/]");
+            return false;
         }
 
         //anything to do?
         if (queuesToTransport.QueuesToTransport.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Queue configuration is empty.[/]");
+            return false;
         }
 
         var result = true;
 
-        var alternativeOwner = GetAlternativeOwner(args, queuesToTransport);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var alternativeOwner = GetAlternativeOwner(service, args, queuesToTransport);
 
-        var queues = GetQueues();
+        var queues = GetQueues(service);
 
         //TODO: delete vs. deactivate
         //find queues which need to be removed
-        Tracer.Log("delete check", TraceEventType.Information);
+        diagnostics.Log("delete check", TraceEventType.Information);
         foreach (var deleteQueue in queues.Where(e => queuesToTransport.QueuesToTransport.All(c => e.Id != c.QueueId)))
         {
             DeleteQueue(deleteQueue);
         }
 
         //find queues need to be updated
-        Tracer.Log("update check", TraceEventType.Information);
+        diagnostics.Log("update check", TraceEventType.Information);
         foreach (var updateQueue in queuesToTransport.QueuesToTransport.Where(c => queues.Exists(e => e.Id == c.QueueId)))
         {
-            result = UpdateQueue(queues, updateQueue, alternativeOwner) && result;
+            result = UpdateQueue(service, queues, updateQueue, alternativeOwner) && result;
         }
 
         //find queues which need to be created
         //create
-        Tracer.Log("create check", TraceEventType.Information);
+        diagnostics.Log("create check", TraceEventType.Information);
         foreach (var newQueue in queuesToTransport.QueuesToTransport.Where(c => queues.TrueForAll(e => e.Id != c.QueueId)))
         {
-            var isCreated = CreateQueue(newQueue, out var id);
+            var isCreated = CreateQueue(service, newQueue, out var id);
             if (!isCreated)
             {
                 result = false;
                 continue;
             }
 
-            if (alternativeOwner != null && !Connection.TryAssign(new EntityReference(dataverse.Queue.EntityLogicalName, id), alternativeOwner))
+            if (alternativeOwner != null && !service.TryAssign(new EntityReference(dataverse.Queue.EntityLogicalName, id), alternativeOwner))
             {
                 result = false;
             }
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
-    private bool CreateQueue(Queue newQueue, out Guid id)
+    private bool CreateQueue(IOrganizationService service, Queue newQueue, out Guid id)
     {
-        Tracer.Log("--->", TraceEventType.Verbose);
+        diagnostics.Log("--->", TraceEventType.Verbose);
         //create queue
-        Tracer.Log($"create queue: {newQueue.Name}", TraceEventType.Verbose);
-        var isCreated = Connection.TryCreate(new dataverse.Queue(newQueue.QueueId)
+        diagnostics.Log($"create queue: {newQueue.Name}", TraceEventType.Verbose);
+        var isCreated = service.TryCreate(new dataverse.Queue(newQueue.QueueId)
         {
             Name = newQueue.Name,
             QueueViewType = new OptionSetValue((int)newQueue.ViewType),
@@ -103,23 +103,23 @@ public sealed class QueueImport(
 
     private void DeleteQueue(dataverse.Queue deleteQueue)
     {
-        Tracer.Log("--->", TraceEventType.Verbose);
+        diagnostics.Log("--->", TraceEventType.Verbose);
         //delete queue
-        Tracer.Log($"obsolete/unknown queue: {deleteQueue.Name}", TraceEventType.Verbose);
+        diagnostics.Log($"obsolete/unknown queue: {deleteQueue.Name}", TraceEventType.Verbose);
         //tracer.Log($"delete queue: {deleteQueue.Name}", TraceEventType.Verbose);
         // TODO: Why is queue deletion deactivated?
         //result = XrmWorker.Delete(tracer, service, Model.Queue.EntityLogicalName, deleteQueue.Id, dryRun) & result;
     }
 
-    private bool UpdateQueue(IEnumerable<dataverse.Queue> queues, Queue updateQueue, SystemUser? alternativeOwner)
+    private bool UpdateQueue(IOrganizationService service, IEnumerable<dataverse.Queue> queues, Queue updateQueue, SystemUser? alternativeOwner)
     {
-        Tracer.Log("--->", TraceEventType.Verbose);
+        diagnostics.Log("--->", TraceEventType.Verbose);
         var existingQueue = queues.Single(e => e.Id == updateQueue.QueueId);
 
         //check the owner
         if (alternativeOwner != null && existingQueue.OwnerId!.Id != alternativeOwner.Id)
         {
-            if (!Connection.TryAssign(existingQueue.ToEntityReference(), alternativeOwner))
+            if (!service.TryAssign(existingQueue.ToEntityReference(), alternativeOwner))
             {
                 return false;
             }
@@ -130,13 +130,13 @@ public sealed class QueueImport(
 
         if (unchangedRule)
         {
-            Tracer.Log($"unchanged queue: {updateQueue.Name}", TraceEventType.Verbose);
+            diagnostics.Log($"unchanged queue: {updateQueue.Name}", TraceEventType.Verbose);
         }
         else
         {
             //update queue
-            Tracer.Log($"update queue: {updateQueue.Name}", TraceEventType.Verbose);
-            result = Connection.TryUpdate(new dataverse.Queue(existingQueue.Id)
+            diagnostics.Log($"update queue: {updateQueue.Name}", TraceEventType.Verbose);
+            result = service.TryUpdate(new dataverse.Queue(existingQueue.Id)
             {
                 Name = updateQueue.Name,
                 QueueViewType = new OptionSetValue((int)updateQueue.ViewType),
@@ -150,13 +150,13 @@ public sealed class QueueImport(
         return result;
     }
 
-    private SystemUser? GetAlternativeOwner(ImportVerb args, Queues queuesToTransport)
+    private static SystemUser? GetAlternativeOwner(IOrganizationService service, ImportVerb args, Queues queuesToTransport)
     {
         var alternativeOwner = default(SystemUser);
-        var owner = GetAssignee(args.Assignee, queuesToTransport);
+        var owner = ImportAssignee.GetAssignee(args.Assignee, queuesToTransport);
         if (!string.IsNullOrWhiteSpace(owner))
         {
-            using var context = new DataContext(Connection);
+            using var context = new DataContext(service);
             alternativeOwner = (from su in context.SystemUserSet
                 where su.DomainName == owner
                 select su).SingleOrDefault();
@@ -165,7 +165,7 @@ public sealed class QueueImport(
         return alternativeOwner;
     }
 
-    private List<dataverse.Queue> GetQueues()
+    private static List<dataverse.Queue> GetQueues(IOrganizationService service)
     {
         var query = new QueryExpression
         {
@@ -205,7 +205,7 @@ public sealed class QueueImport(
         while (moreRecords)
         {
             // Retrieve the page.
-            var results = Connection.RetrieveMultiple(query);
+            var results = service.RetrieveMultiple(query);
             foreach (var entity in results.Entities)
             {
                 queues.Add(entity.ToEntity<dataverse.Queue>());

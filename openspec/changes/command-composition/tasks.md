@@ -27,11 +27,11 @@ Assumptions: the class-name start/end rules are replaced by command-path status 
 
 ## 4. Migrate maintenance, analyze, export and import
 
-- [ ] 4.1 Replace `BaseMaintenance` and migrate maintenance logic, passing the resolved service to existing sync code, and verify `dgt.power.maintenance.tests` pass
-- [ ] 4.2 Replace `BaseAnalyze` helpers (solution component queries, component type lookup) with an injected service, migrate analyze commands, and verify `dgt.power.analyzer.tests` pass
-- [ ] 4.3 Replace `BaseExport` helpers (JSON serialization, file export) with an injected writer service, migrate export commands, and verify `dgt.power.export.tests` pass
-- [ ] 4.4 Replace `BaseImport` helpers with injected services, migrate import commands, and verify `dgt.power.import.tests` pass
-- [ ] 4.5 Request `IConfigResolver` only in commands that read config files and verify no command still receives it through inheritance (search shows no `ConfigResolver` property on a base)
+- [x] 4.1 Replace `BaseMaintenance` and migrate maintenance logic, passing the resolved service to existing sync code, and verify `dgt.power.maintenance.tests` pass
+- [x] 4.2 Replace `BaseAnalyze` helpers (solution component queries, component type lookup) with an injected service, migrate analyze commands, and verify `dgt.power.analyzer.tests` pass
+- [x] 4.3 Replace `BaseExport` helpers (JSON serialization, file export) with an injected writer service, migrate export commands, and verify `dgt.power.export.tests` pass
+- [x] 4.4 Replace `BaseImport` helpers with injected services, migrate import commands, and verify `dgt.power.import.tests` pass
+- [x] 4.5 Request `IConfigResolver` only in commands that read config files and verify no command still receives it through inheritance (search shows no `ConfigResolver` property on a base)
 
 ## 5. Remove legacy and finish
 

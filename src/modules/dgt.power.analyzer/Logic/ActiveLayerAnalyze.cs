@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
@@ -15,25 +14,28 @@ using Spectre.Console;
 namespace dgt.power.analyzer.Logic;
 
 public sealed class ActiveLayerAnalyze(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    SolutionComponentReader reader,
     IAnsiConsole console)
-    : BaseAnalyze(tracer, connection, configResolver, console)
+    : PowerCommand<AnalyzeVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(AnalyzeVerb args)
+    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
         if (string.IsNullOrWhiteSpace(args.InlineData))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]--inline requires a comma separated list of solution unique names.[/]");
+            return false;
         }
 
+        var service = await connection.GetServiceAsync();
+        return Run(args, (IOrganizationService)service);
+    }
+
+    private bool Run(AnalyzeVerb args, IOrganizationService service)
+    {
         var summary = new AnalyzerSummary
         {
             Task = "activelayer",
@@ -46,21 +48,21 @@ public sealed class ActiveLayerAnalyze(
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(Connection);
+        using var context = new DataContext(service);
         foreach (var uniqueName in args.InlineData.Split(','))
         {
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
             solutionTag.LeftJustified();
 
-            Console.Write(solutionTag);
+            console.Write(solutionTag);
 
-            var components = GetSolutionComponents(context, uniqueName);
+            var components = reader.GetSolutionComponents(service, context, uniqueName);
 
             var table = new Table();
-            Console.Live(Align.Center(table))
+            console.Live(Align.Center(table))
                 .Start(ctx =>
                 {
                     table.AddColumn("Component");
@@ -76,7 +78,7 @@ public sealed class ActiveLayerAnalyze(
 
                         table.AddRow(component.ObjectId.ToString() ?? Guid.Empty.ToString(), $"{index}/{components.Count}", "", "Checking");
                         ctx.Refresh();
-                        var layers = GetSolutionLayers(component);
+                        var layers = reader.GetSolutionLayers(service, component);
                         table.RemoveRow(table.Rows.Count - 1);
                         if (!layers.Any())
                         {
@@ -86,7 +88,7 @@ public sealed class ActiveLayerAnalyze(
                         var first = layers[0];
                         if (first.MsdynSolutionname == "Active")
                         {
-                            var componentName = GetComponentName(component, entities, first);
+                            var componentName = SolutionComponentReader.GetComponentName(component, entities, first);
                             table.AddRow($"{first.MsdynSolutioncomponentname}", $"{first.MsdynOrder:D}", componentName.EscapeMarkup(),
                                 uniqueName);
 
@@ -105,14 +107,14 @@ public sealed class ActiveLayerAnalyze(
 
         if (args.GenerateSummaryFile)
         {
-            WriteSummaryFile("ActiveLayer", summary);
+            AnalyzeResultWriter.WriteSummaryFile("ActiveLayer", summary);
         }
 
         if (args.GenerateReportFile)
         {
-            WriteReportFile("ActiveLayer", resultTable.OrderBy(r => r.Solution).ThenBy(r => r.Component).ThenBy(r => r.Name).ThenBy(r => r.Order));
+            AnalyzeResultWriter.WriteReportFile("ActiveLayer", resultTable.OrderBy(r => r.Solution).ThenBy(r => r.Component).ThenBy(r => r.Name).ThenBy(r => r.Order));
         }
 
-        return Tracer.End(this, true);
+        return true;
     }
 }

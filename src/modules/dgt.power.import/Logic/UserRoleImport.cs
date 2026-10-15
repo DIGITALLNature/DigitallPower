@@ -14,46 +14,46 @@ using Spectre.Console;
 namespace dgt.power.import.Logic;
 
 public sealed class UserRoleImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
-        if (!ConfigResolver.TryGetConfigFile<List<UserRole>>(args.FileDir, fileName, out var userRoles))
+        if (!configResolver.TryGetConfigFile<List<UserRole>>(args.FileDir, fileName, out var userRoles))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]User role configuration not found.[/]");
+            return false;
         }
 
         if (userRoles.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]User role configuration is empty.[/]");
+            return false;
         }
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
         var result = true;
         foreach (var userRole in userRoles)
         {
-            Tracer.Log(
+            diagnostics.Log(
                 $"UserName: {userRole.UserName}; BusinessUnit:{userRole.BusinessUnit}; SecurityRoles:[{string.Join("|", userRole.SecurityRoles)}]",
                 TraceEventType.Information);
 
-            using var context = new DataContext(Connection);
+            using var context = new DataContext(service);
             // SystemUser
             var user = (from su in context.SystemUserSet
                 where su.DomainName == userRole.UserName
                 select su).SingleOrDefault();
             if (user == null)
             {
-                Tracer.Log($"Can't find User '{userRole.UserName}' ...", TraceEventType.Warning);
+                diagnostics.Log($"Can't find User '{userRole.UserName}' ...", TraceEventType.Warning);
                 continue;
             }
 
@@ -61,7 +61,7 @@ public sealed class UserRoleImport(
             var businessUnits = userRole.BusinessUnit.Split(userRole.BusinessUnitSeparator);
             if (businessUnits.Length < 1 || businessUnits.Length > 2)
             {
-                Tracer.Log(
+                diagnostics.Log(
                     $"Could not parse {userRole.BusinessUnit}; expected 'businessUnit[{userRole.BusinessUnitSeparator}parentBusinessUnit]'",
                     TraceEventType.Error);
                 return false;
@@ -71,7 +71,7 @@ public sealed class UserRoleImport(
 
             if (businessUnit == null)
             {
-                Tracer.Log(
+                diagnostics.Log(
                     $"Can't find BusinessUnit. Try 'businessUnit[{userRole.BusinessUnitSeparator}parentBusinessUnit]'",
                     TraceEventType.Error);
                 return false;
@@ -81,10 +81,10 @@ public sealed class UserRoleImport(
             if (userRole.SecurityRoles.Count > 0)
             {
                 // SecurityRoles
-                securityRoles = GetSecurityRoles(businessUnit, userRole.SecurityRoles);
+                securityRoles = GetSecurityRoles(service, businessUnit, userRole.SecurityRoles);
                 if (securityRoles.Count != userRole.SecurityRoles.Count)
                 {
-                    Tracer.Log("Not all SecurityRoles found, please check manually", TraceEventType.Error);
+                    diagnostics.Log("Not all SecurityRoles found, please check manually", TraceEventType.Error);
                     return false;
                 }
             }
@@ -100,19 +100,19 @@ public sealed class UserRoleImport(
                 {
                     BusinessUnitId = businessUnit.ToEntityReference()
                 };
-                result = Connection.TryUpdate(update);
+                result = service.TryUpdate(update);
             }
 
-            var assignedRoles = GetAssignedRoles(user.Id);
+            var assignedRoles = GetAssignedRoles(service, user.Id);
             var missingRoles = (from role in securityRoles
                 where assignedRoles.Find(r => r.Id == role.Id) == null
                 select new EntityReference(Role.EntityLogicalName, role.Id) { Name = role.Name }).ToList();
             if (missingRoles.Count > 0)
             {
-                Tracer.Log(
+                diagnostics.Log(
                     $"Associate SecurityRoles:[{string.Join("|", missingRoles.Select(r => r.Name).ToList())}]",
                     TraceEventType.Information);
-                result = Connection.TryAssociate(SystemUser.EntityLogicalName, user.Id,
+                result = service.TryAssociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation),
                     new EntityReferenceCollection(missingRoles)) && result;
             }
@@ -122,16 +122,16 @@ public sealed class UserRoleImport(
                 select new EntityReference(Role.EntityLogicalName, role.Id) { Name = role.Name }).ToList();
             if (spareRoles.Count > 0)
             {
-                Tracer.Log(
+                diagnostics.Log(
                     $"Disassociate SecurityRoles:[{string.Join("|", spareRoles.Select(r => r.Name).ToList())}]",
                     TraceEventType.Information);
-                result = Connection.TryDisassociate(SystemUser.EntityLogicalName, user.Id,
+                result = service.TryDisassociate(SystemUser.EntityLogicalName, user.Id,
                     new Relationship($"{SystemUserRoles.EntityLogicalName}_association"),
                     new EntityReferenceCollection(spareRoles)) && result;
             }
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
     private static BusinessUnit? GetBusinessUnit(string[] businessUnits, DataContext context)
@@ -159,7 +159,7 @@ public sealed class UserRoleImport(
         return businessUnit;
     }
 
-    private List<Role> GetSecurityRoles(BusinessUnit businessUnit, IEnumerable<string> securityRoles)
+    private static List<Role> GetSecurityRoles(IOrganizationService service, BusinessUnit businessUnit, IEnumerable<string> securityRoles)
     {
         var securityRolesQuery = new QueryExpression
         {
@@ -177,11 +177,11 @@ public sealed class UserRoleImport(
             }
         };
 
-        var securityRolesResponse = Connection.RetrieveMultiple(securityRolesQuery);
+        var securityRolesResponse = service.RetrieveMultiple(securityRolesQuery);
         return securityRolesResponse.Entities.Select(s => s.ToEntity<Role>()).ToList();
     }
 
-    private List<Role> GetAssignedRoles(Guid systemUserId)
+    private static List<Role> GetAssignedRoles(IOrganizationService service, Guid systemUserId)
     {
         // Establish a SystemUser link for a query.
         var systemUserLink = new LinkEntity
@@ -218,6 +218,6 @@ public sealed class UserRoleImport(
         };
 
         // Retrieve matching roles.
-        return Connection.RetrieveMultiple(linkQuery).Entities.Select(e => e.ToEntity<Role>()).ToList();
+        return service.RetrieveMultiple(linkQuery).Entities.Select(e => e.ToEntity<Role>()).ToList();
     }
 }

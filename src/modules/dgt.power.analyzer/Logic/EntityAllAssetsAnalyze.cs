@@ -18,32 +18,37 @@ using Spectre.Console;
 namespace dgt.power.analyzer.Logic;
 
 public sealed class EntityAllAssetsAnalyze(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseAnalyze(tracer, connection, configResolver, console)
+    : PowerCommand<AnalyzeVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(AnalyzeVerb args)
+    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        var result = true;
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
         //read config
-        if (!ConfigResolver.TryGetConfigFile<List<EntityAllAssets>>(args.Config, out var entitiesAllAssets))
+        if (!configResolver.TryGetConfigFile<List<EntityAllAssets>>(args.Config, out var entitiesAllAssets))
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
         //anything to do?
         if (entitiesAllAssets.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]No entity all assets configuration found.[/]");
+            return false;
         }
+
+        var service = await connection.GetServiceAsync();
+        return Run(args, entitiesAllAssets, (IOrganizationService)service);
+    }
+
+    private bool Run(AnalyzeVerb args, List<EntityAllAssets> entitiesAllAssets, IOrganizationService service)
+    {
+        var result = true;
 
         var summary = new AnalyzerSummary
         {
@@ -57,7 +62,7 @@ public sealed class EntityAllAssetsAnalyze(
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
         var entities = response.EntityMetadata.ToList();
 
         foreach (var entityAllAssets in entitiesAllAssets)
@@ -65,23 +70,23 @@ public sealed class EntityAllAssetsAnalyze(
             var solutionTag = new Rule($"solution unique name: [lime]{entityAllAssets.Solution}[/]");
             solutionTag.LeftJustified();
 
-            Console.Write(solutionTag);
+            console.Write(solutionTag);
 
-            using var context = new DataContext(Connection);
+            using var context = new DataContext(service);
             var solution = GetSolution(context, entityAllAssets);
-            var components = GetSolutionComponents(solution);
+            var components = GetSolutionComponents(service, solution);
 
             components.Sort((one, two) => string.Compare(entities.Single(e => e.MetadataId == one.ObjectId).LogicalName, entities.Single(e => e.MetadataId == two.ObjectId).LogicalName, StringComparison.Ordinal));
 
             foreach (var component in components)
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId);
-                Tracer.Log($"{entity.LogicalName + " (" + entity.DisplayName.UserLocalizedLabel?.Label + ")"}:", TraceEventType.Information);
+                diagnostics.Log($"{entity.LogicalName + " (" + entity.DisplayName.UserLocalizedLabel?.Label + ")"}:", TraceEventType.Information);
 
                 //check whitelist
                 if (component.RootComponentBehavior?.Value == SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents)
                 {
-                    Tracer.Log("  -> AllAssets", TraceEventType.Information);
+                    diagnostics.Log("  -> AllAssets", TraceEventType.Information);
                     var approved = false;
                     foreach (var entryWl in entityAllAssets.WhiteList)
                     {
@@ -120,7 +125,7 @@ public sealed class EntityAllAssetsAnalyze(
 
                     if (approved)
                     {
-                        Tracer.Log("  -> approved: true", TraceEventType.Information);
+                        diagnostics.Log("  -> approved: true", TraceEventType.Information);
                         resultTable.Add(new AllAssetLine
                         {
                             Solution = entityAllAssets.Solution,
@@ -133,11 +138,11 @@ public sealed class EntityAllAssetsAnalyze(
                         if (entityAllAssets.Strict)
                         {
                             result = false;
-                            Tracer.Log("        -> approved: false", TraceEventType.Error);
+                            diagnostics.Log("        -> approved: false", TraceEventType.Error);
                         }
                         else
                         {
-                            Tracer.Log("      -> approved: false", TraceEventType.Warning);
+                            diagnostics.Log("      -> approved: false", TraceEventType.Warning);
                         }
 
                         summary.Anomalies++;
@@ -190,7 +195,7 @@ public sealed class EntityAllAssetsAnalyze(
 
                     if (good)
                     {
-                        Tracer.Log("  -> good", TraceEventType.Information);
+                        diagnostics.Log("  -> good", TraceEventType.Information);
                         resultTable.Add(new AllAssetLine
                         {
                             Solution = entityAllAssets.Solution,
@@ -200,7 +205,7 @@ public sealed class EntityAllAssetsAnalyze(
                     }
                     else
                     {
-                        Tracer.Log("      -> suspicious", TraceEventType.Warning);
+                        diagnostics.Log("      -> suspicious", TraceEventType.Warning);
 
                         resultTable.Add(new AllAssetLine
                         {
@@ -213,25 +218,25 @@ public sealed class EntityAllAssetsAnalyze(
                 }
                 else
                 {
-                    Tracer.Log("  -> shell only", TraceEventType.Information);
+                    diagnostics.Log("  -> shell only", TraceEventType.Information);
                 }
             }
         }
 
         if (args.GenerateSummaryFile)
         {
-            WriteSummaryFile("EntityAllAssets", summary);
+            AnalyzeResultWriter.WriteSummaryFile("EntityAllAssets", summary);
         }
 
         if (args.GenerateReportFile)
         {
-            WriteReportFile("EntityAllAssets", resultTable.OrderBy(r => r.Solution).ThenBy(r => r.Entity));
+            AnalyzeResultWriter.WriteReportFile("EntityAllAssets", resultTable.OrderBy(r => r.Solution).ThenBy(r => r.Entity));
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
-    private List<SolutionComponent> GetSolutionComponents(Solution solution)
+    private static List<SolutionComponent> GetSolutionComponents(IOrganizationService service, Solution solution)
     {
         var query = new QueryExpression
         {
@@ -262,7 +267,7 @@ public sealed class EntityAllAssetsAnalyze(
             }
         );
         query.Criteria = filter;
-        var components = Connection.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<SolutionComponent>()).ToList();
+        var components = service.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<SolutionComponent>()).ToList();
         return components;
     }
 

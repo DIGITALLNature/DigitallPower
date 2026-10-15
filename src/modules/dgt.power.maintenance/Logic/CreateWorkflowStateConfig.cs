@@ -15,46 +15,40 @@ namespace dgt.power.maintenance.Logic;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class CreateWorkflowStateConfig(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     JsonSerializerOptions jsonSerializerOptions,
     IAnsiConsole console)
-    : PowerLogic<CreateWorkflowStateConfigSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<CreateWorkflowStateConfigSettings>(spans, console)
 {
     private readonly JsonSerializerOptions _jsonSerializerOptions = new(jsonSerializerOptions) { WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     private readonly WorkflowStateTracker _workflowStateTracker = new();
 
-    protected override Task<bool> InvokeAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
-
-        return InvokeCoreAsync(args, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(CreateWorkflowStateConfigSettings args, CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-        Tracer.Start(this);
 
         var solutions = args.Solutions?.Split(',');
         var publishers = args.Publishers?.Split(',');
 
+        var service = await connection.GetServiceAsync();
+
         // Do the actual work
-        await CollectWorkflowStatesAsync(solutions, publishers, args.Config, args.Detailed, args.Overwrite);
+        await CollectWorkflowStatesAsync(service, solutions, publishers, args.Config, args.Detailed, args.Overwrite);
 
         // Print table report if requested
         if (args.TableReport)
         {
-            _workflowStateTracker.WriteToConsole(Console);
+            _workflowStateTracker.WriteToConsole(console);
         }
 
-        return Tracer.End(this, true);
+        return true;
     }
 
-    private async Task CollectWorkflowStatesAsync(string[]? solutions, string[]? publishers, string configFile, bool detailed, bool overwrite)
+    private async Task CollectWorkflowStatesAsync(IOrganizationServiceAsync2 service, string[]? solutions, string[]? publishers, string configFile, bool detailed, bool overwrite)
     {
-        await Console.Progress()
+        await console.Progress()
             .StartAsync(async ctx =>
             {
                 Dictionary<string, ProgressTask> progressTasks = new();
@@ -74,20 +68,20 @@ public class CreateWorkflowStateConfig(
                     ctx.Refresh();
                 };
 
-                var workflowStateManager = new WorkflowStateManager((IOrganizationServiceAsync2)Connection, solutions ?? [], publishers ?? [], Tracer, progress);
+                var workflowStateManager = new WorkflowStateManager(service, solutions ?? [], publishers ?? [], diagnostics, progress);
 
-                Tracer.Log("Loading all workflows", TraceEventType.Information);
+                diagnostics.Log("Loading all workflows", TraceEventType.Information);
                 var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
                 _workflowStateTracker.AddWorkflows(workflows);
 
-                Tracer.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
+                diagnostics.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
 
                 // group all workflows by owner and select max occurence as default owner
                 var groupedFlows = workflows.GroupBy(f => f.OwnerId!.Id).ToList();
                 var defaultOwnerId = groupedFlows.OrderByDescending(g => g.Count()).FirstOrDefault()?.Key;
                 var defaultOwner = defaultOwnerId != null ? workflows.First(w => w.OwnerId!.Id == defaultOwnerId).GetAttributeValue<AliasedValue>("owner.domainname").Value.ToString() : null;
 
-                Tracer.Log($"Default owner will be '{defaultOwner}' ({defaultOwnerId})", TraceEventType.Information);
+                diagnostics.Log($"Default owner will be '{defaultOwner}' ({defaultOwnerId})", TraceEventType.Information);
 
                 // prepare config
                 var prepareConfigTask = ctx.AddTask("Preparing config", false);
@@ -159,7 +153,7 @@ public class CreateWorkflowStateConfig(
                 }
 
                 // Write config to file
-                Tracer.Log($"Writing config to {configFile}", TraceEventType.Verbose);
+                diagnostics.Log($"Writing config to {configFile}", TraceEventType.Verbose);
 
                 var fileMode = overwrite ? FileMode.Create : FileMode.CreateNew;
                 using var fileStream = new FileStream(configFile, fileMode, FileAccess.Write, FileShare.None);

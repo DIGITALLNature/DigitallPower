@@ -15,89 +15,89 @@ using TeamTemplate = dgt.power.dto.TeamTemplate;
 namespace dgt.power.import.Logic;
 
 public sealed class TeamTemplateImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "teamtemplate.json" : args.FileName;
 
-        if (!ConfigResolver.TryGetConfigFile<List<TeamTemplate>>(args.FileDir, fileName, out var templates))
+        if (!configResolver.TryGetConfigFile<List<TeamTemplate>>(args.FileDir, fileName, out var templates))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Team template configuration not found.[/]");
+            return false;
         }
 
         //anything to do?
         if (templates.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Team template configuration is empty.[/]");
+            return false;
         }
 
         var result = true;
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
         var request = new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(Connection);
+        using var context = new DataContext(service);
         var teamTemplates = (from tt in context.TeamTemplateSet
             orderby tt.TeamTemplateName
             select tt).ToList();
 
         //find templates which need to be removed
-        Tracer.Log("delete check", TraceEventType.Information);
+        diagnostics.Log("delete check", TraceEventType.Information);
         foreach (var teamTemplate in teamTemplates.Where(e => templates.TrueForAll(c => e.Id != c.TeamTemplateId)))
         {
-            result = DeleteTeamTemplate(teamTemplate) && result;
+            result = DeleteTeamTemplate(service, teamTemplate) && result;
         }
 
         //find templates which need to be updated
-        Tracer.Log("update check", TraceEventType.Information);
+        diagnostics.Log("update check", TraceEventType.Information);
         foreach (var updateTemplate in templates.Where(c => teamTemplates.Exists(e => e.Id == c.TeamTemplateId)))
         {
-            result = UpdateTeamTemplate(teamTemplates, updateTemplate, entities) && result;
+            result = UpdateTeamTemplate(service, teamTemplates, updateTemplate, entities) && result;
         }
 
         //find templates which need to be created
-        Tracer.Log("create check", TraceEventType.Information);
+        diagnostics.Log("create check", TraceEventType.Information);
         foreach (var newTemplate in templates.Where(c => teamTemplates.TrueForAll(e => e.Id != c.TeamTemplateId)))
         {
-            result = CreateTeamTemplate(entities, newTemplate) && result;
+            result = CreateTeamTemplate(service, entities, newTemplate) && result;
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
-    private bool CreateTeamTemplate(List<EntityMetadata> entities, TeamTemplate newTemplate)
+    private bool CreateTeamTemplate(IOrganizationService service, List<EntityMetadata> entities, TeamTemplate newTemplate)
     {
         var entity = entities.Find(e => e.LogicalName == newTemplate.Entity);
 
         if (entity?.ObjectTypeCode == null)
         {
-            Tracer.Log($"unknown template entity: {newTemplate.Entity}", TraceEventType.Verbose);
+            diagnostics.Log($"unknown template entity: {newTemplate.Entity}", TraceEventType.Verbose);
             return false;
         }
 
         if (entity.AutoCreateAccessTeams == null)
         {
-            Tracer.Log($"access teams not enabled template entity: {newTemplate.Entity}", TraceEventType.Verbose);
+            diagnostics.Log($"access teams not enabled template entity: {newTemplate.Entity}", TraceEventType.Verbose);
             return false;
         }
 
         //create template
-        Tracer.Log($"create template: {newTemplate.TeamTemplateName}", TraceEventType.Verbose);
-        return Connection.TryCreate(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
+        diagnostics.Log($"create template: {newTemplate.TeamTemplateName}", TraceEventType.Verbose);
+        return service.TryCreate(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
         {
             TeamTemplateName = newTemplate.TeamTemplateName,
             Description = newTemplate.Description,
@@ -106,7 +106,8 @@ public sealed class TeamTemplateImport(
         }, out _);
     }
 
-    private bool UpdateTeamTemplate(IEnumerable<dataverse.TeamTemplate> teamTemplates, TeamTemplate updateTemplate, List<EntityMetadata> entities)
+    private bool UpdateTeamTemplate(IOrganizationService service, IEnumerable<dataverse.TeamTemplate> teamTemplates, TeamTemplate updateTemplate,
+        List<EntityMetadata> entities)
     {
         var existingTemplate = teamTemplates.Single(e => e.Id == updateTemplate.TeamTemplateId);
 
@@ -114,7 +115,7 @@ public sealed class TeamTemplateImport(
 
         if (entity == null)
         {
-            Tracer.Log($"unknown template entity: {updateTemplate.Entity}", TraceEventType.Verbose);
+            diagnostics.Log($"unknown template entity: {updateTemplate.Entity}", TraceEventType.Verbose);
             return false;
         }
 
@@ -123,13 +124,13 @@ public sealed class TeamTemplateImport(
         var result = true;
         if (unchangedRule)
         {
-            Tracer.Log($"unchanged template: {updateTemplate.TeamTemplateName}", TraceEventType.Verbose);
+            diagnostics.Log($"unchanged template: {updateTemplate.TeamTemplateName}", TraceEventType.Verbose);
         }
         else
         {
             //update template
-            Tracer.Log($"update template: {updateTemplate.TeamTemplateName}", TraceEventType.Verbose);
-            result = Connection.TryUpdate(new dataverse.TeamTemplate(existingTemplate.Id)
+            diagnostics.Log($"update template: {updateTemplate.TeamTemplateName}", TraceEventType.Verbose);
+            result = service.TryUpdate(new dataverse.TeamTemplate(existingTemplate.Id)
             {
                 TeamTemplateName = updateTemplate.TeamTemplateName,
                 Description = updateTemplate.Description,
@@ -142,11 +143,11 @@ public sealed class TeamTemplateImport(
         return result;
     }
 
-    private bool DeleteTeamTemplate(dataverse.TeamTemplate teamTemplate)
+    private bool DeleteTeamTemplate(IOrganizationService service, dataverse.TeamTemplate teamTemplate)
     {
         //delete template
-        Tracer.Log($"delete template: {teamTemplate.TeamTemplateName}", TraceEventType.Verbose);
-        return Connection.TryDelete(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id);
+        diagnostics.Log($"delete template: {teamTemplate.TeamTemplateName}", TraceEventType.Verbose);
+        return service.TryDelete(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id);
     }
 
     private static bool Unchanged(dataverse.TeamTemplate existing, int entity, TeamTemplate config)

@@ -13,20 +13,16 @@ using Spectre.Console;
 namespace dgt.power.export.Logic;
 
 public sealed class SlaConfigExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
@@ -34,7 +30,8 @@ public sealed class SlaConfigExport(
 
         var configs = new List<SlaConfig>();
 
-        using (var context = new DataContext(Connection))
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using (var context = new DataContext(service))
         {
             configs.AddRange(context.SLASet.Select(s => new SlaConfig
             {
@@ -45,10 +42,10 @@ public sealed class SlaConfigExport(
             }).ToList());
         }
 
-        var json = GetJson(configs);
+        var json = ExportJson.GetJson(configs);
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
 
-        return Tracer.End(this, true);
+        return true;
     }
 }

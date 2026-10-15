@@ -17,58 +17,55 @@ namespace dgt.power.maintenance.Logic;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
 public class UpdateWorkflowState(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : PowerLogic<UpdateWorkflowStateSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<UpdateWorkflowStateSettings>(spans, console)
 {
     private readonly Dictionary<string, SystemUser> _userTable = new();
     private readonly WorkflowStateTracker _workflowStateTracker = new();
 
-    protected override Task<bool> InvokeAsync(UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
 
-        return InvokeCoreAsync(args, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(UpdateWorkflowStateSettings args, CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-        Tracer.Start(this);
-
         // Check if required config is available
-        if (!ConfigResolver.TryGetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
+        if (!configResolver.TryGetConfigFile<WorkflowConfig>(args.Config, out var workflowConfig))
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+
         // Do the actual work
-        var result = await UpdateWorkflowStatesAsync(workflowConfig, workflowConfig.SolutionFilter, workflowConfig.PublisherFilter);
+        var result = await UpdateWorkflowStatesAsync(service, workflowConfig, workflowConfig.SolutionFilter, workflowConfig.PublisherFilter);
 
         // Print table report if requested
         if (args.TableReport)
         {
-            _workflowStateTracker.WriteToConsole(Console);
+            _workflowStateTracker.WriteToConsole(console);
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
     /// <summary>
     /// Take a given workflow config and update corresponding flows
     /// </summary>
+    /// <param name="service">The organization service</param>
     /// <param name="workflowConfig">The underlying workflow config</param>
     /// <param name="solutions">Optional solution filter</param>
     /// <param name="publishers">Optional publisher filter</param>
     /// <returns>True if no errors occured otherwise False</returns>
     private async Task<bool> UpdateWorkflowStatesAsync(
+        IOrganizationService service,
         WorkflowConfig workflowConfig,
         IReadOnlyList<string>? solutions,
         IReadOnlyList<string>? publishers)
     {
-        return await Console.Progress()
+        return await console.Progress()
             .StartAsync(async ctx =>
             {
                 Dictionary<string, ProgressTask> progressTasks = new();
@@ -89,27 +86,27 @@ public class UpdateWorkflowState(
                 };
 
                 var workflowStateManager = new WorkflowStateManager(
-                    (IOrganizationServiceAsync2)Connection,
+                    (IOrganizationServiceAsync2)service,
                     solutions?.ToArray() ?? [],
                     publishers?.ToArray() ?? [],
-                    Tracer,
+                    diagnostics,
                     progress);
 
-                Tracer.Log("Loading all workflows", TraceEventType.Information);
+                diagnostics.Log("Loading all workflows", TraceEventType.Information);
                 var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
                 _workflowStateTracker.AddWorkflows(workflows);
 
-                Tracer.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
+                diagnostics.Log($"Found {workflows.Length} workflows", TraceEventType.Information);
 
-                Tracer.Log("Updating workflows", TraceEventType.Information);
+                diagnostics.Log("Updating workflows", TraceEventType.Information);
 
-                var result = await TryUpdateWorkflowsAsync(workflows, workflowConfig, progress);
+                var result = await TryUpdateWorkflowsAsync(service, workflows, workflowConfig, progress);
 
                 return result;
             });
     }
 
-    private async Task<bool> TryUpdateWorkflowsAsync(Workflow[] workflows, WorkflowConfig workflowConfig, WorkflowStateManager.TaskStatusCallback progress)
+    private async Task<bool> TryUpdateWorkflowsAsync(IOrganizationService service, Workflow[] workflows, WorkflowConfig workflowConfig, WorkflowStateManager.TaskStatusCallback progress)
     {
         // introduce rounds because we might need multiple turns if child flows exist. Instead of figuring out the hierarchy we just repeat as long as each round has some successes
         // keep track of failures in a dictionary
@@ -122,7 +119,7 @@ public class UpdateWorkflowState(
         {
             previousFailures = currentFailures;
             currentFailures = 0;
-            Tracer?.Log($"Updating workflows - round {round} ({previousFailures} failures)", TraceEventType.Information);
+            diagnostics.Log($"Updating workflows - round {round} ({previousFailures} failures)", TraceEventType.Information);
             progress?.Invoke($"Updating workflows - round {round}", $"{currentFailures} failures", 0, previousFailures);
 
             // traverse all workflows that were marked as failures in the last round (initially all are marked as failures)
@@ -133,16 +130,16 @@ public class UpdateWorkflowState(
 
                 try
                 {
-                    updateResult = await TryUpdateWorkflowAsync(workflow.Key, workflowConfig);
+                    updateResult = await TryUpdateWorkflowAsync(service, workflow.Key, workflowConfig);
                 }
                 catch (InvalidDataException e)
                 {
-                    Tracer?.Log($"Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message.EscapeMarkup()}", TraceEventType.Error);
+                    diagnostics.Log($"Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message.EscapeMarkup()}", TraceEventType.Error);
                     updateResult = true;
                 }
                 catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
-                     Tracer?.Log($"Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message.EscapeMarkup()}", TraceEventType.Error);
+                    diagnostics.Log($"Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message.EscapeMarkup()}", TraceEventType.Error);
                     updateResult = false;
                 }
 
@@ -159,22 +156,22 @@ public class UpdateWorkflowState(
             }
 
             round++;
-            Tracer?.Log($"Updating workflows - round {round} end: current_failures={currentFailures};previous_failures:{previousFailures}", TraceEventType.Information);
+            diagnostics.Log($"Updating workflows - round {round} end: current_failures={currentFailures};previous_failures:{previousFailures}", TraceEventType.Information);
         } while (currentFailures > 0 && currentFailures < previousFailures);
 
         return currentFailures <= 0;
     }
 
-    private async Task<bool> TryUpdateWorkflowAsync(Workflow workflow, WorkflowConfig workflowConfig)
+    private async Task<bool> TryUpdateWorkflowAsync(IOrganizationService service, Workflow workflow, WorkflowConfig workflowConfig)
     {
         var workflowCategory = workflow.Category?.Value;
         if (workflowCategory is null)
         {
-            Tracer?.Log($"Unable to process workflow {workflow.Id} category: <null>", TraceEventType.Error);
+            diagnostics.Log($"Unable to process workflow {workflow.Id} category: <null>", TraceEventType.Error);
             return false;
         }
 
-        Tracer.Log($"Workflow {workflow.Id} (category={workflowCategory}): checking against config", TraceEventType.Verbose);
+        diagnostics.Log($"Workflow {workflow.Id} (category={workflowCategory}): checking against config", TraceEventType.Verbose);
 
         string workflowName;
         WorkflowBaseConfig? baseWorkflowConfig = null;
@@ -187,7 +184,7 @@ public class UpdateWorkflowState(
                 workflowName = workflow.Name ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflowCategory}) has no name");
                 if (workflowConfig.Flows?.TryGetValue(workflowName, out var flowConfig) == true)
                 {
-                    Tracer?.Log($"Workflow {workflow.Id} (category={workflowCategory};" +
+                    diagnostics.Log($"Workflow {workflow.Id} (category={workflowCategory};" +
                                 $"name='{workflowName.EscapeMarkup()}'): found config entries - disabled={flowConfig.Disabled};" +
                                 $"owner={flowConfig.Owner};impersonate={flowConfig.Impersonate};", TraceEventType.Verbose);
                     baseWorkflowConfig = flowConfig;
@@ -198,7 +195,7 @@ public class UpdateWorkflowState(
                 workflowName = workflow.UniqueName ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflowCategory}) has no unique name");
                 if (workflowConfig.Actions?.TryGetValue(workflowName, out baseWorkflowConfig) == true)
                 {
-                    Tracer?.Log($"Workflow {workflow.Id} (category={workflowCategory};" +
+                    diagnostics.Log($"Workflow {workflow.Id} (category={workflowCategory};" +
                                 $"name='{workflowName.EscapeMarkup()}'): found config entries - disabled={baseWorkflowConfig.Disabled};" +
                                 $"owner={baseWorkflowConfig.Owner};", TraceEventType.Verbose);
                 }
@@ -207,18 +204,18 @@ public class UpdateWorkflowState(
                 workflowName = workflow.Name ?? throw new InvalidDataException($"Workflow {workflow.Id} (category={workflowCategory};table={workflow.PrimaryEntity}) has no name");
                 if (workflowConfig.BusinessRules?.TryGetValue(workflow.PrimaryEntity!, out var table) == true && table.TryGetValue(workflowName, out baseWorkflowConfig))
                 {
-                    Tracer?.Log($"Workflow {workflow.Id} (category={workflowCategory};" +
+                    diagnostics.Log($"Workflow {workflow.Id} (category={workflowCategory};" +
                                 $"table={workflow.PrimaryEntity};" +
                                 $"name='{workflowName.EscapeMarkup()}'): found config entries - disabled={baseWorkflowConfig.Disabled};" +
                                 $"owner={baseWorkflowConfig.Owner};", TraceEventType.Verbose);
                 }
                 break;
             default:
-                Tracer.Log($"Unable to process workflow {workflow.Id} category: {workflowCategory}", TraceEventType.Error);
+                diagnostics.Log($"Unable to process workflow {workflow.Id} category: {workflowCategory}", TraceEventType.Error);
                 return false;
         }
 
-        Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): collecting desired values", TraceEventType.Verbose);
+        diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): collecting desired values", TraceEventType.Verbose);
         var desiredDisabled = baseWorkflowConfig?.Disabled ?? false; // default to enable workflow if nothing is set in config
         var desiredOwnerDomainName = baseWorkflowConfig?.Owner ?? workflowConfig.DefaultOwner; // owner specified on workflow level overrides default (empty string also triggers override)
         // impersonate specified on workflow level overrides default (empty string also triggers override)
@@ -226,8 +223,8 @@ public class UpdateWorkflowState(
 
         _workflowStateTracker.TrackDisabled(workflow, desiredDisabled);
 
-        var desiredOwner = await ResolveSystemUserAsync(desiredOwnerDomainName);
-        var desiredImpersonateUser = await ResolveSystemUserAsync(desiredImpersonate);
+        var desiredOwner = await ResolveSystemUserAsync(service, desiredOwnerDomainName);
+        var desiredImpersonateUser = await ResolveSystemUserAsync(service, desiredImpersonate);
 
         _workflowStateTracker.TrackOwner(workflow, desiredOwner);
 
@@ -236,13 +233,13 @@ public class UpdateWorkflowState(
         var updateNeeded = false;
 
         var currentDisabled = workflow.StateCode?.Value != Workflow.Options.StateCode.Activated;
-        Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};" +
+        diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};" +
                     $"name='{workflowName.EscapeMarkup()}'): desired disabled - desired={desiredDisabled};current={currentDisabled};", TraceEventType.Verbose);
 
         var currentOwner = workflow.OwnerId;
         workflow.TryGetAttributeValue<AliasedValue>("owner.domainname", out var currentOwnerDomainNameAliased);
         var currentOwnerDomainName = currentOwnerDomainNameAliased?.Value as string;
-        Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};" +
+        diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};" +
                     $"name='{workflowName.EscapeMarkup()}'): desired owner - desired={desiredOwnerDomainName}({desiredOwner?.Id});" +
                     $"current={currentOwnerDomainName}'({workflow.OwnerId?.Id});", TraceEventType.Verbose);
 
@@ -251,7 +248,7 @@ public class UpdateWorkflowState(
         // > additionally this might help to detect issues with connection references
         if (desiredOwner != null && desiredOwner.SystemUserId != currentOwner?.Id && !currentDisabled)
         {
-            Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): disabling workflow for owner update", TraceEventType.Information);
+            diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): disabling workflow for owner update", TraceEventType.Information);
             var disableWorkflowRequest = new UpdateRequest
             {
                 Target = new Workflow(workflow.Id)
@@ -260,7 +257,7 @@ public class UpdateWorkflowState(
                     StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
                 }
             };
-            Connection.Execute(disableWorkflowRequest);
+            service.Execute(disableWorkflowRequest);
 
             // reset current disabled value to reflect the change
             currentDisabled = true;
@@ -276,7 +273,7 @@ public class UpdateWorkflowState(
                 updateWorkflow.StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft);
                 updateNeeded = true;
 
-                Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): marking update - disabled={desiredDisabled}", TraceEventType.Information);
+                diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): marking update - disabled={desiredDisabled}", TraceEventType.Information);
                 break;
             // workflow should be enabled but is disabled try activate it
             case false when currentDisabled:
@@ -284,60 +281,60 @@ public class UpdateWorkflowState(
                 updateWorkflow.StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Activated);
                 updateNeeded = true;
 
-                Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): marking update - disabled={desiredDisabled}", TraceEventType.Information);
+                diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): marking update - disabled={desiredDisabled}", TraceEventType.Information);
                 break;
         }
 
         // check if owner needs to be changed and also skip any update if workflow is still active
         if (desiredOwner != null && desiredOwner.SystemUserId != currentOwner?.Id)
         {
-            Tracer?.Log(
+            diagnostics.Log(
                 $"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): " +
                 $"chaging owner from {currentOwnerDomainName}'({currentOwner?.Id}) to owner={desiredOwnerDomainName}({desiredOwner.Id})",
                 TraceEventType.Information);
-            Connection.Execute(new AssignRequest{ Assignee = desiredOwner.ToEntityReference(), Target = updateWorkflow.ToEntityReference() });
+            service.Execute(new AssignRequest{ Assignee = desiredOwner.ToEntityReference(), Target = updateWorkflow.ToEntityReference() });
         }
 
         if (!updateNeeded)
         {
-            Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): no update needed", TraceEventType.Information);
+            diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): no update needed", TraceEventType.Information);
             return true;
         }
 
-        Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): performing update", TraceEventType.Information);
+        diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): performing update", TraceEventType.Information);
         var updateRequest = new UpdateRequest { Target = updateWorkflow };
 
         if (desiredImpersonateUser != null)
         {
-            var callerId = Connection.GetType().GetProperty("CallerId", BindingFlags.Instance | BindingFlags.Public);
+            var callerId = service.GetType().GetProperty("CallerId", BindingFlags.Instance | BindingFlags.Public);
 
             // Check if used service supports impersonation. This should be the case in real scenarios, but might fail with unit tests
             if (callerId == null)
             {
-                Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): Service '{Connection.GetType().Name.EscapeMarkup()}' does not support impersonation. Continuing without", TraceEventType.Warning);
-                Connection.Execute(updateRequest);
+                diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): Service '{service.GetType().Name.EscapeMarkup()}' does not support impersonation. Continuing without", TraceEventType.Warning);
+                service.Execute(updateRequest);
             }
             else
             {
-                Tracer?.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): Using impersonation of {desiredImpersonateUser.Id}", TraceEventType.Verbose);
+                diagnostics.Log($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName.EscapeMarkup()}'): Using impersonation of {desiredImpersonateUser.Id}", TraceEventType.Verbose);
 
                 // Store current caller id and restore it since we want to reuse the connection
-                var oldCaller = callerId.GetValue(Connection);
-                callerId.SetValue(Connection, desiredImpersonateUser.Id);
+                var oldCaller = callerId.GetValue(service);
+                callerId.SetValue(service, desiredImpersonateUser.Id);
 
                 try
                 {
-                    Connection.Execute(updateRequest);
+                    service.Execute(updateRequest);
                 }
                 finally
                 {
-                    callerId.SetValue(Connection, oldCaller);
+                    callerId.SetValue(service, oldCaller);
                 }
             }
         }
         else
         {
-            Connection.Execute(updateRequest);
+            service.Execute(updateRequest);
         }
 
         _workflowStateTracker.TrackDisabled(workflow, desiredDisabled, desiredDisabled);
@@ -351,7 +348,7 @@ public class UpdateWorkflowState(
     /// </summary>
     /// <param name="username">Domain name to look for</param>
     /// <returns>Found user or default object if not found</returns>
-    private Task<SystemUser?> ResolveSystemUserAsync(string? username)
+    private Task<SystemUser?> ResolveSystemUserAsync(IOrganizationService service, string? username)
     {
         // If no username is given return default
         if (string.IsNullOrWhiteSpace(username))
@@ -379,12 +376,12 @@ public class UpdateWorkflowState(
             }
         };
 
-        user = Connection.RetrieveMultiple(query).Entities.Cast<SystemUser>().SingleOrDefault();
+        user = service.RetrieveMultiple(query).Entities.Cast<SystemUser>().SingleOrDefault();
 
         // If we do not find a user return default
         if (user == null)
         {
-            Tracer.Log($"No user found for '{username.EscapeMarkup()}'", TraceEventType.Warning);
+            diagnostics.Log($"No user found for '{username.EscapeMarkup()}'", TraceEventType.Warning);
             return Task.FromResult<SystemUser?>(null);
         }
 

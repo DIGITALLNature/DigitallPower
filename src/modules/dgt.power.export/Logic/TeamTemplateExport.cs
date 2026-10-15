@@ -14,33 +14,30 @@ using Spectre.Console;
 namespace dgt.power.export.Logic;
 
 public sealed class TeamTemplateExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "teamtemplate.json" : args.FileName;
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
         var request = new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
         var records = response.EntityMetadata.ToList();
 
         IList<TeamTemplate> teamTemplates;
-        using (var context = new DataContext(Connection))
+        using (var context = new DataContext(service))
         {
             teamTemplates = (from tt in context.TeamTemplateSet
                 orderby tt.TeamTemplateName
@@ -65,9 +62,9 @@ public sealed class TeamTemplateExport(
             export.Add(template);
         }
 
-        var json = GetJson(export);
+        var json = ExportJson.GetJson(export);
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
-        return Tracer.End(this, true);
+        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        return true;
     }
 }

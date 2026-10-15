@@ -13,44 +13,45 @@ using Spectre.Console;
 namespace dgt.power.maintenance.Logic;
 
 public sealed class AutoNumberFormatAction(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseMaintenance(tracer, connection, configResolver, console)
+    : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(MaintenanceVerb args)
+    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
+
         //read config
-        if (!ConfigResolver.TryGetConfigFile<List<AutoNumberFormat>>(args.Config, out var autoNumberFormats))
+        if (!configResolver.TryGetConfigFile<List<AutoNumberFormat>>(args.Config, out var autoNumberFormats))
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
         //anything to do?
         if (autoNumberFormats.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Not configured.[/]");
+            return false;
         }
+
+        var service = (IOrganizationService)await connection.GetServiceAsync();
 
         //process
         var result = true;
         foreach (var autoNumberFormat in autoNumberFormats)
         {
-            result = Process(autoNumberFormat) && result;
+            result = Process(service, autoNumberFormat) && result;
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
-    private bool Process(AutoNumberFormat autoNumberFormat)
+    private bool Process(IOrganizationService service, AutoNumberFormat autoNumberFormat)
     {
-        Tracer.Log($"Check the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field}",
+        diagnostics.Log($"Check the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field}",
             TraceEventType.Verbose);
 
         var attributeRequest = new RetrieveAttributeRequest
@@ -59,7 +60,7 @@ public sealed class AutoNumberFormatAction(
             LogicalName = autoNumberFormat.Field,
             RetrieveAsIfPublished = true
         };
-        var attributeResponse = (RetrieveAttributeResponse)Connection.Execute(attributeRequest);
+        var attributeResponse = (RetrieveAttributeResponse)service.Execute(attributeRequest);
 
         var format = attributeResponse.AttributeMetadata.AutoNumberFormat;
 
@@ -68,7 +69,7 @@ public sealed class AutoNumberFormatAction(
             return true;
         }
 
-        Tracer.Log(
+        diagnostics.Log(
             $"Update the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field} from {format} to {autoNumberFormat.Format}",
             TraceEventType.Information);
 
@@ -83,6 +84,6 @@ public sealed class AutoNumberFormatAction(
             MergeLabels = false
         };
 
-        return Connection.TryExecute<UpdateAttributeRequest, UpdateAttributeResponse>(updateRequest, out _);
+        return service.TryExecute<UpdateAttributeRequest, UpdateAttributeResponse>(updateRequest, out _);
     }
 }

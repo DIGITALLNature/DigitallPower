@@ -21,33 +21,29 @@ namespace dgt.power.import.Logic;
 
 [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public sealed class OutlookTemplateImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IConfigResolver configResolver,
     TimeProvider timeProvider,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
     private static readonly TimeSpan s_savedQueryUpdateDelay = TimeSpan.FromSeconds(5);
 
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(args);
-        return InvokeCoreAsync(args, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(ImportVerb args, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
 
-        if (!ConfigResolver.TryGetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
+        if (!configResolver.TryGetConfigFile<dto.SavedQuery>(args.FileDir, fileName, out var queries))
         {
-            return Tracer.NotConfigured(this);
+            console.MarkupLine("[red]Outlook template configuration not found.[/]");
+            return false;
         }
 
         var result = true;
-        var orgAsync = (IOrganizationServiceAsync2)Connection;
+        var orgAsync = await connection.GetServiceAsync();
 
         var savedQueryExpression = new QueryExpression(SavedQuery.EntityLogicalName)
         {
@@ -70,7 +66,7 @@ public sealed class OutlookTemplateImport(
         {
             if (queries.DisabledOutlookTemplates.Contains(savedQuery.Name!) && savedQuery.IsDefault == true)
             {
-                Tracer.Log($"Deactivate OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
+                diagnostics.Log($"Deactivate OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
                 result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = false
@@ -79,7 +75,7 @@ public sealed class OutlookTemplateImport(
 
             if (!queries.DisabledOutlookTemplates.Contains(savedQuery.Name!) && savedQuery.IsDefault == false)
             {
-                Tracer.Log($"Activate OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
+                diagnostics.Log($"Activate OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
                 result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
                     IsDefault = true
@@ -89,7 +85,7 @@ public sealed class OutlookTemplateImport(
 
         if (queries.OutlookTemplates.Count == 0)
         {
-            return Tracer.End(this, result);
+            return result;
         }
 
         foreach (var outlookTemplate in queries.OutlookTemplates)
@@ -97,7 +93,7 @@ public sealed class OutlookTemplateImport(
             result = await UpsertOutlookTemplateAsync(orgAsync, savedQueries, outlookTemplate, cancellationToken) && result;
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
     private async Task<bool> UpsertOutlookTemplateAsync(
@@ -110,7 +106,7 @@ public sealed class OutlookTemplateImport(
         var savedQuery = savedQueries.Find(e => e.Name == outlookTemplate.Name);
         if (savedQuery == null)
         {
-            Tracer.Log($"Create OutlookTemplate {outlookTemplate.Name}", TraceEventType.Information);
+            diagnostics.Log($"Create OutlookTemplate {outlookTemplate.Name}", TraceEventType.Information);
             result = await orgAsync.TryCreateAsync(new SavedQuery
             {
                 FetchXml = outlookTemplate.FetchXml,
@@ -129,8 +125,8 @@ public sealed class OutlookTemplateImport(
 
             if (!XmlCompare(XElement.Parse(current), XElement.Parse(update)))
             {
-                Tracer.Log($"Update OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
-                Tracer.Log("Update OutlookTemplate does not affect existing rule for users!",
+                diagnostics.Log($"Update OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
+                diagnostics.Log("Update OutlookTemplate does not affect existing rule for users!",
                     TraceEventType.Warning);
                 result = await orgAsync.TryUpdateAsync(new SavedQuery(savedQuery.Id)
                 {
@@ -152,7 +148,7 @@ public sealed class OutlookTemplateImport(
             }
             else
             {
-                Tracer.Log($"Skip OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
+                diagnostics.Log($"Skip OutlookTemplate {savedQuery.Name}", TraceEventType.Information);
             }
         }
 

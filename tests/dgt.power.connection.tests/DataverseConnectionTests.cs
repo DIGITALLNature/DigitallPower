@@ -56,7 +56,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
 
         var second = connection.GetServiceAsync();
 
-        await Assert.That(second).IsNotSameReferenceAs(first);
+        await Assert.That(ReferenceEquals(second, first)).IsFalse();
         await Assert.ThrowsAsync<MissingConnectionException>(async () => await second);
     }
 
@@ -72,7 +72,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
         var first = connection.GetServiceAsync();
         var second = connection.GetServiceAsync();
 
-        await Assert.That(second).IsSameReferenceAs(first);
+        await Assert.That(ReferenceEquals(second, first)).IsTrue();
         await Assert.ThrowsAsync<MissingConnectionException>(async () => await first);
     }
 

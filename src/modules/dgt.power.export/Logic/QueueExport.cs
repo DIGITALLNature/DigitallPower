@@ -14,24 +14,21 @@ using Queue = dgt.power.dataverse.Queue;
 namespace dgt.power.export.Logic;
 
 public sealed class QueueExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    IDiagnostics diagnostics,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
+        ArgumentNullException.ThrowIfNull(args);
 
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "queue.json" : args.FileName;
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
 
         var query = new QueryExpression
         {
@@ -71,7 +68,7 @@ public sealed class QueueExport(
         while (moreRecords)
         {
             // Retrieve the page.
-            var results = Connection.RetrieveMultiple(query);
+            var results = service.RetrieveMultiple(query);
             foreach (var entity in results.Entities)
             {
                 queues.Add(entity.ToEntity<Queue>());
@@ -102,9 +99,9 @@ public sealed class QueueExport(
             }).ToList()
         };
 
-        var json = GetJson(export);
+        var json = ExportJson.GetJson(export);
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
-        return Tracer.End(this, true);
+        diagnostics.Log($"Export {fileService.ExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
+        return true;
     }
 }
