@@ -29,9 +29,9 @@ Within a single command run, all Dataverse access MUST share one authenticated c
 - **WHEN** multiple components of one run request Dataverse access, including at the same time
 - **THEN** authentication and the connection verification request happen once
 
-### Requirement: Each run produces one telemetry span with its outcome
+### Requirement: Each run produces one telemetry span with its result
 
-When telemetry is enabled and not suppressed with `--no-telemetry`, a command run MUST produce exactly one span named after the command that records the run's outcome as success or failure. The span MUST be closed on every exit path, including exceptions.
+When telemetry is enabled and not suppressed with `--no-telemetry`, a command run MUST produce exactly one span named after the command that records the run's result as success or failure. The span MUST be closed on every exit path, including exceptions.
 
 #### Scenario: A command completes successfully
 
@@ -48,28 +48,38 @@ When telemetry is enabled and not suppressed with `--no-telemetry`, a command ru
 - **WHEN** `--no-telemetry` is passed
 - **THEN** no span is produced
 
-### Requirement: Run outcome distinguishes not configured and skipped
+### Requirement: Each run is announced at start and end
 
-A traced run MUST report whether it succeeded, failed, was not configured, or was skipped, and the span MUST carry that outcome as an attribute.
+A traced command run MUST print a start line and an end line that identify the command by the path the user typed and state the result and duration at the end. Telemetry settings MUST NOT affect these lines, and they MUST NOT be mixed into the command's data output.
 
-#### Scenario: A required configuration file is missing
+#### Scenario: Consecutive commands in a script
 
-- **WHEN** a command cannot find its configuration
-- **THEN** the span outcome is "not configured" and the run is treated as a failure
+- **WHEN** two commands run one after another
+- **THEN** each run shows its own start line and an end line with result and duration, so the runs can be told apart in the log
 
-#### Scenario: Nothing to do
+#### Scenario: A command fails
 
-- **WHEN** a command determines there is nothing to execute
-- **THEN** the span outcome is "skipped" and the run is treated as successful
+- **WHEN** a command fails
+- **THEN** the end line states the failure and the duration
+
+#### Scenario: A command's output is redirected
+
+- **WHEN** a command's data output is redirected to a file
+- **THEN** the file contains no start or end lines
 
 ### Requirement: Exit code contract
 
-A command MUST exit with `0` when the run succeeded or was skipped, `1` when it failed or was not configured, and `2` when interactive authentication is required. Callers MUST NOT need to distinguish other failure kinds by exit code.
+A command MUST exit with `0` when the run succeeded, `1` when it failed (including a missing required configuration), and `2` when interactive authentication is required. Callers MUST NOT need to distinguish other failure kinds by exit code.
 
 #### Scenario: A run fails
 
-- **WHEN** a command fails for any reason other than required interactive authentication
+- **WHEN** a command fails for any reason other than required interactive authentication, including a missing required configuration
 - **THEN** the process exits with `1`
+
+#### Scenario: A run has nothing to do
+
+- **WHEN** a command determines there is nothing to execute
+- **THEN** the process exits with `0`
 
 #### Scenario: Interactive sign-in is required
 
