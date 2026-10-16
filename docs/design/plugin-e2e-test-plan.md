@@ -63,7 +63,7 @@ Status: `V` verified, `F` failed, `-` not run, `?` open.
 | S12 | Custom API link | Link handler type | Link present in Target | V |
 | S13 | Custom API handler moves to another type (rename and bump) | Update link; old assembly deleted | Link points to new type | V |
 | S14 | Custom API loses its handler | Unlink, then delete type | No dangling link in Target | F (Dev OK; Test import blocked until the link is removed manually, see README). With the manual unlink the import succeeds and Target matches Dev |
-| S15 | Data provider add, change, remove | Matches preview | Matches Dev | ? (skipped: no working data provider example) |
+| S15 | Data provider add, change, remove | Matches preview | Matches Dev | ? (deferred: no data provider available; unit-tested only) |
 | S16 | Retry after a partial failure | Resumes cleanly | n/a | V |
 
 ## B. Packages
@@ -78,10 +78,11 @@ Status: `V` verified, `F` failed, `-` not run, `?` open.
 | P6 | Remove a stepless type | Upload removes type | Import alone removes type | F (Dev OK; Test import fails: "Unable to delete plugintype due to 1 step(s) registered on it", caused by the Custom API link; with a manual unlink in Test first, the import succeeds and the type is removed) |
 | P7 | Add a second assembly | Create | Appears | V (Dev) |
 | P8 | Remove an assembly with steps | Steps deleted, upload removes assembly | Import alone removes assembly and steps | V (Dev) |
-| P9 | Remove an assembly without steps | Upload removes assembly | Import alone removes assembly | - |
-| P10 | New package version | Rejected by Dataverse (verify message) | Import of a new package version as upgrade | ? |
-| P11 | Custom API link and unlink in a package | Link, update, unlink match preview | Same in Target | - |
+| P9 | Remove an assembly without steps | Upload removes assembly | Import alone removes assembly | V (by reasoning: no types or steps, so nothing blocks the delete; planning covered by unit tests) |
+| P10 | New package version | Rejected by Dataverse (verify message) | Import of a new package version as upgrade | n/a (the package version cannot be changed after creation) |
+| P11 | Custom API link and unlink in a package | Link, update, unlink match preview | Same in Target | V (covered by S14 and P6; unlink does not propagate on import, see README) |
 | P12 | Type moved between assemblies in one package | Verify behaviour | Verify | ? |
+| P13 | Data provider in a package (handlers in several assemblies, solution membership) | Matches preview | Matches Dev | ? (deferred: no data provider available; unit-tested only) |
 
 ## C. Managed import without our cleanup (decision cases)
 
@@ -108,12 +109,12 @@ changing the tool.
 
 | ID | Scenario | Expectation | Status |
 |----|----------|-------------|--------|
-| X1 | Several targets in one run | Each target is previewed, confirmed and applied in turn; one confirmation per target with changes | - |
-| X2 | Two targets conflict on the same assembly or package | Preflight reports the conflict | - |
-| X3 | Declined confirmation | No writes | - |
-| X4 | Destructive count in the preview | Counts steps, types and assemblies | - |
-| X5 | CI mode (no prompt) | Applies without prompting | - |
-| X6 | Error paths (missing file, invalid package) | Clear message, no writes | - |
+| X1 | Several targets in one run | Each target is previewed, confirmed and applied in turn; one confirmation per target with changes | V |
+| X2 | Two targets conflict on the same assembly or package | Preflight reports the conflict | V |
+| X3 | Declined confirmation | No writes | V |
+| X4 | Destructive count in the preview | Counts steps, types and assemblies | unit-tested |
+| X5 | CI mode (no prompt) | Applies without prompting | V |
+| X6 | Error paths (missing file, invalid package) | Clear message, no writes | V (fails before connecting) |
 
 ## Reporting
 

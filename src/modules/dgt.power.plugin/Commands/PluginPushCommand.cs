@@ -39,13 +39,19 @@ public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection c
         }
 
         var options = new BatchOptions(settings.Solution, settings.PublisherPrefix, settings.DryRun, settings.Confirm, settings.NonInteractive, ExecutionEnvironment.IsCiAgent);
-        var runner = new DeploymentBatchRunner(new PluginDeployment(await connection.GetServiceAsync()), Console);
-        var result = await runner.RunAsync(read.Targets, options, cancellationToken);
-        foreach (var error in result.PreflightErrors)
+        var errors = BatchPreflight.Validate(read.Targets, options);
+        if (errors.Count > 0)
         {
-            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{error}[/]");
+            foreach (var error in errors)
+            {
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{error}[/]");
+            }
+
+            return false;
         }
 
+        var runner = new DeploymentBatchRunner(new PluginDeployment(await connection.GetServiceAsync()), Console);
+        var result = await runner.RunAsync(read.Targets, options, cancellationToken);
         return result.Success;
     }
 

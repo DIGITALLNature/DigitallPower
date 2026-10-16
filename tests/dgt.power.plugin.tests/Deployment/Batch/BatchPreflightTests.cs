@@ -25,6 +25,32 @@ public class BatchPreflightTests
     internal static LocalDeploymentTarget Package(string path, string name, params LocalAssembly[] assemblies) =>
         new(path, null, new LocalPluginPackage(new LocalPackage(name, "1.0.0", "Y29udGVudA==", name), assemblies));
 
+    private static readonly BatchOptions s_options = new(null, "new", false, false, false, false);
+
+    [Test]
+    public async Task Validate_PackageWithoutPublisherPrefix_Rejects()
+    {
+        var errors = BatchPreflight.Validate([Package("p.nupkg", "P", Assembly("A"))], s_options with { PublisherPrefix = null });
+
+        await Assert.That(errors.Single()).Contains("--publisher-prefix");
+    }
+
+    [Test]
+    public async Task Validate_StandaloneWithoutPublisherPrefix_Accepts()
+    {
+        var errors = BatchPreflight.Validate([Standalone("a.dll", Assembly("A"))], s_options with { PublisherPrefix = null });
+
+        await Assert.That(errors).IsEmpty();
+    }
+
+    [Test]
+    public async Task Validate_Conflict_ReportsConflict()
+    {
+        var errors = BatchPreflight.Validate([Standalone("1/A.dll", Assembly("A")), Standalone("2/A.dll", Assembly("A"))], s_options);
+
+        await Assert.That(errors).Count().IsEqualTo(1);
+        await Assert.That(errors[0]).Contains("Assembly 'A'");
+    }
     [Test]
     public async Task FindConflicts_DistinctTargets_ReturnsNone()
     {

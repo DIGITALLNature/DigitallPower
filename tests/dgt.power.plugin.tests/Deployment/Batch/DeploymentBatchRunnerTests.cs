@@ -170,33 +170,6 @@ public class DeploymentBatchRunnerTests
     }
 
     [Test]
-    public async Task Run_Conflict_RejectsBatchBeforeAnyWrite()
-    {
-        var store = Store("A");
-        using var console = new TestConsole();
-        var targets = new[] { BatchPreflightTests.Standalone("1/A.dll", BatchPreflightTests.Assembly("A")), BatchPreflightTests.Standalone("2/A.dll", BatchPreflightTests.Assembly("A")) };
-
-        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync(targets, s_default);
-
-        await Assert.That(result.Success).IsFalse();
-        await Assert.That(result.Targets).IsEmpty();
-        await Assert.That(result.PreflightErrors).Count().IsEqualTo(1);
-        await Assert.That(Count(store, PluginType.EntityLogicalName)).IsEqualTo(0);
-    }
-
-    [Test]
-    public async Task Run_PackageWithoutPublisherPrefix_RejectsBatch()
-    {
-        using var console = new TestConsole();
-        var package = BatchPreflightTests.Package("p.nupkg", "P", BatchPreflightTests.Assembly("A"));
-
-        var result = await new DeploymentBatchRunner(new PluginDeployment(Store()), console).RunAsync([package], s_default);
-
-        await Assert.That(result.Success).IsFalse();
-        await Assert.That(result.PreflightErrors.Single()).Contains("--publisher-prefix");
-    }
-
-    [Test]
     public async Task Run_Cancelled_PropagatesCancellationAndIsNotAFailure()
     {
         using var console = new TestConsole();

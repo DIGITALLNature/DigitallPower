@@ -3,9 +3,8 @@
 
 namespace dgt.power.plugin.Deployment.Batch;
 
-/// <param name="Targets">Per-target results in execution order; empty when preflight rejected the batch.</param>
-/// <param name="PreflightErrors">Reasons the batch was rejected before any Dataverse access.</param>
-internal sealed record BatchResult(IReadOnlyList<TargetResult> Targets, IReadOnlyList<string> PreflightErrors)
+/// <param name="Targets">Per-target results in execution order.</param>
+internal sealed record BatchResult(IReadOnlyList<TargetResult> Targets)
 {
-    internal bool Success => PreflightErrors.Count == 0 && Targets.All(target => target.Outcome != TargetOutcome.Failed);
+    internal bool Success => Targets.All(target => target.Outcome != TargetOutcome.Failed);
 }

@@ -11,7 +11,7 @@ using Spectre.Console;
 namespace dgt.power.plugin.Deployment.Batch;
 
 /// <summary>
-/// Deploys a validated batch target by target. Remote state is prepared for each target only after the
+/// Deploys a batch that passed <see cref="BatchPreflight.Validate" /> target by target. Remote state is prepared for each target only after the
 /// previous target has been applied, so later targets never act on stale snapshots. A failing target does
 /// not stop independent targets; cancellation stops the batch and is never reported as a target failure.
 /// </summary>
@@ -29,18 +29,6 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
     private async Task<BatchResult> RunCoreAsync(IReadOnlyList<LocalDeploymentTarget> targets, BatchOptions options, CancellationToken cancellationToken)
     {
         var ordered = targets.OrderBy(target => target.FilePath, StringComparer.OrdinalIgnoreCase).ToList();
-        var preflight = new List<string>();
-        if (options.PublisherPrefix is null or { Length: 0 } && ordered.Exists(target => target.Package is not null))
-        {
-            preflight.Add("--publisher-prefix is required when processing a plugin package (.nupkg)");
-        }
-
-        preflight.AddRange(BatchPreflight.FindConflicts(ordered));
-        if (preflight.Count > 0)
-        {
-            return new BatchResult([], preflight);
-        }
-
         var results = new List<TargetResult>();
         foreach (var target in ordered)
         {
@@ -67,7 +55,7 @@ internal sealed class DeploymentBatchRunner(PluginDeployment deployment, IAnsiCo
         }
 
         RenderSummary(results);
-        return new BatchResult(results, []);
+        return new BatchResult(results);
     }
 
     private async Task<TargetResult> ProcessAsync(LocalDeploymentTarget target, BatchOptions options, CancellationToken cancellationToken)

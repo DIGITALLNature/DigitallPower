@@ -6,9 +6,24 @@ namespace dgt.power.plugin.Deployment.Batch;
 /// <summary>
 /// Detects targets in one batch that would deploy the same Dataverse identity. Such targets would
 /// overwrite each other and the result would depend on order, so the whole batch is rejected.
+/// Works on local data only, so callers run it before connecting to Dataverse.
 /// </summary>
 internal static class BatchPreflight
 {
+    internal static IReadOnlyList<string> Validate(IReadOnlyList<LocalDeploymentTarget> targets, BatchOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(targets);
+        ArgumentNullException.ThrowIfNull(options);
+        var errors = new List<string>();
+        if (string.IsNullOrEmpty(options.PublisherPrefix) && targets.Any(target => target.Package is not null))
+        {
+            errors.Add("--publisher-prefix is required when processing a plugin package (.nupkg)");
+        }
+
+        errors.AddRange(FindConflicts(targets));
+        return errors;
+    }
+
     internal static IReadOnlyList<string> FindConflicts(IReadOnlyList<LocalDeploymentTarget> targets)
     {
         ArgumentNullException.ThrowIfNull(targets);
