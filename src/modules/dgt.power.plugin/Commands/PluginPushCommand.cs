@@ -5,7 +5,6 @@ using System.Globalization;
 using dgt.power.common;
 using dgt.power.plugin.Deployment.Batch;
 using dgt.power.plugin.Deployment.Reconciliation;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
