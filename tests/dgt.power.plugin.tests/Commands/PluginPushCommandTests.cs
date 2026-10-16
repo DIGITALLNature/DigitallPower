@@ -43,6 +43,17 @@ public sealed class PluginPushCommandTests : CommandTestsBase<PluginPushCommand,
     }
 
     [Test]
+    public async Task Execute_TargetWithMarkupBrackets_IsRenderedLiterally()
+    {
+        var directory = Directory.CreateDirectory(Path.Combine(_root, "[red]x")).FullName;
+        File.Copy(typeof(object).Assembly.Location, Path.Combine(directory, "runtime.dll"));
+
+        await Assert.That(Run(directory)).IsFalse();
+        var output = string.Join(' ', TestConsole.Output.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+        await Assert.That(output).Contains("[red]x").And.Contains("none contain plugins");
+    }
+
+    [Test]
     public async Task Execute_UnreadablePackage_FailsBeforeAnyWrite()
     {
         await File.WriteAllBytesAsync(Path.Combine(_root, "broken.nupkg"), "not a zip"u8.ToArray());

@@ -26,6 +26,21 @@ public class RegistrationDiffTests
     }
 
     [Test]
+    public async Task Compare_SupersededAssemblyWithSameTypeName_DeletesOldTypeAndMovesStep()
+    {
+        var step = Step();
+        var superseded = Snapshot(step);
+        var empty = new RegistrationSnapshot([], new Dictionary<Guid, IReadOnlyList<RemotePluginStep>>(), new Dictionary<Guid, IReadOnlyList<RemotePluginStepImage>>());
+
+        var changes = RegistrationDiff.Compare([Type(step)], empty, superseded);
+
+        await Assert.That(changes.TypesToCreate.Single().TypeName).IsEqualTo("Plugin");
+        await Assert.That(changes.TypesToDelete.Single().Id).IsEqualTo(superseded.Types.Single().Id);
+        await Assert.That(changes.StepsToWrite.Single().ExistingId).IsEqualTo(superseded.StepsByType.Values.Single().Single().Id);
+        await Assert.That(changes.StepsToDelete).IsEmpty();
+    }
+
+    [Test]
     public async Task Compare_IdenticalRegistrations_HasNoChanges()
     {
         var step = Step();

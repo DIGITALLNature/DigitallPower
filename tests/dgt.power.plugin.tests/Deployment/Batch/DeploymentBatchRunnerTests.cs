@@ -69,6 +69,19 @@ public class DeploymentBatchRunnerTests
     }
 
     [Test]
+    public async Task Run_TargetNameWithMarkupBrackets_IsRenderedLiterally()
+    {
+        var store = Store("A");
+        using var console = new TestConsole();
+        var target = BatchPreflightTests.Standalone("[red]A.dll", BatchPreflightTests.Assembly("A"));
+
+        var result = await new DeploymentBatchRunner(new PluginDeployment(store), console).RunAsync([target], s_default);
+
+        await Assert.That(result.Targets.Single().Outcome).IsEqualTo(TargetOutcome.Applied);
+        await Assert.That(console.Output).Contains("[red]A.dll");
+    }
+
+    [Test]
     [Arguments("Create", "[green]+ Create[/]")]
     [Arguments("Add", "[green]+ Add[/]")]
     [Arguments("Update", "[yellow]~ Update[/]")]

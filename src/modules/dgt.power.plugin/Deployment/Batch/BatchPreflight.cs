@@ -15,7 +15,7 @@ internal static class BatchPreflight
         ArgumentNullException.ThrowIfNull(targets);
         ArgumentNullException.ThrowIfNull(options);
         var errors = new List<string>();
-        if (string.IsNullOrEmpty(options.PublisherPrefix) && targets.Any(target => target.Package is not null))
+        if (string.IsNullOrWhiteSpace(options.PublisherPrefix) && targets.Any(target => target.Package is not null))
         {
             errors.Add("--publisher-prefix is required when processing a plugin package (.nupkg)");
         }

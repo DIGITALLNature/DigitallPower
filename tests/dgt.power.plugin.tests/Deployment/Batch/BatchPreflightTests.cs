@@ -36,6 +36,14 @@ public class BatchPreflightTests
     }
 
     [Test]
+    public async Task Validate_PackageWithWhitespacePublisherPrefix_Rejects()
+    {
+        var errors = BatchPreflight.Validate([Package("p.nupkg", "P", Assembly("A"))], s_options with { PublisherPrefix = "  " });
+
+        await Assert.That(errors.Single()).Contains("--publisher-prefix");
+    }
+
+    [Test]
     public async Task Validate_StandaloneWithoutPublisherPrefix_Accepts()
     {
         var errors = BatchPreflight.Validate([Standalone("a.dll", Assembly("A"))], s_options with { PublisherPrefix = null });
