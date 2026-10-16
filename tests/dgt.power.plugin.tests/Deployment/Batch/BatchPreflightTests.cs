@@ -22,7 +22,7 @@ public class BatchPreflightTests
 
     internal static LocalDeploymentTarget Standalone(string path, LocalAssembly assembly) => new(path, assembly, null);
 
-    internal static LocalDeploymentTarget Package(string path, string name, params LocalAssembly[] assemblies) =>
+    private static LocalDeploymentTarget Package(string path, string name, params LocalAssembly[] assemblies) =>
         new(path, null, new LocalPluginPackage(new LocalPackage(name, "1.0.0", "Y29udGVudA==", name), assemblies));
 
     private static readonly BatchOptions s_options = new(null, "new", false, false, false, false);
