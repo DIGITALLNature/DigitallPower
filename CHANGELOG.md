@@ -1,3 +1,28 @@
+# [3.0.0-beta.11](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.10...v3.0.0-beta.11) (2026-10-16)
+
+
+* feat(plugin)!: rewrite plugin push around a reconciliation core ([#199](https://github.com/DIGITALLNature/DigitallPower/issues/199)) ([936647f](https://github.com/DIGITALLNature/DigitallPower/commit/936647fea6dfcfc8d9b8f6614aea4cfc2a19a039))
+
+
+### BREAKING CHANGES
+
+* `plugin push` changes behavior relative to beta.
+- Managed identity provisioning and binding are removed from push;
+  ManagedIdentityRegistrationAttribute is no longer supported.
+- Custom data providers no longer create or update the configuration
+  table; an existing, compatible table is required. With --solution,
+  only the provider record is added.
+- A data-provider declaration owns all handler slots; undeclared
+  handlers are cleared instead of preserved.
+- The batch is validated before any write, so duplicate declarations,
+  unreadable artifacts and targets matching no plugins fail the run.
+- Custom API unique names must resolve to exactly one record.
+- Existing package records must have a version, and package solution
+  membership requires an unambiguous pluginpackage component
+  definition.
+
+See docs/migrations/2.x-to-3.x.md.
+
 # [3.0.0-beta.10](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.9...v3.0.0-beta.10) (2026-10-13)
 
 
