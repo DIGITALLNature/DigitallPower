@@ -19,6 +19,7 @@ using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
@@ -211,7 +212,7 @@ public class CodeGenerationContextBuilder
             .AddScoped<IDotNetGenerator, DotNetGenerator>()
             .AddScoped<ObjectCache>(_ => MemoryCache.Default)
             .AddScoped<IMetadataService, MetadataService>()
-            .AddScoped<IOrganizationService>(_ => service)
+            .AddScoped<IOrganizationServiceAsync2>(_ => service)
             .AddSingleton(_console)
             .AddSingleton<TimeProvider>(ImmediateTimeProvider.Instance)
             .BuildServiceProvider();

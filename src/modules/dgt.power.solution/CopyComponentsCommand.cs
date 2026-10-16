@@ -15,48 +15,41 @@ namespace dgt.power.solution;
 
 // ReSharper disable once ClassNeverInstantiated.Global — instantiated by the DI container via Spectre.Console.Cli
 public class CopyComponentsCommand(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IAnsiConsole console)
-    : PowerLogic<CopyComponentsSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<CopyComponentsSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(CopyComponentsSettings settings, CancellationToken cancellationToken)
-    {
-        ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
+    private const int PageSize = 5000;
 
-    private async Task<bool> InvokeCoreAsync(CopyComponentsSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(CopyComponentsSettings settings, CancellationToken cancellationToken)
     {
-        Tracer.Start(this);
-
         if (string.IsNullOrWhiteSpace(settings.Target))
         {
             Console.MarkupLine("[red]Invalid or empty target solution name[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         var sourceNames = settings.Source.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (sourceNames.Length == 0)
         {
             Console.MarkupLine("[red]--source is required and must contain at least one solution unique name[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
-        var orgService = (IOrganizationServiceAsync2)Connection;
+        var orgService = await connection.GetServiceAsync();
 
         var target = await RetrieveSolutionAsync(orgService, settings.Target, cancellationToken);
         if (target == null)
         {
             Console.MarkupLine($"[red]Target solution '{settings.Target}' not found[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (target.IsManaged == true)
         {
             Console.MarkupLine($"[red]Target solution '{settings.Target}' is managed - components can only be added to an unmanaged solution[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         var sourceSolutions = await RetrieveSolutionsAsync(orgService, sourceNames, cancellationToken);
@@ -67,7 +60,7 @@ public class CopyComponentsCommand(
         if (missingSourceNames.Count > 0)
         {
             Console.MarkupLine($"[red]Source solution(s) not found: {string.Join(", ", missingSourceNames)}[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         var bestPractices = !settings.Raw;
@@ -79,12 +72,12 @@ public class CopyComponentsCommand(
         if (settings.DryRun)
         {
             Console.MarkupLine("[yellow]--dry-run: no changes were made[/]");
-            return Tracer.End(this, true);
+            return true;
         }
 
         await ExecuteAsync(orgService, target, decisions, settings.Apps == AppHandling.Strip, cancellationToken);
 
-        return Tracer.End(this, true);
+        return true;
     }
 
     private async Task ExecuteAsync(

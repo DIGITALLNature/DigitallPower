@@ -1,20 +1,21 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
-using dgt.power.common;
+using System.Globalization;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
+using IAnsiConsole = Spectre.Console.IAnsiConsole;
+using static Spectre.Console.AnsiConsoleExtensions;
 
 namespace dgt.power.maintenance.Logic;
 
 public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService,
     string[] solutions, string[] publishers,
-    ITracer? tracer = null,
+    IAnsiConsole console,
     WorkflowStateManager.TaskStatusCallback? taskStatusCallback = null)
 {
     public delegate void TaskStatusCallback(string taskName, string message, int progress, double? total = null);
@@ -22,7 +23,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
     public async Task<Workflow[]> LoadAllWorkflowsAsync()
     {
         taskStatusCallback?.Invoke("Loading all workflows", "preparing tasks", -1);
-        tracer?.Log("Loading all workflows: starting tasks", TraceEventType.Verbose);
+        console.MarkupLine("[grey]Loading all workflows: starting tasks[/]");
 
         var loadTasks = new[]
         {
@@ -38,14 +39,14 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
             taskStatusCallback?.Invoke("Loading all workflows", "loading", loadTasks.Count(t => t.IsCompleted), loadTasks.Length);
         }
 
-        tracer?.Log("Loading all workflows: all tasks completed", TraceEventType.Verbose);
+        console.MarkupLine("[grey]Loading all workflows: all tasks completed[/]");
 
         var uniqueWorkflows = loadTasks
             .SelectMany(w => w.Result)
             .DistinctBy(w => w.WorkflowId)
             .ToArray();
 
-        tracer?.Log($"Loading all workflows: {uniqueWorkflows.Length} unique workflows loaded", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading all workflows: {uniqueWorkflows.Length} unique workflows loaded[/]");
         taskStatusCallback?.Invoke("Loading all workflows", "loaded", loadTasks.Length, loadTasks.Length);
 
         return uniqueWorkflows;
@@ -53,7 +54,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
     private async Task<Workflow[]> LoadDirectWorkflowsAsync()
     {
-        tracer?.Log("Loading workflows in solution: preparing query", TraceEventType.Verbose);
+        console.MarkupLine("[grey]Loading workflows in solution: preparing query[/]");
         taskStatusCallback?.Invoke("Workflows in solution", "preparing query", -1);
 
         var query = new QueryExpression(Workflow.EntityLogicalName);
@@ -78,7 +79,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
             // the like operator allows for % wildcards to be used
             foreach (var solution in solutions)
             {
-                tracer?.Log($"Loading workflows in solution: adding filter for solution '{solution}'", TraceEventType.Verbose);
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows in solution: adding filter for solution '{solution}'[/]");
                 linkFilter.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solution);
             }
 
@@ -91,18 +92,18 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
                 foreach (var publisher in publishers)
                 {
-                    tracer?.Log($"Loading workflows in solution: adding filter for publisher '{publisher}'", TraceEventType.Verbose);
+                    console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows in solution: adding filter for publisher '{publisher}'[/]");
                     linkFilter.AddCondition("publisher", Publisher.LogicalNames.UniqueName, ConditionOperator.Like, publisher);
                 }
             }
         }
 
-        tracer?.Log("Loading workflows in solution: executing query", TraceEventType.Verbose);
+        console.MarkupLine("[grey]Loading workflows in solution: executing query[/]");
         taskStatusCallback?.Invoke("Workflows in solution", "loading", 0);
 
         var workflows = await RetrieveMultipleWorkflowsAsync(query);
 
-        tracer?.Log($"Loading workflows in solution: {workflows.Length} workflows loaded", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows in solution: {workflows.Length} workflows loaded[/]");
         taskStatusCallback?.Invoke("Workflows in solution", "loaded", workflows.Length, workflows.Length);
 
         return workflows;
@@ -110,41 +111,41 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
     private async Task<Workflow[]> LoadIndirectBusinessRulesAsync()
     {
-        tracer?.Log("Loading workflows indirectly: load full tables", TraceEventType.Verbose);
+        console.MarkupLine("[grey]Loading workflows indirectly: load full tables[/]");
         taskStatusCallback?.Invoke("Business rules", "starting tasks", -1);
 
         var tableIds = await LoadIndirectBusinessRuleTablesAsync();
 
-        tracer?.Log($"Loading workflows indirectly: found {tableIds.Length} tables with potential business rules", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: found {tableIds.Length} tables with potential business rules[/]");
         taskStatusCallback?.Invoke("Business rules", "resolving table names", 0, tableIds.Length + 1);
 
         var index = 0;
         List<string> tableNames = [];
         await Parallel.ForEachAsync(tableIds, async (tableId, _) =>
         {
-            tracer?.Log($"Loading workflows indirectly {tableId}: resolving table name", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly {tableId}: resolving table name[/]");
             var tableName = await GetTableNameFromMetadataAsync(tableId);
 
             if (tableName != null)
             {
-                tracer?.Log($"Loading workflows indirectly {tableId} ({tableName}): resolved table name", TraceEventType.Verbose);
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly {tableId} ({tableName}): resolved table name[/]");
                 tableNames.Add(tableName);
             }
             else
             {
-                tracer?.Log($"Loading workflows indirectly {tableId}: failed to resolve table name", TraceEventType.Verbose);
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly {tableId}: failed to resolve table name[/]");
             }
 
             Interlocked.Increment(ref index);
             taskStatusCallback?.Invoke("Business rules", "resolving table names", index, tableIds.Length + 1);
         });
 
-        tracer?.Log($"Loading workflows indirectly: resolved {tableNames.Count} tables with potential business rules", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: resolved {tableNames.Count} tables with potential business rules[/]");
         taskStatusCallback?.Invoke("Business rules", "loading business rules", tableIds.Length, tableIds.Length + 1);
 
         var workflows = tableNames.Count > 0 ? await LoadBusinessRulesAsync(tableNames.ToArray()) : [];
 
-        tracer?.Log($"Loading workflows indirectly: {workflows.Length} business rules loaded", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: {workflows.Length} business rules loaded[/]");
         taskStatusCallback?.Invoke("Business rules", "loaded", tableIds.Length + 1, tableIds.Length + 1);
 
         return workflows.ToArray();
@@ -153,7 +154,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
     private async Task<Workflow[]> LoadBusinessRulesAsync(string[] tableNames)
     {
         var tablesString = string.Join(",", tableNames);
-        tracer?.Log($"Loading business rules ({tablesString}): preparing query", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading business rules ({tablesString}): preparing query[/]");
 
         var query = new QueryExpression(Workflow.EntityLogicalName);
 
@@ -164,11 +165,11 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         filter.AddCondition(Workflow.LogicalNames.Category, ConditionOperator.Equal, Workflow.Options.Category.BusinessRule);
         filter.AddCondition(Workflow.LogicalNames.PrimaryEntity, ConditionOperator.In, tableNames.Select(object (t) => t).ToArray());
 
-        tracer?.Log($"Loading business rules ({tablesString}): executing query", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading business rules ({tablesString}): executing query[/]");
 
         var workflows = await RetrieveMultipleWorkflowsAsync(query);
 
-        tracer?.Log($"Loading business rules ({tablesString}): {workflows.Length} business rules loaded", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading business rules ({tablesString}): {workflows.Length} business rules loaded[/]");
 
         return workflows;
     }
@@ -189,14 +190,14 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
-            tracer?.Log($"Failed to resolve table name for id '{tableId}' with error '{e.Message}'", TraceEventType.Error);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed to resolve table name for id '{tableId}' with error '{e.Message}'[/]");
             return null;
         }
     }
 
     private async Task<Guid[]> LoadIndirectBusinessRuleTablesAsync()
     {
-        tracer?.Log("Loading workflows indirectly: preparing query", TraceEventType.Verbose);
+        console.MarkupLine("[grey]Loading workflows indirectly: preparing query[/]");
         taskStatusCallback?.Invoke("Business rules", "preparing table query", -1);
 
         var query = new QueryExpression(SolutionComponent.EntityLogicalName);
@@ -220,7 +221,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         filter.AddFilter(solutionFilter);
         foreach (var solution in solutions)
         {
-            tracer?.Log($"Loading workflows indirectly: adding filter for solution '{solution}'", TraceEventType.Verbose);
+            console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: adding filter for solution '{solution}'[/]");
             solutionFilter.AddCondition("solution", Solution.LogicalNames.UniqueName, ConditionOperator.Like, solution);
         }
 
@@ -233,12 +234,12 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
             foreach (var publisher in publishers)
             {
-                tracer?.Log($"Loading workflows indirectly: adding filter for publisher '{publisher}'", TraceEventType.Verbose);
+                console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: adding filter for publisher '{publisher}'[/]");
                 filter.AddCondition("publisher", Publisher.LogicalNames.UniqueName, ConditionOperator.Like, publisher);
             }
         }
 
-        tracer?.Log("Loading workflows indirectly: executing query", TraceEventType.Verbose);
+        console.MarkupLine("[grey]Loading workflows indirectly: executing query[/]");
         taskStatusCallback?.Invoke("Business rules", "loading tables", 0);
 
         var retrieveMultipleRequest = new RetrieveMultipleRequest
@@ -248,7 +249,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultipleRequest);
         var solutionComponents = response.EntityCollection.Entities.Cast<SolutionComponent>().ToArray();
 
-        tracer?.Log($"Loading workflows indirectly: {solutionComponents.Length} tables loaded", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: {solutionComponents.Length} tables loaded[/]");
         taskStatusCallback?.Invoke("Business rules", "loaded tables", solutionComponents.Length);
 
         return solutionComponents
@@ -288,7 +289,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
     private async Task<TResponse> ExecuteAsync<TResponse>(OrganizationRequest request)
         where TResponse : OrganizationResponse
     {
-        tracer?.Log($"Executing request: {request.RequestName}", TraceEventType.Verbose);
+        console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Executing request: {request.RequestName}[/]");
 
         var response = await organizationService.ExecuteAsync(request);
         return (TResponse)response;

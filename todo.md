@@ -2,11 +2,11 @@
 
 ## Async Migration: IOrganizationServiceAsync2
 
-All `PowerLogic<T>` subclasses currently implement `InvokeAsync` but internally use the synchronous
+All command classes currently implement `RunAsync` but internally use the synchronous
 `IOrganizationService` (via `DataContext` LINQ queries and blocking SDK calls).
 
 **Goal:** Migrate each module's logic to use `IOrganizationServiceAsync2` with true `async/await`
-instead of `Task.FromResult(InvokeCore(...))`.
+instead of `Task.FromResult(...)` wrappers.
 
 ### Why
 - `Task.FromResult` wraps sync work — no thread is released on blocking I/O calls to Dataverse
@@ -16,18 +16,18 @@ instead of `Task.FromResult(InvokeCore(...))`.
 ### Pattern (after migration)
 ```csharp
 // Before (current interim)
-protected override Task<bool> InvokeAsync(TVerb args, CancellationToken cancellationToken) =>
-    Task.FromResult(InvokeCore(args));
+protected override Task<bool> RunAsync(TSettings settings, CancellationToken cancellationToken) =>
+    Task.FromResult(RunCore(settings));
 
-private bool InvokeCore(TVerb args)
+private bool RunCore(TSettings settings)
 {
-    var result = ((IOrganizationService)Connection).Execute(request);  // blocking
+    var result = ((IOrganizationService)connection).Execute(request);  // blocking
 }
 
 // After (target)
-protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken cancellationToken)
+protected override async Task<bool> RunAsync(TSettings settings, CancellationToken cancellationToken)
 {
-    var result = await ((IOrganizationServiceAsync2)Connection).ExecuteAsync(request);  // non-blocking
+    var result = await (await connection.GetServiceAsync()).ExecuteAsync(request, cancellationToken);  // non-blocking
 }
 ```
 
@@ -45,28 +45,20 @@ protected override async Task<bool> InvokeAsync(TVerb args, CancellationToken ca
 `QueryExpression` + `RetrieveMultipleAsync`. This is the main effort per class.
 
 ### Note on `Connection` type
-`PowerLogic<T>.Connection` is still `IOrganizationService`. `IOrganizationServiceAsync2` extends it, so
-changing the property type is source-compatible and removes the `(IOrganizationServiceAsync2)Connection`
-casts. Combine this with the lazy connection item below.
+Commands now acquire the connection lazily through `IDataverseConnection.GetServiceAsync()`, which already returns `IOrganizationServiceAsync2`, so
+the `(IOrganizationService)` casts and synchronous calls can simply be dropped.
 
-## Lazy Dataverse Connection
+---
 
-`Program.cs` registers `IOrganizationService` as a singleton that calls `ConnectAsync()` while the command
-is constructed. This honours `--connection`, `--connection-string` and `--non-interactive` (Spectre runs
-interceptors before it resolves the command), but every command connects and authenticates, including ones that never use
-Dataverse.
+## Paging: `plugin step enable|disable --solution`
 
-**Goal:** connect on demand, after the settings are known.
+`SolutionComponentRepository.ListComponentIdsAsync` and
+`SdkMessageProcessingStepRepository.ListStatesAsync` issue a single `RetrieveMultipleAsync` call each and do
+not follow `MoreRecords`/`PagingCookie`. For solutions with more than one Dataverse page of steps the
+state change silently covers only the first page.
 
-**Preferred approach:** `PowerLogic` (and `MetadataService`) take `IDataverseConnection` and call
-`ConnectAsync()` in `ExecuteAsync`, exposing `Connection` as `IOrganizationServiceAsync2`. Remove the eager
-`IOrganizationService` registration. The change is about 60 mechanical constructor edits.
-
-**Constraints:**
-- Spectre registers the concrete `CommandSettings` type of the running command, not `BaseProgramSettings`
-  or `CommandSettings`, so a factory cannot request the base type from DI. Keep using
-  `ConnectionInvocationContext` (filled by `ConnectionSettingsInterceptor`) or pass `settings` explicitly.
-- `Connection` must not be used in constructors or field initializers after the change.
+Adopt the reusable paging helper from the plugin push rewrite once it is merged, and add a test with
+more than one page of results.
 
 ---
 

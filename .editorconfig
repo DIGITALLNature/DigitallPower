@@ -197,3 +197,7 @@ end_of_line = crlf
 # T4 files
 [*.tt]
 end_of_line = crlf
+
+# PowerCommand.ExecuteAsync guarantees non-null settings, so RunAsync overrides need no check
+[src/modules/**/*.cs]
+dotnet_diagnostic.CA1062.severity = none

@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
@@ -13,31 +12,31 @@ using Spectre.Console;
 namespace dgt.power.maintenance.Logic;
 
 public class FilterPowerFxPluginSteps(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseMaintenance(tracer, connection, configResolver, console)
+    : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(MaintenanceVerb args)
+    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
-
         // Inline arguments are not yet supported so throw error if supplied
         if (!string.IsNullOrWhiteSpace(args.InlineData))
         {
             throw new NotSupportedException("Inline arguments are not yet supported");
         }
 
-        if (!ConfigResolver.TryGetConfigFile<List<PowerFxPluginsConfig>>(args.Config, out var powerfxpluginConfig))
+        if (!configResolver.TryGetConfigFile<List<PowerFxPluginsConfig>>(args.Config, out var powerfxpluginConfig))
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        return Run(service, powerfxpluginConfig);
+    }
+
+    private bool Run(IOrganizationService service, List<PowerFxPluginsConfig> powerfxpluginConfig)
+    {
         Console.Status()
             .Start("Working on PowerFX Plugin Steps...", ctx =>
             {
@@ -49,7 +48,7 @@ public class FilterPowerFxPluginSteps(
                 foreach (var config in powerfxpluginConfig)
                 {
                     ctx.Status($"Search {config.Name}");
-                    var step = SearchPowerFxPluginStep(config.Name,config.MessageName);
+                    var step = SearchPowerFxPluginStep(service, config.Name,config.MessageName);
 
                     ctx.Status($"Build filter for {config.Name}");
                     var filter = config.FilterAttributes.Count > 0
@@ -59,19 +58,17 @@ public class FilterPowerFxPluginSteps(
                     step.FilteringAttributesField = filter;
 
                     ctx.Status($"Update {config.Name}");
-                    Connection.Update(step);
+                    service.Update(step);
                     Console.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
                 }
 
                 ctx.Status("Finishing");
             });
 
-
-        return Tracer.End(this, true);
+        return true;
     }
 
-
-    private SdkMessageProcessingStep SearchPowerFxPluginStep(string name, string? message)
+    private static SdkMessageProcessingStep SearchPowerFxPluginStep(IOrganizationService service, string name, string? message)
     {
 // Instantiate QueryExpression query
         var query = new QueryExpression("sdkmessageprocessingstep")
@@ -86,7 +83,7 @@ public class FilterPowerFxPluginSteps(
         query.AddLink("fxexpression", "fxexpressionid", "fxexpressionid");
         query.AddLink("sdkmessage", "sdkmessageid", "sdkmessageid");
 
-        var result = Connection.RetrieveMultiple(query);
+        var result = service.RetrieveMultiple(query);
 
         if (result.Entities.Count != 1)
         {

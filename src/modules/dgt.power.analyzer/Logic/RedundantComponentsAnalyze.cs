@@ -17,25 +17,28 @@ using Spectre.Console;
 namespace dgt.power.analyzer.Logic;
 
 public sealed class RedundantComponentsAnalyze(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    SolutionComponentReader reader,
     IAnsiConsole console)
-    : BaseAnalyze(tracer, connection, configResolver, console)
+    : PowerCommand<AnalyzeVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
+    private const int PageSize = 5000;
 
-    private bool InvokeCore(AnalyzeVerb args)
+    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-        Tracer.Start(this);
-
         if (string.IsNullOrWhiteSpace(args.InlineData))
         {
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[red]--inline requires a comma separated list of solution unique names.[/]");
+            return false;
         }
 
+        var service = await connection.GetServiceAsync();
+        return Run(args, service);
+    }
+
+    private bool Run(AnalyzeVerb args, IOrganizationService service)
+    {
         var summary = new AnalyzerSummary
         {
             Task = "redundantcomponents",
@@ -47,10 +50,10 @@ public sealed class RedundantComponentsAnalyze(
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(Connection);
+        using var context = new DataContext(service);
         foreach (var uniqueName in args.InlineData.Split(','))
         {
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
@@ -58,7 +61,7 @@ public sealed class RedundantComponentsAnalyze(
 
             Console.Write(solutionTag);
 
-            var components = GetSolutionComponents(context, uniqueName);
+            var components = reader.GetSolutionComponents(service, context, uniqueName);
 
             var table = new Table();
             Console.Live(Align.Center(table))
@@ -75,7 +78,7 @@ public sealed class RedundantComponentsAnalyze(
 
                     foreach (var component in components)
                     {
-                        var otherSolutions = GetSolutionsForComponent(component, args.NotePatch);
+                        var otherSolutions = GetSolutionsForComponent(service, component, args.NotePatch);
                         foreach (var otherSolution in otherSolutions)
                         {
                             var nameColumn = new StringBuilder();
@@ -99,7 +102,7 @@ public sealed class RedundantComponentsAnalyze(
                                     break;
                             }
 
-                            if (!ComponentTypeLookup.TryGetValue(component.ComponentType!.Value, out var typeColumn))
+                            if (!reader.ComponentTypeLookup.TryGetValue(component.ComponentType!.Value, out var typeColumn))
                             {
                                 typeColumn = component.ComponentType.Value.ToString(CultureInfo.InvariantCulture);
                             }
@@ -139,20 +142,20 @@ public sealed class RedundantComponentsAnalyze(
 
         if (args.GenerateSummaryFile)
         {
-            WriteSummaryFile("RedundantComponents", summary);
+            AnalyzeResultWriter.WriteSummaryFile("RedundantComponents", summary);
         }
 
         if (args.GenerateReportFile)
         {
-            WriteReportFile("RedundantComponents", resultTable.OrderBy(r => r.OriginSolution).ThenBy(r => r.AlsoInSolution));
+            AnalyzeResultWriter.WriteReportFile("RedundantComponents", resultTable.OrderBy(r => r.OriginSolution).ThenBy(r => r.AlsoInSolution));
         }
 
         return true;
     }
 
-    private List<Solution> GetSolutionsForComponent(SolutionComponent component, bool notePatches)
+    private List<Solution> GetSolutionsForComponent(IOrganizationService service, SolutionComponent component, bool notePatches)
     {
-        var parallelSolutionComponents = GetParallelSolutionComponentsForComponent(component, notePatches);
+        var parallelSolutionComponents = GetParallelSolutionComponentsForComponent(service, component, notePatches);
 
         var result = new List<Solution>();
         foreach (var solutionComponent in parallelSolutionComponents)
@@ -169,7 +172,7 @@ public sealed class RedundantComponentsAnalyze(
         return result;
     }
 
-    private List<SolutionComponent> GetParallelSolutionComponentsForComponent(SolutionComponent originComponent, bool notePatches)
+    private List<SolutionComponent> GetParallelSolutionComponentsForComponent(IOrganizationService service, SolutionComponent originComponent, bool notePatches)
     {
         var pagequery = new QueryExpression
         {
@@ -212,7 +215,7 @@ public sealed class RedundantComponentsAnalyze(
         );
 
         var componentTypeFilter = pagefilter.AddFilter(LogicalOperator.Or);
-        foreach (var key in ComponentTypeLookup.Keys)
+        foreach (var key in reader.ComponentTypeLookup.Keys)
         {
             componentTypeFilter.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, key);
         }
@@ -249,7 +252,7 @@ public sealed class RedundantComponentsAnalyze(
         while (moreRecords)
         {
             // Retrieve the page.
-            var results = Connection.RetrieveMultiple(pagequery);
+            var results = service.RetrieveMultiple(pagequery);
             components.AddRange(results.Entities.Select(e => e.ToEntity<SolutionComponent>()));
             if (results.MoreRecords)
             {

@@ -23,7 +23,7 @@ public partial class MetadataService
     public void PopulateEntitiesAndSolutions(CodeGenerationConfig config)
     {
         ArgumentNullException.ThrowIfNull(config);
-        var entities = (RetrieveAllEntitiesResponse)connection.Execute(new RetrieveAllEntitiesRequest
+        var entities = (RetrieveAllEntitiesResponse)Service.Execute(new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity, RetrieveAsIfPublished = true
         });
@@ -72,7 +72,7 @@ public partial class MetadataService
                     ConditionOperator.Equal,
                     solutionId));
 
-                var entityComponents = connection.RetrieveMultiple(componentsQuery).Entities;
+                var entityComponents = Service.RetrieveMultiple(componentsQuery).Entities;
 
                 foreach (var entityComponent in entityComponents)
                     entitySet.Add(
@@ -127,7 +127,7 @@ public partial class MetadataService
         {
             Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
         };
-        var actions = connection.RetrieveMultiple(query);
+        var actions = Service.RetrieveMultiple(query);
 
 
         var result = new List<WfAction>();
@@ -227,7 +227,7 @@ public partial class MetadataService
         {
             Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
         };
-        var customApis = connection.RetrieveMultiple(query);
+        var customApis = Service.RetrieveMultiple(query);
 
 
         var result = new List<WfAction>();
@@ -271,7 +271,7 @@ public partial class MetadataService
                     }
                 }
             };
-            var inparams = connection.RetrieveMultiple(inquery);
+            var inparams = Service.RetrieveMultiple(inquery);
             foreach (var inparam in inparams.Entities)
             {
                 var type = GetParamType(inparam
@@ -308,7 +308,7 @@ public partial class MetadataService
                     }
                 }
             };
-            var outparams = connection.RetrieveMultiple(outquery);
+            var outparams = Service.RetrieveMultiple(outquery);
             foreach (var outparam in outparams.Entities)
             {
                 var type = GetParamType(outparam
@@ -381,7 +381,7 @@ public partial class MetadataService
                 Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
             }
         };
-        var sdkMessages = connection.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
+        var sdkMessages = Service.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
                           Enumerable.Empty<SdkMessage>();
         var hashSet = new HashSet<string>();
         foreach (var sdkMessage in sdkMessages)
@@ -410,7 +410,7 @@ public partial class MetadataService
         foreach (var globalOptionSet in config.GlobalOptionSets)
         {
             var request = new RetrieveOptionSetRequest {Name = globalOptionSet};
-            var response = (RetrieveOptionSetResponse)connection.Execute(request);
+            var response = (RetrieveOptionSetResponse)Service.Execute(request);
             var metadata = (OptionSetMetadata)response.OptionSetMetadata;
             result.Add(globalOptionSet, new List<Option>());
             foreach (var option in metadata.Options)
@@ -448,7 +448,7 @@ public partial class MetadataService
             },
             Orders = {new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending)}
         };
-        var bpfs = connection.RetrieveMultiple(query)
+        var bpfs = Service.RetrieveMultiple(query)
                        ?.Entities?
                        .Select(x => x.ToEntity<Workflow>()) ??
                    Enumerable.Empty<Workflow>();
@@ -510,7 +510,7 @@ public partial class MetadataService
 
             queryWorkflow.Criteria.AddFilter(queryAnd);
         }
-        List<Workflow> returnList = connection
+        List<Workflow> returnList = Service
             .RetrieveMultiple(queryWorkflow)?
             .Entities
             .Select(x => x.ToEntity<Workflow>())

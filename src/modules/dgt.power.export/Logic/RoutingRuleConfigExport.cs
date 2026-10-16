@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
@@ -14,29 +13,22 @@ using RoutingRuleItem = dgt.power.common.DTO.RoutingRuleItem;
 namespace dgt.power.export.Logic;
 
 public sealed class RoutingRuleConfigExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
-
-
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "routingruleconfig.json" : args.FileName;
 
 
         var export = new List<RoutingRuleConfig>();
 
-        using var context = new DataContext(Connection);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service);
         context.RoutingRuleSet
             .Select(rr => new RoutingRule
                 {
@@ -52,19 +44,19 @@ public sealed class RoutingRuleConfigExport(
                             Name = rule.Name!,
                             RoutingRuleId = rule.RoutingRuleId ?? Guid.Empty,
                             Active = rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active,
-                            RoutingRuleItems = GetRuleItems(context, rule)
+                            RoutingRuleItems = GetRuleItems(context, service, rule)
                         }
                     );
                 }
             );
 
-        var json = GetJson(export);
+        var json = ExportJson.GetJson(export);
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
-        return Tracer.End(this, true);
+        Console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
+        return true;
     }
 
-    private List<RoutingRuleItem> GetRuleItems(DataContext context, RoutingRule rule) =>
+    private static List<RoutingRuleItem> GetRuleItems(DataContext context, IOrganizationService service, RoutingRule rule) =>
         context.RoutingRuleItemSet
             .Where(rri => rri.RoutingRuleId != null && rri.RoutingRuleId.Id == rule.RoutingRuleId)
             .AsEnumerable()
@@ -76,7 +68,7 @@ public sealed class RoutingRuleConfigExport(
                     MsdynRouteto = ResolveRouteTarget(rri),
                     RoutedQueueId = rri.RoutedQueueId?.Id,
                     AssignObjectIdType = rri.AssignObjectId?.LogicalName,
-                    AssignObjectIdName = ResolveAssignedObjectName(rri.AssignObjectId)
+                    AssignObjectIdName = ResolveAssignedObjectName(service, rri.AssignObjectId)
                 }
             ).ToList();
 
@@ -92,7 +84,7 @@ public sealed class RoutingRuleConfigExport(
             : dataverse.RoutingRuleItem.Options.MsdynRouteto.User_Team;
     }
 
-    private string? ResolveAssignedObjectName(EntityReference? assignObjectId)
+    private static string? ResolveAssignedObjectName(IOrganizationService service, EntityReference? assignObjectId)
     {
         if (assignObjectId == null)
         {
@@ -104,7 +96,7 @@ public sealed class RoutingRuleConfigExport(
             return assignObjectId.Name;
         }
 
-        return GetSystemUserDomainName(Connection, assignObjectId.Id);
+        return GetSystemUserDomainName(service, assignObjectId.Id);
     }
 
     private static string? GetSystemUserDomainName(IOrganizationService service, Guid systemuserId)

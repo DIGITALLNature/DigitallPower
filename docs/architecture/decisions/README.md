@@ -17,3 +17,4 @@ Current requirements are maintained in OpenSpec; implementation details remain w
 - [Non-interactive authentication](non-interactive-authentication.md): exit code 2 and status/refresh commands for coding agents.
 - [Keep certificate authentication](keep-certificate-authentication.md): retained without live validation.
 - [Dependency ownership](dependency-ownership.md): dependency cleanup is a dedicated solution-wide change.
+- [Command composition](command-composition.md): thin lifecycle base, explicit services and a cached `IDataverseConnection`.

@@ -6,61 +6,48 @@ using dgt.power.common;
 using dgt.power.plugin.Deployment.Batch;
 using dgt.power.plugin.Deployment.Reconciliation;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.plugin.Commands;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PluginPushCommand(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console)
-    : PowerLogic<PluginPushSettings>(tracer, connection, configResolver, console)
+public class PluginPushCommand(ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console)
+    : PowerCommand<PluginPushSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(PluginPushSettings settings, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(PluginPushSettings settings, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(settings);
-        return InvokeCoreAsync(settings, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(PluginPushSettings settings, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
-
         if (settings.DryRun)
         {
-            Console.Write(new Panel("[yellow]No changes will be written to Dataverse.[/]")
-            {
-                Header = new PanelHeader("DRY RUN"), Border = BoxBorder.Rounded, BorderStyle = new Style(Color.Yellow), Padding = new Padding(1, 0, 1, 0)
-            });
+            DryRunBanner.Write(Console);
         }
-
         if (!TryResolve(settings.Target, out var paths))
         {
-            return Tracer.End(this, false);
+            return false;
         }
 
         var read = new DeploymentTargetReader(Console).Read(paths, cancellationToken);
         if (read.Failures.Count > 0)
         {
             ReportReadFailures(read);
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (read.Targets.Count == 0)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
                 $"[red]{paths.Count} file(s) matched '{settings.Target}', but none contain plugins. Narrow the target to the plugin artifacts.[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         var options = new BatchOptions(settings.Solution, settings.PublisherPrefix, settings.DryRun, settings.Confirm, settings.NonInteractive, ExecutionEnvironment.IsCiAgent);
-        var runner = new DeploymentBatchRunner(new PluginDeployment((IOrganizationServiceAsync2)Connection), Console);
+        var runner = new DeploymentBatchRunner(new PluginDeployment(await connection.GetServiceAsync()), Console);
         var result = await runner.RunAsync(read.Targets, options, cancellationToken);
         foreach (var error in result.PreflightErrors)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]{error}[/]");
         }
 
-        return Tracer.End(this, result.Success);
+        return result.Success;
     }
 
     private bool TryResolve(string target, out IReadOnlyList<string> paths)

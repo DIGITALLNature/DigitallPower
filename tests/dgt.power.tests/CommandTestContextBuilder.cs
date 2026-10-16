@@ -111,7 +111,6 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         }
 
         var command = _serviceCollection
-            .AddScoped<IOrganizationService>(_ => service)
             .AddScoped<IOrganizationServiceAsync2>(_ => service)
             .AddSingleton<TCommand>()
             .AddSingleton<TimeProvider>(ImmediateTimeProvider.Instance)

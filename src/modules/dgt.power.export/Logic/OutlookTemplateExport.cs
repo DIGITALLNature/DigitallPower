@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
 using dgt.power.common;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
@@ -15,26 +14,20 @@ using SavedQuery = dgt.power.dataverse.SavedQuery;
 namespace dgt.power.export.Logic;
 
 public sealed class OutlookTemplateExport(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IFileService fileService,
     IAnsiConsole console)
-    : BaseExport(tracer, connection, configResolver, fileService, console)
+    : PowerCommand<ExportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ExportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ExportVerb args)
+    protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
-
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
 
+        var service = (IOrganizationService)await connection.GetServiceAsync();
         IList<SavedQuery> savedQueries;
-        using (var context = new DataContext(Connection))
+        using (var context = new DataContext(service))
         {
             savedQueries = (from sq in context.SavedQuerySet
                 where sq.QueryType == SavedQueryQueryType.OutlookTemplate
@@ -64,9 +57,9 @@ public sealed class OutlookTemplateExport(
             }
         }
 
-        var json = GetJson(export);
+        var json = ExportJson.GetJson(export);
 
-        Tracer.Log($"Export {HandleExportFile(fileDir, fileName, json)} ", TraceEventType.Information);
-        return Tracer.End(this, true);
+        Console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
+        return true;
     }
 }

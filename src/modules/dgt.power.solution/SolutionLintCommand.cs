@@ -7,51 +7,42 @@ using dgt.power.common;
 using dgt.power.solution.Base;
 using dgt.power.solution.Reporting;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 
 namespace dgt.power.solution;
 
 // ReSharper disable once ClassNeverInstantiated.Global — instantiated by the DI container via Spectre.Console.Cli
 public sealed class SolutionLintCommand(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : PowerLogic<SolutionLintSettings>(tracer, connection, configResolver, console)
+    : PowerCommand<SolutionLintSettings>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(SolutionLintSettings args, CancellationToken cancellationToken)
+    protected override async Task<bool> RunAsync(SolutionLintSettings args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-        return InvokeCoreAsync(args, cancellationToken);
-    }
-
-    private async Task<bool> InvokeCoreAsync(SolutionLintSettings args, CancellationToken cancellationToken)
-    {
-        Tracer.Start(this);
-
         if (args.UpdateBaseline && string.IsNullOrWhiteSpace(args.Baseline))
         {
             Console.MarkupLine("[red]--update-baseline requires --baseline <path>.[/]");
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (!TryParseFailOnThreshold(args.FailOn, out var threshold))
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Invalid --fail-on value '{0}'. Expected None, Info, Warning or Error.[/]", args.FailOn);
-            return Tracer.End(this, false);
+            return false;
         }
 
-        if (!ConfigResolver.TryGetConfigFile<LintConfig>(args.Config, out var config))
+        if (!configResolver.TryGetConfigFile<LintConfig>(args.Config, out var config))
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unable to read lint config from {0}[/]", args.Config);
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (config.Version != 1)
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unsupported lint config version {0}. Only version 1 is supported.[/]", config.Version);
-            return Tracer.End(this, false);
+            return false;
         }
 
         var knownRuleIds = LintRuleCatalog.All.Select(static rule => rule.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -60,7 +51,7 @@ public sealed class SolutionLintCommand(
         if (unknownConfiguredRuleIds.Count > 0)
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in {0}: {1}[/]", args.Config, string.Join(", ", unknownConfiguredRuleIds));
-            return Tracer.End(this, false);
+            return false;
         }
 
         var invalidOptionRuleIds = config.Rules
@@ -70,7 +61,7 @@ public sealed class SolutionLintCommand(
         if (invalidOptionRuleIds.Count > 0)
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Rule(s) with invalid 'options' (expected a JSON object) in {0}: {1}[/]", args.Config, string.Join(", ", invalidOptionRuleIds));
-            return Tracer.End(this, false);
+            return false;
         }
 
         var requestedRuleIds = ParseRuleIds(args.Rules);
@@ -78,15 +69,16 @@ public sealed class SolutionLintCommand(
         if (unknownRequestedRuleIds.Count > 0)
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Unknown rule id(s) in --rules: {0}[/]", string.Join(", ", unknownRequestedRuleIds));
-            return Tracer.End(this, false);
+            return false;
         }
 
-        var (findings, missingSolutionNames) = await EvaluateRulesAsync(Console, (IOrganizationServiceAsync2)Connection, config, [args.Solution], requestedRuleIds, cancellationToken);
+        var orgService = await connection.GetServiceAsync();
+        var (findings, missingSolutionNames) = await EvaluateRulesAsync(Console, orgService, config, [args.Solution], requestedRuleIds, cancellationToken);
 
         if (missingSolutionNames.Count > 0)
         {
             Console.MarkupLine(CultureInfo.InvariantCulture, "[red]Solution(s) not found: {0}[/]", string.Join(", ", missingSolutionNames));
-            return Tracer.End(this, false);
+            return false;
         }
 
         if (args.UpdateBaseline)
@@ -100,7 +92,7 @@ public sealed class SolutionLintCommand(
                 await SarifWriter.WriteAsync(args.SarifOutput, findings, suppressedKeys: null, cancellationToken);
             }
 
-            return Tracer.End(this, true);
+            return true;
         }
 
         IReadOnlySet<string> baselinedKeys = string.IsNullOrWhiteSpace(args.Baseline)
@@ -118,14 +110,14 @@ public sealed class SolutionLintCommand(
 
         if (threshold is null)
         {
-            return Tracer.End(this, true);
+            return true;
         }
 
         var failingFindings = findings
             .Where(finding => !baselinedKeys.Contains(finding.BaselineKey) && finding.Severity >= threshold.Value)
             .ToList();
 
-        return Tracer.End(this, failingFindings.Count == 0);
+        return failingFindings.Count == 0;
     }
 
     private static async Task<(List<LintFinding> Findings, IReadOnlyList<string> MissingSolutionNames)> EvaluateRulesAsync(

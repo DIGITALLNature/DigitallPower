@@ -12,21 +12,27 @@ using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
 
-public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connection, IConfigResolver configResolver, IAnsiConsole console) : BaseAnalyze(tracer, connection, configResolver, console)
+public class RedundantPatchAnalyze(
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
+    SolutionComponentReader reader,
+    IAnsiConsole console)
+    : PowerCommand<AnalyzeVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(AnalyzeVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(AnalyzeVerb args)
+    protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(args);
-        Tracer.Start(this);
-
         if (string.IsNullOrWhiteSpace(args.InlineData))
         {
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[red]--inline requires the unique name of a managed solution.[/]");
+            return false;
         }
 
+        var service = await connection.GetServiceAsync();
+        return Run(args, service);
+    }
+
+    private bool Run(AnalyzeVerb args, IOrganizationService service)
+    {
         var summary = new AnalyzerSummary
         {
             Task = "redundantpatches",
@@ -36,12 +42,12 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
         var resultTable = new List<SolutionRedundantPatchLine>();
 
 
-        using var context = new DataContext(Connection);
-        var solution = GetSolution(context, args.InlineData);
+        using var context = new DataContext(service);
+        var solution = SolutionComponentReader.GetSolution(context, args.InlineData);
         if (!solution.IsManaged.GetValueOrDefault(false))
         {
             Console.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
-            return Tracer.End(this, false);
+            return false;
         }
 
         Guid parentSolutionId = solution.Id;
@@ -69,19 +75,19 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
                     table.AddRow(patchUniqueName, patch.FriendlyName ?? patchUniqueName, "", "", "Checking");
                     ctx.Refresh();
                     table.RemoveRow(table.Rows.Count - 1);
-                    var components = GetSolutionComponents(patch.Id);
+                    var components = reader.GetSolutionComponents(service, patch.Id);
 
                     var topLayers = 0;
                     var notTopLayers = 0;
                     foreach (var component in components)
                     {
-                        var layers = GetSolutionLayers(component);
+                        var layers = reader.GetSolutionLayers(service, component);
                         if (!layers.Any())
                         {
                             continue;
                         }
 
-                        var first = GetTopNotActiveLayer(layers);
+                        var first = SolutionComponentReader.GetTopNotActiveLayer(layers);
                         var layerSolutionName = first.MsdynSolutionname;
                         if (string.IsNullOrWhiteSpace(patchUniqueName) ||
                             string.IsNullOrWhiteSpace(layerSolutionName) ||
@@ -121,15 +127,15 @@ public class RedundantPatchAnalyze(ITracer tracer, IOrganizationService connecti
 
         if (args.GenerateSummaryFile)
         {
-            WriteSummaryFile("RedundantPatch", summary);
+            AnalyzeResultWriter.WriteSummaryFile("RedundantPatch", summary);
         }
 
         if (args.GenerateReportFile)
         {
-            WriteReportFile("RedundantPatch", resultTable.OrderBy(r => r.Solution ?? string.Empty, StringComparer.OrdinalIgnoreCase));
+            AnalyzeResultWriter.WriteReportFile("RedundantPatch", resultTable.OrderBy(r => r.Solution ?? string.Empty, StringComparer.OrdinalIgnoreCase));
         }
 
-        return Tracer.End(this, true);
+        return true;
     }
 
     private static List<Solution> GetPatchSolutions(DataContext context, Guid parentSolutionId)

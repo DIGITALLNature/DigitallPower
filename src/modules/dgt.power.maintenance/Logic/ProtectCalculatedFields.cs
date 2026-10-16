@@ -11,21 +11,22 @@ using Spectre.Console;
 namespace dgt.power.maintenance.Logic;
 
 public sealed class ProtectCalculatedFields(
-    ITracer tracer,
-    IOrganizationService connection,
-    IConfigResolver configResolver,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IAnsiConsole console)
-    : BaseMaintenance(tracer, connection, configResolver, console)
+    : PowerCommand<MaintenanceVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(MaintenanceVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore());
+    protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
+    {
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        return Run(service);
+    }
 
     #pragma warning disable S1135 // Async migration tracked in todo.md
     // TODO(async): migrate to IOrganizationServiceAsync2
     #pragma warning restore S1135
-    private bool InvokeCore()
+    private bool Run(IOrganizationService service)
     {
-        Tracer.Start(this);
         var updated = 0;
 
         Console.Status()
@@ -40,7 +41,7 @@ public sealed class ProtectCalculatedFields(
                 {
                     EntityFilters = EntityFilters.Attributes
                 };
-                var response = (RetrieveAllEntitiesResponse)Connection.Execute(request);
+                var response = (RetrieveAllEntitiesResponse)service.Execute(request);
                 var attributeMetadatas = response.EntityMetadata.SelectMany(a => a.Attributes).Where(a => a.SourceType == 1 && a.IsManaged == false);
 
                 foreach (var attributeMetadata in attributeMetadatas)
@@ -60,7 +61,7 @@ public sealed class ProtectCalculatedFields(
                     {
                         Console.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
                         attributeMetadata.IsCustomizable = new BooleanManagedProperty(false);
-                        Connection.Execute(new UpdateAttributeRequest
+                        service.Execute(new UpdateAttributeRequest
                         {
                             Attribute = attributeMetadata,
                             EntityName = attributeMetadata.EntityLogicalName,

@@ -1,7 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Diagnostics;
+using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
@@ -14,49 +14,47 @@ using Calendar = dgt.power.dataverse.Calendar;
 namespace dgt.power.import.Logic;
 
 public class SlaConfigImport(
-    ITracer tracer,
-    IOrganizationService connection,
+    ICommandSpanFactory spans,
+    IDataverseConnection connection,
     IConfigResolver configResolver,
     IAnsiConsole console)
-    : BaseImport(tracer, connection, configResolver, console)
+    : PowerCommand<ImportVerb>(spans, console)
 {
-    protected override Task<bool> InvokeAsync(ImportVerb args, CancellationToken cancellationToken) =>
-        Task.FromResult(InvokeCore(args));
-
-    private bool InvokeCore(ImportVerb args)
+    protected override async Task<bool> RunAsync(ImportVerb args, CancellationToken cancellationToken)
     {
-        Debug.Assert(args != null, nameof(args) + " != null");
-        Tracer.Start(this);
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "slaconfig.json" : args.FileName;
 
 
-        if (!ConfigResolver.TryGetConfigFile<List<SlaConfig>>(args.FileDir, fileName, out var slaConfigs))
+        if (!configResolver.TryGetConfigFile<List<SlaConfig>>(args.FileDir, fileName, out var slaConfigs))
         {
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[red]SLA configuration not found.[/]");
+            return false;
         }
 
         //anything to do?
         if (slaConfigs.Count == 0)
         {
-            return Tracer.NotConfigured(this);
+            Console.MarkupLine("[red]SLA configuration is empty.[/]");
+            return false;
         }
 
         var result = true;
 
-        using var context = new DataContext(Connection);
+        var service = (IOrganizationService)await connection.GetServiceAsync();
+        using var context = new DataContext(service);
         foreach (var sla in slaConfigs)
         {
             var slaCrm = context.SLASet.SingleOrDefault(s => s.Id == sla.SlaId);
 
-            Tracer.Log($"Check Sla {sla.Name}({sla.SlaId:D})", TraceEventType.Information);
+            Console.WriteLine($"Check Sla {sla.Name}({sla.SlaId:D})");
 
             if (slaCrm == null)
             {
-                Tracer.Log($"Sla {sla.Name}({sla.SlaId:D}) is not in the system --> skip", TraceEventType.Warning);
+                Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Sla {sla.Name}({sla.SlaId:D}) is not in the system --> skip[/]");
                 continue;
             }
 
-            var owner = GetAssignee(args.Assignee, sla);
+            var owner = ImportAssignee.GetAssignee(args.Assignee, sla);
             var systemuser = default(SystemUser);
             if (!string.IsNullOrWhiteSpace(owner))
             {
@@ -65,11 +63,11 @@ public class SlaConfigImport(
 
             if (RequiresUpdate(sla, slaCrm, systemuser))
             {
-                Tracer.Log($"Update Sla {sla.Name}({sla.SlaId:D})", TraceEventType.Information);
+                Console.WriteLine($"Update Sla {sla.Name}({sla.SlaId:D})");
 
                 if (slaCrm.StatusCode?.Value != SLA.Options.StatusCode.Draft)
                 {
-                    result &= Connection.TrySetState(slaCrm.ToEntityReference(), SLA.Options.StateCode.Draft, SLA.Options.StatusCode.Draft);
+                    result &= service.TrySetState(slaCrm.ToEntityReference(), SLA.Options.StateCode.Draft, SLA.Options.StatusCode.Draft);
                 }
 
                 var slatoUpdate = new SLA
@@ -83,16 +81,16 @@ public class SlaConfigImport(
                     slatoUpdate.OwnerId = systemuser.ToEntityReference();
                 }
 
-                result &= Connection.TryUpdate(slatoUpdate);
+                result &= service.TryUpdate(slatoUpdate);
 
                 if (sla.Active == true)
                 {
-                    result &= Connection.TrySetState(slaCrm.ToEntityReference(), SLA.Options.StateCode.Active, SLA.Options.StatusCode.Active);
+                    result &= service.TrySetState(slaCrm.ToEntityReference(), SLA.Options.StateCode.Active, SLA.Options.StatusCode.Active);
                 }
             }
         }
 
-        return Tracer.End(this, result);
+        return result;
     }
 
     private static bool RequiresUpdate(SlaConfig sla, SLA slaCrm, SystemUser? systemuser)
