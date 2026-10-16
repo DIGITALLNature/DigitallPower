@@ -725,7 +725,7 @@ public class PackageDeploymentTests
     {
         var oldDesired = Package(Convert.ToBase64String(s_initialPackage),
             Assembly("First", CreateLocalType("First.Plugin")), Assembly("Second", CreateLocalType("Second.Plugin")));
-        var desired = Package(Convert.ToBase64String("smaller-package"u8), Assembly("First", CreateLocalType("First.Plugin")));
+        var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin")));
         var store = CreateStore();
         var service = new PackageUploadService(store, desired);
         var packageId = service.SeedPackage("new_Contoso.Plugins", oldDesired, s_initialPackage);
@@ -768,45 +768,6 @@ public class PackageDeploymentTests
     }
 
     [Test]
-    public async Task Prepare_UnchangedPackageWithExtraServerAssembly_RejectsWithoutWrites()
-    {
-        var oldDesired = Package(Convert.ToBase64String(s_initialPackage),
-            Assembly("First", CreateLocalType("First.Plugin")), Assembly("Second", CreateLocalType("Second.Plugin", Step("registered"))));
-        var desired = Package(Convert.ToBase64String(s_initialPackage), Assembly("First", CreateLocalType("First.Plugin")));
-        var store = CreateStore();
-        var service = new PackageUploadService(store, desired);
-        var packageId = service.SeedPackage("new_Contoso.Plugins", oldDesired, s_initialPackage);
-        service.MaterializeAssemblies(packageId, oldDesired);
-        var deployment = new PluginDeployment(service);
-        var stepSeed = All(store, PluginAssembly.EntityLogicalName).Single(entity => entity.GetAttributeValue<string>("name") == "Second").Id;
-        var typeId = All(store, PluginType.EntityLogicalName).Single(entity => entity.GetAttributeValue<EntityReference>("pluginassemblyid").Id == stepSeed).Id;
-        store.Create(new SdkMessageProcessingStep { Name = "registered", EventHandler = new EntityReference(PluginType.EntityLogicalName, typeId) });
-
-        await Assert.That(async () => await deployment.PreparePackageAsync(desired, "new")).ThrowsExactly<InvalidOperationException>();
-
-        await Assert.That(service.UploadCount).IsEqualTo(0);
-        await Assert.That(All(store, SdkMessageProcessingStep.EntityLogicalName)).Count().IsEqualTo(1);
-        await Assert.That(All(store, PluginAssembly.EntityLogicalName)).Count().IsEqualTo(2);
-    }
-
-    [Test]
-    public async Task Prepare_UnchangedPackageWithExtraServerType_RejectsWithoutWrites()
-    {
-        var desired = Package(Convert.ToBase64String(s_initialPackage),
-            Assembly("First", CreateLocalType("First.Plugin"), CreateLocalType("First.Extra")));
-        var store = CreateStore();
-        var service = new PackageUploadService(store, desired);
-        var deployment = new PluginDeployment(service);
-        await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
-        var narrowed = desired with { Assemblies = [Assembly("First", CreateLocalType("First.Plugin"))] };
-
-        await Assert.That(async () => await deployment.PreparePackageAsync(narrowed, "new")).ThrowsExactly<InvalidOperationException>();
-
-        await Assert.That(service.UploadCount).IsEqualTo(1);
-        await Assert.That(All(store, PluginType.EntityLogicalName)).Count().IsEqualTo(2);
-    }
-
-    [Test]
     public async Task Prepare_PackageTypeRemoval_PlansTypeDeletionAsDestructive()
     {
         var desired = Package(Convert.ToBase64String(s_initialPackage),
@@ -815,7 +776,7 @@ public class PackageDeploymentTests
         var service = new PackageUploadService(store, desired);
         var deployment = new PluginDeployment(service);
         await deployment.ApplyPackageAsync(await deployment.PreparePackageAsync(desired, "new"));
-        var removal = Package(Convert.ToBase64String("smaller-package"u8), Assembly("First", CreateLocalType("First.Plugin")));
+        var removal = desired with { Assemblies = [Assembly("First", CreateLocalType("First.Plugin"))] };
 
         var changes = await deployment.PreparePackageAsync(removal, "new");
 

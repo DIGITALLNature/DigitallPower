@@ -392,21 +392,6 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
             }
         }
 
-        var uploadPlanned = existing is null || !string.Equals(existing.PackageHash, desired.Package.PackageHash, StringComparison.OrdinalIgnoreCase);
-        if (!uploadPlanned)
-        {
-            // Only an upload lets Dataverse remove server-owned assemblies and types; without one the drift can never be reconciled.
-            var drift = removedAssemblies.Select(removed => $"assembly '{removed.Assembly.Name}'")
-                .Concat(assemblies.SelectMany(changed => changed.Registrations.TypesToDelete.Select(type => $"plugin type '{type.TypeName}' in assembly '{changed.Desired.Name}'")))
-                .ToList();
-            if (drift.Count > 0)
-            {
-                throw new InvalidOperationException(
-                    $"Package '{name}' is unchanged but Dataverse has unexpected {string.Join(", ", drift)}. " +
-                    "Nothing was written; change the package content so it is uploaded again, or remove the unexpected records.");
-            }
-        }
-
         var customApis = await PrepareCustomApisAsync(desired.Assemblies, ownedTypes, existingTypeIds, cancellationToken);
         var membership = await PreparePackageSolutionAsync(existing?.Id, assemblies, solution, cancellationToken);
         var providers = await PrepareProvidersAsync(desired.Assemblies, ownedTypes, existingTypeIds, solution, cancellationToken);
