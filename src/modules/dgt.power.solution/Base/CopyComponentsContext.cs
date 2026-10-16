@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -17,7 +18,6 @@ namespace dgt.power.solution.Base;
 /// </summary>
 public sealed class CopyComponentsContext
 {
-    private const int PageSize = 5000;
     private const int MaxConcurrentEntityMetadataRequests = 8;
 
     // Not part of the generated SolutionComponent.Options.ComponentType enum.
@@ -235,21 +235,7 @@ public sealed class CopyComponentsContext
                 SolutionComponent.LogicalNames.RootSolutionComponentId)
         };
         query.Criteria.AddCondition(SolutionComponent.LogicalNames.SolutionId, ConditionOperator.In, sourceSolutionIds.Cast<object>().ToArray());
-        query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
-
-        var rows = new List<Entity>();
-        bool moreRecords;
-        do
-        {
-            var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
-            rows.AddRange(page.Entities);
-            moreRecords = page.MoreRecords;
-            if (moreRecords)
-            {
-                query.PageInfo.PageNumber++;
-                query.PageInfo.PagingCookie = page.PagingCookie;
-            }
-        } while (moreRecords);
+        var rows = await connection.RetrieveAllAsync(query, cancellationToken: cancellationToken);
 
         // Dedupe by (componenttype, objectid): the same component can legitimately appear in
         // multiple source solutions. When behaviors disagree, the most complete one wins

@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.plugin.Exceptions;
 using Microsoft.Crm.Sdk.Messages;
@@ -21,7 +22,7 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
             Criteria = new FilterExpression { Conditions = { new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName, ConditionOperator.Equal, entityLogicalName) } }
         };
 
-        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        var result = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         if (result.Count > 1)
         {
             throw new InvalidOperationException($"Entity '{entityLogicalName}' has multiple solution component definitions; membership cannot be resolved unambiguously.");
@@ -57,7 +58,7 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
                 }
             }
         };
-        var components = await DataverseQueryReader.ReadAllAsync(service, componentQuery, cancellationToken);
+        var components = await service.RetrieveAllAsync(componentQuery, cancellationToken: cancellationToken);
         return components.Select(entity => entity.ToEntity<SolutionComponent>().ObjectId).OfType<Guid>().ToHashSet();
     }
 

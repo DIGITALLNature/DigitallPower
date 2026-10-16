@@ -52,17 +52,13 @@ Commands already acquire the service lazily via `IDataverseConnection.GetService
 
 ## Shared paging helper
 
-`DataverseQueryReader.ReadAllAsync` (plugin module, internal) is the only reusable paged read. About 11
-other places hand-copy the `MoreRecords`/`PagingCookie` loop (solution, analyzer, export, import,
-maintenance, `EntityDataProviderRepository`).
+`IOrganizationServiceAsync2.RetrieveAllAsync` (`dgt.power.common`) is the shared paged read and is used by
+the plugin and solution modules.
 
-**Goal:** move it to `dgt.power.common` as an extension and use it everywhere.
-
-- Signature: `IOrganizationServiceAsync2.RetrieveAllAsync(QueryExpression query, int pageSize = 5000, CancellationToken cancellationToken = default)`.
-- The method owns `query.PageInfo` and overwrites it. Document that on the method; callers must not rely on their own paging settings.
-- `QueryExpression` only; FetchXML and `QueryByAttribute` loops stay as they are.
-- Replace `DataverseQueryReader` and `LintContext.PageSize`, then the hand-written loops.
-- Add a common test with a multi-page fake (page size, cookie, page number, cancellation). Do this first in the async migration branch.
+**Remaining:** the synchronous `MoreRecords`/`PagingCookie` loops in analyzer (`SolutionComponentReader`,
+`RedundantComponentsAnalyze`), export (`QueueExport`, `UserRoleExport`), import (`QueueImport`) and
+maintenance (`RemoveRedundantComponents`). Replace them with `RetrieveAllAsync` as part of the async
+migration of those classes; they cannot use it before they have an `IOrganizationServiceAsync2`.
 
 ---
 

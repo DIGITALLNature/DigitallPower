@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Security.Cryptography;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
@@ -66,7 +67,7 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             Orders = { new OrderExpression(PluginAssembly.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
-        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        var result = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         return result.Select(entity => entity.ToEntity<PluginAssembly>()).Select(entity =>
         {
             var contentHash = entity.PackageId is not null || entity.Content is null ? null : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
@@ -91,7 +92,7 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
                 Conditions = { new ConditionExpression(PluginAssembly.LogicalNames.PackageId, ConditionOperator.Equal, packageId) }
             }
         };
-        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        var result = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         return result.Select(entity => entity.ToEntity<PluginAssembly>())
             .Select(entity => new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId!.Id,
                 ManagedIdentityId: entity.ManagedIdentityId?.Id)).ToList();

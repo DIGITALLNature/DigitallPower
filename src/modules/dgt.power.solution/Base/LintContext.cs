@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Collections.Concurrent;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -13,8 +14,6 @@ namespace dgt.power.solution.Base;
 
 public class LintContext
 {
-    private const int PageSize = 5000;
-
     // Bounds how many RetrieveEntityRequest calls run at once - high enough to cut latency for
     // solutions spanning many tables, low enough to stay well under Dataverse's per-user
     // concurrent-request service protection limit.
@@ -149,7 +148,7 @@ public class LintContext
         componentQuery.Criteria.AddCondition(SolutionComponent.LogicalNames.IsMetadata, ConditionOperator.Equal, true);
         componentQuery.Criteria.AddCondition(SolutionComponent.LogicalNames.SolutionId, ConditionOperator.In, solutionIds.Cast<object>().ToArray());
 
-        var components = (await RetrieveAllPagesAsync(componentQuery, cancellationToken))
+        var components = (await Connection.RetrieveAllAsync(componentQuery, cancellationToken: cancellationToken))
             .Select(static entity => entity.ToEntity<SolutionComponent>())
             .ToDictionary(static component => component.Id);
 
@@ -175,7 +174,7 @@ public class LintContext
         query.Criteria.AddCondition(SolutionComponent.LogicalNames.ComponentType, ConditionOperator.Equal, SolutionComponent.Options.ComponentType.WebResource);
         query.Criteria.AddCondition(SolutionComponent.LogicalNames.SolutionId, ConditionOperator.In, solutionIds.Cast<object>().ToArray());
 
-        return (await RetrieveAllPagesAsync(query, cancellationToken))
+        return (await Connection.RetrieveAllAsync(query, cancellationToken: cancellationToken))
             .Select(static entity => entity.ToEntity<SolutionComponent>())
             .ToList();
     }
@@ -201,32 +200,8 @@ public class LintContext
         };
         query.Criteria.AddCondition(WebResource.LogicalNames.WebResourceId, ConditionOperator.In, webResourceIds.Cast<object>().ToArray());
 
-        return (await RetrieveAllPagesAsync(query, cancellationToken))
+        return (await Connection.RetrieveAllAsync(query, cancellationToken: cancellationToken))
             .Select(static entity => entity.ToEntity<WebResource>())
             .ToDictionary(static webResource => webResource.Id, EqualityComparer<Guid>.Default);
     }
-
-    /// <summary>Pages through every result of a query using <see cref="PageSize"/>, following <c>MoreRecords</c>/<c>PagingCookie</c>.</summary>
-    private async Task<List<Entity>> RetrieveAllPagesAsync(QueryExpression query, CancellationToken cancellationToken)
-    {
-        query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
-
-        var results = new List<Entity>();
-        bool moreRecords;
-        do
-        {
-            var page = await Connection.RetrieveMultipleAsync(query, cancellationToken);
-            results.AddRange(page.Entities);
-
-            moreRecords = page.MoreRecords;
-            if (moreRecords)
-            {
-                query.PageInfo.PageNumber++;
-                query.PageInfo.PagingCookie = page.PagingCookie;
-            }
-        } while (moreRecords);
-
-        return results;
-    }
 }
-

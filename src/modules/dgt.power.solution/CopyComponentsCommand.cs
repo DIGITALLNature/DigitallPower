@@ -3,6 +3,7 @@
 
 using System.ServiceModel;
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.solution.Base;
 using Microsoft.Crm.Sdk.Messages;
@@ -20,8 +21,6 @@ public class CopyComponentsCommand(
     IAnsiConsole console)
     : PowerCommand<CopyComponentsSettings>(spans, console)
 {
-    private const int PageSize = 5000;
-
     protected override async Task<bool> RunAsync(CopyComponentsSettings settings, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(settings.Target))
@@ -251,30 +250,18 @@ public class CopyComponentsCommand(
         {
             NoLock = true,
             ColumnSet = new ColumnSet(SolutionComponent.LogicalNames.ComponentType, SolutionComponent.LogicalNames.ObjectId),
-            PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 }
         };
         query.Criteria.AddCondition(SolutionComponent.LogicalNames.SolutionId, ConditionOperator.Equal, solutionId);
 
+        var components = await orgService.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         var keys = new HashSet<(int, Guid)>();
-        bool moreRecords;
-        do
+        foreach (var component in components.Select(static entity => entity.ToEntity<SolutionComponent>()))
         {
-            var page = await orgService.RetrieveMultipleAsync(query, cancellationToken);
-            foreach (var component in page.Entities.Select(static entity => entity.ToEntity<SolutionComponent>()))
+            if (component.ComponentType?.Value is { } type && component.ObjectId.HasValue)
             {
-                if (component.ComponentType?.Value is { } type && component.ObjectId.HasValue)
-                {
-                    keys.Add((type, component.ObjectId.Value));
-                }
+                keys.Add((type, component.ObjectId.Value));
             }
-
-            moreRecords = page.MoreRecords;
-            if (moreRecords)
-            {
-                query.PageInfo.PageNumber++;
-                query.PageInfo.PagingCookie = page.PagingCookie;
-            }
-        } while (moreRecords);
+        }
 
         return keys;
     }

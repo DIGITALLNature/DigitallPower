@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
@@ -28,7 +29,7 @@ public sealed class SdkMessageProcessingStepImageRepository(IOrganizationService
             }
         };
 
-        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        var result = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         return result.Select(e => e.ToEntity<SdkMessageProcessingStepImage>()).Select(ToRemoteImage).ToList();
     }
 

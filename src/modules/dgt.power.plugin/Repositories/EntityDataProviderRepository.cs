@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Exceptions;
@@ -24,22 +25,13 @@ public sealed class EntityDataProviderRepository(IOrganizationServiceAsync2 serv
         var operations = Enum.GetValues<DataProviderOperation>();
         var columns = new[] { EntityDataProvider.LogicalNames.Name, EntityDataProvider.LogicalNames.Description, EntityDataProvider.LogicalNames.DataSourceLogicalName }
             .Concat(operations.Select(operation => operation.HandlerField())).ToArray();
-        var query = new QueryExpression(EntityDataProvider.EntityLogicalName) { ColumnSet = new ColumnSet(columns), PageInfo = new PagingInfo { PageNumber = 1, Count = 5000 } };
-        var providers = new List<RemoteDataProvider>();
-        EntityCollection result;
-        do
-        {
-            result = await service.RetrieveMultipleAsync(query, cancellationToken);
-            providers.AddRange(result.Entities.Select(entity => entity.ToEntity<EntityDataProvider>()).Select(entity => new RemoteDataProvider(entity.Id,
-                entity.DataSourceLogicalName ?? string.Empty, entity.Name ?? entity.Id.ToString(),
-                entity.Description,
-                operations.Where(operation => entity.Attributes.TryGetValue(operation.HandlerField(), out var value) && value is not null)
-                    .ToDictionary(operation => operation, operation => entity.GetAttributeValue<Guid>(operation.HandlerField())))));
-            query.PageInfo.PageNumber++;
-            query.PageInfo.PagingCookie = result.PagingCookie;
-        } while (result.MoreRecords);
-
-        return providers;
+        var query = new QueryExpression(EntityDataProvider.EntityLogicalName) { ColumnSet = new ColumnSet(columns) };
+        var entities = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        return entities.Select(entity => entity.ToEntity<EntityDataProvider>()).Select(entity => new RemoteDataProvider(entity.Id,
+            entity.DataSourceLogicalName ?? string.Empty, entity.Name ?? entity.Id.ToString(),
+            entity.Description,
+            operations.Where(operation => entity.Attributes.TryGetValue(operation.HandlerField(), out var value) && value is not null)
+                .ToDictionary(operation => operation, operation => entity.GetAttributeValue<Guid>(operation.HandlerField())))).ToList();
     }
 
     public async Task<EntityMetadata?> FindDataSourceAsync(string logicalName, CancellationToken cancellationToken = default)

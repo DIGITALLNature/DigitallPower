@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Security.Cryptography;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.Crm.Sdk.Messages;
@@ -27,7 +28,7 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
             Orders = { new OrderExpression(PluginPackage.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
-        var matches = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        var matches = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         if (matches.Count == 0)
         {
             return null;

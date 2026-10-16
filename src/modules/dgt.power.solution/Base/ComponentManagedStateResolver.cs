@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -23,7 +24,6 @@ public sealed class ComponentManagedStateResolver(IOrganizationServiceAsync2 con
 {
     // Bounds concurrent RetrieveEntityRequest calls while resolving distinct backing tables.
     private const int MaxConcurrentEntityMetadataRequests = 8;
-    private const int PageSize = 5000;
     private const int InClauseBatchSize = 500;
 
     public Task<IReadOnlyDictionary<(int ComponentType, Guid ObjectId), bool>> ResolveAsync(
@@ -128,20 +128,7 @@ public sealed class ComponentManagedStateResolver(IOrganizationServiceAsync2 con
                 ColumnSet = new ColumnSet(backingEntity.PrimaryIdAttribute, "ismanaged")
             };
             query.Criteria.AddCondition(backingEntity.PrimaryIdAttribute, ConditionOperator.In, objectIdBatch.Select(static objectId => (object)objectId).ToArray());
-            query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
-
-            bool moreRecords;
-            do
-            {
-                var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
-                rows.AddRange(page.Entities);
-                moreRecords = page.MoreRecords;
-                if (moreRecords)
-                {
-                    query.PageInfo.PageNumber++;
-                    query.PageInfo.PagingCookie = page.PagingCookie;
-                }
-            } while (moreRecords);
+            rows.AddRange(await connection.RetrieveAllAsync(query, cancellationToken: cancellationToken));
         }
 
         var managedById = rows.ToDictionary(static entity => entity.Id, static entity => entity.GetAttributeValue<bool>("ismanaged"));

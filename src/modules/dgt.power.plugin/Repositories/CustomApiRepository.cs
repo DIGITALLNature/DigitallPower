@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
@@ -28,7 +29,7 @@ public sealed class CustomApiRepository(IOrganizationServiceAsync2 service) : IC
             }
         };
 
-        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        var result = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         if (result.Count > 1)
         {
             throw new InvalidOperationException($"Custom API '{uniqueName}' has multiple matching records; its handler cannot be resolved unambiguously.");
@@ -54,7 +55,7 @@ public sealed class CustomApiRepository(IOrganizationServiceAsync2 service) : IC
             }
         };
 
-        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        var result = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
         return result.Select(entity => (entity.Id, entity.GetAttributeValue<string>(CustomAPI.LogicalNames.UniqueName) ?? entity.Id.ToString())).ToList();
     }
 
