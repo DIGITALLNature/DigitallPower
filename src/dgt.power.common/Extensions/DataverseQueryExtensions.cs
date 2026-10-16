@@ -1,12 +1,15 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.common.Extensions;
 
+// The C# 14 extension block is compiled into a nested type, which CA1034 does not recognise.
+[SuppressMessage("Design", "CA1034", Justification = "Compiler-generated type for the C# 14 extension block")]
 public static class DataverseQueryExtensions
 {
     extension(IOrganizationServiceAsync2 service)
