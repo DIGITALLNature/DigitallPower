@@ -21,8 +21,13 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
             Criteria = new FilterExpression { Conditions = { new ConditionExpression(SolutionComponentDefinition.LogicalNames.PrimaryEntityName, ConditionOperator.Equal, entityLogicalName) } }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.FirstOrDefault()?.ToEntity<SolutionComponentDefinition>().SolutionComponentType;
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        if (result.Count > 1)
+        {
+            throw new InvalidOperationException($"Entity '{entityLogicalName}' has multiple solution component definitions; membership cannot be resolved unambiguously.");
+        }
+
+        return result.SingleOrDefault()?.ToEntity<SolutionComponentDefinition>().SolutionComponentType;
     }
 
     public async Task<IReadOnlySet<Guid>> ListComponentIdsAsync(string solutionUniqueName, int componentType, CancellationToken cancellationToken = default)
@@ -52,8 +57,8 @@ public sealed class SolutionComponentRepository(IOrganizationServiceAsync2 servi
                 }
             }
         };
-        var components = await service.RetrieveMultipleAsync(componentQuery, cancellationToken);
-        return components.Entities.Select(entity => entity.ToEntity<SolutionComponent>().ObjectId).OfType<Guid>().ToHashSet();
+        var components = await DataverseQueryReader.ReadAllAsync(service, componentQuery, cancellationToken);
+        return components.Select(entity => entity.ToEntity<SolutionComponent>().ObjectId).OfType<Guid>().ToHashSet();
     }
 
     public async Task AddToSolutionAsync(int componentType, Guid componentId, string solutionUniqueName, CancellationToken cancellationToken = default)

@@ -4,6 +4,7 @@
 using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
+using dgt.power.plugin.tests.Extensions;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
@@ -332,6 +333,19 @@ public class SdkMessageProcessingStepRepositoryTests
         var states = await new SdkMessageProcessingStepRepository(service).ListStatesAsync([enabledId, disabledId]);
 
         await Assert.That(states.Select(state => (state.Name, state.IsEnabled))).IsEquivalentTo([("a", false), ("b", true)]);
+    }
+
+    [Test]
+    public async Task ListStatesAsync_ResultsAcrossPages_ReadsAllPages()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        var states = await new SdkMessageProcessingStepRepository(service).ListStatesAsync([Guid.NewGuid()]);
+
+        await Assert.That(states.Count).IsEqualTo(2);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, string.Null, 5000), (2, "next-page", 5000)]);
     }
 
     [Test]

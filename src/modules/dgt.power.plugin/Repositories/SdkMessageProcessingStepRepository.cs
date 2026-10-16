@@ -4,8 +4,8 @@
 using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.Repositories;
 
@@ -53,8 +53,8 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(ToRemoteStep).ToList();
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(ToRemoteStep).ToList();
     }
 
     private static RemotePluginStep ToRemoteStep(Entity entity)
@@ -227,8 +227,8 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(ToRemoteStep).ToList();
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(ToRemoteStep).ToList();
     }
 
     public async Task UpdateConfigurationAsync(Guid stepId, string? configuration, CancellationToken cancellationToken = default)
@@ -283,8 +283,8 @@ public sealed class SdkMessageProcessingStepRepository(IOrganizationServiceAsync
             };
             query.Criteria.AddCondition(SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId, ConditionOperator.In, chunk.Cast<object>().ToArray());
 
-            var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-            states.AddRange(result.Entities.Select(ToStepState));
+            var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+            states.AddRange(result.Select(ToStepState));
         }
 
         return states.OrderBy(state => state.Name, StringComparer.OrdinalIgnoreCase).ToList();

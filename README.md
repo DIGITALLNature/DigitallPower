@@ -777,9 +777,16 @@ Commands for deploying Dataverse plugin assemblies and packages.
 
 #### `push` — Deploy plugin assemblies/packages
 
-Registers a single plugin assembly (`.dll`), a plugin package (`.nupkg`), or every `.dll`/`.nupkg`
-found directly in a directory (mixed content in one directory is supported; each file is processed
-independently).
+Registers a single plugin assembly (`.dll`), a plugin package (`.nupkg`), every `.dll`/`.nupkg`
+found directly in a directory, or every file matched by a glob pattern (for example
+`bin/release/**/*.nupkg`, quote it to prevent shell expansion). DLLs without plugins, such as
+dependencies, are ignored. Targets are processed one after another; a failing target does not stop
+the others but fails the command.
+
+The whole batch is validated before anything is written: unreadable artifacts, a missing
+`--publisher-prefix` for packages, and two targets declaring the same assembly, package, data
+provider or Custom API reject the batch. Narrow the target to resolve a conflict. A path or glob
+that matches no files, or matched files that contain no plugins, fails the command.
 
 ##### Usage
 
@@ -787,6 +794,7 @@ independently).
 dgtp plugin push ./bin/Release/MyPlugin.dll --solution mysolution
 dgtp plugin push ./bin/Release/MyPlugin.1.0.0.nupkg --publisher-prefix contoso --solution mysolution
 dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
+dgtp plugin push "./src/**/bin/Release/*.nupkg" --publisher-prefix contoso
 ```
 
 ##### Options
@@ -798,6 +806,9 @@ dgtp plugin push ./bin/Release --publisher-prefix contoso --solution mysolution
 | `--dry-run` | No | Previews the deployment and solution membership plan without writing to Dataverse |
 | `--confirm` | No | Prompts before executing each rendered target plan; ignored by dry-run, non-interactive, and CI execution |
 
+Existing plugin package records must have a version in Dataverse; deployment fails explicitly
+if the version is missing. A package without an attached file is treated as requiring a content upload.
+
 ##### Supported registration attributes
 
 `plugin push` requires registration attributes from `Digitall.Plugins.Registration` 3.0.0 or
@@ -807,8 +818,7 @@ later. Other registration namespaces are not recognized.
 |-----------|----------|
 | `PluginRegistrationAttribute` | Registers plugin steps, including message, stage, mode, entity filters, and images |
 | `CustomApiRegistrationAttribute` | Links a plugin type to the declared Custom API |
-| `CustomDataProviderRegistrationAttribute` | Creates/updates a custom data provider and links its operation handlers |
-| `ManagedIdentityRegistrationAttribute` | Links the assembly, or the package containing it, to a managed identity |
+| `CustomDataProviderRegistrationAttribute` | Creates/updates a custom data provider record and links its operation handlers (experimental support); the configuration table must already exist |
 
 Workflow activity registration (`WorkflowRegistrationAttribute`) is not supported by `plugin push`.
 Every concrete `IPlugin` type must carry one of the supported registration attributes; assemblies
@@ -816,8 +826,8 @@ with manually maintained plugin registrations are not supported.
 
 ##### Custom data providers
 
-**Experimental:** Custom data-provider deployment is still experimental. Validate it in a
-non-production environment before production rollout.
+**Experimental support:** Custom data-provider deployment is offered as experimental support.
+Validate it in a non-production environment before production rollout.
 
 Requires `Digitall.Plugins.Registration` 3.0.0 or later and its three-argument constructor:
 data-source configuration-table schema name, operation, and provider name on every declaration.
@@ -825,16 +835,22 @@ Rebuild assemblies using the old two-argument constructor before deployment. See
 [registration library](https://github.com/DIGITALLNature/DigitallRegistrationPower) for attribute
 usage and examples.
 
-`plugin push` creates or updates the provider, creates or validates its configuration table, and
-assigns the Retrieve, RetrieveMultiple, Create, Update, and Delete handlers. Undeclared handlers and
-omitted optional metadata are preserved. With `--solution`, the provider and configuration-table
-schema are included; `--dry-run` previews the deployment.
+The data-source configuration table is a prerequisite: `plugin push` does not create, update, or
+delete it. Provision the table in each environment first. A missing table, or one that is not an
+organization-owned table backed by the `JsonConverter` data provider, is rejected before any
+deployment writes. The target environment must contain exactly one data provider named
+`JsonConverter`; its ID is resolved automatically.
 
-On new providers, undeclared handlers are left unset.
-New data-source tables use `<publisher-prefix>_name` as their primary-name column; existing columns are unchanged.
-Existing tables incompatible with data-source configuration are rejected before deployment writes.
-The target environment must contain exactly one data provider named `JsonConverter` to back the
-configuration table; its ID is resolved automatically.
+`plugin push` creates or updates the provider record and assigns the Retrieve, RetrieveMultiple,
+Create, Update, and Delete handlers. A declaration owns all handler slots of its provider:
+undeclared handlers are cleared, even when they reference types from other assemblies. Omitted
+optional metadata such as the description is preserved. If a provider is no longer declared, only
+handlers referring to plugin types owned by the target are cleared; the provider record and its
+table are never deleted. `--dry-run` previews the deployment.
+
+With `--solution`, only missing provider records are added to the solution. The configuration
+table, its schema, and its data are not managed by `plugin push` and are not added; transport the
+table to downstream environments through your own solution, as with Custom API records.
 
 Data-source records, custom configuration columns, business virtual tables, mappings, and
 bulk-operation handlers are outside scope. Existing ordinary tables are not converted into
@@ -850,10 +866,18 @@ attributes or source-controlled configuration files.
 
 ##### Managed identity
 
-When an assembly has `ManagedIdentityRegistrationAttribute`, `plugin push` finds or creates the
-managed identity for its client ID and links it to the assembly. For a package, the first bundled
-assembly with this attribute also determines the package identity. If no tenant ID is declared, the
-environment tenant is used.
+Managed identity provisioning and binding are outside `plugin push`. Configure the Dataverse
+managed identity record and assembly/package binding separately in each environment, together
+with that environment's Entra app registration or user-assigned managed identity, federated
+credential, and resource permissions.
+
+The same signed artifact can be promoted across stages; the federated credential's subject
+includes the Dataverse environment ID. Identity client/tenant IDs do not belong in registration
+attributes. See [Microsoft's managed identity setup guide](https://learn.microsoft.com/en-us/power-platform/admin/set-up-managed-identity).
+
+Push leaves identity bindings on existing assembly/package records untouched. A newly created
+replacement assembly does not inherit the superseded assembly's binding; provision its identity
+binding separately. Push never creates or deletes shared managed identity records.
 
 ##### Planning and execution
 
@@ -864,6 +888,7 @@ Data providers appear in a separate tree after the package or assembly tree; han
 reference plugin types rather than nesting the provider beneath them.
 `--dry-run` stops after rendering the plan. Missing declared Custom APIs and unresolved step
 messages fail before Dataverse changes occur.
+Custom API unique names must resolve to exactly one record; ambiguous matches are rejected.
 `--confirm` prompts after each target plan in interactive sessions; declining leaves that target
 unchanged. Non-interactive and CI execution suppress the prompt.
 For assembly upgrades, the tree represents the effective replacement-assembly state, including
@@ -883,6 +908,9 @@ listed below the deployment tree, including in dry-run output. Plugin types, ima
 and managed identities are not added implicitly. When every managed component is already present,
 the same section confirms that no membership additions are needed. An unknown solution fails
 planning with `MissingSolutionException` before any Dataverse writes occur.
+Package membership requires an unambiguous solution component definition for `pluginpackage`
+in the target environment; missing or duplicate definitions fail planning rather than skipping
+the requested membership.
 
 ##### Updates and upgrades
 
@@ -897,6 +925,21 @@ replacement, migrates matching declared plugin steps to preserve their environme
 then removes the superseded assembly and registrations. More than one same-name standalone
 assembly is unsupported: `plugin push` fails before writing and requires manual cleanup. Use
 `--dry-run` to preview the supported update or replacement outcome.
+
+##### Removals and solution import
+
+`plugin push` only changes the environment it targets. A cleared Custom API handler link is not
+propagated by managed solution import (a Dataverse platform limitation), and the linked plugin
+type or assembly cannot be deleted while the link exists. Workaround: unlink the handler manually
+in each downstream environment before the release that removes the type or assembly. This
+creates no unmanaged layer, and the next import then removes the type or assembly.
+
+For plugin packages the same applies to steps: package assemblies are updated in place, even
+when the assembly version changes. A managed import that removes a plugin type fails with "Unable
+to delete plugintype due to 1 step(s) registered on it" while the type still has a step
+downstream, or while a Custom API is still linked to it (Dataverse reports both as a registered
+step). Delete the step or unlink the handler manually in each downstream environment before
+deploying the release that removes the type.
 
 #### `step config set` — Set plugin step configuration
 
@@ -1338,6 +1381,7 @@ DigitallPower/
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
 ├── schemas/                      # JSON schemas for configuration files
+├── docs/                         # Migration guides and developer design proposals
 ├── scripts/                      # Repository maintenance scripts
 ├── Directory.Build.props         # Common MSBuild properties
 ├── global.json                   # Pinned .NET SDK

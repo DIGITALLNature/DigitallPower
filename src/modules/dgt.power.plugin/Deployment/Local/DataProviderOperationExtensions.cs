@@ -3,7 +3,6 @@
 
 using dgt.power.dataverse;
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 
 namespace dgt.power.plugin.Deployment.Local;
 

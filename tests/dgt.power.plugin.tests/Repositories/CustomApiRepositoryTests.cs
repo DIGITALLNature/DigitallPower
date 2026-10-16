@@ -3,6 +3,7 @@
 
 using dgt.power.dataverse;
 using dgt.power.plugin.Repositories;
+using dgt.power.plugin.tests.Extensions;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
@@ -40,6 +41,40 @@ public class CustomApiRepositoryTests
         var result = await repository.FindIdByUniqueNameAsync("new_MyApi");
 
         await Assert.That(result).IsEqualTo(id);
+    }
+
+    [Test]
+    public async Task FindIdByUniqueNameAsync_DuplicateMatches_RejectsAmbiguity()
+    {
+        var service = CreateService();
+        service.Create(new CustomAPI { UniqueName = "new_Api" });
+        service.Create(new CustomAPI { UniqueName = "new_Api" });
+
+        await Assert.That(async () => await new CustomApiRepository(service).FindIdByUniqueNameAsync("new_Api")).ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task FindIdByUniqueNameAsync_MatchesAcrossPages_RejectsAmbiguity()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        await Assert.That(async () => await new CustomApiRepository(service).FindIdByUniqueNameAsync("new_Api")).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, string.Null, 5000), (2, "next-page", 5000)]);
+    }
+
+    [Test]
+    public async Task ListLinkedToPluginTypeAsync_MultiplePages_ReadsEveryPage()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        var result = await new CustomApiRepository(service).ListLinkedToPluginTypeAsync(Guid.NewGuid());
+
+        await Assert.That(result).Count().IsEqualTo(2);
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, string.Null, 5000), (2, "next-page", 5000)]);
     }
 
     [Test]

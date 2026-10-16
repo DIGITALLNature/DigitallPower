@@ -15,7 +15,6 @@ internal static class RegistrationAttributeNames
     public const string PluginRegistration = "PluginRegistrationAttribute";
     public const string CustomApiRegistration = "CustomApiRegistrationAttribute";
     public const string CustomDataProviderRegistration = "CustomDataProviderRegistrationAttribute";
-    public const string ManagedIdentityRegistration = "ManagedIdentityRegistrationAttribute";
 
     /// <summary>Attribute names that mark a type as a Power Plugin type.</summary>
     public static readonly string[] KnownPluginAttributes =

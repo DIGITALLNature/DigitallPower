@@ -5,8 +5,8 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.Repositories;
 
@@ -25,8 +25,8 @@ public sealed class PluginTypeRepository(IOrganizationServiceAsync2 service) : I
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result
             .Select(e => e.ToEntity<PluginType>())
             .Select(t => new RemotePluginType(t.Id, t.TypeName!))
             .ToList();

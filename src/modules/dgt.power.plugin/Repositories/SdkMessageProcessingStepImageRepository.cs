@@ -4,8 +4,8 @@
 using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.Repositories;
 
@@ -28,8 +28,8 @@ public sealed class SdkMessageProcessingStepImageRepository(IOrganizationService
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(e => e.ToEntity<SdkMessageProcessingStepImage>()).Select(ToRemoteImage).ToList();
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(e => e.ToEntity<SdkMessageProcessingStepImage>()).Select(ToRemoteImage).ToList();
     }
 
     private static RemotePluginStepImage ToRemoteImage(SdkMessageProcessingStepImage image)

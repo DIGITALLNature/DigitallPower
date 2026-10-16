@@ -13,34 +13,49 @@ public sealed class CustomApiRepository(IOrganizationServiceAsync2 service) : IC
 {
     public async Task<Guid?> FindIdByUniqueNameAsync(string uniqueName, CancellationToken cancellationToken = default)
     {
+        return (await FindByUniqueNameAsync(uniqueName, cancellationToken))?.Id;
+    }
+
+    internal async Task<(Guid Id, Guid? PluginTypeId)?> FindByUniqueNameAsync(string uniqueName, CancellationToken cancellationToken)
+    {
         var query = new QueryExpression(CustomAPI.EntityLogicalName)
         {
             NoLock = true,
-            ColumnSet = new ColumnSet(false),
+            ColumnSet = new ColumnSet(CustomAPI.LogicalNames.PluginTypeId),
             Criteria = new FilterExpression
             {
                 Conditions = { new ConditionExpression(CustomAPI.LogicalNames.UniqueName, ConditionOperator.Equal, uniqueName) }
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.FirstOrDefault()?.Id;
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        if (result.Count > 1)
+        {
+            throw new InvalidOperationException($"Custom API '{uniqueName}' has multiple matching records; its handler cannot be resolved unambiguously.");
+        }
+
+        return result.Count == 0 ? null : (result[0].Id, result[0].GetAttributeValue<EntityReference>(CustomAPI.LogicalNames.PluginTypeId)?.Id);
     }
 
     public async Task<IReadOnlyList<Guid>> ListLinkedToPluginTypeAsync(Guid pluginTypeId, CancellationToken cancellationToken = default)
     {
+        return (await ListAssociationsAsync(pluginTypeId, cancellationToken)).Select(api => api.Id).ToList();
+    }
+
+    internal async Task<IReadOnlyList<(Guid Id, string Name)>> ListAssociationsAsync(Guid pluginTypeId, CancellationToken cancellationToken)
+    {
         var query = new QueryExpression(CustomAPI.EntityLogicalName)
         {
             NoLock = true,
-            ColumnSet = new ColumnSet(false),
+            ColumnSet = new ColumnSet(CustomAPI.LogicalNames.UniqueName),
             Criteria = new FilterExpression
             {
                 Conditions = { new ConditionExpression(CustomAPI.LogicalNames.PluginTypeId, ConditionOperator.Equal, pluginTypeId) }
             }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(e => e.Id).ToList();
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(entity => (entity.Id, entity.GetAttributeValue<string>(CustomAPI.LogicalNames.UniqueName) ?? entity.Id.ToString())).ToList();
     }
 
     public async Task LinkPluginTypeAsync(Guid customApiId, Guid pluginTypeId, CancellationToken cancellationToken = default)

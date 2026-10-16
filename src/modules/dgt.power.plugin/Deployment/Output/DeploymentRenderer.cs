@@ -1,0 +1,301 @@
+// Copyright (c) DIGITALL Nature. All rights reserved
+// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+
+using dgt.power.plugin.Deployment.Local;
+using dgt.power.plugin.Deployment.Reconciliation;
+using Spectre.Console;
+
+namespace dgt.power.plugin.Deployment.Output;
+
+internal sealed class DeploymentRenderer(IAnsiConsole console)
+{
+    private const string Create = "Create";
+    private const string Update = "Update";
+    private const string Delete = "Delete";
+    private const string Unchanged = "Unchanged";
+    private const string Add = "Add";
+    private const string Set = "Set";
+    private const string Clear = "Clear";
+    private const string Link = "Link";
+    private const string Unlink = "Unlink";
+
+    /// <summary>Marks an action with a trailing, colored marker so it stands out without altering the tree layout.</summary>
+    internal static string Tag(string action)
+    {
+        if (action is Create or Add or Link)
+        {
+            return $"[green]+ {action}[/]";
+        }
+
+        if (action is Delete or Unlink or Clear)
+        {
+            return $"[red]- {action}[/]";
+        }
+
+        return $"[yellow]~ {action}[/]";
+    }
+
+    // Unchanged nodes carry no marker; <paramref name="text"/> must already be markup-escaped.
+    private static string Label(string text, string action) => action == Unchanged ? text : $"{text} {Tag(action)}";
+
+    private static string UpToDate(string text) => $"[green]{Emoji.Known.CheckMark}[/] {text}";
+
+    internal void Render(StandaloneDeploymentChanges changes)
+    {
+        ArgumentNullException.ThrowIfNull(changes);
+        var registrations = changes.Registrations;
+        var artifactAction = Action(changes.ExistingAssemblyId, changes.UpdateContent);
+        var tree = new Tree(Label($"{Emoji.Known.PuzzlePiece} {Markup.Escape(changes.Desired.Identity)}", artifactAction));
+        var renderedUnlinks = new HashSet<Guid>();
+        var oldTree = changes.AssemblyToDelete is { } oldAssembly
+            ? new Tree(Label($"{Emoji.Known.PuzzlePiece} {Markup.Escape(oldAssembly.Identity)}", Delete))
+            : null;
+        AddRegistrations(tree, changes.Desired, registrations, changes.CustomApis, renderedUnlinks, oldTree);
+        AddCustomApiUnlinks(tree, changes.CustomApis, renderedUnlinks);
+
+        console.Write(tree);
+        if (oldTree is not null)
+        {
+            console.Write(oldTree);
+        }
+        if (changes.Solution is { } solution)
+        {
+            RenderMembershipHeading(solution.UniqueName);
+            RenderProviderMembership(solution.Providers);
+            if (!solution.HasChanges)
+            {
+                console.MarkupLine(UpToDate("All components are already in the solution"));
+            }
+            if (solution.AddAssembly)
+            {
+                console.MarkupLine($"Assembly {Markup.Escape(changes.Desired.Identity)} {Tag(Add)}");
+            }
+            foreach (var step in solution.Steps)
+            {
+                console.MarkupLine($"Step {Markup.Escape(step.Step.Name)} {Tag(Add)}");
+            }
+        }
+        RenderProviders([changes.Desired], changes.Providers);
+        if (changes.DestructiveCount > 0)
+        {
+            console.WriteLine();
+            console.MarkupLine($"[bold red]Destructive operations: {changes.DestructiveCount}[/]");
+        }
+    }
+
+    internal void RenderPackage(PackageDeploymentChanges changes)
+    {
+        ArgumentNullException.ThrowIfNull(changes);
+        var tree = new Tree(Label($"{Emoji.Known.Package} {Markup.Escape(changes.DataverseName)}", Action(changes.Existing?.Id, changes.UpdateContent)));
+        var renderedUnlinks = new HashSet<Guid>();
+        foreach (var assembly in changes.Assemblies)
+        {
+            var node = tree.AddNode($"{Emoji.Known.PuzzlePiece} {Markup.Escape(assembly.Desired.Identity)}");
+            AddRegistrations(node, assembly.Desired, assembly.Registrations, changes.CustomApis, renderedUnlinks);
+        }
+
+        AddCustomApiUnlinks(tree, changes.CustomApis, renderedUnlinks);
+        foreach (var removed in changes.RemovedAssemblies)
+        {
+            var node = tree.AddNode(Label($"{Emoji.Known.PuzzlePiece} {Markup.Escape(removed.Assembly.Identity)}", Delete));
+            var empty = new LocalAssembly { Name = removed.Assembly.Name, Version = removed.Assembly.Version, Content = string.Empty, ContentHash = string.Empty };
+            AddRegistrations(node, empty, removed.Registrations, changes.CustomApis, renderedUnlinks);
+        }
+
+        console.Write(tree);
+        if (changes.Solution is { } solution)
+        {
+            RenderMembershipHeading(solution.UniqueName);
+            RenderProviderMembership(solution.Providers);
+            if (!solution.HasChanges)
+            {
+                console.MarkupLine(UpToDate("All components are already in the solution"));
+            }
+            if (solution.AddPackage)
+            {
+                console.MarkupLine($"Package {Markup.Escape(changes.DataverseName)} {Tag(Add)}");
+            }
+            foreach (var step in solution.Steps)
+            {
+                console.MarkupLine($"Step {Markup.Escape(step.Step.Name)} {Tag(Add)}");
+            }
+        }
+        RenderProviders(changes.Desired.Assemblies, changes.Providers);
+        var destructiveCount = changes.DestructiveCount;
+        if (destructiveCount > 0)
+        {
+            console.WriteLine();
+            console.MarkupLine($"[bold red]Destructive operations: {destructiveCount}[/]");
+        }
+    }
+
+    private void RenderMembershipHeading(string solutionName)
+    {
+        console.WriteLine();
+        console.MarkupLine($"[bold]Solution membership: {Markup.Escape(solutionName)}[/]");
+    }
+
+    private void RenderProviderMembership(ProviderSolutionChanges? changes)
+    {
+        if (changes is null)
+        {
+            return;
+        }
+        foreach (var addition in changes.Additions)
+        {
+            console.MarkupLine($"Data provider {Markup.Escape(addition.DataSourceLogicalName)} {Tag(Add)}");
+        }
+    }
+
+    private void RenderProviders(IReadOnlyList<LocalAssembly> desired, IReadOnlyList<DataProviderChange> changes)
+    {
+        var declarations = DataProviderRegistrationGrouper.Group(desired.SelectMany(assembly => assembly.PluginTypes).ToList());
+        if (declarations.Count == 0 && changes.Count == 0)
+        {
+            return;
+        }
+
+        var tree = new Tree("Data providers");
+        foreach (var provider in declarations)
+        {
+            var change = changes.SingleOrDefault(item => item.Desired?.DataSourceLogicalName == provider.DataSourceLogicalName);
+            var action = change is null ? Unchanged : Action(change.Existing?.Id, true);
+            var node = tree.AddNode(Label($"{Markup.Escape(provider.ProviderName)} ({Markup.Escape(provider.DataSourceLogicalName)})", action));
+            if (change is not null)
+            {
+                AddHandlerChanges(node, change);
+            }
+        }
+
+        foreach (var change in changes.Where(change => change.Desired is null))
+        {
+            var node = tree.AddNode($"{Markup.Escape(change.Name)} {Tag(Update)}");
+            AddHandlerChanges(node, change);
+        }
+
+        console.WriteLine();
+        console.Write(tree);
+
+        static void AddHandlerChanges(IHasTreeNodes parent, DataProviderChange change)
+        {
+            foreach (var (operation, handler) in change.Handlers)
+            {
+                parent.AddNode(handler is null
+                    ? $"{operation} {Tag(Clear)}"
+                    : $"{operation} -> {Markup.Escape(handler.AssemblyName)} / {Markup.Escape(handler.TypeName)} {Tag(Set)}");
+            }
+        }
+    }
+
+    private static void AddCustomApiUnlinks(IHasTreeNodes parent, IReadOnlyList<CustomApiChange> changes, HashSet<Guid> rendered)
+    {
+        foreach (var change in changes.Where(api => api.Handler is null && !rendered.Contains(api.Id)))
+        {
+            parent.AddNode($"Custom API {Markup.Escape(change.Name)} {Tag(Unlink)}");
+        }
+    }
+
+    // Unlinks belong to the plugin type the API is currently linked to, whether that type stays or is deleted.
+    private static void AddCustomApiUnlinks(IHasTreeNodes typeNode, Guid? typeId, IReadOnlyList<CustomApiChange> changes, ISet<Guid> rendered)
+    {
+        if (typeId is null)
+        {
+            return;
+        }
+
+        foreach (var change in changes.Where(api => api.Handler is null && api.PreviousHandlerId == typeId))
+        {
+            typeNode.AddNode($"Custom API {Markup.Escape(change.Name)} {Tag(Unlink)}");
+            rendered.Add(change.Id);
+        }
+    }
+
+    private static void AddCustomApi(IHasTreeNodes typeNode, LocalAssembly assembly, LocalPluginType type, IReadOnlyList<CustomApiChange> changes)
+    {
+        if (type.CustomApi.Length == 0)
+        {
+            return;
+        }
+
+        var handler = new PluginTypeReference(assembly.Name, type.TypeName);
+        var change = changes.SingleOrDefault(api => api.Handler == handler);
+        var action = Unchanged;
+        if (change is not null)
+        {
+            action = change.PreviousHandlerId is null ? Link : Update;
+        }
+
+        typeNode.AddNode(Label($"Custom API {Markup.Escape(type.CustomApi)}", action));
+    }
+
+    private static void AddRegistrations(IHasTreeNodes parent, LocalAssembly desired, RegistrationChanges registrations,
+        IReadOnlyList<CustomApiChange> customApis, ISet<Guid> renderedUnlinks, IHasTreeNodes? deletedTypesParent = null)
+    {
+        var renderedDeletes = new HashSet<Guid>();
+        foreach (var type in desired.PluginTypes)
+        {
+            var typeNode = parent.AddNode(Label(Markup.Escape(type.TypeName), registrations.TypesToCreate.Contains(type) ? Create : Unchanged));
+            AddCustomApi(typeNode, desired, type, customApis);
+            AddCustomApiUnlinks(typeNode, registrations.ExistingTypeIds.TryGetValue(type.TypeName, out var retainedTypeId) ? retainedTypeId : null,
+                customApis, renderedUnlinks);
+            foreach (var step in type.Steps)
+            {
+                var write = registrations.StepsToWrite.SingleOrDefault(item => item.TypeName == type.TypeName && item.Desired == step);
+                var action = write is null ? Unchanged : Action(write.ExistingId, true);
+                var stepNode = typeNode.AddNode(Label(Markup.Escape(step.Name), action));
+                foreach (var image in step.Images)
+                {
+                    var imageWrite = registrations.ImagesToWrite.SingleOrDefault(item => item.TypeName == type.TypeName && item.Step == step && item.Desired == image);
+                    var imageAction = imageWrite is null ? Unchanged : Action(imageWrite.ExistingId, true);
+                    stepNode.AddNode(Label(Markup.Escape(image.Name), imageAction));
+                }
+
+                if (registrations.ExistingStepIds.TryGetValue(new PluginStepReference(type.TypeName, step), out var stepId))
+                {
+                    foreach (var image in registrations.ImagesToDelete.Where(image => registrations.DeletedImageStepIds.GetValueOrDefault(image.Id) == stepId))
+                    {
+                        stepNode.AddNode($"Step image {Markup.Escape(image.Name)} {Tag(Delete)}");
+                        renderedDeletes.Add(image.Id);
+                    }
+                }
+            }
+
+            foreach (var step in registrations.StepsToDelete.Where(step => registrations.DeletedStepTypeNames.GetValueOrDefault(step.Id) == type.TypeName))
+            {
+                typeNode.AddNode($"Step {Markup.Escape(step.Name)} {Tag(Delete)}");
+                renderedDeletes.Add(step.Id);
+            }
+        }
+
+        foreach (var type in registrations.TypesToDelete)
+        {
+            var deletedNode = (deletedTypesParent ?? parent).AddNode($"Plugin type {Markup.Escape(type.TypeName)} {Tag(Delete)}");
+            AddCustomApiUnlinks(deletedNode, type.Id, customApis, renderedUnlinks);
+            foreach (var step in registrations.StepsToDelete.Where(step => registrations.DeletedStepTypeNames.GetValueOrDefault(step.Id) == type.TypeName))
+            {
+                deletedNode.AddNode($"Step {Markup.Escape(step.Name)} {Tag(Delete)}");
+                renderedDeletes.Add(step.Id);
+            }
+        }
+
+        foreach (var image in registrations.ImagesToDelete.Where(image => !renderedDeletes.Contains(image.Id)))
+        {
+            parent.AddNode($"Step image {Markup.Escape(image.Name)} {Tag(Delete)}");
+        }
+
+        foreach (var step in registrations.StepsToDelete.Where(step => !renderedDeletes.Contains(step.Id)))
+        {
+            parent.AddNode($"Step {Markup.Escape(step.Name)} {Tag(Delete)}");
+        }
+    }
+
+    private static string Action(Guid? existingId, bool update)
+    {
+        if (existingId is null)
+        {
+            return Create;
+        }
+
+        return update ? Update : Unchanged;
+    }
+}

@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Exceptions;
-using dgt.power.plugin.Models;
 using dgt.registration;
 using Digitall.Plugins.Registration;
 using Microsoft.Xrm.Sdk;
@@ -160,14 +159,6 @@ public class AssemblyReflectionReaderTests
         var result = reader.BuildPluginType(typeof(ExplicitOrderPlugin));
 
         await Assert.That(result.Steps[0].ExecutionOrder).IsEqualTo(25);
-    }
-
-    [Test]
-    [Arguments("invalid", "clientId")]
-    [Arguments("invalid", "TenantId")]
-    public async Task ValidateGuidAttribute_InvalidValue_Throws(string value, string attributeName)
-    {
-        await Assert.That(() => AssemblyReflectionReader.ValidateGuidAttribute(value, attributeName)).ThrowsExactly<AssemblyException>();
     }
 
     [Test]

@@ -2,13 +2,14 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 
-using dgt.power.plugin.Exceptions;
 
 namespace dgt.power.plugin.Repositories;
 
 /// <summary>
 /// Thin access to solution component registration for plugin packages, assemblies, and steps.
 /// </summary>
+// Public repository contract; the deployment core uses the sealed implementations directly.
+// ReSharper disable UnusedMemberInSuper.Global
 public interface ISolutionComponentRepository
 {
     /// <summary>
@@ -20,7 +21,7 @@ public interface ISolutionComponentRepository
     /// <summary>
     /// Lists component IDs of the specified type already present in a solution.
     /// </summary>
-    /// <exception cref="MissingSolutionException">The requested solution does not exist.</exception>
+    /// <exception cref="dgt.power.plugin.Exceptions.MissingSolutionException">The requested solution does not exist.</exception>
     Task<IReadOnlySet<Guid>> ListComponentIdsAsync(string solutionUniqueName, int componentType, CancellationToken cancellationToken = default);
 
     /// <summary>Adds a component to a solution.</summary>

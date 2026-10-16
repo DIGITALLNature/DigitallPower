@@ -22,15 +22,4 @@ public sealed record LocalAssembly
     public LocalAssemblyKind Kind { get; init; } = LocalAssemblyKind.None;
 
     public IReadOnlyList<LocalPluginType> PluginTypes { get; init; } = [];
-
-    /// <summary>
-    /// Client ID from a ManagedIdentityRegistrationAttribute on the assembly, if present.
-    /// </summary>
-    public string? ManagedIdentityClientId { get; init; }
-
-    /// <summary>
-    /// Optional tenant ID from a ManagedIdentityRegistrationAttribute; defaults to the
-    /// environment's tenant when not provided.
-    /// </summary>
-    public string? ManagedIdentityTenantId { get; init; }
 }

@@ -7,6 +7,10 @@ Current requirements are maintained in OpenSpec; implementation details remain w
 - [Plan before execution](plan-before-execution.md): share a typed plan between preview and mutation.
 - [Versioned code-generation configuration](versioned-codegeneration-config.md): preserve V1 while routing V2 to typed targets.
 - [Telemetry data protection](telemetry-data-protection.md): balance diagnostic utility with best-effort redaction.
+- [Plugin reconciliation core](plugin-reconciliation-core.md): snapshot, change set, apply for plugin push; supersedes plan-before-execution there.
+- [Custom API association ownership](custom-api-association-ownership.md): push reconciles handler links, never API records.
+- [Data provider ownership](data-provider-ownership.md): declarations own handler slots, not provider records or tables.
+- [Environment-owned plugin identities](environment-owned-plugin-identities.md): managed identities stay outside push.
 - [Plugin module namespace layout](plugin-module-namespace-layout.md): shared code at top level, feature internals grouped per feature.
 - [Typed connection storage](typed-connection-storage.md): version-stable home directory, separate metadata, secrets, and token caches.
 - [Azure DevOps Workload Identity Federation](azure-devops-workload-identity-federation.md): `AzurePipelinesCredential` with a self-constructed OIDC request URI.

@@ -35,8 +35,7 @@ public static class LocalPluginStepValidator
             throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: unknown execution mode '{step.Mode}'.");
         }
 
-        if (step.Stage is not (SdkMessageProcessingStep.Options.Stage.PreValidation or SdkMessageProcessingStep.Options.Stage.PreOperation or
-            SdkMessageProcessingStep.Options.Stage.PostOperation))
+        if (!IsDeclarativeStage(step.Stage))
         {
             throw new InvalidPluginStepException($"Step '{step.Name}' on '{typeName}' is invalid: unsupported stage '{step.Stage}'.");
         }
@@ -71,6 +70,9 @@ public static class LocalPluginStepValidator
                                                  "available for a 'Delete' message (the record no longer exists).");
         }
     }
+
+    internal static bool IsDeclarativeStage(int stage) =>
+        stage is SdkMessageProcessingStep.Options.Stage.PreValidation or SdkMessageProcessingStep.Options.Stage.PreOperation or SdkMessageProcessingStep.Options.Stage.PostOperation;
 
     private static bool IsPreOperationStage(int stage) => stage == SdkMessageProcessingStep.Options.Stage.PreValidation || stage == SdkMessageProcessingStep.Options.Stage.PreOperation;
 }

@@ -14,8 +14,8 @@ namespace dgt.power.plugin.Commands;
 public class PluginPushSettings : PluginSettings
 {
     [CommandArgument(0, "<Target>")]
-    [Description("Full path to a plugin assembly (.dll), a plugin package (.nupkg), or a directory containing multiple such files")]
-    public required string Target { get; set; }
+    [Description("Path to a plugin assembly (.dll), a plugin package (.nupkg), a directory (top level only) or a glob pattern such as 'bin/release/**/*.nupkg'")]
+    public required string Target { get; init; }
 
     [CommandOption("--solution")]
     [Description("Add new/updated components to solution; default: none")]

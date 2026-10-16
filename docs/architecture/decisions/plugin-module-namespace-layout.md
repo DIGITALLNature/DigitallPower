@@ -9,7 +9,7 @@
 Keep entry points and shared code at the module top level and group feature-internal code per feature:
 
 - Shared: `Commands`, `Repositories`, `Models` (records and enums used across features), `Exceptions`, `Base`.
-- Push internals: `Deployment.*` (`Local`, `Planning`, `Output`, and execution or reconciliation code).
+- Push internals: `Deployment.*` (`Local`, `Batch`, `Reconciliation`, `Output`).
 - Step state internals: `StepManagement`.
 
 ## Rationale

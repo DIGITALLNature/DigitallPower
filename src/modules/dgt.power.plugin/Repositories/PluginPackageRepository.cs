@@ -6,8 +6,8 @@ using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.Repositories;
 
@@ -21,21 +21,33 @@ public sealed class PluginPackageRepository(IOrganizationServiceAsync2 service) 
         var query = new QueryExpression(PluginPackage.EntityLogicalName)
         {
             NoLock = true,
-            ColumnSet = new ColumnSet(PluginPackage.LogicalNames.PluginPackageId, PluginPackage.LogicalNames.Package, PluginPackage.LogicalNames.Managedidentityid),
+            ColumnSet = new ColumnSet(PluginPackage.LogicalNames.PluginPackageId, PluginPackage.LogicalNames.Package,
+                PluginPackage.LogicalNames.Managedidentityid, PluginPackage.LogicalNames.Version),
             Criteria = new FilterExpression { Conditions = { new ConditionExpression(PluginPackage.LogicalNames.Name, ConditionOperator.Equal, name) } },
             Orders = { new OrderExpression(PluginPackage.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        var entity = result.Entities.FirstOrDefault();
-        if (entity is null)
+        var matches = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        if (matches.Count == 0)
         {
             return null;
         }
 
+        if (matches.Count > 1)
+        {
+            throw new InvalidOperationException($"Multiple plugin packages are named '{name}'; package deployment is ambiguous.");
+        }
+
+        var entity = matches[0];
         var package = entity.ToEntity<PluginPackage>();
+        var version = package.Version;
+        if (string.IsNullOrWhiteSpace(version))
+        {
+            throw new InvalidOperationException($"Plugin package '{name}' does not have a version in Dataverse.");
+        }
+
         var packageHash = package.Package is null ? null : await DownloadPackageHashAsync(entity.Id, cancellationToken);
-        return new RemotePackage(entity.Id, packageHash, package.Managedidentityid?.Id);
+        return new RemotePackage(entity.Id, packageHash, version, package.Managedidentityid?.Id);
     }
 
     public async Task<Guid> CreateAsync(string name, string version, string content, CancellationToken cancellationToken = default)

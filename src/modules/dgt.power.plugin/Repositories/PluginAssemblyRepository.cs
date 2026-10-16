@@ -5,8 +5,8 @@ using System.Security.Cryptography;
 using dgt.power.dataverse;
 using dgt.power.plugin.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.Repositories;
 
@@ -66,8 +66,8 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
             Orders = { new OrderExpression(PluginAssembly.LogicalNames.CreatedOn, OrderType.Descending) }
         };
 
-        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
-        return result.Entities.Select(entity => entity.ToEntity<PluginAssembly>()).Select(entity =>
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(entity => entity.ToEntity<PluginAssembly>()).Select(entity =>
         {
             var contentHash = entity.PackageId is not null || entity.Content is null ? null : Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(entity.Content)));
             return new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId?.Id, contentHash, entity.ManagedIdentityId?.Id);
@@ -78,6 +78,23 @@ public sealed class PluginAssemblyRepository(IOrganizationServiceAsync2 service)
     {
         var assemblies = await ListByNameCoreAsync(name, cancellationToken);
         return assemblies.Where(assembly => assembly.PackageId is null).ToList();
+    }
+
+    internal async Task<IReadOnlyList<RemoteAssembly>> ListByPackageAsync(Guid packageId, CancellationToken cancellationToken)
+    {
+        var query = new QueryExpression(PluginAssembly.EntityLogicalName)
+        {
+            ColumnSet = new ColumnSet(PluginAssembly.LogicalNames.Name, PluginAssembly.LogicalNames.Version,
+                PluginAssembly.LogicalNames.PackageId, PluginAssembly.LogicalNames.ManagedIdentityId),
+            Criteria = new FilterExpression
+            {
+                Conditions = { new ConditionExpression(PluginAssembly.LogicalNames.PackageId, ConditionOperator.Equal, packageId) }
+            }
+        };
+        var result = await DataverseQueryReader.ReadAllAsync(service, query, cancellationToken);
+        return result.Select(entity => entity.ToEntity<PluginAssembly>())
+            .Select(entity => new RemoteAssembly(entity.Id, entity.Name!, Version.Parse(entity.Version!), entity.PackageId!.Id,
+                ManagedIdentityId: entity.ManagedIdentityId?.Id)).ToList();
     }
 
     public async Task<IReadOnlyList<RemoteAssembly>> ListOutdatedAsync(string name, Guid excludeId, CancellationToken cancellationToken = default)

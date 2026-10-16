@@ -4,9 +4,12 @@
 using dgt.power.dataverse;
 using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.Repositories;
+using dgt.power.plugin.tests.Extensions;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Query;
 
 namespace dgt.power.plugin.tests.Repositories;
 
@@ -44,6 +47,29 @@ public class SolutionComponentRepositoryTests
     }
 
     [Test]
+    public async Task GetComponentTypeAsync_DuplicateDefinitions_RejectsAmbiguity()
+    {
+        var service = CreateService();
+        service.Create(new SolutionComponentDefinition { PrimaryEntityName = PluginPackage.EntityLogicalName, SolutionComponentType = 10119 });
+        service.Create(new SolutionComponentDefinition { PrimaryEntityName = PluginPackage.EntityLogicalName, SolutionComponentType = 10120 });
+
+        await Assert.That(async () => await new SolutionComponentRepository(service).GetComponentTypeAsync(PluginPackage.EntityLogicalName))
+            .ThrowsExactly<InvalidOperationException>();
+    }
+
+    [Test]
+    public async Task GetComponentTypeAsync_DefinitionsAcrossPages_RejectsAmbiguity()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagedQueryExecutor();
+        service.AddRequests(executor);
+
+        await Assert.That(async () => await new SolutionComponentRepository(service).GetComponentTypeAsync(PluginPackage.EntityLogicalName))
+            .ThrowsExactly<InvalidOperationException>();
+        await Assert.That(executor.Requests).IsEquivalentTo([(1, string.Null, 5000), (2, "next-page", 5000)]);
+    }
+
+    [Test]
     public async Task AddToSolutionAsync_DoesNotThrow()
     {
         var service = CreateService();
@@ -74,6 +100,47 @@ public class SolutionComponentRepositoryTests
         var repository = new SolutionComponentRepository(CreateService());
 
         await Assert.That(async () => await repository.ListComponentIdsAsync("MissingSolution", IPluginAssemblyRepository.ComponentType)).ThrowsExactly<MissingSolutionException>();
+    }
+
+    [Test]
+    public async Task ListComponentIdsAsync_MultiplePages_CollectsEveryMembership()
+    {
+        var service = new FakeOrganizationServiceAsync();
+        var solutionId = Guid.NewGuid();
+        var firstId = Guid.NewGuid();
+        var secondId = Guid.NewGuid();
+        var pages = new List<(int Page, string? Cookie)>();
+        service.AddRequests(new ProviderRequestFake(typeof(RetrieveMultipleRequest), request =>
+        {
+            var query = (QueryExpression)((RetrieveMultipleRequest)request).Query;
+            if (query.EntityName == Solution.EntityLogicalName)
+            {
+                return new RetrieveMultipleResponse
+                {
+                    Results = { ["EntityCollection"] = new EntityCollection([new Solution(solutionId)]) }
+                };
+            }
+
+            pages.Add((query.PageInfo.PageNumber, query.PageInfo.PagingCookie));
+            var componentId = query.PageInfo.PageNumber == 1 ? firstId : secondId;
+            return new RetrieveMultipleResponse
+            {
+                Results =
+                {
+                    ["EntityCollection"] = new EntityCollection(
+                        [CreateSolutionComponent(solutionId, componentId, IPluginAssemblyRepository.ComponentType)])
+                    {
+                        MoreRecords = query.PageInfo.PageNumber == 1,
+                        PagingCookie = "next-page"
+                    }
+                }
+            };
+        }));
+
+        var result = await new SolutionComponentRepository(service).ListComponentIdsAsync("target", IPluginAssemblyRepository.ComponentType);
+
+        await Assert.That(result).IsEquivalentTo([firstId, secondId]);
+        await Assert.That(pages).IsEquivalentTo([(1, string.Null), (2, "next-page")]);
     }
 
     private static SolutionComponent CreateSolutionComponent(Guid solutionId, Guid componentId, int componentType)

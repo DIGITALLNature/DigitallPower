@@ -6,6 +6,8 @@ Deployment commands need a trustworthy preview, including dry-run, without makin
 
 ## Decision
 
+Plugin push no longer follows this record; see [Plugin reconciliation core](plugin-reconciliation-core.md).
+
 Build one typed deployment plan and use that same plan for rendering and execution. Executors apply planned actions; they do not repeat reconciliation decisions.
 
 ## Rationale
