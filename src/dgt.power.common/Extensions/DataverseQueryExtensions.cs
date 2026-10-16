@@ -15,7 +15,7 @@ public static class DataverseQueryExtensions
         /// Retrieves every page of a query, following Dataverse paging cookies as needed.
         /// This method replaces the query's existing <see cref="QueryExpression.PageInfo"/> and owns paging.
         /// </summary>
-        public async Task<IReadOnlyList<Entity>> RetrieveAllAsync(
+        public Task<IReadOnlyList<Entity>> RetrieveAllAsync(
             QueryExpression query,
             int pageSize = 5000,
             CancellationToken cancellationToken = default)
@@ -24,6 +24,14 @@ public static class DataverseQueryExtensions
             ArgumentNullException.ThrowIfNull(query);
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(pageSize);
 
+            return service.RetrieveAllCoreAsync(query, pageSize, cancellationToken);
+        }
+
+        private async Task<IReadOnlyList<Entity>> RetrieveAllCoreAsync(
+            QueryExpression query,
+            int pageSize,
+            CancellationToken cancellationToken)
+        {
             query.PageInfo = new PagingInfo { Count = pageSize, PageNumber = 1 };
 
             var entities = new List<Entity>();
