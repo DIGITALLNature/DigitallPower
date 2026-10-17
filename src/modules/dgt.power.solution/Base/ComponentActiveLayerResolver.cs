@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Query;
@@ -18,7 +19,6 @@ namespace dgt.power.solution.Base;
 public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 connection)
 {
     private const string ActiveLayerName = "Active";
-    private const int PageSize = 5000;
     private const int InClauseBatchSize = 500;
 
     public Task<IReadOnlyDictionary<(int ComponentType, Guid ObjectId), bool>> ResolveAsync(
@@ -73,20 +73,8 @@ public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 conn
                     ConditionOperator.In,
                     componentIdBatch.Select(static componentId => (object)componentId).ToArray());
                 query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
-                query.PageInfo = new PagingInfo { Count = PageSize, PageNumber = 1 };
-
-                bool moreRecords;
-                do
-                {
-                    var page = await connection.RetrieveMultipleAsync(query, cancellationToken);
-                    layers.AddRange(page.Entities.Select(static entity => entity.ToEntity<MsdynComponentlayer>()));
-                    moreRecords = page.MoreRecords;
-                    if (moreRecords)
-                    {
-                        query.PageInfo.PageNumber++;
-                        query.PageInfo.PagingCookie = page.PagingCookie;
-                    }
-                } while (moreRecords);
+                var results = await connection.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+                layers.AddRange(results.Select(static entity => entity.ToEntity<MsdynComponentlayer>()));
             }
 
             var topLayerByComponentId = layers

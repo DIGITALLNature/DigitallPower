@@ -9,7 +9,7 @@ using Microsoft.Xrm.Sdk;
 using Spectre.Console;
 using Spectre.Console.Testing;
 
-namespace dgt.power.cli.tests;
+namespace dgt.power.common.tests.Extensions;
 
 public class ExceptionExtensionsTests
 {
