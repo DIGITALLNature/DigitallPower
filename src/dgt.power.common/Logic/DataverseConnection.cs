@@ -54,7 +54,7 @@ public sealed partial class DataverseConnection(
             var url = ExtractUrlFromConnectionString(invocationContext.ConnectionString);
             return await ConnectUsingAsync(
                 new DataverseConnectionStringConnector(invocationContext.ConnectionString, console),
-                "ad-hoc",
+                "ConnectionString",
                 url,
                 "ConnectionString");
         }
