@@ -34,18 +34,17 @@ public class DataverseQueryExtensionsTests
     [Test]
     public async Task RetrieveAllAsync_CancelledBeforeFirstPage_DoesNotQuery()
     {
-        using (var cancellation = new CancellationTokenSource())
-        {
-            var service = new FakeOrganizationServiceAsync();
-            var executor = new PagingExecutor(2);
-            service.AddRequests(executor);
-            await cancellation.CancelAsync();
+        using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagingExecutor(2);
+        service.AddRequests(executor);
+        await cancellation.CancelAsync();
 
-            await Assert.That(async () =>
-                    await service.RetrieveAllAsync(new QueryExpression("account"), cancellationToken: cancellation.Token))
-                .Throws<OperationCanceledException>();
-            await Assert.That(executor.Requests).Count().IsEqualTo(0);
-        }
+        await Assert.That(async () =>
+                await service.RetrieveAllAsync(new QueryExpression("account"), cancellationToken: token))
+            .Throws<OperationCanceledException>();
+        await Assert.That(executor.Requests).Count().IsEqualTo(0);
     }
 
     [Test]
@@ -63,23 +62,22 @@ public class DataverseQueryExtensionsTests
     [Test]
     public async Task RetrieveAllAsync_CancelledBetweenPages_DoesNotQueryNextPage()
     {
-        using (var cancellation = new CancellationTokenSource())
+        using var cancellation = new CancellationTokenSource();
+        var token = cancellation.Token;
+        var service = new FakeOrganizationServiceAsync();
+        var executor = new PagingExecutor(2, page =>
         {
-            var service = new FakeOrganizationServiceAsync();
-            var executor = new PagingExecutor(2, page =>
+            if (page == 1)
             {
-                if (page == 1)
-                {
-                    cancellation.Cancel();
-                }
-            });
-            service.AddRequests(executor);
+                cancellation.Cancel();
+            }
+        });
+        service.AddRequests(executor);
 
-            await Assert.That(async () =>
-                    await service.RetrieveAllAsync(new QueryExpression("account"), cancellationToken: cancellation.Token))
-                .Throws<OperationCanceledException>();
-            await Assert.That(executor.Requests).Count().IsEqualTo(1);
-        }
+        await Assert.That(async () =>
+                await service.RetrieveAllAsync(new QueryExpression("account"), cancellationToken: token))
+            .Throws<OperationCanceledException>();
+        await Assert.That(executor.Requests).Count().IsEqualTo(1);
     }
 
     private sealed class PagingExecutor(int pageCount, Action<int>? onPageRetrieved = null) : IOrganizationRequestFake
