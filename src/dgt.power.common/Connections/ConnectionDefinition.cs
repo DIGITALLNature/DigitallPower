@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Text.Json.Serialization;
+
 namespace dgt.power.common.Connections;
 
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
@@ -16,13 +17,9 @@ public abstract record ConnectionDefinition
     public required string Url { get; init; }
 #pragma warning restore CA1056, S3996
 
-    public string GetDisplayName() => this switch
+    public string GetDisplayName()
     {
-        InteractiveConnection => "interactive",
-        DeviceCodeConnection => "deviceCode",
-        ClientSecretConnection => "clientSecret",
-        ClientCertificateConnection => "clientCertificate",
-        AzureDevOpsFederatedConnection => "azureDevOpsFederated",
-        _ => GetType().Name.ToLowerInvariant()
-    };
+        var name = GetType().Name;
+        return name.EndsWith("Connection", StringComparison.OrdinalIgnoreCase) ? name[..^"Connection".Length] : name;
+    }
 }

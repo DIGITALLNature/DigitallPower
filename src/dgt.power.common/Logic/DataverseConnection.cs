@@ -56,7 +56,7 @@ public sealed partial class DataverseConnection(
                 new DataverseConnectionStringConnector(invocationContext.ConnectionString, console),
                 "ad-hoc",
                 url,
-                "connectionString");
+                "ConnectionString");
         }
 
         var (name, definition) = ResolveConnection();
