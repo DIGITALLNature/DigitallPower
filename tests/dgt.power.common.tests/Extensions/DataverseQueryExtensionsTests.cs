@@ -8,7 +8,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 
-namespace dgt.power.plugin.tests.Extensions;
+namespace dgt.power.common.tests.Extensions;
 
 public class DataverseQueryExtensionsTests
 {
