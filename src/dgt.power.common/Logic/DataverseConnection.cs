@@ -160,14 +160,14 @@ public sealed partial class DataverseConnection(
         string connectionType)
     {
         return await console.Status().StartAsync(
-            $"Connecting to {Markup.Escape(url)}...",
+            $"Connecting to {Markup.Escape(url)} ({Markup.Escape(connectionType)})...",
             async ctx =>
             {
                 try
                 {
                     var service = await connector.CreateOrganizationServiceProxyAsync();
                     await CheckWhoAmIAsync(service);
-                    ctx.Status = $"[green]{Emoji.Known.CheckMark}[/] Connected to {Markup.Escape(url)} ({Markup.Escape(connectionType)})";
+                    ctx.Status = $"[green]{Emoji.Known.CheckMark}[/] Connected to {Markup.Escape(url)}";
                     return service;
                 }
 #pragma warning disable CA1031 // Wrap connector failures with the selected connection context.
