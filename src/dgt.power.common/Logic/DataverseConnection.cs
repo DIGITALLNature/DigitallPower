@@ -56,7 +56,7 @@ public sealed partial class DataverseConnection(
                 new DataverseConnectionStringConnector(invocationContext.ConnectionString, console),
                 "ad-hoc",
                 url,
-                "connection string");
+                "connectionString");
         }
 
         var (name, definition) = ResolveConnection();
@@ -69,7 +69,7 @@ public sealed partial class DataverseConnection(
             new CredentialConnector(definition.Url, credential, invocationContext.NonInteractive),
             name,
             definition.Url,
-            GetConnectionTypeName(definition));
+            definition.GetDisplayName());
     }
 
     /// <inheritdoc />
@@ -195,9 +195,6 @@ public sealed partial class DataverseConnection(
         }
         return connectionString;
     }
-
-    private static string GetConnectionTypeName(ConnectionDefinition definition) =>
-        definition.GetType().Name;
 
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ConnectionUrlRegex();

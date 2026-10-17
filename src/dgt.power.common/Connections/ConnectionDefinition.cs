@@ -15,4 +15,14 @@ public abstract record ConnectionDefinition
 #pragma warning disable CA1056, S3996 // Serialized as the URL string used by the Dataverse connection model.
     public required string Url { get; init; }
 #pragma warning restore CA1056, S3996
+
+    public string GetDisplayName() => this switch
+    {
+        InteractiveConnection => "interactive",
+        DeviceCodeConnection => "deviceCode",
+        ClientSecretConnection => "clientSecret",
+        ClientCertificateConnection => "clientCertificate",
+        AzureDevOpsFederatedConnection => "azureDevOpsFederated",
+        _ => GetType().Name.ToLowerInvariant()
+    };
 }
