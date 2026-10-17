@@ -31,7 +31,7 @@ public class ListConnectionCommandTests : ConnectionTestsBase<ListConnectionComm
         await Assert.That(result).IsEqualTo(0);
         await Assert.That(TestConsole.Output).Contains("Dev");
         await Assert.That(TestConsole.Output).Contains("Test");
-        await Assert.That(TestConsole.Output).Contains("interactive");
+        await Assert.That(TestConsole.Output).Contains("Interactive");
     }
 
     private static CommandContext CreateContext() =>
