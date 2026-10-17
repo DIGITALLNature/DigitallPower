@@ -51,10 +51,12 @@ public sealed partial class DataverseConnection(
     {
         if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {
-            WriteAdHocConnectionNotice(invocationContext.ConnectionString);
+            var url = ExtractUrlFromConnectionString(invocationContext.ConnectionString);
             return await ConnectUsingAsync(
                 new DataverseConnectionStringConnector(invocationContext.ConnectionString, console),
-                "ad-hoc");
+                "ad-hoc",
+                url,
+                "connection string");
         }
 
         var (name, definition) = ResolveConnection();
@@ -65,7 +67,9 @@ public sealed partial class DataverseConnection(
             invocationContext.AllowUnencryptedStorage);
         return await ConnectUsingAsync(
             new CredentialConnector(definition.Url, credential, invocationContext.NonInteractive),
-            name);
+            name,
+            definition.Url,
+            GetConnectionTypeName(definition));
     }
 
     /// <inheritdoc />
@@ -149,35 +153,60 @@ public sealed partial class DataverseConnection(
         return new ResolvedConnection(connectionStore.ResolveName(name), definition);
     }
 
-    private async Task<IOrganizationServiceAsync2>     ConnectUsingAsync(IConnector connector, string name)
+    private async Task<IOrganizationServiceAsync2> ConnectUsingAsync(
+        IConnector connector,
+        string name,
+        string url,
+        string connectionType)
     {
-        try
-        {
-            var service = await connector.CreateOrganizationServiceProxyAsync();
-            await CheckWhoAmIAsync(service);
-            return service;
-        }
+        return await console.Status().StartAsync(
+            $"Connecting to {Markup.Escape(url)}...",
+            async ctx =>
+            {
+                try
+                {
+                    var service = await connector.CreateOrganizationServiceProxyAsync();
+                    await CheckWhoAmIAsync(service);
+                    ctx.Status = $"[green]✓[/] Connected to {Markup.Escape(url)} ({Markup.Escape(connectionType)})";
+                    return service;
+                }
 #pragma warning disable CA1031 // Wrap connector failures with the selected connection context.
-        catch (Exception exception)
-        {
-            throw new FailedConnectionException(name, exception);
-        }
+                catch (Exception exception)
+                {
+                    ctx.Status = $"[red]✗[/] Connection to {Markup.Escape(url)} failed: {Markup.Escape(exception.Message)}";
+                    throw new FailedConnectionException(name, exception);
+                }
 #pragma warning restore CA1031
+            });
     }
 
     private async Task CheckWhoAmIAsync(IOrganizationServiceAsync2 service)
     {
-        var userId = ((WhoAmIResponse)await service.ExecuteAsync(new WhoAmIRequest())).UserId;
-        console.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
+        // WhoAmI serves as connection health check - no output needed
+        await service.ExecuteAsync(new WhoAmIRequest());
     }
 
-    private void WriteAdHocConnectionNotice(string connectionString)
+    private string ExtractUrlFromConnectionString(string connectionString)
     {
         var match = ConnectionUrlRegex().Match(connectionString);
-        var url = match.Success && Uri.TryCreate(match.Groups[1].Value.Trim(), UriKind.Absolute, out var uri)
-            ? $" for {uri.GetLeftPart(UriPartial.Authority)}"
-            : string.Empty;
-        console.MarkupLine($"Using ad-hoc connection string (not persisted){Markup.Escape(url)}");
+        if (match.Success && Uri.TryCreate(match.Groups[1].Value.Trim(), UriKind.Absolute, out var uri))
+        {
+            return uri.GetLeftPart(UriPartial.Authority);
+        }
+        return connectionString;
+    }
+
+    private static string GetConnectionTypeName(ConnectionDefinition definition)
+    {
+        return definition switch
+        {
+            InteractiveConnection => "interactive",
+            DeviceCodeConnection => "device code",
+            ClientSecretConnection => "client secret",
+            ClientCertificateConnection => "client certificate",
+            AzureDevOpsFederatedConnection => "Azure DevOps",
+            _ => "unknown"
+        };
     }
 
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]

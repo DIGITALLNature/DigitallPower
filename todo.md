@@ -71,10 +71,11 @@ connection code (`DataverseConnectionStringConnector`, `DataverseConnection`), s
   'SkipDiscovery=true'!" and "'RequireNewInstance=true'!" for every ad-hoc connection string without those
   flags. They are leftovers from the legacy `CrmServiceClient`. Discovery is skipped for modern `Url=`
   strings, and dgtp creates one client per run. Remove both hints and the two regexes.
-- **Context-free connection lines:** `DataverseConnection` prints `Using ad-hoc connection string (not
-  persisted) for <url>` and a bare `WhoAmI: <guid>`. Replace them with one dimmed line that says what was
-  connected, for example `Connected to <url> as <user>`. Keep the WhoAmI request as the connection check.
-- Update tests that assert the current lines.
+- ✅ **Context-free connection lines:** `DataverseConnection` prints `Using ad-hoc connection string (not
+  persisted) for <url>` and a bare `WhoAmI: <guid>`. Replaced with Spectre Status activity showing
+  `Connecting to <url>...` → `[green]✓[/] Connected to <url> (<connection type>)` on success or
+  `[red]✗[/] Connection to <url> failed: <reason>` on failure. WhoAmI kept as health check without output.
+- ✅ Update tests that assert the current lines.
 
 ---
 

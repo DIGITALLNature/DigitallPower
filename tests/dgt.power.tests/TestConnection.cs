@@ -11,8 +11,8 @@ public class TestConnection(IOrganizationServiceAsync2 service) : IDataverseConn
 {
     public Task<IOrganizationServiceAsync2> GetServiceAsync()
     {
-        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
-        Console.WriteLine($"WhoAmI: [bold]{userId:D}[/]");
+        // WhoAmI serves as connection health check
+        service.Execute(new WhoAmIRequest());
         return Task.FromResult(service);
     }
 
