@@ -180,13 +180,13 @@ public sealed partial class DataverseConnection(
             });
     }
 
-    private async Task CheckWhoAmIAsync(IOrganizationServiceAsync2 service)
+    private static async Task CheckWhoAmIAsync(IOrganizationServiceAsync2 service)
     {
         // WhoAmI serves as connection health check - no output needed
         await service.ExecuteAsync(new WhoAmIRequest());
     }
 
-    private string ExtractUrlFromConnectionString(string connectionString)
+    private static string ExtractUrlFromConnectionString(string connectionString)
     {
         var match = ConnectionUrlRegex().Match(connectionString);
         if (match.Success && Uri.TryCreate(match.Groups[1].Value.Trim(), UriKind.Absolute, out var uri))
@@ -196,18 +196,8 @@ public sealed partial class DataverseConnection(
         return connectionString;
     }
 
-    private static string GetConnectionTypeName(ConnectionDefinition definition)
-    {
-        return definition switch
-        {
-            InteractiveConnection => "interactive",
-            DeviceCodeConnection => "device code",
-            ClientSecretConnection => "client secret",
-            ClientCertificateConnection => "client certificate",
-            AzureDevOpsFederatedConnection => "Azure DevOps",
-            _ => "unknown"
-        };
-    }
+    private static string GetConnectionTypeName(ConnectionDefinition definition) =>
+        definition.GetType().Name;
 
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ConnectionUrlRegex();
