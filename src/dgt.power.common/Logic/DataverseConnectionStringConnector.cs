@@ -2,8 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Text.RegularExpressions;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.PowerPlatform.Dataverse.Client.Utils;
 using Spectre.Console;
@@ -23,16 +21,6 @@ internal sealed partial class DataverseConnectionStringConnector : IConnector
 
     public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
     {
-        if (!SkipDiscoveryRegex().IsMatch(_connectionString))
-        {
-            _console.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'SkipDiscovery=true'![/]");
-        }
-
-        if (!RequireNewInstanceRegex().IsMatch(_connectionString))
-        {
-            _console.MarkupLine(CultureInfo.InvariantCulture, "[italic]Connection String: It's recommended to use 'RequireNewInstance=true'![/]");
-        }
-
         var serviceClient = new ServiceClient(_connectionString);
 
         return Task.FromResult(GetOrganizationService(serviceClient));
@@ -48,9 +36,4 @@ internal sealed partial class DataverseConnectionStringConnector : IConnector
 
         return serviceClient;
     }
-
-    [GeneratedRegex("SkipDiscovery=True", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-    private static partial Regex SkipDiscoveryRegex();
-    [GeneratedRegex("RequireNewInstance=True", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
-    private static partial Regex RequireNewInstanceRegex();
 }
