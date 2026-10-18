@@ -4,19 +4,16 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.PowerPlatform.Dataverse.Client.Utils;
-using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
 internal sealed class ConnectionStringConnector : IDataverseConnector
 {
     private readonly string _connectionString;
-    private readonly IAnsiConsole _console;
 
-    internal ConnectionStringConnector(string connectionString, IAnsiConsole? console = null)
+    internal ConnectionStringConnector(string connectionString)
     {
         _connectionString = connectionString;
-        _console = console ?? AnsiConsole.Console;
     }
 
     public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
