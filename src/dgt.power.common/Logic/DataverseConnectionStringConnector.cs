@@ -8,7 +8,7 @@ using Spectre.Console;
 
 namespace dgt.power.common.Logic;
 
-internal sealed class DataverseConnectionStringConnector : IConnector
+internal sealed class DataverseConnectionStringConnector : IDataverseConnector
 {
     private readonly string _connectionString;
     private readonly IAnsiConsole _console;

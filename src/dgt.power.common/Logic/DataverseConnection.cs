@@ -154,7 +154,7 @@ public sealed partial class DataverseConnection(
     }
 
     private async Task<IOrganizationServiceAsync2> ConnectUsingAsync(
-        IConnector connector,
+        IDataverseConnector connector,
         string name,
         string url,
         string connectionType)
@@ -199,7 +199,7 @@ public sealed partial class DataverseConnection(
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ConnectionUrlRegex();
 
-    private sealed class CredentialConnector(string url, TokenCredential credential, bool nonInteractive) : IConnector
+    private sealed class CredentialConnector(string url, TokenCredential credential, bool nonInteractive) : IDataverseConnector
     {
         public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
         {
