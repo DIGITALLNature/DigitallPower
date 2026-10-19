@@ -58,16 +58,11 @@ public sealed partial class DataverseConnection(
                 "Connection String");
         }
 
-        var (name, definition) = ResolveConnection();
-        var credential = credentialFactory.Create(
-            name,
-            definition,
-            invocationContext.NonInteractive,
-            invocationContext.AllowUnencryptedStorage);
+        var resolved = ResolveConnection();
         return await ConnectUsingAsync(
-            new CredentialConnector(definition.Url, credential, invocationContext.NonInteractive),
-            definition.Url,
-            definition.TypeDisplayName);
+            new CredentialConnector(credentialFactory, resolved, invocationContext),
+            resolved.Definition.Url,
+            resolved.Definition.TypeDisplayName);
     }
 
     /// <inheritdoc />
@@ -199,10 +194,19 @@ public sealed partial class DataverseConnection(
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ConnectionUrlRegex();
 
-    private sealed class CredentialConnector(string url, TokenCredential credential, bool nonInteractive) : IDataverseConnector
+    private sealed class CredentialConnector(
+        CredentialFactory credentialFactory,
+        ResolvedConnection connection,
+        ConnectionInvocationContext invocationContext) : IDataverseConnector
     {
         public Task<ServiceClient> CreateServiceClientAsync()
         {
+            var credential = credentialFactory.Create(
+                connection.Name,
+                connection.Definition,
+                invocationContext.NonInteractive,
+                invocationContext.AllowUnencryptedStorage);
+            var url = connection.Definition.Url;
             var uri = new Uri(url);
             var scope = new TokenRequestContext([GetScope(url)]);
             var service = new ServiceClient(uri, async _ => await GetTokenAsync(credential, scope));
@@ -215,9 +219,9 @@ public sealed partial class DataverseConnection(
             {
                 return (await tokenCredential.GetTokenAsync(context, CancellationToken.None)).Token;
             }
-            catch (AuthenticationRequiredException exception) when (nonInteractive)
+            catch (AuthenticationRequiredException exception) when (invocationContext.NonInteractive)
             {
-                throw new InteractiveLoginRequiredException(new Uri(url).Authority, exception);
+                throw new InteractiveLoginRequiredException(new Uri(connection.Definition.Url).Authority, exception);
             }
         }
 

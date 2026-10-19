@@ -13,6 +13,35 @@ namespace dgt.power.connection.tests;
 public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusCommand, ConnectionSettings>
 {
     [Test]
+    public async Task GetServiceAsync_MissingClientSecret_ReportsFailureAndPropagatesOriginalError()
+    {
+        const string name = "private-connection-name";
+        ConnectionStore.Upsert(name, new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant",
+            ClientId = "client"
+        });
+        TestConsole.Profile.Width = 200;
+        var invocationContext = new ConnectionInvocationContext();
+        invocationContext.Capture(new ConnectionSettings { Connection = name });
+        using var connection = new DataverseConnection(
+            ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole),
+            invocationContext,
+            TestConsole);
+
+        await Assert.That(connection.GetServiceAsync()).Throws<InvalidOperationException>()
+            .WithMessageContaining($"Client secret is missing for connection '{name}'");
+
+        await Assert.That(TestConsole.Output)
+            .Contains($"Connection to {ConnectionTestUrls.Dataverse} (Client Secret) failed");
+        await Assert.That(TestConsole.Output).DoesNotContain(name);
+        await Assert.That(TestConsole.Output).DoesNotContain("Client secret is missing");
+        await Assert.That(TestConsole.Output).DoesNotContain("Connected to");
+    }
+
+    [Test]
     [NotInParallel("SystemAccessToken")]
     public async Task CheckAuth_ReturnsFalseWhenFederatedCredentialCannotBeCreated()
     {
