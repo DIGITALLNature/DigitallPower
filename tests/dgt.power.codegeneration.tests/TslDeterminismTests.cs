@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Security.Cryptography;
@@ -77,7 +77,7 @@ public class TslDeterminismTests : CodeGenerationTestsBase
             .WithData(CreateDeterministicMainForm())
             .Build();
 
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = Path.GetFullPath(Path.Combine(args.TargetDirectory, args.Folder, Folders.Typescript));
         return await CaptureFileHashes(typescriptPath);

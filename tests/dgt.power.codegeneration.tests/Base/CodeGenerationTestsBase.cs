@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Runtime.Caching;
@@ -128,12 +128,12 @@ public class CodeGenerationContext
     ///     Reads a V1 <see cref="CodeGenerationConfig"/> from the verb's config file path
     ///     and runs the TypeScript facade. Convenience method for tests that use on-disk config files.
     /// </summary>
-    public bool ExecuteTypescriptFromConfigFile(CodeGenerationVerb verb)
+    public async Task<bool> ExecuteTypescriptFromConfigFileAsync(CodeGenerationVerb verb)
     {
         var json = File.ReadAllText(verb.Config);
         var config = JsonSerializer.Deserialize<CodeGenerationConfig>(json, s_jsonOptions)
                      ?? throw new InvalidOperationException($"Failed to deserialize config from '{verb.Config}'.");
-        return TypeScriptGenerator.Generate(verb, config);
+        return await TypeScriptGenerator.GenerateAsync(verb, config);
     }
 }
 

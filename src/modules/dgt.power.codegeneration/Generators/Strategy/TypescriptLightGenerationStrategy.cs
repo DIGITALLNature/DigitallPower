@@ -32,14 +32,14 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     #region ITypescriptGenerationStrategy (V1)
 
     /// <inheritdoc />
-    bool ITypescriptGenerationStrategy.Generate(CodeGenerationVerb args, CodeGenerationConfig config)
+    async Task<bool> ITypescriptGenerationStrategy.GenerateAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         PrepareDirectory(args);
-        GenerateEntities(args, config);
-        GenerateEntityForms(args, config);
-        GenerateOptionSets(args, config);
-        GenerateSdkMessages(args, config);
-        GenerateCustomApis(args, config);
+        await GenerateEntitiesAsync(args, config, cancellationToken);
+        await GenerateEntityFormsAsync(args, config, cancellationToken);
+        await GenerateOptionSetsAsync(args, config, cancellationToken);
+        await GenerateSdkMessagesAsync(args, config, cancellationToken);
+        await GenerateCustomApisAsync(args, config, cancellationToken);
         return true;
     }
 
@@ -52,7 +52,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// </summary>
     /// <param name="args">The code generation arguments.</param>
     /// <param name="config">The code generation configuration.</param>
-    private void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateEntitiesAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -63,7 +63,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         int? languageCode = 1031;
         if (config.UseBaseLanguage)
         {
-            languageCode = metadataService.RetrieveOrganizationLanguage();
+            languageCode = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
             Console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
@@ -73,7 +73,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         foreach (var entity in config.Entities.OrderBy(entityName => entityName))
         {
             // Retrieve the metadata for the entity
-            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var metadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
 
             var viewModel = new EntityViewModel
             {
@@ -100,7 +100,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
     }
 
-    private void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateEntityFormsAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -111,14 +111,14 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var languageCode = 1031;
         if (config.UseBaseLanguage)
         {
-            languageCode = metadataService.RetrieveOrganizationLanguage();
+            languageCode = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
             Console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
-        WarnIfSessionLanguageMismatch(languageCode);
+        await WarnIfSessionLanguageMismatchAsync(languageCode, cancellationToken);
 
-        var bpfControls = GetCompleteEntityBpfControlList(config);
-        var entityWithParsedFormList = GenerateEntityWithMetadata(config, bpfControls);
+        var bpfControls = await GetCompleteEntityBpfControlListAsync(config, cancellationToken);
+        var entityWithParsedFormList = await GenerateEntityWithMetadataAsync(config, bpfControls, cancellationToken);
         var flatListParseForm = GetFlatFormDetail(entityWithParsedFormList);
         foreach (var entityParsedForm in entityWithParsedFormList)
         {
@@ -171,13 +171,13 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// <summary>
     /// Generate intermediate structure as postprocessing of the overall list is needed to link forms
     /// </summary>
-    private List<EntityWithMetadataFormData> GenerateEntityWithMetadata(CodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls)
+    private async Task<List<EntityWithMetadataFormData>> GenerateEntityWithMetadataAsync(CodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls, CancellationToken cancellationToken)
     {
         List<EntityWithMetadataFormData> entityWithMetadataForms = new List<EntityWithMetadataFormData>();
 
         foreach (var entity in config.Entities.OrderBy(entityName => entityName))
         {
-            var entityMetadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var entityMetadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
             if (entityMetadata.IsBPFEntity == true)
             {
                 Console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
@@ -187,8 +187,8 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             var bpfControlsForEntity = bpfControls.GetValueOrDefault(entity) ?? [];
 
             var forms = config.OnlyFormsFromSolutions
-                ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Solutions], bpfControlsForEntity)
-                : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, bpfControlsForEntity);
+                ? await metadataService.RetrieveFormsDetailsFromSolutionsAsync(entityMetadata.LogicalName, [.. config.Solutions], bpfControlsForEntity, cancellationToken)
+                : await metadataService.RetrieveFormsDetailsAsync(entityMetadata.LogicalName, bpfControlsForEntity, cancellationToken);
 
             entityWithMetadataForms.Add(new EntityWithMetadataFormData
             {
@@ -202,7 +202,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// <summary>
     ///     Generates SDK messages for code generation.
     /// </summary>
-    private void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateSdkMessagesAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -213,7 +213,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
 
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.SdkMessages);
-        var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
+        var sdkMessages = await metadataService.RetrieveSdkMessageNamesAsync(config, cancellationToken);
 
         var viewModel = new SdkMessagesViewModel
         {
@@ -232,7 +232,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// <summary>
     /// Generates Custom Apis type for code generation
     /// </summary>
-    private void GenerateCustomApis(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateCustomApisAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -242,7 +242,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             return;
         }
 
-        var customApis = metadataService.RetrieveCustomApis(config);
+        var customApis = await metadataService.RetrieveCustomApisAsync(config, cancellationToken);
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.CustomApi);
 
@@ -270,7 +270,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     /// <summary>
     ///     Generates option sets based on the provided arguments and configuration
     /// </summary>
-    private void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateOptionSetsAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -281,7 +281,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
 
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.OptionSets);
-        var optionSets = metadataService.RetrieveOptionSets(config);
+        var optionSets = await metadataService.RetrieveOptionSetsAsync(config, cancellationToken);
 
         var viewModel = new OptionSetViewModel
         {
@@ -297,12 +297,12 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         CreateFile(content, FileNames.Typescript.FileNames.OptionSetValues, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlList(CodeGenerationConfig config)
+    private async Task<Dictionary<string, SortedSet<BpfControlDetail>>> GetCompleteEntityBpfControlListAsync(CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
         foreach (var entityName in config.Entities.OrderBy(entityName => entityName))
         {
-            var bpfControlsForEntityMain = metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config, entityName);
+            var bpfControlsForEntityMain = await metadataService.RetrieveBusinessProcessFlowControlsForMainEntityAsync(config, entityName, cancellationToken);
             foreach(var bpfControlForEntityMain in bpfControlsForEntityMain)
             {
                 if (bpfControls.TryGetValue(bpfControlForEntityMain.EntityName, out var value))
@@ -322,18 +322,18 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
     #region V2 Generate (TypeScriptCodeGenerationConfig)
 
-    public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    public async Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         PrepareDirectory(args);
-        GenerateEntitiesV2(args, config);
-        GenerateEntityFormsV2(args, config);
-        GenerateOptionSetsV2(args, config);
-        GenerateSdkMessagesV2(args, config);
-        GenerateCustomApisV2(args, config);
+        await GenerateEntitiesV2Async(args, config, cancellationToken);
+        await GenerateEntityFormsV2Async(args, config, cancellationToken);
+        await GenerateOptionSetsV2Async(args, config, cancellationToken);
+        await GenerateSdkMessagesV2Async(args, config, cancellationToken);
+        await GenerateCustomApisV2Async(args, config, cancellationToken);
         return true;
     }
 
-    private void GenerateEntitiesV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private async Task GenerateEntitiesV2Async(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -343,7 +343,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var languageCode = config.Language;
         if (config.Language == null)
         {
-            languageCode = metadataService.RetrieveOrganizationLanguage();
+            languageCode = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
             Console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
@@ -351,7 +351,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
         foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
         {
-            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var metadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
 
             var viewModel = new EntityViewModel
             {
@@ -378,7 +378,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
     }
 
-    private void GenerateEntityFormsV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private async Task GenerateEntityFormsV2Async(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -386,13 +386,13 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
         var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
-        var languageCode = config.Language ?? metadataService.RetrieveOrganizationLanguage();
+        var languageCode = config.Language ?? await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
         Console.MarkupLine($"Using Language: {languageCode}");
 
-        WarnIfSessionLanguageMismatch(languageCode);
+        await WarnIfSessionLanguageMismatchAsync(languageCode, cancellationToken);
 
-        var bpfControls = GetCompleteEntityBpfControlListV2(config);
-        var entityWithParsedFormList = GenerateEntityWithMetadataV2(config, bpfControls);
+        var bpfControls = await GetCompleteEntityBpfControlListV2Async(config, cancellationToken);
+        var entityWithParsedFormList = await GenerateEntityWithMetadataV2Async(config, bpfControls, cancellationToken);
         var flatListParseForm = GetFlatFormDetail(entityWithParsedFormList);
         foreach (var entityParsedForm in entityWithParsedFormList)
         {
@@ -442,7 +442,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockTestTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateSdkMessagesV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private async Task GenerateSdkMessagesV2Async(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -453,7 +453,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
 
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.SdkMessages);
-        var sdkMessages = metadataService.RetrieveSdkMessageNames(config.Requests);
+        var sdkMessages = await metadataService.RetrieveSdkMessageNamesAsync(config.Requests, cancellationToken);
 
         var viewModel = new SdkMessagesViewModel
         {
@@ -469,7 +469,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         CreateFile(content, FileNames.Typescript.FileNames.SdkMessageNames, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateOptionSetsV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private async Task GenerateOptionSetsV2Async(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -480,7 +480,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
 
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.OptionSets);
-        var optionSets = metadataService.RetrieveOptionSets(config.OptionSets);
+        var optionSets = await metadataService.RetrieveOptionSetsAsync(config.OptionSets, cancellationToken);
 
         var viewModel = new OptionSetViewModel
         {
@@ -496,7 +496,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         CreateFile(content, FileNames.Typescript.FileNames.OptionSetValues, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateCustomApisV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private async Task GenerateCustomApisV2Async(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -508,7 +508,7 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
 
         // RetrieveRequests auto-detects custom APIs vs actions vs built-in messages.
         // Filter to only entries that have parameters (i.e. actual custom APIs, not plain name constants).
-        var allRequests = metadataService.RetrieveRequests(config.Requests);
+        var allRequests = await metadataService.RetrieveRequestsAsync(config.Requests, cancellationToken);
         var customApis = allRequests.Where(r => r.InParameters.Count > 0 || r.OutParameters.Count > 0).ToList();
 
         if (customApis.Count == 0)
@@ -540,13 +540,13 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         }
     }
 
-    private List<EntityWithMetadataFormData> GenerateEntityWithMetadataV2(TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls)
+    private async Task<List<EntityWithMetadataFormData>> GenerateEntityWithMetadataV2Async(TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls, CancellationToken cancellationToken)
     {
         var entityWithMetadataForms = new List<EntityWithMetadataFormData>();
 
         foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
         {
-            var entityMetadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var entityMetadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
             if (entityMetadata.IsBPFEntity == true)
             {
                 Console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
@@ -556,8 +556,8 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
             var bpfControlsForEntity = bpfControls.GetValueOrDefault(entity) ?? [];
 
             var forms = config.Output.Forms?.FromSolutions ?? false
-                ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Entities.FromSolutions], bpfControlsForEntity)
-                : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, bpfControlsForEntity);
+                ? await metadataService.RetrieveFormsDetailsFromSolutionsAsync(entityMetadata.LogicalName, [.. config.Entities.FromSolutions], bpfControlsForEntity, cancellationToken)
+                : await metadataService.RetrieveFormsDetailsAsync(entityMetadata.LogicalName, bpfControlsForEntity, cancellationToken);
 
             entityWithMetadataForms.Add(new EntityWithMetadataFormData
             {
@@ -568,12 +568,12 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
         return entityWithMetadataForms;
     }
 
-    private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlListV2(TypeScriptCodeGenerationConfig config)
+    private async Task<Dictionary<string, SortedSet<BpfControlDetail>>> GetCompleteEntityBpfControlListV2Async(TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
         foreach (var entityName in config.Entities.Names.OrderBy(entityName => entityName))
         {
-            var bpfControlsForEntityMain = metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config.Requests, entityName);
+            var bpfControlsForEntityMain = await metadataService.RetrieveBusinessProcessFlowControlsForMainEntityAsync(config.Requests, entityName, cancellationToken);
             foreach (var bpfControlForEntityMain in bpfControlsForEntityMain)
             {
                 if (bpfControls.TryGetValue(bpfControlForEntityMain.EntityName, out var value))
@@ -700,9 +700,9 @@ public class TypescriptLightGenerationStrategy(IMetadataService metadataService,
     ///     code generation, since Dataverse resolves translatable out-of-box record text (e.g. system form
     ///     <c>name</c>) using the session language - not the configured one. See <see cref="Warnings.FormNameLanguageMismatch"/>.
     /// </summary>
-    private void WarnIfSessionLanguageMismatch(int configuredLanguageCode)
+    private async Task WarnIfSessionLanguageMismatchAsync(int configuredLanguageCode, CancellationToken cancellationToken)
     {
-        var sessionLanguageCode = metadataService.RetrieveConnectionUserLanguage();
+        var sessionLanguageCode = await metadataService.RetrieveConnectionUserLanguageAsync(cancellationToken);
         if (sessionLanguageCode != configuredLanguageCode)
         {
             Console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, configuredLanguageCode));

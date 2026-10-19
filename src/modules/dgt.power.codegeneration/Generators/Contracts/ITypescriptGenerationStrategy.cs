@@ -14,5 +14,5 @@ internal interface ITypescriptGenerationStrategy
     /// <summary>
     ///     Runs the full TypeScript code generation pipeline for a V1 legacy config.
     /// </summary>
-    bool Generate(CodeGenerationVerb args, CodeGenerationConfig config);
+    Task<bool> GenerateAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken = default);
 }

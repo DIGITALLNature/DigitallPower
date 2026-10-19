@@ -20,13 +20,14 @@ namespace dgt.power.codegeneration.Services;
 /// <summary>V1 legacy overloads for <see cref="MetadataService"/>.</summary>
 public partial class MetadataService
 {
-    public void PopulateEntitiesAndSolutions(CodeGenerationConfig config)
+    public async Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
-        var entities = (RetrieveAllEntitiesResponse)Service.Execute(new RetrieveAllEntitiesRequest
+        var service = await connection.GetServiceAsync();
+        var entities = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity, RetrieveAsIfPublished = true
-        });
+        }, cancellationToken);
 
         var entitySet = config.Entities.ToHashSet();
         if (!string.IsNullOrWhiteSpace(config.EntityMask))
@@ -47,6 +48,7 @@ public partial class MetadataService
             var componentsQuery = new QueryExpression
             {
                 EntityName = SolutionComponent.EntityLogicalName,
+                NoLock = true,
                 ColumnSet = new ColumnSet(SolutionComponent.LogicalNames.ObjectId),
                 Criteria = new FilterExpression()
             };
@@ -66,13 +68,13 @@ public partial class MetadataService
 
             foreach (var solution in config.Solutions)
             {
-                var solutionId = FetchSolution(solution)!.Id;
+                var solutionId = (await FetchSolutionAsync(solution, cancellationToken))!.Id;
                 solutionFilter.Conditions.Clear();
                 solutionFilter.AddCondition(new ConditionExpression(SolutionComponent.LogicalNames.SolutionId,
                     ConditionOperator.Equal,
                     solutionId));
 
-                var entityComponents = Service.RetrieveMultiple(componentsQuery).Entities;
+                var entityComponents = (await service.RetrieveMultipleAsync(componentsQuery, cancellationToken)).Entities;
 
                 foreach (var entityComponent in entityComponents)
                     entitySet.Add(
@@ -84,7 +86,7 @@ public partial class MetadataService
 
         config.Entities = entitySet;
     }
-    public IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config)
+    public async Task<IEnumerable<WfAction>> RetrieveActionsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
 
@@ -127,7 +129,8 @@ public partial class MetadataService
         {
             Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
         };
-        var actions = Service.RetrieveMultiple(query);
+        var service = await connection.GetServiceAsync();
+        var actions = await service.RetrieveMultipleAsync(query, cancellationToken);
 
 
         var result = new List<WfAction>();
@@ -192,7 +195,7 @@ public partial class MetadataService
         return result;
     }
 
-    public IEnumerable<WfAction> RetrieveCustomApis(CodeGenerationConfig config)
+    public async Task<IEnumerable<WfAction>> RetrieveCustomApisAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
         var query = new QueryExpression(CustomAPI.EntityLogicalName)
@@ -227,7 +230,8 @@ public partial class MetadataService
         {
             Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
         };
-        var customApis = Service.RetrieveMultiple(query);
+        var service = await connection.GetServiceAsync();
+        var customApis = await service.RetrieveMultipleAsync(query, cancellationToken);
 
 
         var result = new List<WfAction>();
@@ -271,7 +275,7 @@ public partial class MetadataService
                     }
                 }
             };
-            var inparams = Service.RetrieveMultiple(inquery);
+            var inparams = await service.RetrieveMultipleAsync(inquery, cancellationToken);
             foreach (var inparam in inparams.Entities)
             {
                 var type = GetParamType(inparam
@@ -308,7 +312,7 @@ public partial class MetadataService
                     }
                 }
             };
-            var outparams = Service.RetrieveMultiple(outquery);
+            var outparams = await service.RetrieveMultipleAsync(outquery, cancellationToken);
             foreach (var outparam in outparams.Entities)
             {
                 var type = GetParamType(outparam
@@ -334,7 +338,7 @@ public partial class MetadataService
     }
 
 
-    public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config)
+    public async Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
         var result = new List<(string Name, string Message)>
@@ -381,7 +385,8 @@ public partial class MetadataService
                 Conditions = {new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray())}
             }
         };
-        var sdkMessages = Service.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
+        var service = await connection.GetServiceAsync();
+        var sdkMessages = (await service.RetrieveMultipleAsync(query, cancellationToken))?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
                           Enumerable.Empty<SdkMessage>();
         var hashSet = new HashSet<string>();
         foreach (var sdkMessage in sdkMessages)
@@ -403,20 +408,22 @@ public partial class MetadataService
         return result;
     }
 
-    public SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config)
+    public async Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
         var result = new SortedDictionary<string, List<Option>>();
+        var service = await connection.GetServiceAsync();
+        var systemLanguage = await RetrieveOrganizationLanguageAsync(cancellationToken);
         foreach (var globalOptionSet in config.GlobalOptionSets)
         {
             var request = new RetrieveOptionSetRequest {Name = globalOptionSet};
-            var response = (RetrieveOptionSetResponse)Service.Execute(request);
+            var response = (RetrieveOptionSetResponse)await service.ExecuteAsync(request, cancellationToken);
             var metadata = (OptionSetMetadata)response.OptionSetMetadata;
             result.Add(globalOptionSet, new List<Option>());
             foreach (var option in metadata.Options)
             {
                 result[globalOptionSet].Add(new Option(option.Value,
-                    Formatter.GetLocalizedLabel(option.Label, config.UseBaseLanguage, RetrieveOrganizationLanguage())));
+                    Formatter.GetLocalizedLabel(option.Label, config.UseBaseLanguage, systemLanguage)));
             }
 
             result[globalOptionSet]
@@ -426,7 +433,7 @@ public partial class MetadataService
         return result;
     }
 
-    public IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config)
+    public async Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
         var result = new List<Tuple<string, string, Guid, string>>();
@@ -448,7 +455,8 @@ public partial class MetadataService
             },
             Orders = {new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending)}
         };
-        var bpfs = Service.RetrieveMultiple(query)
+        var service = await connection.GetServiceAsync();
+        var bpfs = (await service.RetrieveMultipleAsync(query, cancellationToken))
                        ?.Entities?
                        .Select(x => x.ToEntity<Workflow>()) ??
                    Enumerable.Empty<Workflow>();
@@ -468,7 +476,7 @@ public partial class MetadataService
         return result;
     }
 
-    public IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName)
+    public async Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(CodeGenerationConfig config, string entityName, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
         var queryWorkflow = new QueryExpression(Workflow.EntityLogicalName)
@@ -510,8 +518,9 @@ public partial class MetadataService
 
             queryWorkflow.Criteria.AddFilter(queryAnd);
         }
-        List<Workflow> returnList = Service
-            .RetrieveMultiple(queryWorkflow)?
+        var service = await connection.GetServiceAsync();
+        List<Workflow> returnList = (await service
+            .RetrieveMultipleAsync(queryWorkflow, cancellationToken))?
             .Entities
             .Select(x => x.ToEntity<Workflow>())
             .OrderBy(x => x.Name)

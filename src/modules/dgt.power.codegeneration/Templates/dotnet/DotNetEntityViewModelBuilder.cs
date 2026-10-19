@@ -11,7 +11,7 @@ namespace dgt.power.codegeneration.Templates.dotnet;
 
 public class DotNetEntityViewModelBuilder(
     EntityMetadata entity,
-    Func<string, EntityMetadata> retrieveEntityMetadata,
+    Func<string, string> retrieveEntitySchemaName,
     DotNetCodeGenerationConfig config,
     int systemLanguage,
     IAnsiConsole? console = null)
@@ -362,7 +362,7 @@ public class DotNetEntityViewModelBuilder(
 
     private string RetrieveSchemaName(string entityLogicalName)
     {
-        return retrieveEntityMetadata.Invoke(entityLogicalName).SchemaName;
+        return retrieveEntitySchemaName.Invoke(entityLogicalName);
     }
 }
 

@@ -13,15 +13,17 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
     : ITypeScriptGenerator
 {
     /// <inheritdoc />
-    public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    public async Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var strategy = new TypescriptLightGenerationStrategy(metadataService, console);
-        return strategy.Generate(args, config);
+        return await strategy.GenerateAsync(args, config, cancellationToken);
     }
 
     /// <inheritdoc />
-    public bool Generate(CodeGenerationVerb args, CodeGenerationConfig config)
+    public async Task<bool> GenerateAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         ArgumentNullException.ThrowIfNull(args);
         ArgumentNullException.ThrowIfNull(config);
 
@@ -32,6 +34,6 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
             _ => throw new ArgumentOutOfRangeException(nameof(config), config.TypescriptGeneratorVersion, "Unknown TypeScript generator version.")
         };
 
-        return strategy.Generate(args, config);
+        return await strategy.GenerateAsync(args, config, cancellationToken);
     }
 }

@@ -19,15 +19,16 @@ namespace dgt.power.codegeneration.Generators;
 public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole console) : IDotNetGenerator
 {
     /// <inheritdoc />
-    public bool Generate(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    public async Task<bool> GenerateAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         PrepareDirectory(args);
-        GenerateRequests(args, config);
-        GenerateSdkMessageNames(args, config);
-        GenerateOptionSets(args, config);
+        await GenerateRequestsAsync(args, config, cancellationToken);
+        await GenerateSdkMessageNamesAsync(args, config, cancellationToken);
+        await GenerateOptionSetsAsync(args, config, cancellationToken);
         GenerateContext(args, config);
-        GenerateEntities(args, config);
-        GenerateMetadata(args, config);
+        await GenerateEntitiesAsync(args, config, cancellationToken);
+        await GenerateMetadataAsync(args, config, cancellationToken);
         return true;
     }
 
@@ -51,7 +52,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         }
     }
 
-    private void GenerateRequests(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private async Task GenerateRequestsAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -61,7 +62,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
             return;
         }
 
-        var requests = metadataService.RetrieveRequests(config.Requests);
+        var requests = await metadataService.RetrieveRequestsAsync(config.Requests, cancellationToken);
        
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Actions}.cs");
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
@@ -75,12 +76,12 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         file.Write(content);
     }
 
-    private void GenerateSdkMessageNames(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private async Task GenerateSdkMessageNamesAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var sdkMessages = metadataService.RetrieveSdkMessageNames(config.Requests);
+        var sdkMessages = await metadataService.RetrieveSdkMessageNamesAsync(config.Requests, cancellationToken);
 
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.SdkMessageNames}.cs");
         using var file = File.CreateText(fileName);
@@ -94,7 +95,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         file.Write(content);
     }
 
-    private void GenerateOptionSets(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private async Task GenerateOptionSetsAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -104,7 +105,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
             return;
         }
 
-        var optionSets = metadataService.RetrieveOptionSets(config.OptionSets);
+        var optionSets = await metadataService.RetrieveOptionSetsAsync(config.OptionSets, cancellationToken);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.OptionSetValues}.cs");
 
         using var file = File.CreateText(fileName);
@@ -140,15 +141,22 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         file.Write(content);
     }
 
-    private void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private async Task GenerateEntitiesAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
+        var entityMetadataByName = new Dictionary<string, EntityMetadata>(StringComparer.OrdinalIgnoreCase);
         foreach (var entity in config.Entities.Names)
         {
-            var metadata = metadataService.RetrieveEntityMetadata(entity,
-                EntityFilters.Attributes | EntityFilters.Relationships | EntityFilters.Entity);
+            entityMetadataByName[entity] = await metadataService.RetrieveEntityMetadataAsync(entity,
+                EntityFilters.Attributes | EntityFilters.Relationships | EntityFilters.Entity, cancellationToken);
+        }
+
+        var systemLanguage = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
+        foreach (var entity in config.Entities.Names)
+        {
+            var metadata = entityMetadataByName[entity];
 
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet,
                 $"{Formatter.CamelCase(metadata.SchemaName)}.cs");
@@ -158,9 +166,9 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
 
             var builder = new DotNetEntityViewModelBuilder(
                 metadata,
-                logicalName => metadataService.RetrieveEntityMetadata(logicalName),
+                logicalName => entityMetadataByName[logicalName].SchemaName,
                 config,
-                metadataService.RetrieveOrganizationLanguage(),
+                systemLanguage,
                 console);
 
             var context = DotNetLiquidRenderer.CreateContext();
@@ -173,7 +181,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         }
     }
 
-    private void GenerateMetadata(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    private async Task GenerateMetadataAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -196,7 +204,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
 
         foreach (var entity in config.Entities.Names)
         {
-            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
+            var metadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.All, cancellationToken);
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Metadata,
                 $"{metadata.LogicalName.ToLowerInvariant()}.xml");
             var serializer = new System.Runtime.Serialization.DataContractSerializer(typeof(EntityMetadata));

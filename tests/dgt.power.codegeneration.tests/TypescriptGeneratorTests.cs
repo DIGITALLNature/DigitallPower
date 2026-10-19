@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
@@ -48,7 +48,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
-        GetContext().TypeScriptGenerator.Generate(args, config);
+        await GetContext().TypeScriptGenerator.GenerateAsync(args, config);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         await Assert.That(Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.Typescript}")).IsTrue();
@@ -71,7 +71,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         var existingFilePath = $"{typescriptPath}/testentity.form.ts";
         await File.WriteAllTextAsync(existingFilePath, "import * from '.'");
 
-        GetContext().TypeScriptGenerator.Generate(args, config);
+        await GetContext().TypeScriptGenerator.GenerateAsync(args, config);
 
         await Assert.That(Directory.Exists(modelPath)).IsTrue();
         await Assert.That(Directory.Exists(typescriptPath)).IsTrue();
@@ -90,7 +90,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
-        GetContext().TypeScriptGenerator.Generate(args, config);
+        await GetContext().TypeScriptGenerator.GenerateAsync(args, config);
 
         var servicePath = $"{typescriptPath}/{FileNames.Typescript.FileNamePart.Services}.ts";
         File.Exists(servicePath);
@@ -125,7 +125,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var entityPath = $"{typescriptPath}/{_accountMetadata.LogicalName}.{FileNames.Typescript.FileNamePart.Entity}.ts";
@@ -159,7 +159,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
             .WithData(forms.mainForm)
             .Build();
 
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
@@ -187,7 +187,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
             .WithData(forms)
             .Build();
 
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
@@ -214,7 +214,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
             .WithData(forms)
             .Build();
 
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
@@ -270,7 +270,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
             })
             .Build();
 
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 
@@ -293,7 +293,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var messagesPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts";
@@ -323,7 +323,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
             .WithData(additionalMessage)
             .Build();
 
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var messagesPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts";
@@ -346,7 +346,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         await Assert.That(File.Exists($"{typescriptPath}/{FileNames.Typescript.FileNames.SdkMessageNames}.ts")).IsFalse();
@@ -371,7 +371,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
             .WithMetaData(activityPointerMetadata)
             .Build();
 
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var optionSetsPath = $"{typescriptPath}/{FileNames.Typescript.FileNames.OptionSetValues}.ts";
@@ -406,7 +406,7 @@ public class TypescriptGeneratorTests : CodeGenerationTestsBase
             .WithData(processStage)
             .Build();
 
-        context.TypeScriptGenerator.Generate(args, config);
+        await context.TypeScriptGenerator.GenerateAsync(args, config);
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
 

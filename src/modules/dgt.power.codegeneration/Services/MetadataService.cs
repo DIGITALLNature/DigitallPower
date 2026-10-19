@@ -17,6 +17,7 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services;
@@ -26,15 +27,10 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
 {
     private readonly Dictionary<string, List<string>> _usedTokens = new();
 
-    // The generators are synchronous. The command acquires the service first (see CodeGenerationCommand),
-    // so this resolves from the connection cache and does not block on I/O.
-#pragma warning disable VSTHRD002 // the connection is already established and cached, so this does not block
-    private IOrganizationService Service => connection.GetServiceAsync().GetAwaiter().GetResult();
-#pragma warning restore VSTHRD002
-
-
-    public Solution? FetchSolution(string uniqueName) =>
-        Service.RetrieveMultiple(new QueryExpression(Solution.EntityLogicalName)
+    public async Task<Solution?> FetchSolutionAsync(string uniqueName, CancellationToken cancellationToken = default)
+    {
+        var service = await connection.GetServiceAsync();
+        return (await service.RetrieveMultipleAsync(new QueryExpression(Solution.EntityLogicalName)
         {
             NoLock = true,
             ColumnSet = new ColumnSet(Solution.LogicalNames.SolutionId, Solution.LogicalNames.FriendlyName, Solution.LogicalNames.UniqueName, Solution.LogicalNames.Version, Solution.LogicalNames.IsManaged),
@@ -46,18 +42,20 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
                         ConditionOperator.Equal, uniqueName)
                 }
             }
-        }).Entities.SingleOrDefault()?.ToEntity<Solution>();
+        }, cancellationToken)).Entities.SingleOrDefault()?.ToEntity<Solution>();
+    }
 
-    public EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default)
+    public async Task<EntityMetadata> RetrieveEntityMetadataAsync(string entity, EntityFilters filter = EntityFilters.Default, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
         var key = $"{entity.ToLowerInvariant()}_{filter:D}";
         if (!metadataCache.Contains(key))
         {
-            var metadata = (RetrieveEntityResponse)Service.Execute(new RetrieveEntityRequest
+            var service = await connection.GetServiceAsync();
+            var metadata = (RetrieveEntityResponse)await service.ExecuteAsync(new RetrieveEntityRequest
             {
                 EntityFilters = filter, LogicalName = entity, RetrieveAsIfPublished = true
-            });
+            }, cancellationToken);
 
             metadataCache.Add(key, metadata.EntityMetadata,
                 new CacheItemPolicy {Priority = CacheItemPriority.NotRemovable});
@@ -67,13 +65,14 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         return (EntityMetadata)metadataCache[key];
     }
 
-    public int RetrieveOrganizationLanguage()
+    public async Task<int> RetrieveOrganizationLanguageAsync(CancellationToken cancellationToken = default)
     {
+        var service = await connection.GetServiceAsync();
         var query = new QueryExpression(Organization.EntityLogicalName)
         {
             NoLock = true, ColumnSet = new ColumnSet(Organization.LogicalNames.LanguageCode)
         };
-        var organization = Service.RetrieveMultiple(query);
+        var organization = await service.RetrieveMultipleAsync(query, cancellationToken);
 
         return organization.Entities.Single().ToEntity<Organization>().LanguageCode!.Value;
     }
@@ -85,24 +84,30 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
     ///     doubles), since this value is only used to emit a warning, never to control actual retrieval.
     /// </remarks>
 #pragma warning disable CA1031 // Diagnostic-only best-effort lookup: any failure (privileges, missing metadata, connectivity) must not break generation, only skip the warning.
-    public int RetrieveConnectionUserLanguage()
+    public async Task<int> RetrieveConnectionUserLanguageAsync(CancellationToken cancellationToken = default)
     {
         try
         {
-            var userId = ((WhoAmIResponse)Service.Execute(new WhoAmIRequest())).UserId;
-            var userSettings = Service.Retrieve("usersettings", userId, new ColumnSet("uilanguageid"));
-            return userSettings.GetAttributeValue<int?>("uilanguageid") ?? RetrieveOrganizationLanguage();
+            var service = await connection.GetServiceAsync();
+            var userId = ((WhoAmIResponse)await service.ExecuteAsync(new WhoAmIRequest(), cancellationToken)).UserId;
+            var userSettings = await service.RetrieveAsync("usersettings", userId, new ColumnSet("uilanguageid"), cancellationToken);
+            return userSettings.GetAttributeValue<int?>("uilanguageid") ?? await RetrieveOrganizationLanguageAsync(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception)
         {
-            return RetrieveOrganizationLanguage();
+            return await RetrieveOrganizationLanguageAsync(cancellationToken);
         }
     }
 #pragma warning restore CA1031
 
 
-    public IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId)
+    public async Task<IReadOnlyList<Tuple<string, string, List<Guid>>>> RetrieveBusinessProcessFlowStagesAsync(Guid processId, CancellationToken cancellationToken = default)
     {
+        var service = await connection.GetServiceAsync();
         var result = new List<Tuple<string, string, List<Guid>>>();
         var query = new QueryExpression(ProcessStage.EntityLogicalName)
         {
@@ -118,7 +123,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             Orders = {new OrderExpression(ProcessStage.LogicalNames.StageName, OrderType.Ascending)}
         };
 
-        var stages = (Service.RetrieveMultiple(query)
+        var stages = ((await service.RetrieveMultipleAsync(query, cancellationToken))
                          ?.Entities?.Select(x => x.ToEntity<ProcessStage>()) ??
                      Enumerable.Empty<ProcessStage>()).ToArray();
 
@@ -145,10 +150,11 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         return result;
     }
 
-    public Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls)
+    public async Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsAsync(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(configSolutions);
         var querySystemForm = new QueryExpression(SystemForm.EntityLogicalName);
+        querySystemForm.NoLock = true;
         querySystemForm.ColumnSet.AddColumns(
             SystemForm.LogicalNames.ObjectTypeCode,
             SystemForm.LogicalNames.FormXml,
@@ -235,14 +241,15 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             entityComponentToSolutionLink.LinkCriteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, solutionName);
         }
 
-        var systemForms = Service.RetrieveMultiple(querySystemForm);
+        var service = await connection.GetServiceAsync();
+        var systemForms = await service.RetrieveMultipleAsync(querySystemForm, cancellationToken);
 
         return ParseSystemFormsCollectionToFormDetails(systemForms, entityLogicalName, bpfControls);
     }
 
-    public Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls)
+    public async Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsAsync(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default)
     {
-        var systemForms = RetrieveFormsForEntity(entityLogicalName);
+        var systemForms = await RetrieveFormsForEntityAsync(entityLogicalName, cancellationToken);
         return ParseSystemFormsCollectionToFormDetails(systemForms, entityLogicalName, bpfControls);
     }
 
@@ -262,9 +269,9 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
        .ToDictionary(formDetail => $"{formDetail.FormUniqueName}.{FormParser.GetFormType(formDetail.FormType)}", formDetail => formDetail);
     }
 
-    private EntityCollection RetrieveFormsForEntity(string logicalName)
+    private async Task<EntityCollection> RetrieveFormsForEntityAsync(string logicalName, CancellationToken cancellationToken)
     {
-        var query = new QueryExpression(SystemForm.EntityLogicalName);
+        var query = new QueryExpression(SystemForm.EntityLogicalName) { NoLock = true };
         query.ColumnSet.AddColumns(
             SystemForm.LogicalNames.FormXml,
             SystemForm.LogicalNames.Name,
@@ -280,7 +287,8 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         query.Criteria.AddCondition(SystemForm.LogicalNames.FormActivationState, ConditionOperator.Equal,
             SystemForm.Options.FormActivationState.Active);
 
-        return Service.RetrieveMultiple(query);
+        var service = await connection.GetServiceAsync();
+        return await service.RetrieveMultipleAsync(query, cancellationToken);
     }
 
     private string Unique(string value, string scope)
@@ -320,13 +328,14 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
 
     #region V2 API
 
-    public void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config)
+    public async Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
-        var entities = (RetrieveAllEntitiesResponse)Service.Execute(new RetrieveAllEntitiesRequest
+        var service = await connection.GetServiceAsync();
+        var entities = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity, RetrieveAsIfPublished = true
-        });
+        }, cancellationToken);
 
         var entitySet = config.Entities.Names.ToHashSet();
         if (!string.IsNullOrWhiteSpace(config.Entities.Mask))
@@ -346,6 +355,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             var componentsQuery = new QueryExpression
             {
                 EntityName = SolutionComponent.EntityLogicalName,
+                NoLock = true,
                 ColumnSet = new ColumnSet(SolutionComponent.LogicalNames.ObjectId),
                 Criteria = new FilterExpression()
             };
@@ -363,14 +373,14 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
 
             foreach (var solution in config.Entities.FromSolutions)
             {
-                var solutionId = FetchSolution(solution)!.Id;
+                var solutionId = (await FetchSolutionAsync(solution, cancellationToken))!.Id;
                 solutionFilter.Conditions.Clear();
                 solutionFilter.AddCondition(new ConditionExpression(
                     SolutionComponent.LogicalNames.SolutionId,
                     ConditionOperator.Equal,
                     solutionId));
 
-                var entityComponents = Service.RetrieveMultiple(componentsQuery).Entities;
+                var entityComponents = (await service.RetrieveMultipleAsync(componentsQuery, cancellationToken)).Entities;
                 foreach (var entityComponent in entityComponents)
                 {
                     entitySet.Add(
@@ -383,7 +393,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         config.Entities.Names = entitySet;
     }
 
-    public IReadOnlyList<WfAction> RetrieveRequests(IReadOnlyCollection<string> requestNames)
+    public async Task<IReadOnlyList<WfAction>> RetrieveRequestsAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestNames);
         if (requestNames.Count == 0) return [];
@@ -392,13 +402,13 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         var result = new List<WfAction>();
 
         // 1. Custom APIs
-        var customApis = RetrieveCustomApisByNames(remaining);
+        var customApis = await RetrieveCustomApisByNamesAsync(remaining, cancellationToken);
         result.AddRange(customApis);
         foreach (var api in customApis) remaining.Remove(api.LogicalName);
         if (remaining.Count == 0) return result;
 
         // 2. Classic actions (Workflow category=Action)
-        var actions = RetrieveActionsByNames(remaining);
+        var actions = await RetrieveActionsByNamesAsync(remaining, cancellationToken);
         result.AddRange(actions);
         foreach (var action in actions) remaining.Remove(action.LogicalName);
         if (remaining.Count == 0) return result;
@@ -420,7 +430,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
     /// <summary>
     ///     Built-in SDK messages that every Dataverse environment provides, regardless of the requested
     ///     messages — always merged into the query in
-    ///     <see cref="RetrieveSdkMessageNames(IReadOnlyCollection{string})"/> so they're only ever generated
+    ///     <see cref="RetrieveSdkMessageNamesAsync(IReadOnlyCollection{string})"/> so they're only ever generated
     ///     once (deduplicated with any caller-requested name) and verified against the connected environment
     ///     like every other requested message.
     /// </summary>
@@ -430,7 +440,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         "RetrievePrincipalAccess", "RetrieveSharedPrincipalsAndAccess", "RevokeAccess", "SetState", "Update"
     ];
 
-    public IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames)
+    public async Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestNames);
 
@@ -449,7 +459,8 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
                 Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, allNames.Cast<object>().ToArray()) }
             }
         };
-        var sdkMessages = Service.RetrieveMultiple(query)?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
+        var service = await connection.GetServiceAsync();
+        var sdkMessages = (await service.RetrieveMultipleAsync(query, cancellationToken))?.Entities.Select(x => x.ToEntity<SdkMessage>()) ??
                           Enumerable.Empty<SdkMessage>();
         var result = new List<(string Name, string Message)>();
         var hashSet = new HashSet<string>();
@@ -478,20 +489,22 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         return result;
     }
 
-    public SortedDictionary<string, List<Option>> RetrieveOptionSets(IReadOnlyCollection<string> globalOptionSets)
+    public async Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsAsync(IReadOnlyCollection<string> globalOptionSets, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(globalOptionSets);
         var result = new SortedDictionary<string, List<Option>>();
+        var service = await connection.GetServiceAsync();
+        var systemLanguage = await RetrieveOrganizationLanguageAsync(cancellationToken);
         foreach (var globalOptionSet in globalOptionSets)
         {
             var request = new RetrieveOptionSetRequest { Name = globalOptionSet };
-            var response = (RetrieveOptionSetResponse)Service.Execute(request);
+            var response = (RetrieveOptionSetResponse)await service.ExecuteAsync(request, cancellationToken);
             var metadata = (OptionSetMetadata)response.OptionSetMetadata;
             result.Add(globalOptionSet, new List<Option>());
             foreach (var option in metadata.Options)
             {
                 result[globalOptionSet].Add(new Option(option.Value,
-                    Formatter.GetLocalizedLabel(option.Label, false, RetrieveOrganizationLanguage())));
+                    Formatter.GetLocalizedLabel(option.Label, false, systemLanguage)));
             }
 
             result[globalOptionSet]
@@ -501,7 +514,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         return result;
     }
 
-    public IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(IReadOnlyCollection<string> businessProcessFlows)
+    public async Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(IReadOnlyCollection<string> businessProcessFlows, CancellationToken cancellationToken = default)
     {
         var result = new List<Tuple<string, string, Guid, string>>();
         var query = new QueryExpression(Workflow.EntityLogicalName)
@@ -517,7 +530,8 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             },
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
         };
-        var bpfs = Service.RetrieveMultiple(query)?.Entities?.Select(x => x.ToEntity<Workflow>()) ?? Enumerable.Empty<Workflow>();
+        var service = await connection.GetServiceAsync();
+        var bpfs = (await service.RetrieveMultipleAsync(query, cancellationToken))?.Entities?.Select(x => x.ToEntity<Workflow>()) ?? Enumerable.Empty<Workflow>();
 
         foreach (var bpf in bpfs)
         {
@@ -534,7 +548,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         return result;
     }
 
-    public IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string> businessProcessFlows, string entityName)
+    public async Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(IReadOnlyCollection<string> businessProcessFlows, string entityName, CancellationToken cancellationToken = default)
     {
         var queryWorkflow = new QueryExpression(Workflow.EntityLogicalName)
         {
@@ -555,7 +569,8 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             Orders = { new OrderExpression(Workflow.LogicalNames.Name, OrderType.Ascending) }
         };
 
-        List<Workflow> returnList = Service.RetrieveMultiple(queryWorkflow)?
+        var service = await connection.GetServiceAsync();
+        List<Workflow> returnList = (await service.RetrieveMultipleAsync(queryWorkflow, cancellationToken))?
             .Entities.Select(x => x.ToEntity<Workflow>()).OrderBy(x => x.Name).ToList() ?? [];
 
         if (returnList.Count == 0) return [];
@@ -572,8 +587,9 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
 
     #region V2 internal helpers
 
-    private List<WfAction> RetrieveCustomApisByNames(IReadOnlyCollection<string> names)
+    private async Task<List<WfAction>> RetrieveCustomApisByNamesAsync(IReadOnlyCollection<string> names, CancellationToken cancellationToken)
     {
+        var service = await connection.GetServiceAsync();
         var query = new QueryExpression(CustomAPI.EntityLogicalName)
         {
             NoLock = true,
@@ -588,7 +604,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray()) }
         };
 
-        var customApis = Service.RetrieveMultiple(query);
+        var customApis = await service.RetrieveMultipleAsync(query, cancellationToken);
         var result = new List<WfAction>();
 
         foreach (var customApi in customApis.Entities)
@@ -619,7 +635,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
                     Conditions = { new ConditionExpression(CustomAPIRequestParameter.LogicalNames.CustomAPIId, ConditionOperator.Equal, customApi[CustomAPI.LogicalNames.CustomAPIId]) }
                 }
             };
-            foreach (var inparam in Service.RetrieveMultiple(inquery).Entities)
+            foreach (var inparam in (await service.RetrieveMultipleAsync(inquery, cancellationToken)).Entities)
             {
                 ia.InParameters.Add(new WfParameter
                 {
@@ -646,7 +662,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
                     Conditions = { new ConditionExpression(CustomAPIResponseProperty.LogicalNames.CustomAPIId, ConditionOperator.Equal, customApi[CustomAPI.LogicalNames.CustomAPIId]) }
                 }
             };
-            foreach (var outparam in Service.RetrieveMultiple(outquery).Entities)
+            foreach (var outparam in (await service.RetrieveMultipleAsync(outquery, cancellationToken)).Entities)
             {
                 ia.OutParameters.Add(new WfParameter
                 {
@@ -665,8 +681,9 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
         return result;
     }
 
-    private List<WfAction> RetrieveActionsByNames(IReadOnlyCollection<string> names)
+    private async Task<List<WfAction>> RetrieveActionsByNamesAsync(IReadOnlyCollection<string> names, CancellationToken cancellationToken)
     {
+        var service = await connection.GetServiceAsync();
         var query = new QueryExpression(Workflow.EntityLogicalName)
         {
             NoLock = true,
@@ -690,7 +707,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             Conditions = { new ConditionExpression(SdkMessage.LogicalNames.Name, ConditionOperator.In, names.Cast<object>().ToArray()) }
         };
 
-        var actions = Service.RetrieveMultiple(query);
+        var actions = await service.RetrieveMultipleAsync(query, cancellationToken);
         var result = new List<WfAction>();
         XNamespace x = "http://schemas.microsoft.com/winfx/2006/xaml";
 

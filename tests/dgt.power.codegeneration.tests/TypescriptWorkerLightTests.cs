@@ -45,7 +45,7 @@ public class TypescriptWorkerLightTests : CodeGenerationTestsBase
             .WithData(GetTestTableMainForm())
             .Build();
 
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)
@@ -82,7 +82,7 @@ public class TypescriptWorkerLightTests : CodeGenerationTestsBase
         };
 
         var context = GetBuilder().Build();
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)
@@ -111,7 +111,7 @@ public class TypescriptWorkerLightTests : CodeGenerationTestsBase
         };
 
         var context = GetBuilder().Build();
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)

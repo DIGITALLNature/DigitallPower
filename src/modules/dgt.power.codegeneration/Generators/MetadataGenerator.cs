@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
+using System.Threading.Tasks;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Generators.Contracts;
@@ -38,14 +39,14 @@ public class MetadataGenerator(IMetadataService metadataService, IAnsiConsole co
         }
     }
 
-    public void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    public async Task GenerateEntitiesAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
         foreach (var entity in config.Entities.Names)
         {
-            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
+            var metadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.All, cancellationToken);
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, "MetaData",
                 $"{metadata.LogicalName.ToLowerInvariant()}.xml");
             var serializer = new DataContractSerializer(typeof(EntityMetadata));

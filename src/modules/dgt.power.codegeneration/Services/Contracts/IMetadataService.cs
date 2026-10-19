@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Threading.Tasks;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Model;
 using dgt.power.codegeneration.Templates;
@@ -14,22 +15,22 @@ public interface IMetadataService
     ///     Retrieves request metadata (actions, custom APIs, built-in SDK messages) for the given names.
     ///     Auto-detects type per entry: custom API → CustomAPI table, classic action → Workflow XAML, built-in → name only.
     /// </summary>
-    IReadOnlyList<WfAction> RetrieveRequests(IReadOnlyCollection<string> requestNames);
+    Task<IReadOnlyList<WfAction>> RetrieveRequestsAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Returns SDK message name constants. Includes hardcoded defaults (Create, Update, etc.)
     ///     plus any additional names from the provided requests collection.
     /// </summary>
-    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames);
-    /// <inheritdoc cref="RetrieveSdkMessageNames(IReadOnlyCollection{string})"/>
-    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(CodeGenerationConfig config);
+    Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default);
+    /// <inheritdoc cref="RetrieveSdkMessageNamesAsync(IReadOnlyCollection{string})"/>
+    Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default);
 
-    SortedDictionary<string, List<Option>> RetrieveOptionSets(IReadOnlyCollection<string> globalOptionSets);
-    /// <inheritdoc cref="RetrieveOptionSets(IReadOnlyCollection{string})"/>
-    SortedDictionary<string, List<Option>> RetrieveOptionSets(CodeGenerationConfig config);
+    Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsAsync(IReadOnlyCollection<string> globalOptionSets, CancellationToken cancellationToken = default);
+    /// <inheritdoc cref="RetrieveOptionSetsAsync(IReadOnlyCollection{string})"/>
+    Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default);
 
-    EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default);
-    int RetrieveOrganizationLanguage();
+    Task<EntityMetadata> RetrieveEntityMetadataAsync(string entity, EntityFilters filter = EntityFilters.Default, CancellationToken cancellationToken = default);
+    Task<int> RetrieveOrganizationLanguageAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Returns the UI language (LCID) of the currently connected user, as configured in their personal
@@ -37,26 +38,26 @@ public interface IMetadataService
     ///     <c>name</c>) based on this session language, not on any per-request parameter - so it can differ
     ///     from the language configured for code generation. Used to warn about this known limitation.
     /// </summary>
-    int RetrieveConnectionUserLanguage();
+    Task<int> RetrieveConnectionUserLanguageAsync(CancellationToken cancellationToken = default);
 
-    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(IReadOnlyCollection<string> businessProcessFlows);
-    /// <inheritdoc cref="RetrieveBusinessProcessFlows(IReadOnlyCollection{string})"/>
-    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(CodeGenerationConfig config);
+    Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(IReadOnlyCollection<string> businessProcessFlows, CancellationToken cancellationToken = default);
+    /// <inheritdoc cref="RetrieveBusinessProcessFlowsAsync(IReadOnlyCollection{string})"/>
+    Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default);
 
-    IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
+    Task<IReadOnlyList<Tuple<string, string, List<Guid>>>> RetrieveBusinessProcessFlowStagesAsync(Guid processId, CancellationToken cancellationToken = default);
 
-    Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls);
-    Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls);
+    Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsAsync(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default);
+    Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsAsync(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default);
 
-    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string> businessProcessFlows, string entityName);
-    /// <inheritdoc cref="RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection{string},string)"/>
-    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(CodeGenerationConfig config, string entityName);
+    Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(IReadOnlyCollection<string> businessProcessFlows, string entityName, CancellationToken cancellationToken = default);
+    /// <inheritdoc cref="RetrieveBusinessProcessFlowControlsForMainEntityAsync(IReadOnlyCollection{string},string)"/>
+    Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(CodeGenerationConfig config, string entityName, CancellationToken cancellationToken = default);
 
-    void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config);
-    /// <inheritdoc cref="PopulateEntitiesAndSolutions(CodeGenerationConfigBase)"/>
-    void PopulateEntitiesAndSolutions(CodeGenerationConfig config);
+    Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken = default);
+    /// <inheritdoc cref="PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase)"/>
+    Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default);
 
     // V1 legacy methods without V2 counterparts
-    IEnumerable<WfAction> RetrieveActions(CodeGenerationConfig config);
-    IEnumerable<WfAction> RetrieveCustomApis(CodeGenerationConfig config);
+    Task<IEnumerable<WfAction>> RetrieveActionsAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default);
+    Task<IEnumerable<WfAction>> RetrieveCustomApisAsync(CodeGenerationConfig config, CancellationToken cancellationToken = default);
 }

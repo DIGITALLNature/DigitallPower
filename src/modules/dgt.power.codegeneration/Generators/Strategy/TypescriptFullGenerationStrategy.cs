@@ -19,16 +19,16 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
     : TypescriptGenerationStrategyBase(console), ITypescriptGenerationStrategy
 {
     /// <inheritdoc />
-    public bool Generate(CodeGenerationVerb args, CodeGenerationConfig config)
+    public async Task<bool> GenerateAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         PrepareDirectory(args);
-        GenerateEntities(args, config);
-        GenerateEntityForms(args, config);
-        GenerateOptionSets(args, config);
-        GenerateSdkMessages(args, config);
+        await GenerateEntitiesAsync(args, config, cancellationToken);
+        await GenerateEntityFormsAsync(args, config, cancellationToken);
+        await GenerateOptionSetsAsync(args, config, cancellationToken);
+        await GenerateSdkMessagesAsync(args, config, cancellationToken);
         GenerateBoilerPlateFull(args, config);
-        GenerateEntityRefsFull(args, config);
-        GenerateBusinessProcessFlowsFull(args, config);
+        await GenerateEntityRefsFullAsync(args, config, cancellationToken);
+        await GenerateBusinessProcessFlowsFullAsync(args, config, cancellationToken);
         return true;
     }
 
@@ -64,55 +64,55 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
         CreateLiquidTemplateFile(templateName, context, name, args);
     }
 
-    private void GenerateEntities(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateEntitiesAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var systemLanguage = metadataService.RetrieveOrganizationLanguage();
+        var systemLanguage = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
 
         // Iterate through each entity in the configuration
         foreach (var entity in config.Entities)
         {
             // Retrieve the metadata for the entity
             var metadata =
-                metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+                await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
 
             var model = TsLiquidTemplateModelFactory.CreateEntityModel(config.TypingPath, metadata, config, systemLanguage);
             CreateLiquidTemplateFile("D365Entity.liquid", model, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.FileNamePart.Entity}", args);
         }
     }
 
-    private void GenerateEntityRefsFull(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateEntityRefsFullAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
-        var systemLanguage = metadataService.RetrieveOrganizationLanguage();
+        var systemLanguage = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
 
         foreach (var entity in config.Entities)
         {
             var metadata =
-                metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+                await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
 
             var model = TsLiquidTemplateModelFactory.CreateEntityRefModel(config.TypingPath, metadata, config, systemLanguage);
             CreateLiquidTemplateFile("D365EntityRef.liquid", model, $"{metadata.LogicalName.ToLowerInvariant()}.{FileNames.Typescript.FileNamePart.EntityRef}", args);
         }
     }
 
-    private void GenerateEntityForms(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateEntityFormsAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
         foreach (var entity in config.Entities)
         {
-            GenerateEntityFormForEntity(args, config, entity);
+            await GenerateEntityFormForEntityAsync(args, config, entity, cancellationToken);
         }
     }
 
-    private void GenerateSdkMessages(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateSdkMessagesAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         // Check if the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -125,13 +125,13 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
         }
 
         // Retrieve SDK message names from the metadata service
-        var sdkMessages = metadataService.RetrieveSdkMessageNames(config);
+        var sdkMessages = await metadataService.RetrieveSdkMessageNamesAsync(config, cancellationToken);
 
         var model = TsLiquidTemplateModelFactory.CreateSdkMessagesModel(sdkMessages, config);
         CreateLiquidTemplateFile("D365SdkMessages.liquid", model, $"{FileNames.Typescript.FileNames.SdkMessageNames}", args);
     }
 
-    private void GenerateOptionSets(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateOptionSetsAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         // Ensure that the arguments and configuration are not null
         Debug.Assert(args != null, nameof(args) + " != null");
@@ -144,13 +144,13 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
         }
 
         // Retrieve option sets from the metadata service
-        var optionSets = metadataService.RetrieveOptionSets(config);
+        var optionSets = await metadataService.RetrieveOptionSetsAsync(config, cancellationToken);
 
         var model = TsLiquidTemplateModelFactory.CreateOptionSetsModel(optionSets);
         CreateLiquidTemplateFile("D365OptionSets.liquid", model, $"{FileNames.Typescript.FileNames.OptionSetValues}", args);
     }
 
-    private void GenerateBusinessProcessFlowsFull(CodeGenerationVerb args, CodeGenerationConfig config)
+    private async Task GenerateBusinessProcessFlowsFullAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -160,10 +160,10 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
             return;
         }
 
-        var bpfs = metadataService.RetrieveBusinessProcessFlows(config);
+        var bpfs = await metadataService.RetrieveBusinessProcessFlowsAsync(config, cancellationToken);
         foreach (var bpf in bpfs)
         {
-            var stages = metadataService.RetrieveBusinessProcessFlowStages(bpf.Item3);
+            var stages = await metadataService.RetrieveBusinessProcessFlowStagesAsync(bpf.Item3, cancellationToken);
             var model = TsLiquidTemplateModelFactory.CreateBusinessProcessFlowModel(config.TypingPath, bpf, stages);
             CreateLiquidTemplateFile("D365BusinessProcessFlow.liquid", model, $"{bpf.Item4}.bpf", args);
         }
@@ -177,24 +177,24 @@ public class TypescriptFullGenerationStrategy(IMetadataService metadataService, 
     /// <param name="args"></param>
     /// <param name="config"></param>
     /// <param name="entityLogicalName"></param>
-    private void GenerateEntityFormForEntity(CodeGenerationVerb args, CodeGenerationConfig config, string entityLogicalName)
+    private async Task GenerateEntityFormForEntityAsync(CodeGenerationVerb args, CodeGenerationConfig config, string entityLogicalName, CancellationToken cancellationToken)
     {
         var entityMetadata =
-                metadataService.RetrieveEntityMetadata(entityLogicalName, EntityFilters.Attributes | EntityFilters.Entity);
+                await metadataService.RetrieveEntityMetadataAsync(entityLogicalName, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
 
         var languageCode = config.UseBaseLanguage
-            ? metadataService.RetrieveOrganizationLanguage()
+            ? await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken)
             : 1031;
 
-        var sessionLanguageCode = metadataService.RetrieveConnectionUserLanguage();
+        var sessionLanguageCode = await metadataService.RetrieveConnectionUserLanguageAsync(cancellationToken);
         if (sessionLanguageCode != languageCode)
         {
             Console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, languageCode));
         }
 
         var forms = config.OnlyFormsFromSolutions
-            ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Solutions], null)
-            : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, null);
+            ? await metadataService.RetrieveFormsDetailsFromSolutionsAsync(entityMetadata.LogicalName, [.. config.Solutions], null, cancellationToken)
+            : await metadataService.RetrieveFormsDetailsAsync(entityMetadata.LogicalName, null, cancellationToken);
 
         foreach (var formDetail in forms)
         {

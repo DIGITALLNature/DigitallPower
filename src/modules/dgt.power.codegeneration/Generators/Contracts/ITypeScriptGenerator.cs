@@ -10,10 +10,10 @@ public interface ITypeScriptGenerator
     /// <summary>
     ///     Runs the TypeScript code generation pipeline for a V2 config (Light mode only).
     /// </summary>
-    bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config);
+    Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Runs the TypeScript code generation pipeline for a V1 legacy config (Full or Light mode).
     /// </summary>
-    bool Generate(CodeGenerationVerb args, CodeGenerationConfig config);
+    Task<bool> GenerateAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken = default);
 }
