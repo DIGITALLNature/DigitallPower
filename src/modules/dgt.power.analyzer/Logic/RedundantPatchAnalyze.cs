@@ -7,7 +7,9 @@ using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using Microsoft.Xrm.Sdk;
+using dgt.power.common.Extensions;
+using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.analyzer.Logic;
@@ -28,10 +30,10 @@ public class RedundantPatchAnalyze(
         }
 
         var service = await connection.GetServiceAsync();
-        return Run(args, service);
+        return await RunAsync(args, service, cancellationToken);
     }
 
-    private bool Run(AnalyzeVerb args, IOrganizationService service)
+    private async Task<bool> RunAsync(AnalyzeVerb args, IOrganizationServiceAsync2 service, CancellationToken cancellationToken)
     {
         var summary = new AnalyzerSummary
         {
@@ -42,8 +44,7 @@ public class RedundantPatchAnalyze(
         var resultTable = new List<SolutionRedundantPatchLine>();
 
 
-        using var context = new DataContext(service);
-        var solution = SolutionComponentReader.GetSolution(context, args.InlineData);
+        var solution = await SolutionComponentReader.GetSolutionAsync(service, args.InlineData, cancellationToken);
         if (!solution.IsManaged.GetValueOrDefault(false))
         {
             Console.WriteLine($"Given Solution {solution.FriendlyName} is not Managed - this is not supported.");
@@ -56,11 +57,11 @@ public class RedundantPatchAnalyze(
             Console.WriteLine($"Given Solution {solution.FriendlyName} is not the Base Solution - Analyse will base on found base solution");
             parentSolutionId = solution.ParentSolutionId!.Id;
         }
-        var patches = GetPatchSolutions(context, parentSolutionId);
+        var patches = await GetPatchSolutionsAsync(service, parentSolutionId, cancellationToken);
 
         var table = new Table();
-        Console.Live(Align.Center(table))
-            .Start(ctx =>
+        await Console.Live(Align.Center(table))
+            .StartAsync(async ctx =>
             {
                 table.AddColumn("Solution");
                 table.AddColumn("Name");
@@ -75,13 +76,13 @@ public class RedundantPatchAnalyze(
                     table.AddRow(patchUniqueName, patch.FriendlyName ?? patchUniqueName, "", "", "Checking");
                     ctx.Refresh();
                     table.RemoveRow(table.Rows.Count - 1);
-                    var components = reader.GetSolutionComponents(service, patch.Id);
+                    var components = await reader.GetSolutionComponentsAsync(service, patch.Id, cancellationToken);
 
                     var topLayers = 0;
                     var notTopLayers = 0;
                     foreach (var component in components)
                     {
-                        var layers = reader.GetSolutionLayers(service, component);
+                        var layers = await reader.GetSolutionLayersAsync(service, component, cancellationToken);
                         if (!layers.Any())
                         {
                             continue;
@@ -138,10 +139,24 @@ public class RedundantPatchAnalyze(
         return true;
     }
 
-    private static List<Solution> GetPatchSolutions(DataContext context, Guid parentSolutionId)
+    private static async Task<List<Solution>> GetPatchSolutionsAsync(IOrganizationServiceAsync2 service, Guid parentSolutionId, CancellationToken cancellationToken)
     {
-        return (from su in context.SolutionSet
-            where su.ParentSolutionId != null && su.ParentSolutionId.Id == parentSolutionId
-                select su).ToList();
+        var query = new QueryExpression(Solution.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                Solution.LogicalNames.SolutionId,
+                Solution.LogicalNames.UniqueName,
+                Solution.LogicalNames.FriendlyName),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(Solution.LogicalNames.ParentSolutionId, ConditionOperator.Equal, parentSolutionId)
+                }
+            }
+        };
+        var patches = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        return patches.Select(entity => entity.ToEntity<Solution>()).ToList();
     }
 }

@@ -6,7 +6,7 @@ using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.common.DTO;
 using dgt.power.dataverse;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
@@ -29,10 +29,10 @@ public sealed class TopLayerAnalyze(
         }
 
         var service = await connection.GetServiceAsync();
-        return Run(args, service);
+        return await RunAsync(args, service, cancellationToken);
     }
 
-    private bool Run(AnalyzeVerb args, IOrganizationService service)
+    private async Task<bool> RunAsync(AnalyzeVerb args, IOrganizationServiceAsync2 service, CancellationToken cancellationToken)
     {
         var summary = new AnalyzerSummary
         {
@@ -46,10 +46,9 @@ public sealed class TopLayerAnalyze(
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(request, cancellationToken);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(service);
         foreach (var uniqueName in args.InlineData.Split(','))
         {
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
@@ -57,11 +56,11 @@ public sealed class TopLayerAnalyze(
 
             Console.Write(solutionTag);
 
-            var components = reader.GetSolutionComponents(service, context, uniqueName);
+            var components = await reader.GetSolutionComponentsAsync(service, uniqueName, cancellationToken);
 
             var table = new Table();
-            Console.Live(Align.Center(table))
-                .Start(ctx =>
+            await Console.Live(Align.Center(table))
+                .StartAsync(async ctx =>
                 {
                     table.AddColumn("Component");
                     table.AddColumn("Order");
@@ -72,7 +71,7 @@ public sealed class TopLayerAnalyze(
 
                     foreach (var component in components)
                     {
-                        var layers = reader.GetSolutionLayers(service, component);
+                        var layers = await reader.GetSolutionLayersAsync(service, component, cancellationToken);
                         if (!layers.Any())
                         {
                             continue;

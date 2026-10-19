@@ -2,7 +2,9 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -11,7 +13,7 @@ namespace dgt.power.analyzer.Base;
 
 /// <summary>
 /// Reads solution components, their layers and solutions for the analyzers. Holds no Dataverse
-/// connection; every method receives the service or data context it should use.
+/// connection; every method receives the async service it should use.
 /// </summary>
 public sealed class SolutionComponentReader
 {
@@ -34,26 +36,22 @@ public sealed class SolutionComponentReader
     /// <summary>
     /// Retrieves the solution components for a given solution.
     /// </summary>
-    /// <param name="service">The organization service.</param>
-    /// <param name="context">The data context.</param>
+    /// <param name="service">The async organization service.</param>
     /// <param name="uniqueName">The unique name of the solution.</param>
     /// <returns>A list of solution components.</returns>
-    public IList<SolutionComponent> GetSolutionComponents(IOrganizationService service, DataContext context, string uniqueName)
+    public async Task<IList<SolutionComponent>> GetSolutionComponentsAsync(IOrganizationServiceAsync2 service, string uniqueName, CancellationToken cancellationToken)
     {
-        // Get the solution using the provided unique name
-        var solution = GetSolution(context, uniqueName);
-
-        // Retrieve the solution components using the solution ID
-        return GetSolutionComponents(service, solution.Id);
+        var solution = await GetSolutionAsync(service, uniqueName, cancellationToken);
+        return await GetSolutionComponentsAsync(service, solution.Id, cancellationToken);
     }
 
     /// <summary>
     /// Retrieves solution components based on the provided solution Id.
     /// </summary>
-    /// <param name="service">The organization service.</param>
+    /// <param name="service">The async organization service.</param>
     /// <param name="solutionId">The Id of the solution to retrieve components for.</param>
     /// <returns>A list of SolutionComponent objects.</returns>
-    public IList<SolutionComponent> GetSolutionComponents(IOrganizationService service, Guid solutionId)
+    public async Task<IList<SolutionComponent>> GetSolutionComponentsAsync(IOrganizationServiceAsync2 service, Guid solutionId, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(service);
 
@@ -120,30 +118,8 @@ public sealed class SolutionComponentReader
         });
 
         // Set paging information
-        pagequery.PageInfo = new PagingInfo
-        {
-            Count = PageSize,
-            PageNumber = 1,
-            PagingCookie = null
-        };
-
-        var components = new List<SolutionComponent>();
-        var moreRecords = true;
-        while (moreRecords)
-        {
-            // Retrieve the page.
-            var results = service.RetrieveMultiple(pagequery);
-            components.AddRange(results.Entities.Select(e => e.ToEntity<SolutionComponent>()));
-            if (results.MoreRecords)
-            {
-                pagequery.PageInfo.PageNumber++;
-                pagequery.PageInfo.PagingCookie = results.PagingCookie;
-            }
-
-            moreRecords = results.MoreRecords;
-        }
-
-        return components;
+        var results = await service.RetrieveAllAsync(pagequery, PageSize, cancellationToken);
+        return results.Select(e => e.ToEntity<SolutionComponent>()).ToList();
     }
 
     /// <summary>
@@ -170,7 +146,7 @@ public sealed class SolutionComponentReader
         return first.MsdynSolutionname == "Active" ? GetTopNotActiveLayer(layers.Skip(1).ToList()) : first;
     }
 
-    public IList<MsdynComponentlayer> GetSolutionLayers(IOrganizationService service, SolutionComponent component)
+    public async Task<IList<MsdynComponentlayer>> GetSolutionLayersAsync(IOrganizationServiceAsync2 service, SolutionComponent component, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(service);
         Debug.Assert(component != null, nameof(component) + " != null");
@@ -206,17 +182,31 @@ public sealed class SolutionComponentReader
         query.Criteria = filter;
 
         query.AddOrder(MsdynComponentlayer.LogicalNames.MsdynOrder, OrderType.Descending);
-        var layers = service.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<MsdynComponentlayer>()).ToList();
+        var layers = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(s => s.ToEntity<MsdynComponentlayer>()).ToList();
         return layers;
     }
 
-    public static Solution GetSolution(DataContext context, string uniqueName)
+    public static async Task<Solution> GetSolutionAsync(IOrganizationServiceAsync2 service, string uniqueName, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(context);
-        var solution = (from su in context.SolutionSet
-                        where su.UniqueName == uniqueName
-                        select su).Single();
-        return solution;
+        ArgumentNullException.ThrowIfNull(service);
+        ArgumentNullException.ThrowIfNull(uniqueName);
+        var query = new QueryExpression(Solution.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                Solution.LogicalNames.SolutionId,
+                Solution.LogicalNames.UniqueName,
+                Solution.LogicalNames.FriendlyName,
+                Solution.LogicalNames.IsManaged,
+                Solution.LogicalNames.ParentSolutionId),
+            Criteria = new FilterExpression
+            {
+                Conditions = { new ConditionExpression(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, uniqueName) }
+            }
+        };
+        var solutions = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        return solutions.Select(entity => entity.ToEntity<Solution>()).Single();
     }
 
     public static string GetComponentName(SolutionComponent component, IEnumerable<EntityMetadata> entities, MsdynComponentlayer first)
