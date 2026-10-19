@@ -9,7 +9,6 @@ using dgt.power.maintenance.Base.Config;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -34,10 +33,15 @@ public class UpdateWorkflowState(
             return false;
         }
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var service = await connection.GetServiceAsync();
 
         // Do the actual work
-        var result = await UpdateWorkflowStatesAsync(service, workflowConfig, workflowConfig.SolutionFilter, workflowConfig.PublisherFilter);
+        var result = await UpdateWorkflowStatesAsync(
+            service,
+            workflowConfig,
+            workflowConfig.SolutionFilter,
+            workflowConfig.PublisherFilter,
+            cancellationToken);
 
         // Print table report if requested
         if (args.TableReport)
@@ -51,16 +55,17 @@ public class UpdateWorkflowState(
     /// <summary>
     /// Take a given workflow config and update corresponding flows
     /// </summary>
-    /// <param name="service">The organization service</param>
+    /// <param name="service">The asynchronous organization service</param>
     /// <param name="workflowConfig">The underlying workflow config</param>
     /// <param name="solutions">Optional solution filter</param>
     /// <param name="publishers">Optional publisher filter</param>
     /// <returns>True if no errors occured otherwise False</returns>
     private async Task<bool> UpdateWorkflowStatesAsync(
-        IOrganizationService service,
+        IOrganizationServiceAsync2 service,
         WorkflowConfig workflowConfig,
         IReadOnlyList<string>? solutions,
-        IReadOnlyList<string>? publishers)
+        IReadOnlyList<string>? publishers,
+        CancellationToken cancellationToken)
     {
         return await Console.Progress()
             .StartAsync(async ctx =>
@@ -83,27 +88,32 @@ public class UpdateWorkflowState(
                 };
 
                 var workflowStateManager = new WorkflowStateManager(
-                    (IOrganizationServiceAsync2)service,
+                    service,
                     solutions?.ToArray() ?? [],
                     publishers?.ToArray() ?? [],
                     Console,
                     progress);
 
                 Console.WriteLine("Loading all workflows");
-                var workflows = await workflowStateManager.LoadAllWorkflowsAsync();
+                var workflows = await workflowStateManager.LoadAllWorkflowsAsync(cancellationToken);
                 _workflowStateTracker.AddWorkflows(workflows);
 
                 Console.WriteLine($"Found {workflows.Length} workflows");
 
                 Console.WriteLine("Updating workflows");
 
-                var result = await TryUpdateWorkflowsAsync(service, workflows, workflowConfig, progress);
+                var result = await TryUpdateWorkflowsAsync(service, workflows, workflowConfig, progress, cancellationToken);
 
                 return result;
             });
     }
 
-    private async Task<bool> TryUpdateWorkflowsAsync(IOrganizationService service, Workflow[] workflows, WorkflowConfig workflowConfig, WorkflowStateManager.TaskStatusCallback progress)
+    private async Task<bool> TryUpdateWorkflowsAsync(
+        IOrganizationServiceAsync2 service,
+        Workflow[] workflows,
+        WorkflowConfig workflowConfig,
+        WorkflowStateManager.TaskStatusCallback progress,
+        CancellationToken cancellationToken)
     {
         // introduce rounds because we might need multiple turns if child flows exist. Instead of figuring out the hierarchy we just repeat as long as each round has some successes
         // keep track of failures in a dictionary
@@ -123,18 +133,19 @@ public class UpdateWorkflowState(
             var index = 0;
             foreach (var workflow in updateResults.Where(r => !r.Value))
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 bool updateResult;
 
                 try
                 {
-                    updateResult = await TryUpdateWorkflowAsync(service, workflow.Key, workflowConfig);
+                    updateResult = await TryUpdateWorkflowAsync(service, workflow.Key, workflowConfig, cancellationToken);
                 }
                 catch (InvalidDataException e)
                 {
                     Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message}[/]");
                     updateResult = true;
                 }
-                catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
+                catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException and not OperationCanceledException)
                 {
                     Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Unable to update workflow '{workflow.Key.WorkflowId}': {e.Message}[/]");
                     updateResult = false;
@@ -159,7 +170,11 @@ public class UpdateWorkflowState(
         return currentFailures <= 0;
     }
 
-    private async Task<bool> TryUpdateWorkflowAsync(IOrganizationService service, Workflow workflow, WorkflowConfig workflowConfig)
+    private async Task<bool> TryUpdateWorkflowAsync(
+        IOrganizationServiceAsync2 service,
+        Workflow workflow,
+        WorkflowConfig workflowConfig,
+        CancellationToken cancellationToken)
     {
         var workflowCategory = workflow.Category?.Value;
         if (workflowCategory is null)
@@ -220,8 +235,8 @@ public class UpdateWorkflowState(
 
         _workflowStateTracker.TrackDisabled(workflow, desiredDisabled);
 
-        var desiredOwner = await ResolveSystemUserAsync(service, desiredOwnerDomainName);
-        var desiredImpersonateUser = await ResolveSystemUserAsync(service, desiredImpersonate);
+        var desiredOwner = await ResolveSystemUserAsync(service, desiredOwnerDomainName, cancellationToken);
+        var desiredImpersonateUser = await ResolveSystemUserAsync(service, desiredImpersonate, cancellationToken);
 
         _workflowStateTracker.TrackOwner(workflow, desiredOwner);
 
@@ -246,15 +261,11 @@ public class UpdateWorkflowState(
         if (desiredOwner != null && desiredOwner.SystemUserId != currentOwner?.Id && !currentDisabled)
         {
             Console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): disabling workflow for owner update");
-            var disableWorkflowRequest = new UpdateRequest
+            await service.UpdateAsync(new Workflow(workflow.Id)
             {
-                Target = new Workflow(workflow.Id)
-                {
-                    StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
-                    StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
-                }
-            };
-            service.Execute(disableWorkflowRequest);
+                StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft),
+                StatusCode = new OptionSetValue(Workflow.Options.StatusCode.Draft)
+            }, cancellationToken);
 
             // reset current disabled value to reflect the change
             currentDisabled = true;
@@ -288,7 +299,9 @@ public class UpdateWorkflowState(
             Console.WriteLine(
                 $"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): " +
                 $"chaging owner from {currentOwnerDomainName}'({currentOwner?.Id}) to owner={desiredOwnerDomainName}({desiredOwner.Id})");
-            service.Execute(new AssignRequest{ Assignee = desiredOwner.ToEntityReference(), Target = updateWorkflow.ToEntityReference() });
+            await service.ExecuteAsync(
+                new AssignRequest { Assignee = desiredOwner.ToEntityReference(), Target = updateWorkflow.ToEntityReference() },
+                cancellationToken);
         }
 
         if (!updateNeeded)
@@ -298,8 +311,6 @@ public class UpdateWorkflowState(
         }
 
         Console.WriteLine($"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}'): performing update");
-        var updateRequest = new UpdateRequest { Target = updateWorkflow };
-
         if (desiredImpersonateUser != null)
         {
             var callerId = service.GetType().GetProperty("CallerId", BindingFlags.Instance | BindingFlags.Public);
@@ -310,7 +321,7 @@ public class UpdateWorkflowState(
                 var noImpersonationLabel = $"Workflow {workflow.Id} (category={workflow.Category?.Value};name='{workflowName}')";
                 Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
                     $"[yellow]{noImpersonationLabel}: Service '{service.GetType().Name}' does not support impersonation. Continuing without[/]");
-                service.Execute(updateRequest);
+                await service.UpdateAsync(updateWorkflow, cancellationToken);
             }
             else
             {
@@ -323,7 +334,7 @@ public class UpdateWorkflowState(
 
                 try
                 {
-                    service.Execute(updateRequest);
+                    await service.UpdateAsync(updateWorkflow, cancellationToken);
                 }
                 finally
                 {
@@ -333,7 +344,7 @@ public class UpdateWorkflowState(
         }
         else
         {
-            service.Execute(updateRequest);
+            await service.UpdateAsync(updateWorkflow, cancellationToken);
         }
 
         _workflowStateTracker.TrackDisabled(workflow, desiredDisabled, desiredDisabled);
@@ -348,18 +359,21 @@ public class UpdateWorkflowState(
     /// <param name="service">Organization service to query with</param>
     /// <param name="username">Domain name to look for</param>
     /// <returns>Found user or default object if not found</returns>
-    private Task<SystemUser?> ResolveSystemUserAsync(IOrganizationService service, string? username)
+    private async Task<SystemUser?> ResolveSystemUserAsync(
+        IOrganizationServiceAsync2 service,
+        string? username,
+        CancellationToken cancellationToken)
     {
         // If no username is given return default
         if (string.IsNullOrWhiteSpace(username))
         {
-            return Task.FromResult<SystemUser?>(null);
+            return null;
         }
 
         // Check if we seen the username already and if so grab it from the table
         if (_userTable.TryGetValue(username, out var user))
         {
-            return Task.FromResult<SystemUser?>(user);
+            return user;
         }
 
         // Check for existing systemuser with domain name
@@ -376,16 +390,17 @@ public class UpdateWorkflowState(
             }
         };
 
-        user = service.RetrieveMultiple(query).Entities.Cast<SystemUser>().SingleOrDefault();
+        var response = await service.RetrieveMultipleAsync(query, cancellationToken);
+        user = response.Entities.Cast<SystemUser>().SingleOrDefault();
 
         // If we do not find a user return default
         if (user == null)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]No user found for '{username}'[/]");
-            return Task.FromResult<SystemUser?>(null);
+            return null;
         }
 
         _userTable.TryAdd(username, user);
-        return Task.FromResult<SystemUser?>(user);
+        return user;
     }
 }
