@@ -75,10 +75,14 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
         await Assert.That(entityCode).Contains("declare namespace XrmTable.DgtTestTable");
         await Assert.That(entityCode).Contains("export interface FormContext extends Xrm.FormContext");
         await Assert.That(entityCode).Contains("LogicalName = \"dgt_test_table\"");
+        await Assert.That(entityCode).Contains("getAttribute(name: \"dgt_text_rich\")");
+        await Assert.That(entityCode).Contains("dgt_text_rich?: string;");
 
         await Assert.That(formCode).Contains("declare namespace XrmForm.");
         await Assert.That(formCode).Contains("export interface FormContext extends Xrm.FormContext");
         await Assert.That(formCode).Contains("export interface Ui extends Xrm.Ui");
+        await Assert.That(formCode).Contains("getAttribute(name: \"statuscode\"): Xrm.Attributes.OptionSetAttribute");
+        await Assert.That(formCode).Contains("getControl(name: \"header_statuscode\"): Xrm.Controls.OptionSetControl");
     }
 
     [Test]
@@ -186,6 +190,26 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
         var generated = await File.ReadAllTextAsync(customApiPath);
         await Assert.That(generated).Contains("InputValue");
         await Assert.That(generated).Contains("OutputValue");
+
+        var noCustomApiArgs = new CodeGenerationVerb
+        {
+            Config = args.Config,
+            Folder = args.Folder,
+            TargetDirectory = Path.Combine(ArtifactDirectory, "without-custom-apis")
+        };
+        var noCustomApiConfig = new TypeScriptCodeGenerationConfig
+        {
+            Requests = [customApi.UniqueName],
+            Output = new TypeScriptOutput { CustomApis = false }
+        };
+        await Assert.That(context.TypeScriptGenerator.Generate(noCustomApiArgs, noCustomApiConfig)).IsTrue();
+
+        var noCustomApiOutputPath = Path.Combine(
+            noCustomApiArgs.TargetDirectory,
+            noCustomApiArgs.Folder,
+            Folders.Typescript);
+        await Assert.That(Directory.Exists(Path.Combine(noCustomApiOutputPath, Folders.TypescriptCustomApis))).IsFalse();
+        await Assert.That(File.Exists(Path.Combine(noCustomApiOutputPath, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName + ".d.ts"))).IsFalse();
     }
 
     private static string GetScenarioFilePath(string scenarioName, string fileName) =>

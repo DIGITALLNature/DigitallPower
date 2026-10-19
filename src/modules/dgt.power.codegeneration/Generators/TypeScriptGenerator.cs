@@ -103,20 +103,18 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         return LiquidTemplateEngine.LoadTemplate(TslResourcePrefix, templateName);
     }
 
-    #region V2 Generate (TypeScriptCodeGenerationConfig)
-
     public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
         PrepareDirectory(args);
-        GenerateEntitiesV2(args, config);
-        GenerateEntityFormsV2(args, config);
-        GenerateOptionSetsV2(args, config);
-        GenerateSdkMessagesV2(args, config);
-        GenerateCustomApisV2(args, config);
+        GenerateEntities(args, config);
+        GenerateEntityForms(args, config);
+        GenerateOptionSets(args, config);
+        GenerateSdkMessages(args, config);
+        GenerateCustomApis(args, config);
         return true;
     }
 
-    private void GenerateEntitiesV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateEntities(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -161,7 +159,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
     }
 
-    private void GenerateEntityFormsV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateEntityForms(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -174,8 +172,8 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
 
         WarnIfSessionLanguageMismatch(languageCode);
 
-        var bpfControls = GetCompleteEntityBpfControlListV2(config);
-        var entityWithParsedFormList = GenerateEntityWithMetadataV2(config, bpfControls);
+        var bpfControls = GetCompleteEntityBpfControlList(config);
+        var entityWithParsedFormList = GenerateEntityWithMetadata(config, bpfControls);
         var flatListParseForm = GetFlatFormDetail(entityWithParsedFormList);
         foreach (var entityParsedForm in entityWithParsedFormList)
         {
@@ -225,7 +223,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockTestTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateSdkMessagesV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateSdkMessages(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -252,7 +250,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         CreateFile(content, FileNames.Typescript.FileNames.SdkMessageNames, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateOptionSetsV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateOptionSets(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -279,7 +277,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         CreateFile(content, FileNames.Typescript.FileNames.OptionSetValues, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateCustomApisV2(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateCustomApis(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -323,7 +321,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
     }
 
-    private List<EntityWithMetadataFormData> GenerateEntityWithMetadataV2(TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls)
+    private List<EntityWithMetadataFormData> GenerateEntityWithMetadata(TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls)
     {
         var entityWithMetadataForms = new List<EntityWithMetadataFormData>();
 
@@ -351,7 +349,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         return entityWithMetadataForms;
     }
 
-    private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlListV2(TypeScriptCodeGenerationConfig config)
+    private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlList(TypeScriptCodeGenerationConfig config)
     {
         var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
         foreach (var entityName in config.Entities.Names.OrderBy(entityName => entityName))
@@ -371,9 +369,6 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
         return bpfControls;
     }
-
-
-    #endregion
 
     #region Shared Helpers
 

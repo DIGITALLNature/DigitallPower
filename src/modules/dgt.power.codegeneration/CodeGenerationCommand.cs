@@ -32,10 +32,11 @@ public class CodeGenerationCommand(
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", _ =>
                 {
+                    metadataService.PopulateEntitiesAndSolutions(config);
                     success = config switch
                     {
-                        DotNetCodeGenerationConfig dotnetConfig => ExecuteV2(verb, dotnetConfig),
-                        TypeScriptCodeGenerationConfig tsConfig => ExecuteV2(verb, tsConfig),
+                        DotNetCodeGenerationConfig dotnetConfig => dotNetGenerator.Generate(verb, dotnetConfig),
+                        TypeScriptCodeGenerationConfig tsConfig => typeScriptGenerator.Generate(verb, tsConfig),
                         _ => throw new InvalidOperationException($"Unsupported configuration type '{config.GetType().Name}'.")
                     };
                 }
@@ -43,17 +44,4 @@ public class CodeGenerationCommand(
 
         return success;
     }
-
-    private bool ExecuteV2(CodeGenerationVerb verb, CodeGenerationConfigBase config)
-    {
-        metadataService.PopulateEntitiesAndSolutions(config);
-
-        return config switch
-        {
-            DotNetCodeGenerationConfig dotnetConfig => dotNetGenerator.Generate(verb, dotnetConfig),
-            TypeScriptCodeGenerationConfig tsConfig => typeScriptGenerator.Generate(verb, tsConfig),
-            _ => false
-        };
-    }
-
 }

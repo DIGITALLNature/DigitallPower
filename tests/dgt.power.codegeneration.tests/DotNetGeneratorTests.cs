@@ -358,7 +358,19 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             var accountFile = Path.Combine(dotNetPath, "Account.cs");
             await Assert.That(File.Exists(accountFile)).IsTrue();
             await Assert.That(File.Exists(Path.Combine(dotNetPath, $"{FileNames.DotNet.Context}.cs"))).IsTrue();
-            await Assert.That(await File.ReadAllTextAsync(accountFile)).Contains("namespace Contoso.Dataverse.Model");
+            var generatedEntity = await File.ReadAllTextAsync(accountFile);
+            await Assert.That(generatedEntity).Contains("namespace Contoso.Dataverse.Model");
+            if (target == DotNetTarget.Modern)
+            {
+                await Assert.That(generatedEntity).Contains("GetAttributeValue<string?>(");
+                await Assert.That(generatedEntity).DoesNotContain("using System;");
+            }
+            else
+            {
+                await Assert.That(generatedEntity).Contains("GetAttributeValue<string>(");
+                await Assert.That(generatedEntity).Contains("using System;");
+                await Assert.That(generatedEntity).DoesNotContain("GetAttributeValue<string?>(");
+            }
         }
     }
 

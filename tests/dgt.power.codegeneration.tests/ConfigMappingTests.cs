@@ -128,24 +128,18 @@ public class ConfigMappingTests
     [Arguments("""{"version":2,"type":null}""")]
     [Arguments("""{"version":2,"type":1}""")]
     [Arguments("""{"version":2,"type":"full"}""")]
-    public async Task ResolveInvalidTarget_ShouldFailActionably(string json)
-    {
-        var exception = ResolveAndCaptureException(json);
-
-        await Assert.That(exception is JsonException or NotSupportedException).IsTrue();
-        await Assert.That(exception.Message).IsNotEmpty();
-    }
-
-    [Test]
     [Arguments("""{"version":2,"Type":"dotnet"}""")]
     [Arguments("""{"version":2,"TYPE":"typescript"}""")]
     [Arguments("""{"version":2,"type":"DotNet"}""")]
     [Arguments("""{"version":2,"type":"TypeScript"}""")]
-    public async Task ResolveIncorrectlyCasedTarget_ShouldFail(string json)
+    public async Task ResolveInvalidTarget_ShouldExplainSupportedDiscriminators(string json)
     {
         var exception = ResolveAndCaptureException(json);
 
-        await Assert.That(exception is JsonException or NotSupportedException).IsTrue();
+        await Assert.That(exception).IsTypeOf<InvalidOperationException>();
+        await Assert.That(exception.Message)
+            .IsEqualTo("Config requires a case-sensitive 'type' property set to 'dotnet' or 'typescript'.");
+        await Assert.That(exception.InnerException is JsonException or NotSupportedException).IsTrue();
     }
 
     [Test]

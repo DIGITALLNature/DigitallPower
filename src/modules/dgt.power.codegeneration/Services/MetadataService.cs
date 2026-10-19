@@ -318,7 +318,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             _ => "object"
         };
 
-    #region V2 API
+    #region Metadata API
 
     public void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config)
     {
@@ -570,7 +570,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
 
     #endregion
 
-    #region V2 internal helpers
+    #region Metadata helpers
 
     private List<WfAction> RetrieveCustomApisByNames(IReadOnlyCollection<string> names)
     {

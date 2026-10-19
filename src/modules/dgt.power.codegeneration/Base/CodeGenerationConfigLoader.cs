@@ -77,7 +77,17 @@ public static class CodeGenerationConfigLoader
             writer.WriteEndObject();
         }
 
-        return JsonSerializer.Deserialize<CodeGenerationConfigBase>(buffer.WrittenSpan, s_options);
+        try
+        {
+            return JsonSerializer.Deserialize<CodeGenerationConfigBase>(buffer.WrittenSpan, s_options);
+        }
+        catch (Exception exception) when (
+            (exception is JsonException or NotSupportedException) && HasInvalidDiscriminator(root))
+        {
+            throw new InvalidOperationException(
+                "Config requires a case-sensitive 'type' property set to 'dotnet' or 'typescript'.",
+                exception);
+        }
     }
 
     private static void ValidateVersion(JsonElement root)
@@ -130,5 +140,29 @@ public static class CodeGenerationConfigLoader
 
         property = default;
         return false;
+    }
+
+    private static bool HasInvalidDiscriminator(JsonElement root)
+    {
+        var discriminators = root.EnumerateObject()
+            .Where(property => property.NameEquals("type"))
+            .ToArray();
+
+        if (discriminators.Length == 0)
+        {
+            return true;
+        }
+
+        if (discriminators.Length > 1)
+        {
+            return false;
+        }
+
+        if (discriminators[0].Value.ValueKind != JsonValueKind.String)
+        {
+            return true;
+        }
+
+        return discriminators[0].Value.GetString() is not ("dotnet" or "typescript");
     }
 }
