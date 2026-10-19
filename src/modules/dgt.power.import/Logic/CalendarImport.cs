@@ -5,7 +5,9 @@ using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.import.Base;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Calendar = dgt.power.dataverse.Calendar;
 using CalendarRule = dgt.power.dataverse.CalendarRule;
@@ -39,24 +41,47 @@ public sealed class CalendarImport(
 
         var result = true;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service);
-
-        var defaultBusinessUnit = context.BusinessUnitSet.SingleOrDefault(bu => bu.ParentBusinessUnitId == null)
-            ?.ToEntityReference();
+        var service = await connection.GetServiceAsync();
+        var businessUnitQuery = new QueryExpression(BusinessUnit.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(BusinessUnit.LogicalNames.BusinessUnitId),
+            Criteria =
+            {
+                Conditions =
+                {
+                    new ConditionExpression(BusinessUnit.LogicalNames.ParentBusinessUnitId, ConditionOperator.Null)
+                }
+            }
+        };
+        var defaultBusinessUnit = (await service.RetrieveAllAsync(businessUnitQuery, cancellationToken: cancellationToken))
+            .SingleOrDefault()?.ToEntityReference();
 
         foreach (var calendar in calendars.OrderByDescending(c => c.Type))
         {
             Console.WriteLine($"Check {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
-            var calendarCurrent = context.CalendarSet.SingleOrDefault(c => c.Id == calendar.CalendarId);
+            var calendarQuery = new QueryExpression(Calendar.EntityLogicalName)
+            {
+                NoLock = true,
+                ColumnSet = new ColumnSet(Calendar.LogicalNames.CalendarId),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(Calendar.LogicalNames.CalendarId, ConditionOperator.Equal, calendar.CalendarId)
+                    }
+                }
+            };
+            var calendarCurrent = (await service.RetrieveAllAsync(calendarQuery, cancellationToken: cancellationToken))
+                .SingleOrDefault()?.ToEntity<Calendar>();
 
             if (calendarCurrent == null)
             {
                 Console.WriteLine($"Create {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = CreateCalendarStructure(calendar, defaultBusinessUnit);
-                result = service.TryCreate(calendarEntity, out _);
+                result = await service.TryCreateAsync(calendarEntity, cancellationToken);
             }
             else if (calendar.IsVaryByDay)
             {
@@ -67,7 +92,7 @@ public sealed class CalendarImport(
                 Console.WriteLine($"Update {calendar.CalendarId} - Name {calendar.Name} - Type: {calendar.Type}");
 
                 var calendarEntity = UpdateCalendarStructure(calendar);
-                result = service.TryUpdate(calendarEntity);
+                result = await service.TryUpdateAsync(calendarEntity, cancellationToken);
             }
         }
 

@@ -239,6 +239,10 @@ public static class OrganizationServiceExtensions
             await service.ExecuteAsync(new UpdateRequest { Target = entity }, cancellationToken);
             LogToConsole("updated", TraceEventType.Verbose);
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception e)
         {
             LogToConsole($"update failed {entity.Id:B}: {e.RootMessage()}", TraceEventType.Error);
@@ -260,6 +264,10 @@ public static class OrganizationServiceExtensions
             await service.ExecuteAsync(new DeleteRequest { Target = new EntityReference(name, id) }, cancellationToken);
             LogToConsole("deleted", TraceEventType.Verbose);
         }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception e)
         {
             LogToConsole($"delete failed {id:B}: {e.RootMessage()}", TraceEventType.Error);
@@ -273,6 +281,43 @@ public static class OrganizationServiceExtensions
         ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(entity);
         return TryCreateCoreAsync(service, entity, cancellationToken);
+    }
+
+    public static Task<(bool Succeeded, T? Entity)> TryRetrieveAsync<T>(
+        this IOrganizationServiceAsync2 service,
+        string entityName,
+        Guid entityId,
+        ColumnSet columns,
+        CancellationToken cancellationToken = default)
+        where T : Entity
+    {
+        ArgumentNullException.ThrowIfNull(service);
+        return TryRetrieveCoreAsync<T>(service, entityName, entityId, columns, cancellationToken);
+    }
+
+    private static async Task<(bool Succeeded, T? Entity)> TryRetrieveCoreAsync<T>(
+        IOrganizationServiceAsync2 service,
+        string entityName,
+        Guid entityId,
+        ColumnSet columns,
+        CancellationToken cancellationToken)
+        where T : Entity
+    {
+        try
+        {
+            var entity = (await service.RetrieveAsync(entityName, entityId, columns, cancellationToken)).ToEntity<T>();
+            LogToConsole("retrieved", TraceEventType.Verbose);
+            return (true, entity);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            LogToConsole($"retrieve failed {entityName}({entityId:D}): {e.RootMessage()}", TraceEventType.Error);
+            return (false, null);
+        }
     }
 
     public static Task<(bool Succeeded, TO? Response)> TryExecuteAsync<TR, TO>(
@@ -313,6 +358,10 @@ public static class OrganizationServiceExtensions
         {
             await service.ExecuteAsync(new CreateRequest { Target = entity }, cancellationToken);
             LogToConsole("created", TraceEventType.Verbose);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception e)
         {
