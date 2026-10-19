@@ -20,8 +20,6 @@ namespace dgt.power.codegeneration.Generators;
 
 public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole console) : ITypeScriptGenerator
 {
-    private IAnsiConsole Console { get; } = console;
-
     private readonly TemplateOptions _templateOptions = TslTemplateOptionsFactory.Create();
 
     private const string TslResourcePrefix = "dgt.power.codegeneration.Templates.tsl";
@@ -42,7 +40,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
 
         CreateDirectoryWhenNeeded(Path.GetDirectoryName(path));
         using var file = File.CreateText(path);
-        Console.MarkupLine($"Creating File: [bold green] {path} [/]");
+        console.MarkupLine($"Creating File: [bold green] {path} [/]");
         file.Write(content);
     }
 
@@ -52,7 +50,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         Debug.Assert(args != null, $"{nameof(args)} != null");
         Debug.Assert(extension != null, $"{nameof(extension)} != null");
 
-        Console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
+        console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
 
         using var reader = new StreamReader(typeof(TypeScriptGenerator).Assembly
             .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
@@ -125,7 +123,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         if (config.Language == null)
         {
             languageCode = metadataService.RetrieveOrganizationLanguage();
-            Console.MarkupLine($"Using Base Language: {languageCode}");
+            console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.TsAuxiliaryExtTypes, FileNames.Typescript.FileExtension.TypeExtension);
@@ -168,7 +166,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
         var languageCode = config.Language ?? metadataService.RetrieveOrganizationLanguage();
-        Console.MarkupLine($"Using Language: {languageCode}");
+        console.MarkupLine($"Using Language: {languageCode}");
 
         WarnIfSessionLanguageMismatch(languageCode);
 
@@ -185,7 +183,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
                 var formName = $"{entityMetada.LogicalName.Trim()}.{Formatter.Sanitize(parsedForm.Key.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.Form}";
                 if (ShouldSkipFormForConfig(config.Output.Forms?.Filter ?? [], formName))
                 {
-                    Console.MarkupLine($"Skip: {formName}");
+                    console.MarkupLine($"Skip: {formName}");
                     continue;
                 }
                 FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
@@ -265,7 +263,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
 
         var viewModel = new OptionSetViewModel
         {
-            OptionSets = [..optionSets]
+            OptionSets = [.. optionSets]
         };
 
         var content = RenderTemplateWithDiagnostics(
@@ -330,7 +328,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
             var entityMetadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
             if (entityMetadata.IsBPFEntity == true)
             {
-                Console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
+                console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
                 continue;
             }
 
@@ -433,7 +431,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
         configForms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
             .ToList()
-            .ForEach(_ => Console.MarkupLine(Warnings.TsExtensionDeprecation));
+            .ForEach(_ => console.MarkupLine(Warnings.TsExtensionDeprecation));
         configForms = configForms.Select(e => e.EndsWith(".ts", StringComparison.InvariantCulture)
                     ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
                     : e)
@@ -483,14 +481,14 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         var sessionLanguageCode = metadataService.RetrieveConnectionUserLanguage();
         if (sessionLanguageCode != configuredLanguageCode)
         {
-            Console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, configuredLanguageCode));
+            console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, configuredLanguageCode));
         }
     }
 
     private TemplateContext CreateTemplateContext(object viewModel)
     {
         var context = new TemplateContext(viewModel, _templateOptions);
-        CustomLiquidFilters.ConfigureTemplateContext(context, Console);
+        CustomLiquidFilters.ConfigureTemplateContext(context, console);
         return context;
     }
 
