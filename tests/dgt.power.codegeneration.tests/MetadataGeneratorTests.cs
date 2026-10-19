@@ -27,15 +27,14 @@ public class MetadataGeneratorTests : CodeGenerationTestsBase
             .WithMetaData(accountMetadata)
             .Build();
 
-        var config = new CodeGenerationConfig
+        var config = new DotNetCodeGenerationConfig
         {
-            Entities = [accountMetadata.LogicalName]
+            Entities = new EntityScopeConfig { Names = [accountMetadata.LogicalName] }
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         context.MetadataGenerator.PrepareDirectory(args);
-        context.MetadataGenerator.GenerateEntities(args,
-            config.ToDotNetConfig());
+        context.MetadataGenerator.GenerateEntities(args, config);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";

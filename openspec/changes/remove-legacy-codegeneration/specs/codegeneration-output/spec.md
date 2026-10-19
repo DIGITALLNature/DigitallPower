@@ -4,7 +4,7 @@
 
 Define the supported Dataverse .NET and TypeScript generation outputs independently of retired compatibility modes.
 
-## ADDED Requirements
+## MODIFIED Requirements
 
 ### Requirement: Each target has one generation mode
 

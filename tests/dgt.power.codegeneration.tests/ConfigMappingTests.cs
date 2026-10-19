@@ -1,95 +1,13 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Text.Json;
 using dgt.power.codegeneration.Base;
 
 namespace dgt.power.codegeneration.tests;
 
 public class ConfigMappingTests
 {
-    [Test]
-    public async Task ToDotNetConfig_ShouldMapLegacyFieldsToNestedV2Shape()
-    {
-        var config = new CodeGenerationConfig
-        {
-            NameSpace = "Contoso.Dataverse.Model",
-            Entities = ["account"],
-            Solutions = ["ContosoCore"],
-            EntityMask = "contoso_*",
-            UseBaseLanguage = true,
-            GlobalOptionSets = ["contoso_status"],
-            Actions = ["ActionA"],
-            CustomAPIs = ["ApiA"],
-            AdditionalSdkMessages = ["WhoAmI"],
-            SuppressNullableSupport = true,
-            Virtual = true,
-            EditableReadOnlyProperties = true,
-            SuppressContext = true,
-            SuppressOptions = true,
-            SuppressLogicalNames = true,
-            SuppressRelations = true,
-            SuppressNavigationProperties = true,
-            SuppressEntityTypeCode = true,
-            SuppressAlternateKeys = true,
-            SuppressMetaData = true
-        };
-
-        var mapped = config.ToDotNetConfig();
-
-        await Assert.That(mapped.Namespace).IsEqualTo("Contoso.Dataverse.Model");
-        await Assert.That(mapped.Entities.Names).IsEquivalentTo(["account"]);
-        await Assert.That(mapped.Entities.FromSolutions).IsEquivalentTo(["ContosoCore"]);
-        await Assert.That(mapped.Entities.Mask).IsEqualTo("contoso_*");
-        await Assert.That(mapped.Language).IsNull();
-        await Assert.That(mapped.OptionSets).IsEquivalentTo(["contoso_status"]);
-        await Assert.That(mapped.Requests).IsEquivalentTo(["ActionA", "ApiA", "WhoAmI"]);
-        await Assert.That(mapped.Output.Target).IsEqualTo(DotNetTarget.Framework);
-        await Assert.That(mapped.Output.Virtual).IsTrue();
-        await Assert.That(mapped.Output.EditableReadOnly).IsTrue();
-        await Assert.That(mapped.Output.Include.Context).IsFalse();
-        await Assert.That(mapped.Output.Include.Options).IsFalse();
-        await Assert.That(mapped.Output.Include.LogicalNames).IsFalse();
-        await Assert.That(mapped.Output.Include.Relations).IsFalse();
-        await Assert.That(mapped.Output.Include.NavigationProps).IsFalse();
-        await Assert.That(mapped.Output.Include.EntityTypeCode).IsFalse();
-        await Assert.That(mapped.Output.Include.AlternateKeys).IsFalse();
-        await Assert.That(mapped.Output.Include.Metadata).IsFalse();
-    }
-
-    [Test]
-    public async Task ToTypeScriptConfig_ShouldMapLegacyFieldsToNestedV2Shape()
-    {
-        var config = new CodeGenerationConfig
-        {
-            Entities = ["account"],
-            Solutions = ["ContosoCore"],
-            EntityMask = "contoso_*",
-            GlobalOptionSets = ["contoso_status"],
-            Actions = ["ActionA"],
-            CustomAPIs = ["ApiA"],
-            AdditionalSdkMessages = ["WhoAmI"],
-            Forms = ["account.main.form"],
-            OnlyFormsFromSolutions = true,
-            XrmMockFormHelpers = true,
-            UseBaseLanguage = false
-        };
-
-        var mapped = config.ToTypeScriptConfig();
-
-        await Assert.That(mapped.Namespace).IsNull();
-        await Assert.That(mapped.Entities.Names).IsEquivalentTo(["account"]);
-        await Assert.That(mapped.Entities.FromSolutions).IsEquivalentTo(["ContosoCore"]);
-        await Assert.That(mapped.Entities.Mask).IsEqualTo("contoso_*");
-        await Assert.That(mapped.Language).IsEqualTo(0);
-        await Assert.That(mapped.OptionSets).IsEquivalentTo(["contoso_status"]);
-        await Assert.That(mapped.Requests).IsEquivalentTo(["ActionA", "ApiA", "WhoAmI"]);
-        await Assert.That(mapped.Output.CustomApis).IsTrue();
-        await Assert.That(mapped.Output.Forms).IsNotNull();
-        await Assert.That(mapped.Output.Forms!.Filter).IsEquivalentTo(["account.main.form"]);
-        await Assert.That(mapped.Output.Forms.FromSolutions).IsTrue();
-        await Assert.That(mapped.Output.Forms.TestHelpers).IsTrue();
-    }
-
     [Test]
     public async Task ResolveV2DotNetConfig_ShouldDeserializeNestedShape()
     {
@@ -116,8 +34,8 @@ public class ConfigMappingTests
                             }
                             """;
 
-        var result = CodeGenerationConfigFactory.ResolveFromFile(WriteConfigFile("v2-dotnet.json", json));
-        var config = AssertV2<DotNetCodeGenerationConfig>(result);
+        var config = CodeGenerationConfigLoader.LoadFromFile(WriteConfigFile("v2-dotnet.json", json))
+            as DotNetCodeGenerationConfig ?? throw new InvalidOperationException("Expected V2 .NET config.");
 
         await Assert.That(config.Namespace).IsEqualTo("Contoso.Dataverse.Model");
         await Assert.That(config.Entities.Names).IsEquivalentTo(["account"]);
@@ -138,6 +56,7 @@ public class ConfigMappingTests
                             {
                               "version": 2,
                               "type": "typescript",
+                              "$schema": "https://example.test/typescript.schema.json",
                               "namespace": null,
                               "entities": {
                                 "names": ["account"],
@@ -156,8 +75,8 @@ public class ConfigMappingTests
                             }
                             """;
 
-        var result = CodeGenerationConfigFactory.ResolveFromFile(WriteConfigFile("v2-typescript.json", json));
-        var config = AssertV2<TypeScriptCodeGenerationConfig>(result);
+        var config = CodeGenerationConfigLoader.LoadFromFile(WriteConfigFile("v2-typescript.json", json))
+            as TypeScriptCodeGenerationConfig ?? throw new InvalidOperationException("Expected V2 TypeScript config.");
 
         await Assert.That(config.Namespace).IsNull();
         await Assert.That(config.Entities.Names).IsEquivalentTo(["account"]);
@@ -171,23 +90,119 @@ public class ConfigMappingTests
         await Assert.That(config.Output.CustomApis).IsFalse();
     }
 
-    private static TConfig AssertV2<TConfig>(CodeGenerationConfigResult result)
-        where TConfig : CodeGenerationConfigBase
+    [Test]
+    [Arguments("""{"type":"dotnet","version":2}""", nameof(DotNetCodeGenerationConfig))]
+    [Arguments("""{"$schema":"https://example.test/schema.json","version":2,"type":"typescript"}""", nameof(TypeScriptCodeGenerationConfig))]
+    [Arguments("""{"version":2,"entities":{"names":["account"]},"type":"dotnet"}""", nameof(DotNetCodeGenerationConfig))]
+    [Arguments("""{"version":2,"output":{"customApis":false},"type":"typescript"}""", nameof(TypeScriptCodeGenerationConfig))]
+    [Arguments("""{"VERSION":2,"type":"dotnet","ENTITIES":{"NAMES":["account"]}}""", nameof(DotNetCodeGenerationConfig))]
+    [Arguments("""{"version":2,"type":"dotnet",}""", nameof(DotNetCodeGenerationConfig))]
+    public async Task ResolveConfig_ShouldDeserializePolymorphicallyRegardlessOfDiscriminatorOrder(
+        string json,
+        string expectedType)
     {
-        if (result is CodeGenerationConfigResult.V2 { Config: TConfig config })
-        {
-            return config;
-        }
+        var config = CodeGenerationConfigLoader.LoadFromFile(WriteConfigFile("polymorphic-config.json", json));
 
-        throw new InvalidOperationException($"Expected V2 config {nameof(result)}.");
+        await Assert.That(config.GetType().Name).IsEqualTo(expectedType);
+    }
+
+    [Test]
+    [Arguments("""{"type":"dotnet"}""", "explicit config version is required")]
+    [Arguments("""{"version":1,"type":"dotnet"}""", "Unsupported config version 1")]
+    [Arguments("""{"version":3,"type":"dotnet"}""", "Unsupported config version 3")]
+    [Arguments("""{"version":null,"type":"dotnet"}""", "version' must be the integer 2")]
+    [Arguments("""{"version":"2","type":"dotnet"}""", "version' must be the integer 2")]
+    [Arguments("""{"version":true,"type":"dotnet"}""", "version' must be the integer 2")]
+    [Arguments("""{"version":{},"type":"dotnet"}""", "version' must be the integer 2")]
+    [Arguments("""{"version":[],"type":"dotnet"}""", "version' must be the integer 2")]
+    [Arguments("""{"version":2.5,"type":"dotnet"}""", "version' must be the integer 2")]
+    public async Task ResolveInvalidVersion_ShouldFailActionably(string json, string expectedMessage)
+    {
+        var exception = ResolveAndCaptureException(json);
+
+        await Assert.That(exception.Message).Contains(expectedMessage);
+    }
+
+    [Test]
+    [Arguments("""{"version":2}""")]
+    [Arguments("""{"version":2,"type":null}""")]
+    [Arguments("""{"version":2,"type":1}""")]
+    [Arguments("""{"version":2,"type":"full"}""")]
+    public async Task ResolveInvalidTarget_ShouldFailActionably(string json)
+    {
+        var exception = ResolveAndCaptureException(json);
+
+        await Assert.That(exception is JsonException or NotSupportedException).IsTrue();
+        await Assert.That(exception.Message).IsNotEmpty();
+    }
+
+    [Test]
+    [Arguments("""{"version":2,"Type":"dotnet"}""")]
+    [Arguments("""{"version":2,"TYPE":"typescript"}""")]
+    [Arguments("""{"version":2,"type":"DotNet"}""")]
+    [Arguments("""{"version":2,"type":"TypeScript"}""")]
+    public async Task ResolveIncorrectlyCasedTarget_ShouldFail(string json)
+    {
+        var exception = ResolveAndCaptureException(json);
+
+        await Assert.That(exception is JsonException or NotSupportedException).IsTrue();
+    }
+
+    [Test]
+    [Arguments("""{"version":2,"type":"dotnet","type":"typescript"}""")]
+    [Arguments("""{"version":2,"type":"dotnet","type":"dotnet"}""")]
+    [Arguments("""{"version":2,"version":2,"type":"dotnet"}""")]
+    [Arguments("""{"version":2,"VERSION":2,"type":"dotnet"}""")]
+    [Arguments("""{"version":2,"type":"dotnet","entities":{},"Entities":{}}""")]
+    public async Task ResolveDuplicateProperty_ShouldFail(string json)
+    {
+        var exception = ResolveAndCaptureException(json);
+
+        await Assert.That(exception is JsonException or NotSupportedException).IsTrue();
+    }
+
+    [Test]
+    [Arguments("""{"version":2,"type":"typescript","EntityFilters":[]}""", "Attribute-level filters were removed without replacement")]
+    [Arguments("""{"version":2,"type":"typescript","entityfilters":[]}""", "Attribute-level filters were removed without replacement")]
+    [Arguments("""{"version":2,"type":"typescript","EntityRefFilters":[]}""", "Attribute-level filters were removed without replacement")]
+    [Arguments("""{"version":2,"type":"typescript","EntityFormFilters":[]}""", "Attribute-level filters were removed without replacement")]
+    [Arguments("""{"version":2,"type":"typescript","TypescriptGeneratorVersion":"Full"}""", "no longer has a mode selector")]
+    public async Task ResolveRetiredSetting_ShouldFailActionably(string json, string expectedMessage)
+    {
+        var exception = ResolveAndCaptureException(json);
+
+        await Assert.That(exception.Message).Contains(expectedMessage);
     }
 
     private static string WriteConfigFile(string fileName, string json)
     {
         var directory = Path.Combine(AppContext.BaseDirectory, "ConfigMappingTestsArtifacts");
         Directory.CreateDirectory(directory);
-        var path = Path.Combine(directory, fileName);
+        var path = Path.Combine(directory, $"{Path.GetFileNameWithoutExtension(fileName)}-{Guid.NewGuid():N}.json");
         File.WriteAllText(path, json);
         return path;
+    }
+
+    private static Exception ResolveAndCaptureException(string json)
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"dgtp-codegen-{Guid.NewGuid():N}.json");
+        File.WriteAllText(path, json);
+        try
+        {
+            try
+            {
+                CodeGenerationConfigLoader.LoadFromFile(path);
+            }
+            catch (Exception exception) when (exception is InvalidOperationException or JsonException or NotSupportedException)
+            {
+                return exception;
+            }
+
+            throw new InvalidOperationException("Expected config resolution to fail.");
+        }
+        finally
+        {
+            File.Delete(path);
+        }
     }
 }

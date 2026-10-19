@@ -6,13 +6,17 @@
 // ReSharper disable CollectionNeverUpdated.Global
 // ReSharper disable UnusedMember.Global
 
+using System.Text.Json.Serialization;
+
 namespace dgt.power.codegeneration.Base;
 
 /// <summary>
 ///     V2 base configuration shared between all output types.
-///     Discriminated by <c>"type"</c> in JSON. Polymorphic routing handled by
-///     <see cref="CodeGenerationConfigFactory"/>.
+///     Discriminated by <c>"type"</c> in JSON.
 /// </summary>
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+[JsonDerivedType(typeof(DotNetCodeGenerationConfig), "dotnet")]
+[JsonDerivedType(typeof(TypeScriptCodeGenerationConfig), "typescript")]
 public abstract class CodeGenerationConfigBase
 {
     /// <summary>Config version. V2 configs use the typed discriminator model.</summary>

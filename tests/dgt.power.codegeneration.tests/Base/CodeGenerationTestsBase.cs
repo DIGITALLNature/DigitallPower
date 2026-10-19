@@ -4,8 +4,6 @@
 using System.Runtime.Caching;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Xml;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
@@ -103,13 +101,6 @@ public abstract class CodeGenerationTestsBase : IDisposable
 /// </summary>
 public class CodeGenerationContext
 {
-    private static readonly JsonSerializerOptions s_jsonOptions = new()
-    {
-        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
-        AllowTrailingCommas = true,
-        PropertyNameCaseInsensitive = true
-    };
-
     public IDotNetGenerator DotNetGenerator { get; }
     public ITypeScriptGenerator TypeScriptGenerator { get; }
     public IMetadataGenerator MetadataGenerator { get; }
@@ -125,14 +116,16 @@ public class CodeGenerationContext
     }
 
     /// <summary>
-    ///     Reads a V1 <see cref="CodeGenerationConfig"/> from the verb's config file path
-    ///     and runs the TypeScript facade. Convenience method for tests that use on-disk config files.
+    ///     Reads a V2 TypeScript config from the verb's config file path and runs the TypeScript generator.
+    ///     Convenience method for tests that use on-disk config files.
     /// </summary>
     public bool ExecuteTypescriptFromConfigFile(CodeGenerationVerb verb)
     {
-        var json = File.ReadAllText(verb.Config);
-        var config = JsonSerializer.Deserialize<CodeGenerationConfig>(json, s_jsonOptions)
-                     ?? throw new InvalidOperationException($"Failed to deserialize config from '{verb.Config}'.");
+        if (CodeGenerationConfigLoader.LoadFromFile(verb.Config) is not TypeScriptCodeGenerationConfig config)
+        {
+            throw new InvalidOperationException($"Expected a V2 TypeScript config in '{verb.Config}'.");
+        }
+
         return TypeScriptGenerator.Generate(verb, config);
     }
 }
