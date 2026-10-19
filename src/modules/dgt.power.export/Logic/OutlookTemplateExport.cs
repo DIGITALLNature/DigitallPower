@@ -2,12 +2,14 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
 
@@ -25,15 +27,28 @@ public sealed class OutlookTemplateExport(
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "outlooktemplate.json" : args.FileName;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        IList<SavedQuery> savedQueries;
-        using (var context = new DataContext(service))
+        var service = await connection.GetServiceAsync();
+        var query = new QueryExpression(SavedQuery.EntityLogicalName)
         {
-            savedQueries = (from sq in context.SavedQuerySet
-                where sq.QueryType == SavedQueryQueryType.OutlookTemplate
-                orderby sq.Name
-                select sq).ToList();
-        }
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                SavedQuery.LogicalNames.Name,
+                SavedQuery.LogicalNames.ReturnedTypeCode,
+                SavedQuery.LogicalNames.IsDefault,
+                SavedQuery.LogicalNames.FetchXml,
+                SavedQuery.LogicalNames.Description),
+            Criteria =
+            {
+                Conditions =
+                {
+                    new ConditionExpression(SavedQuery.LogicalNames.QueryType, ConditionOperator.Equal,
+                        (int)SavedQueryQueryType.OutlookTemplate)
+                }
+            },
+            Orders = { new OrderExpression(SavedQuery.LogicalNames.Name, OrderType.Ascending) }
+        };
+        var savedQueries = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<SavedQuery>()).ToList();
 
         var export = new dto.SavedQuery();
 

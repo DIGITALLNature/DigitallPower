@@ -8,6 +8,7 @@ using dgt.power.common.FileAccess;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
@@ -59,13 +60,15 @@ public sealed class DocumentTemplateExport(
             }
         }
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        if (!GetQueryExpression(Console, service, filter, out var query))
+        var service = await connection.GetServiceAsync();
+        var query = await GetQueryExpressionAsync(Console, service, filter, cancellationToken);
+        if (query == null)
         {
             return false;
         }
 
-        var documentTemplates = service.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<DocumentTemplate>()).ToList();
+        var documentTemplates = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(s => s.ToEntity<DocumentTemplate>()).ToList();
 
         var export = new List<dto.DocumentTemplate>();
 
@@ -102,10 +105,10 @@ public sealed class DocumentTemplateExport(
         return true;
     }
 
-    private static bool GetQueryExpression(IAnsiConsole console, IOrganizationService service, string filter, out QueryExpression? query)
+    private static async Task<QueryExpression?> GetQueryExpressionAsync(IAnsiConsole console, IOrganizationServiceAsync2 service,
+        string filter, CancellationToken cancellationToken)
     {
         var fetchXml = string.Empty;
-        query = null;
         try
         {
             fetchXml = "<fetch no-lock=\"true\" >" +
@@ -118,17 +121,21 @@ public sealed class DocumentTemplateExport(
                        "<order attribute=\"name\" />" +
                        "</entity>" +
                        "</fetch>";
-            var response = (FetchXmlToQueryExpressionResponse)service.Execute(new FetchXmlToQueryExpressionRequest
+            var response = (FetchXmlToQueryExpressionResponse)await service.ExecuteAsync(new FetchXmlToQueryExpressionRequest
             {
                 FetchXml = fetchXml
-            });
-            query = response.Query;
-            return true;
+            }, cancellationToken);
+            response.Query.NoLock = true;
+            return response.Query;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}[/]");
-            return false;
+            return null;
         }
     }
 }

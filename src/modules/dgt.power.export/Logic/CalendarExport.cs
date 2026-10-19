@@ -2,9 +2,11 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.export.Base;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
@@ -25,11 +27,29 @@ public sealed class CalendarExport(
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "calendar.json" : args.FileName;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service);
-        var scheduleIds = GetCalendarIds(context);
-
-        var calendars = scheduleIds.Select(id => RetrieveCalendarStructure(service, id));
+        var service = await connection.GetServiceAsync();
+        var scheduleQuery = new QueryExpression(dataverse.Calendar.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(dataverse.Calendar.LogicalNames.CalendarId, dataverse.Calendar.LogicalNames.Name),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(dataverse.Calendar.LogicalNames.Type, ConditionOperator.In,
+                        dataverse.Calendar.Options.Type.CustomerService,
+                        dataverse.Calendar.Options.Type.HolidaySchedule)
+                }
+            },
+            Orders = { new OrderExpression(dataverse.Calendar.LogicalNames.Name, OrderType.Ascending) }
+        };
+        var scheduleIds = (await service.RetrieveAllAsync(scheduleQuery, cancellationToken: cancellationToken))
+            .Select(entity => entity.Id).ToList();
+        var calendars = new List<Calendar>();
+        foreach (var id in scheduleIds)
+        {
+            calendars.Add(await RetrieveCalendarStructureAsync(service, id, cancellationToken));
+        }
 
         var json = ExportJson.GetJson(calendars);
 
@@ -38,21 +58,9 @@ public sealed class CalendarExport(
         return true;
     }
 
-    private static List<Guid> GetCalendarIds(DataContext context)
+    private static async Task<Calendar> RetrieveCalendarStructureAsync(IOrganizationServiceAsync2 service, Guid calendarid, CancellationToken cancellationToken)
     {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        return (from rec in context.CalendarSet
-            where rec.Type != null
-            where rec.Type.Value == dataverse.Calendar.Options.Type.CustomerService
-                  || rec.Type.Value == dataverse.Calendar.Options.Type.HolidaySchedule
-            orderby rec.Name
-            select rec.Id).ToList();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-    }
-
-    private static Calendar RetrieveCalendarStructure(IOrganizationService service, Guid calendarid)
-    {
-        var calendar = GetCalendarWithRules(service, calendarid);
+        var calendar = await GetCalendarWithRulesAsync(service, calendarid, cancellationToken);
         var calendarRules = calendar
             .RelatedEntities[new Relationship(dataverse.Calendar.Relations.OneToMany.CalendarCalendarRules)]?.Entities
             .Select(e => e.ToEntity<CalendarRule>()).ToList();
@@ -80,7 +88,7 @@ public sealed class CalendarExport(
         foreach (var calendarRule in calendarRules)
         {
             var innerCalendar = calendarRule.InnerCalendarId != null
-                ? RetrieveCalendarStructure(service, calendarRule.InnerCalendarId.Id)
+                ? await RetrieveCalendarStructureAsync(service, calendarRule.InnerCalendarId.Id, cancellationToken)
                 : null;
 
             export.Rules.Add(new dto.CalendarRule
@@ -112,7 +120,7 @@ public sealed class CalendarExport(
         return export;
     }
 
-    private static dataverse.Calendar GetCalendarWithRules(IOrganizationService service, Guid calendarid)
+    private static async Task<dataverse.Calendar> GetCalendarWithRulesAsync(IOrganizationServiceAsync2 service, Guid calendarid, CancellationToken cancellationToken)
     {
         var request = new RetrieveRequest
         {
@@ -124,13 +132,14 @@ public sealed class CalendarExport(
                     new Relationship(dataverse.Calendar.Relations.OneToMany.CalendarCalendarRules),
                     new QueryExpression(CalendarRule.EntityLogicalName)
                     {
+                        NoLock = true,
                         ColumnSet = new ColumnSet(true)
                     }
                 }
             }
         };
 
-        var response = (RetrieveResponse)service.Execute(request);
+        var response = (RetrieveResponse)await service.ExecuteAsync(request, cancellationToken);
         var calendar = response.Entity.ToEntity<dataverse.Calendar>();
         return calendar;
     }

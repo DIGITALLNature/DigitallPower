@@ -2,11 +2,13 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.export.Logic;
@@ -26,17 +28,21 @@ public sealed class SlaConfigExport(
 
         var configs = new List<SlaConfig>();
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using (var context = new DataContext(service))
+        var service = await connection.GetServiceAsync();
+        var query = new QueryExpression(SLA.EntityLogicalName)
         {
-            configs.AddRange(context.SLASet.Select(s => new SlaConfig
-            {
-                Name = s.Name ?? string.Empty,
-                SlaId = s.SLAId,
-                BusinessHours = s.BusinessHoursId != null ? s.BusinessHoursId.Id : null,
-                Active = s.StatusCode != null && s.StatusCode.Value == SLA.Options.StatusCode.Active
-            }).ToList());
-        }
+            NoLock = true,
+            ColumnSet = new ColumnSet(SLA.LogicalNames.Name, SLA.LogicalNames.SLAId,
+                SLA.LogicalNames.BusinessHoursId, SLA.LogicalNames.StatusCode)
+        };
+        var records = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        configs.AddRange(records.Select(entity => entity.ToEntity<SLA>()).Select(s => new SlaConfig
+        {
+            Name = s.Name ?? string.Empty,
+            SlaId = s.SLAId,
+            BusinessHours = s.BusinessHoursId?.Id,
+            Active = s.StatusCode?.Value == SLA.Options.StatusCode.Active
+        }));
 
         var json = ExportJson.GetJson(configs);
 
