@@ -660,7 +660,7 @@ currently unused.
   "optionSets": ["contoso_orderstatus"],
   "output": {
     "forms": {
-      "filter": ["account.main.account"],
+      "filter": ["account.main.form"],
       "testHelpers": true
     }
   }
