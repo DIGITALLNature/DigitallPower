@@ -4,9 +4,11 @@
 using System.Globalization;
 using System.Text;
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Model.Settings;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -17,8 +19,6 @@ namespace dgt.power.maintenance.Logic;
 
 public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsVerb>
 {
-    private const int PageSize = 5000;
-
     private readonly IDataverseConnection _connection;
     private readonly IAnsiConsole _console;
 
@@ -41,28 +41,31 @@ public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsV
 
     protected override async Task<bool> RunAsync(RemoveRedundantComponentsVerb args, CancellationToken cancellationToken)
     {
-        var service = (IOrganizationService)await _connection.GetServiceAsync();
-        return Run(service, args);
+        var service = await _connection.GetServiceAsync();
+        return await RunAsync(service, args, cancellationToken);
     }
 
-    private bool Run(IOrganizationService service, RemoveRedundantComponentsVerb args)
+    private async Task<bool> RunAsync(
+        IOrganizationServiceAsync2 service,
+        RemoveRedundantComponentsVerb args,
+        CancellationToken cancellationToken)
     {
         var request = new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(request, cancellationToken);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(service);
         var sourceComponents = new HashSet<Guid?>();
         foreach (var sourceSolution in args.SourceSolutions.Split(','))
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _console.WriteLine($"Fetch components for source {sourceSolution}");
-            sourceComponents.UnionWith(GetSolutionComponents(service, context, sourceSolution).Select(s => s.ObjectId));
+            sourceComponents.UnionWith((await GetSolutionComponentsAsync(service, sourceSolution, cancellationToken)).Select(s => s.ObjectId));
         }
         _console.WriteLine($"Fetch components for target {args.TargetSolution}");
-        var targetComponents = GetSolutionComponents(service, context, args.TargetSolution);
+        var targetComponents = await GetSolutionComponentsAsync(service, args.TargetSolution, cancellationToken);
 
         var componentsToProcess = targetComponents
             .Where(component => component.ComponentType?.Value != null)
@@ -71,6 +74,7 @@ public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsV
 
         foreach (var component in componentsToProcess)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (component.ComponentType?.Value == SolutionComponent.Options.ComponentType.Entity && !args.Entities)
             {
                 var entity = entities.Single(e => e.MetadataId == component.ObjectId!.Value);
@@ -107,12 +111,12 @@ public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsV
             _console.WriteLine($"Remove Component {component.ObjectId:D} <{typeColumn}> {nameColumn}");
             if (!args.DryRun)
             {
-                service.Execute(new RemoveSolutionComponentRequest
+                await service.ExecuteAsync(new RemoveSolutionComponentRequest
                 {
                     ComponentId = component.ObjectId!.Value,
                     ComponentType = component.ComponentType.Value,
                     SolutionUniqueName = args.TargetSolution
-                });
+                }, cancellationToken);
                 _console.WriteLine(" - removed");
             }
         }
@@ -120,11 +124,12 @@ public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsV
         return true;
     }
 
-    protected IList<SolutionComponent> GetSolutionComponents(IOrganizationService service, DataContext context, string uniqueName)
+    private async Task<IReadOnlyList<SolutionComponent>> GetSolutionComponentsAsync(
+        IOrganizationServiceAsync2 service,
+        string uniqueName,
+        CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(service);
-        ArgumentNullException.ThrowIfNull(context);
-        var solution = GetSolution(context, uniqueName);
+        var solution = await GetSolutionAsync(service, uniqueName, cancellationToken);
 
         var pagequery = new QueryExpression
         {
@@ -180,37 +185,23 @@ public class RemoveRedundantComponents : PowerCommand<RemoveRedundantComponentsV
             OrderType = OrderType.Ascending
         });
 
-        pagequery.PageInfo = new PagingInfo
-        {
-            Count = PageSize,
-            PageNumber = 1,
-            PagingCookie = null
-        };
-        var components = new List<SolutionComponent>();
-        var moreRecords = true;
-        while (moreRecords)
-        {
-            // Retrieve the page.
-            var results = service.RetrieveMultiple(pagequery);
-            components.AddRange(results.Entities.Select(e => e.ToEntity<SolutionComponent>()));
-            if (results.MoreRecords)
-            {
-                pagequery.PageInfo.PageNumber++;
-                pagequery.PageInfo.PagingCookie = results.PagingCookie;
-            }
-
-            moreRecords = results.MoreRecords;
-        }
-
-        return components;
+        var results = await service.RetrieveAllAsync(pagequery, cancellationToken: cancellationToken);
+        return results.Select(static entity => entity.ToEntity<SolutionComponent>()).ToArray();
     }
 
-    private static Solution GetSolution(DataContext context, string uniqueName)
+    private static async Task<Solution> GetSolutionAsync(
+        IOrganizationServiceAsync2 service,
+        string uniqueName,
+        CancellationToken cancellationToken)
     {
-        var solution = (from su in context.SolutionSet
-            where su.UniqueName == uniqueName
-            select su).Single();
-        return solution;
+        var query = new QueryExpression(Solution.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(Solution.LogicalNames.SolutionId)
+        };
+        query.Criteria.AddCondition(Solution.LogicalNames.UniqueName, ConditionOperator.Equal, uniqueName);
+        var solutions = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        return solutions.Select(static entity => entity.ToEntity<Solution>()).Single();
     }
 
 }
