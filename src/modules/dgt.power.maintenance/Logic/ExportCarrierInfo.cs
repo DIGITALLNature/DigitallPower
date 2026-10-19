@@ -120,6 +120,7 @@ public class ExportCarrierInfo(
     {
         var query = new QueryExpression(entityName)
         {
+            NoLock = true,
             ColumnSet = new ColumnSet(idField, referenceField, versionField, solutionIdField,
                 uniqueNameField, friendlyNameField, orderField, "statecode"),
             Criteria = new FilterExpression
@@ -173,6 +174,7 @@ public class ExportCarrierInfo(
         var solutionId = Guid.Parse(carrier.SolutionId!, CultureInfo.InvariantCulture);
         var query = new QueryExpression(Solution.EntityLogicalName)
         {
+            NoLock = true,
             ColumnSet = new ColumnSet(
                 Solution.LogicalNames.SolutionId,
                 Solution.LogicalNames.FriendlyName,
