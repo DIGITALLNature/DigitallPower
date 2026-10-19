@@ -7,5 +7,5 @@ namespace dgt.power.common;
 
 public interface IDataverseConnector
 {
-    Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync();
+    Task<ServiceClient> CreateServiceClientAsync();
 }

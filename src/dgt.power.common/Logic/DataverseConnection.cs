@@ -6,9 +6,7 @@ using Azure.Core;
 using Azure.Identity;
 using dgt.power.common.Connections;
 using dgt.power.common.Exceptions;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.PowerPlatform.Dataverse.Client.Utils;
 using Spectre.Console;
 
 namespace dgt.power.common.Logic;
@@ -153,7 +151,7 @@ public sealed partial class DataverseConnection(
         return new ResolvedConnection(connectionStore.ResolveName(name), definition);
     }
 
-    private async Task<IOrganizationServiceAsync2> ConnectUsingAsync(
+    internal async Task<IOrganizationServiceAsync2> ConnectUsingAsync(
         IDataverseConnector connector,
         string url,
         string connectionType)
@@ -163,25 +161,29 @@ public sealed partial class DataverseConnection(
             $"Connecting to {target}...",
             async _ =>
             {
+                ServiceClient? service = null;
+                var verified = false;
                 try
                 {
-                    var service = await connector.CreateOrganizationServiceProxyAsync();
-                    await CheckWhoAmIAsync(service);
+                    service = await connector.CreateServiceClientAsync();
+                    await DataverseConnectionVerifier.VerifyAsync(service, CancellationToken.None);
                     console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Connected to {target}");
-                    return service;
+                    verified = true;
+                    return (IOrganizationServiceAsync2)service;
                 }
                 catch (Exception exception) when (exception is not OperationCanceledException)
                 {
                     console.MarkupLine($"[red]{Emoji.Known.CrossMark}[/] Connection to {target} failed");
                     throw;
                 }
+                finally
+                {
+                    if (!verified)
+                    {
+                        service?.Dispose();
+                    }
+                }
             });
-    }
-
-    private static async Task CheckWhoAmIAsync(IOrganizationServiceAsync2 service)
-    {
-        // WhoAmI serves as connection health check - no output needed
-        await service.ExecuteAsync(new WhoAmIRequest());
     }
 
     private static Uri? ExtractUrlFromConnectionString(string connectionString)
@@ -199,17 +201,12 @@ public sealed partial class DataverseConnection(
 
     private sealed class CredentialConnector(string url, TokenCredential credential, bool nonInteractive) : IDataverseConnector
     {
-        public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
+        public Task<ServiceClient> CreateServiceClientAsync()
         {
             var uri = new Uri(url);
             var scope = new TokenRequestContext([GetScope(url)]);
             var service = new ServiceClient(uri, async _ => await GetTokenAsync(credential, scope));
-            if (!service.IsReady)
-            {
-                throw new DataverseConnectionException($"Dataverse connection failed: {service.LastError}", service.LastException);
-            }
-
-            return Task.FromResult<IOrganizationServiceAsync2>(service);
+            return Task.FromResult(service);
         }
 
         private async Task<string> GetTokenAsync(TokenCredential tokenCredential, TokenRequestContext context)
