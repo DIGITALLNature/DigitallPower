@@ -7,7 +7,6 @@ using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -67,7 +66,7 @@ public class FilterPowerFxPluginSteps(
                     step.FilteringAttributesField = filter;
 
                     ctx.Status($"Update {config.Name}");
-                    await service.ExecuteAsync(new UpdateRequest { Target = step }, cancellationToken);
+                    await service.UpdateAsync(step, cancellationToken);
                     Console.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
                 }
 
