@@ -20,8 +20,6 @@ namespace dgt.power.codegeneration.Generators;
 
 public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole console) : ITypeScriptGenerator
 {
-    private readonly TemplateOptions _templateOptions = TslTemplateOptionsFactory.Create();
-
     private const string TslResourcePrefix = "dgt.power.codegeneration.Templates.tsl";
 
     private void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
@@ -103,16 +101,17 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
 
     public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
     {
+        var templateOptions = TslTemplateOptionsFactory.Create();
         PrepareDirectory(args);
-        GenerateEntities(args, config);
-        GenerateEntityForms(args, config);
-        GenerateOptionSets(args, config);
-        GenerateSdkMessages(args, config);
-        GenerateCustomApis(args, config);
+        GenerateEntities(args, config, templateOptions);
+        GenerateEntityForms(args, config, templateOptions);
+        GenerateOptionSets(args, config, templateOptions);
+        GenerateSdkMessages(args, config, templateOptions);
+        GenerateCustomApis(args, config, templateOptions);
         return true;
     }
 
-    private void GenerateEntities(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateEntities(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -146,6 +145,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
                 liquidTemplate,
                 LiquidTemplates.Entity,
                 viewModel,
+                templateOptions,
                 entityKey: metadata.LogicalName,
                 artifact: artifactName);
 
@@ -157,7 +157,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
     }
 
-    private void GenerateEntityForms(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateEntityForms(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -197,7 +197,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
                     bpfControlsForEntity,
                     languageCode);
 
-                CreateFormFile(renderContext);
+                CreateFormFile(renderContext, templateOptions);
                 if (config.Output.Forms?.TestHelpers ?? false)
                 {
                     CreateFormTestHelperFile(renderContext with
@@ -205,7 +205,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
                         LiquidTemplate = liquidTemplateFormTestHelpers,
                         TemplateName = LiquidTemplates.EntityFormTestHelper,
                         FormName = $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}",
-                    });
+                    }, templateOptions);
                 }
             }
         }
@@ -221,7 +221,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockTestTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateSdkMessages(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateSdkMessages(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -243,12 +243,13 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
             liquidTemplate,
             LiquidTemplates.SdkMessages,
             viewModel,
+            templateOptions,
             artifact: $"{FileNames.Typescript.FileNames.SdkMessageNames}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
         CreateFile(content, FileNames.Typescript.FileNames.SdkMessageNames, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateOptionSets(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateOptionSets(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -270,12 +271,13 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
             liquidTemplate,
             LiquidTemplates.OptionSets,
             viewModel,
+            templateOptions,
             artifact: $"{FileNames.Typescript.FileNames.OptionSetValues}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
         CreateFile(content, FileNames.Typescript.FileNames.OptionSetValues, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateCustomApis(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    private void GenerateCustomApis(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -312,6 +314,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
                 liquidTemplate,
                 LiquidTemplates.CustomApi,
                 viewModel,
+                templateOptions,
                 entityKey: customApi.LogicalName,
                 artifact: $"{customApiName}.{FileNames.Typescript.FileExtension.TypeExtension}");
 
@@ -380,21 +383,21 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         SortedSet<BpfControlDetail> BpfControls,
         int LanguageCode);
 
-    private void CreateFormFile(FormFileRenderContext context)
+    private void CreateFormFile(FormFileRenderContext context, TemplateOptions templateOptions)
     {
         var artifact = $"{context.FormName}.{FileNames.Typescript.FileExtension.TypeExtension}";
-        var content = CreateFormFileContent(context, artifact);
+        var content = CreateFormFileContent(context, artifact, templateOptions);
         CreateFile(content, context.FormName, context.Args, FileNames.Typescript.FileExtension.TypeExtension, GetEntityFolderName(context.Metadata.LogicalName, Folders.TypescriptEntityForms));
     }
 
-    private void CreateFormTestHelperFile(FormFileRenderContext context)
+    private void CreateFormTestHelperFile(FormFileRenderContext context, TemplateOptions templateOptions)
     {
         var artifact = $"{context.FormName}.{FileNames.Typescript.FileExtension.TsExtension}";
-        var content = CreateFormFileContent(context, artifact);
+        var content = CreateFormFileContent(context, artifact, templateOptions);
         CreateFile(content, context.FormName, context.Args, FileNames.Typescript.FileExtension.TsExtension, GetEntityFolderName(context.Metadata.LogicalName, Folders.TypescriptEntityTestHelper));
     }
 
-    private string CreateFormFileContent(FormFileRenderContext context, string artifact)
+    private string CreateFormFileContent(FormFileRenderContext context, string artifact, TemplateOptions templateOptions)
     {
         var formname = context.FormDetail.Key
                     .Replace(".main", "Main", StringComparison.Ordinal)
@@ -413,6 +416,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
             context.LiquidTemplate,
             context.TemplateName,
             viewModel,
+            templateOptions,
             entityKey: context.Metadata.LogicalName,
             formKey: context.FormDetail.Key,
             artifact: artifact);
@@ -485,9 +489,9 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
     }
 
-    private TemplateContext CreateTemplateContext(object viewModel)
+    private TemplateContext CreateTemplateContext(object viewModel, TemplateOptions templateOptions)
     {
-        var context = new TemplateContext(viewModel, _templateOptions);
+        var context = new TemplateContext(viewModel, templateOptions);
         CustomLiquidFilters.ConfigureTemplateContext(context, console);
         return context;
     }
@@ -496,11 +500,12 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         IFluidTemplate template,
         string templateName,
         object viewModel,
+        TemplateOptions templateOptions,
         string? entityKey = null,
         string? formKey = null,
         string? artifact = null)
     {
-        var context = CreateTemplateContext(viewModel);
+        var context = CreateTemplateContext(viewModel, templateOptions);
         return TslRenderDiagnostics.Render(template, context, templateName, entityKey, formKey, artifact);
     }
 

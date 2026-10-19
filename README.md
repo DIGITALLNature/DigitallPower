@@ -640,6 +640,10 @@ allowlist of form identifiers to narrow this, or set `output.forms.fromSolutions
 forms belonging to the configured entity solutions. Set `output.forms.testHelpers` to generate
 XrmMock helpers alongside form typings; this is disabled by default.
 
+Form identifiers include the entity, environment-specific form name, and form type. Generate without
+a filter first, then use the generated form declaration's filename without `.d.ts` as its identifier
+(for example, `account.account_main.form` for a main form named `Account`).
+
 Requests generate SDK message name declarations. Parameterized Custom APIs also generate typed
 wrappers by default; set `output.customApis` to `false` to omit those wrappers. Option-set
 declarations are controlled by `optionSets`.
@@ -660,7 +664,6 @@ currently unused.
   "optionSets": ["contoso_orderstatus"],
   "output": {
     "forms": {
-      "filter": ["account.main.form"],
       "testHelpers": true
     }
   }

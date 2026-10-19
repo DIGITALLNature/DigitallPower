@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
+using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
@@ -13,25 +14,44 @@ using Spectre.Console.Cli;
 namespace dgt.power.codegeneration.tests;
 
 
-[NotInParallel("AnsiConsole")]
+[NotInParallel]
 public class CodeGenerationCommandTests
 {
     private readonly ICommand<CodeGenerationVerb> _command;
     private readonly StubConnection _connection;
+    private readonly StubDotNetGenerator _dotNetGenerator = new();
+    private readonly StubTypeScriptGenerator _typeScriptGenerator = new();
 
     public CodeGenerationCommandTests()
     {
-        var dotNetGeneratorMock = Mock.Of<IDotNetGenerator>();
-        dotNetGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<DotNetCodeGenerationConfig>()).Returns(true);
-
-        var typeScriptGeneratorMock = Mock.Of<ITypeScriptGenerator>();
-        typeScriptGeneratorMock.Generate(Any<CodeGenerationVerb>(), Any<TypeScriptCodeGenerationConfig>()).Returns(true);
         var metadataServiceMock = Mock.Of<IMetadataService>();
 
         _connection = new StubConnection();
         _command = new CodeGenerationCommand(new TestSpanFactory(), _connection,
-            dotNetGeneratorMock.Object, typeScriptGeneratorMock.Object,
+            _dotNetGenerator, _typeScriptGenerator,
             metadataServiceMock.Object, AnsiConsole.Console);
+    }
+
+    private sealed class StubDotNetGenerator : IDotNetGenerator
+    {
+        public int GenerateCallCount { get; private set; }
+
+        public bool Generate(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+        {
+            GenerateCallCount++;
+            return true;
+        }
+    }
+
+    private sealed class StubTypeScriptGenerator : ITypeScriptGenerator
+    {
+        public int GenerateCallCount { get; private set; }
+
+        public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+        {
+            GenerateCallCount++;
+            return true;
+        }
     }
 
     private sealed class StubConnection : IDataverseConnection
@@ -74,7 +94,7 @@ public class CodeGenerationCommandTests
     {
         var tempDirectory = Path.Combine(Path.GetTempPath(), $"dgtp-codegeneration-{Guid.NewGuid():N}");
         var configPath = Path.Combine(tempDirectory, "config.json");
-        var outputDirectory = Path.Combine(tempDirectory, "Model");
+        var outputDirectory = Path.Combine(tempDirectory, "Model", "TypeScript");
         var existingOutput = Path.Combine(outputDirectory, "custom-file.ts");
         Directory.CreateDirectory(outputDirectory);
 
@@ -95,10 +115,67 @@ public class CodeGenerationCommandTests
                 )).Throws<InvalidOperationException>();
 
             await Assert.That(_connection.GetServiceCallCount).IsEqualTo(0);
+            await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(0);
+            await Assert.That(_typeScriptGenerator.GenerateCallCount).IsEqualTo(0);
             await Assert.That(await File.ReadAllTextAsync(existingOutput)).IsEqualTo("keep this file");
         }
         finally
         {
+            Directory.Delete(tempDirectory, true);
+        }
+    }
+
+    [Test]
+    public async Task InvalidTypeScriptOptions_ShouldNotPreventDotNetGeneration()
+    {
+        var originalMaxSteps = Environment.GetEnvironmentVariable("DGTP_TSL_MAX_STEPS");
+        try
+        {
+            Environment.SetEnvironmentVariable("DGTP_TSL_MAX_STEPS", "0");
+            var metadataService = Mock.Of<IMetadataService>().Object;
+            var command = new CodeGenerationCommand(new TestSpanFactory(), _connection,
+                _dotNetGenerator, new TypeScriptGenerator(metadataService, AnsiConsole.Console),
+                metadataService, AnsiConsole.Console);
+
+            var result = await command.ExecuteAsync(
+                new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
+                new CodeGenerationVerb { Config = "Resources/CodeGenerationCommand/config.json" },
+                CancellationToken.None);
+
+            await Assert.That(result).IsEqualTo(0);
+            await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(1);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("DGTP_TSL_MAX_STEPS", originalMaxSteps);
+        }
+    }
+
+    [Test]
+    public async Task InvalidTypeScriptOptions_ShouldNotModifyExistingOutput()
+    {
+        var originalMaxSteps = Environment.GetEnvironmentVariable("DGTP_TSL_MAX_STEPS");
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"dgtp-codegeneration-{Guid.NewGuid():N}");
+        var outputDirectory = Path.Combine(tempDirectory, "Model", "TypeScript");
+        var existingOutput = Path.Combine(outputDirectory, "custom-file.ts");
+        Directory.CreateDirectory(outputDirectory);
+
+        try
+        {
+            Environment.SetEnvironmentVariable("DGTP_TSL_MAX_STEPS", "0");
+            await File.WriteAllTextAsync(existingOutput, "keep this file");
+            var generator = new TypeScriptGenerator(Mock.Of<IMetadataService>().Object, AnsiConsole.Console);
+
+            await Assert.That(() => generator.Generate(
+                    new CodeGenerationVerb { TargetDirectory = tempDirectory },
+                    new TypeScriptCodeGenerationConfig()))
+                .Throws<InvalidOperationException>();
+
+            await Assert.That(await File.ReadAllTextAsync(existingOutput)).IsEqualTo("keep this file");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("DGTP_TSL_MAX_STEPS", originalMaxSteps);
             Directory.Delete(tempDirectory, true);
         }
     }
