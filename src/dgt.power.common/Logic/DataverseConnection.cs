@@ -51,7 +51,9 @@ public sealed partial class DataverseConnection(
     {
         if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {
-            var url = ExtractUrlFromConnectionString(invocationContext.ConnectionString);
+            var url = ExtractUrlFromConnectionString(invocationContext.ConnectionString)?
+                .GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)
+                ?? "Dataverse environment";
             return await ConnectUsingAsync(
                 new ConnectionStringConnector(invocationContext.ConnectionString),
                 "ConnectionString",
@@ -69,7 +71,7 @@ public sealed partial class DataverseConnection(
             new CredentialConnector(definition.Url, credential, invocationContext.NonInteractive),
             name,
             definition.Url,
-            definition.GetDisplayName());
+            definition.TypeDisplayName);
     }
 
     /// <inheritdoc />
@@ -186,14 +188,14 @@ public sealed partial class DataverseConnection(
         await service.ExecuteAsync(new WhoAmIRequest());
     }
 
-    private static string ExtractUrlFromConnectionString(string connectionString)
+    private static Uri? ExtractUrlFromConnectionString(string connectionString)
     {
         var match = ConnectionUrlRegex().Match(connectionString);
         if (match.Success && Uri.TryCreate(match.Groups[1].Value.Trim(), UriKind.Absolute, out var uri))
         {
-            return uri.GetLeftPart(UriPartial.Authority);
+            return uri;
         }
-        return connectionString;
+        return null;
     }
 
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]

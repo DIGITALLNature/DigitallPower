@@ -62,6 +62,26 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
     }
 
     [Test]
+    public async Task GetServiceAsync_InvalidConnectionString_DoesNotWriteConnectionStringToConsole()
+    {
+        const string secret = "do-not-display-this-secret";
+        var invocationContext = new ConnectionInvocationContext();
+        invocationContext.Capture(new ConnectionSettings
+        {
+            ConnectionString = $"AuthType=ClientSecret;ClientSecret={secret}"
+        });
+        using var connection = new DataverseConnection(
+            ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole),
+            invocationContext,
+            TestConsole);
+
+        await Assert.That(connection.GetServiceAsync()).Throws<FailedConnectionException>();
+
+        await Assert.That(TestConsole.Output).DoesNotContain(secret);
+    }
+
+    [Test]
     public async Task ResolveName_ReturnsPersistedSpelling()
     {
         ConnectionStore.Upsert("Dev", new InteractiveConnection { Url = ConnectionTestUrls.Dataverse });

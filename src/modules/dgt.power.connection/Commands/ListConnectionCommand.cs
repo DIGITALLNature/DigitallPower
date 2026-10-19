@@ -26,12 +26,10 @@ public class ListConnectionCommand(
             grid.AddRow(
                 string.Equals(name, current, StringComparison.OrdinalIgnoreCase) ? "*" : string.Empty,
                 name,
-                definition.GetDisplayName());
+                definition.TypeDisplayName);
         }
 
         console.Write(grid);
         return 0;
     }
-
-
 }

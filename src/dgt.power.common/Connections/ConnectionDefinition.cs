@@ -17,9 +17,6 @@ public abstract record ConnectionDefinition
     public required string Url { get; init; }
 #pragma warning restore CA1056, S3996
 
-    public string GetDisplayName()
-    {
-        var name = GetType().Name;
-        return name.EndsWith("Connection", StringComparison.OrdinalIgnoreCase) ? name[..^"Connection".Length] : name;
-    }
+    [JsonIgnore]
+    public abstract string TypeDisplayName { get; }
 }
