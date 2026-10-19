@@ -62,21 +62,6 @@ migration of those classes; they cannot use it before they have an `IOrganizatio
 
 ---
 
-## Connection output cleanup
-
-Two cosmetic issues in the console output every connecting command shows first. Both live in shared
-connection code (`DataverseConnectionStringConnector`, `DataverseConnection`), so do them in a dedicated PR.
-
-- **Outdated connection string hints:** `DataverseConnectionStringConnector` prints "It's recommended to use
-  'SkipDiscovery=true'!" and "'RequireNewInstance=true'!" for every ad-hoc connection string without those
-  flags. They are leftovers from the legacy `CrmServiceClient`. Discovery is skipped for modern `Url=`
-  strings, and dgtp creates one client per run. Remove both hints and the two regexes.
-- **Context-free connection lines:** `DataverseConnection` prints `Using ad-hoc connection string (not
-  persisted) for <url>` and a bare `WhoAmI: <guid>`. Replace them with one dimmed line that says what was
-  connected, for example `Connected to <url> as <user>`. Keep the WhoAmI request as the connection check.
-- Update tests that assert the current lines.
-
----
 
 ## Global `--verbose` flag
 

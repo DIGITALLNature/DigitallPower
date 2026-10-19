@@ -12,15 +12,29 @@ namespace dgt.power.connection.tests;
 public class ListConnectionCommandTests : ConnectionTestsBase<ListConnectionCommand, ConnectionSettings>
 {
     [Test]
-    public async Task ListsTypedConnectionsAndMarksCurrent()
+    public async Task ListsTypedConnectionsWithTypeDisplayNamesAndMarksCurrent()
     {
-        var definition = new InteractiveConnection
+        ConnectionStore.Upsert("Interactive", new InteractiveConnection { Url = ConnectionTestUrls.Dataverse });
+        ConnectionStore.Upsert("Device", new DeviceCodeConnection { Url = ConnectionTestUrls.Dataverse }, makeCurrent: false);
+        ConnectionStore.Upsert("Secret", new ClientSecretConnection
         {
             Url = ConnectionTestUrls.Dataverse,
-            TenantId = "contoso.onmicrosoft.com"
-        };
-        ConnectionStore.Upsert("Dev", definition);
-        ConnectionStore.Upsert("Test", definition, makeCurrent: false);
+            TenantId = "tenant",
+            ClientId = "client"
+        }, makeCurrent: false);
+        ConnectionStore.Upsert("Certificate", new ClientCertificateConnection
+        {
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant",
+            ClientId = "client"
+        }, makeCurrent: false);
+        ConnectionStore.Upsert("Federated", new AzureDevOpsFederatedConnection
+        {
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant",
+            ClientId = "client",
+            ServiceConnectionId = "service-connection"
+        }, makeCurrent: false);
         ICommand<ConnectionSettings> command = new ListConnectionCommand(
             ConnectionStore,
             new ConnectionInvocationContext(),
@@ -29,9 +43,12 @@ public class ListConnectionCommandTests : ConnectionTestsBase<ListConnectionComm
         var result = await command.ExecuteAsync(CreateContext(), new ConnectionSettings(), CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
-        await Assert.That(TestConsole.Output).Contains("Dev");
-        await Assert.That(TestConsole.Output).Contains("Test");
-        await Assert.That(TestConsole.Output).Contains("interactive");
+        await Assert.That(TestConsole.Output).Contains("Interactive");
+        await Assert.That(TestConsole.Output).Contains("Device Code");
+        await Assert.That(TestConsole.Output).Contains("Client Secret");
+        await Assert.That(TestConsole.Output).Contains("Client Certificate");
+        await Assert.That(TestConsole.Output).Contains("Azure DevOps Federated");
+        await Assert.That(TestConsole.Output).Contains("*");
     }
 
     private static CommandContext CreateContext() =>

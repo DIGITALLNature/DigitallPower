@@ -26,20 +26,10 @@ public class ListConnectionCommand(
             grid.AddRow(
                 string.Equals(name, current, StringComparison.OrdinalIgnoreCase) ? "*" : string.Empty,
                 name,
-                GetTypeName(definition));
+                definition.TypeDisplayName);
         }
 
         console.Write(grid);
         return 0;
     }
-
-    private static string GetTypeName(ConnectionDefinition definition) => definition switch
-    {
-        InteractiveConnection => "interactive",
-        DeviceCodeConnection => "deviceCode",
-        ClientSecretConnection => "clientSecret",
-        ClientCertificateConnection => "clientCertificate",
-        AzureDevOpsFederatedConnection => "azureDevOpsFederated",
-        _ => definition.GetType().Name
-    };
 }

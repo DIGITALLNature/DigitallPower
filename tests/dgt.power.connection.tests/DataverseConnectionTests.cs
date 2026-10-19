@@ -13,6 +13,35 @@ namespace dgt.power.connection.tests;
 public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusCommand, ConnectionSettings>
 {
     [Test]
+    public async Task GetServiceAsync_MissingClientSecret_ReportsFailureAndPropagatesOriginalError()
+    {
+        const string name = "private-connection-name";
+        ConnectionStore.Upsert(name, new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "tenant",
+            ClientId = "client"
+        });
+        TestConsole.Profile.Width = 200;
+        var invocationContext = new ConnectionInvocationContext();
+        invocationContext.Capture(new ConnectionSettings { Connection = name });
+        using var connection = new DataverseConnection(
+            ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole),
+            invocationContext,
+            TestConsole);
+
+        await Assert.That(connection.GetServiceAsync()).Throws<InvalidOperationException>()
+            .WithMessageContaining($"Client secret is missing for connection '{name}'");
+
+        await Assert.That(TestConsole.Output)
+            .Contains($"Connection to {ConnectionTestUrls.Dataverse} (Client Secret) failed");
+        await Assert.That(TestConsole.Output).DoesNotContain(name);
+        await Assert.That(TestConsole.Output).DoesNotContain("Client secret is missing");
+        await Assert.That(TestConsole.Output).DoesNotContain("Connected to");
+    }
+
+    [Test]
     [NotInParallel("SystemAccessToken")]
     public async Task CheckAuth_ReturnsFalseWhenFederatedCredentialCannotBeCreated()
     {
@@ -59,6 +88,27 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
 
         await Assert.That(connection.GetServiceAsync()).Throws<MissingConnectionException>()
             .WithMessageContaining("'Missing' was not found");
+    }
+
+    [Test]
+    public async Task GetServiceAsync_InvalidConnectionString_PropagatesOriginalExceptionWithoutWritingSecret()
+    {
+        const string secret = "do-not-display-this-secret";
+        var invocationContext = new ConnectionInvocationContext();
+        invocationContext.Capture(new ConnectionSettings
+        {
+            ConnectionString = $"AuthType=ClientSecret;ClientSecret={secret}"
+        });
+        using var connection = new DataverseConnection(
+            ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole),
+            invocationContext,
+            TestConsole);
+
+        await Assert.That(connection.GetServiceAsync()).Throws<NullReferenceException>();
+
+        await Assert.That(TestConsole.Output).DoesNotContain(secret);
+        await Assert.That(TestConsole.Output).Contains("Connection to Dataverse environment (Connection String) failed");
     }
 
     [Test]

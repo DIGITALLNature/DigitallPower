@@ -36,13 +36,27 @@ public sealed class DataverseConnectionVerifier(CredentialFactory credentialFact
             uri,
             async _ => (await credential.GetTokenAsync(scope, cancellationToken)).Token);
 
+        await VerifyAsync(service, cancellationToken);
+    }
+
+    internal static Task VerifyAsync(ServiceClient service, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(service);
+        return VerifyCoreAsync(service, cancellationToken);
+    }
+
+    private static async Task VerifyCoreAsync(ServiceClient service, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (!service.IsReady)
         {
 #pragma warning disable S2302 // "connection" is part of the error message, not a parameter name.
-            throw new DataverseConnectionException(
-                $"Dataverse connection failed: {service.LastError}",
-                service.LastException);
+            var message = $"Dataverse connection failed: {service.LastError}";
 #pragma warning restore S2302
+            throw service.LastException is { } exception
+                ? new DataverseConnectionException(message, exception)
+                : new DataverseConnectionException(message);
         }
 
         await service.ExecuteAsync(new WhoAmIRequest(), cancellationToken);

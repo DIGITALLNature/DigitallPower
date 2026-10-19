@@ -5,7 +5,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.common;
 
-public interface IConnector
+public interface IDataverseConnector
 {
-    Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync();
+    Task<ServiceClient> CreateServiceClientAsync();
 }

@@ -6,9 +6,7 @@ using Azure.Core;
 using Azure.Identity;
 using dgt.power.common.Connections;
 using dgt.power.common.Exceptions;
-using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.PowerPlatform.Dataverse.Client.Utils;
 using Spectre.Console;
 
 namespace dgt.power.common.Logic;
@@ -51,21 +49,20 @@ public sealed partial class DataverseConnection(
     {
         if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
         {
-            WriteAdHocConnectionNotice(invocationContext.ConnectionString);
+            var url = ExtractUrlFromConnectionString(invocationContext.ConnectionString)?
+                .GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)
+                ?? "Dataverse environment";
             return await ConnectUsingAsync(
-                new DataverseConnectionStringConnector(invocationContext.ConnectionString, console),
-                "ad-hoc");
+                new ConnectionStringConnector(invocationContext.ConnectionString),
+                url,
+                "Connection String");
         }
 
-        var (name, definition) = ResolveConnection();
-        var credential = credentialFactory.Create(
-            name,
-            definition,
-            invocationContext.NonInteractive,
-            invocationContext.AllowUnencryptedStorage);
+        var resolved = ResolveConnection();
         return await ConnectUsingAsync(
-            new CredentialConnector(definition.Url, credential, invocationContext.NonInteractive),
-            name);
+            new CredentialConnector(credentialFactory, resolved, invocationContext),
+            resolved.Definition.Url,
+            resolved.Definition.TypeDisplayName);
     }
 
     /// <inheritdoc />
@@ -149,53 +146,71 @@ public sealed partial class DataverseConnection(
         return new ResolvedConnection(connectionStore.ResolveName(name), definition);
     }
 
-    private async Task<IOrganizationServiceAsync2>     ConnectUsingAsync(IConnector connector, string name)
+    internal async Task<IOrganizationServiceAsync2> ConnectUsingAsync(
+        IDataverseConnector connector,
+        string url,
+        string connectionType)
     {
-        try
-        {
-            var service = await connector.CreateOrganizationServiceProxyAsync();
-            await CheckWhoAmIAsync(service);
-            return service;
-        }
-#pragma warning disable CA1031 // Wrap connector failures with the selected connection context.
-        catch (Exception exception)
-        {
-            throw new FailedConnectionException(name, exception);
-        }
-#pragma warning restore CA1031
+        var target = $"{Markup.Escape(url)} ({Markup.Escape(connectionType)})";
+        return await console.Status().StartAsync(
+            $"Connecting to {target}...",
+            async _ =>
+            {
+                ServiceClient? service = null;
+                var verified = false;
+                try
+                {
+                    service = await connector.CreateServiceClientAsync();
+                    await DataverseConnectionVerifier.VerifyAsync(service, CancellationToken.None);
+                    console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Connected to {target}");
+                    verified = true;
+                    return (IOrganizationServiceAsync2)service;
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    console.MarkupLine($"[red]{Emoji.Known.CrossMark}[/] Connection to {target} failed");
+                    throw;
+                }
+                finally
+                {
+                    if (!verified)
+                    {
+                        service?.Dispose();
+                    }
+                }
+            });
     }
 
-    private async Task CheckWhoAmIAsync(IOrganizationServiceAsync2 service)
-    {
-        var userId = ((WhoAmIResponse)await service.ExecuteAsync(new WhoAmIRequest())).UserId;
-        console.MarkupLine($"WhoAmI: [bold]{userId:D}[/]");
-    }
-
-    private void WriteAdHocConnectionNotice(string connectionString)
+    private static Uri? ExtractUrlFromConnectionString(string connectionString)
     {
         var match = ConnectionUrlRegex().Match(connectionString);
-        var url = match.Success && Uri.TryCreate(match.Groups[1].Value.Trim(), UriKind.Absolute, out var uri)
-            ? $" for {uri.GetLeftPart(UriPartial.Authority)}"
-            : string.Empty;
-        console.MarkupLine($"Using ad-hoc connection string (not persisted){Markup.Escape(url)}");
+        if (match.Success && Uri.TryCreate(match.Groups[1].Value.Trim(), UriKind.Absolute, out var uri))
+        {
+            return uri;
+        }
+        return null;
     }
 
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ConnectionUrlRegex();
 
-    private sealed class CredentialConnector(string url, TokenCredential credential, bool nonInteractive) : IConnector
+    private sealed class CredentialConnector(
+        CredentialFactory credentialFactory,
+        ResolvedConnection connection,
+        ConnectionInvocationContext invocationContext) : IDataverseConnector
     {
-        public Task<IOrganizationServiceAsync2> CreateOrganizationServiceProxyAsync()
+        public Task<ServiceClient> CreateServiceClientAsync()
         {
+            var credential = credentialFactory.Create(
+                connection.Name,
+                connection.Definition,
+                invocationContext.NonInteractive,
+                invocationContext.AllowUnencryptedStorage);
+            var url = connection.Definition.Url;
             var uri = new Uri(url);
             var scope = new TokenRequestContext([GetScope(url)]);
             var service = new ServiceClient(uri, async _ => await GetTokenAsync(credential, scope));
-            if (!service.IsReady)
-            {
-                throw new DataverseConnectionException($"Dataverse connection failed: {service.LastError}", service.LastException);
-            }
-
-            return Task.FromResult<IOrganizationServiceAsync2>(service);
+            return Task.FromResult(service);
         }
 
         private async Task<string> GetTokenAsync(TokenCredential tokenCredential, TokenRequestContext context)
@@ -204,9 +219,9 @@ public sealed partial class DataverseConnection(
             {
                 return (await tokenCredential.GetTokenAsync(context, CancellationToken.None)).Token;
             }
-            catch (AuthenticationRequiredException exception) when (nonInteractive)
+            catch (AuthenticationRequiredException exception) when (invocationContext.NonInteractive)
             {
-                throw new InteractiveLoginRequiredException(new Uri(url).Authority, exception);
+                throw new InteractiveLoginRequiredException(new Uri(connection.Definition.Url).Authority, exception);
             }
         }
 
