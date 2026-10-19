@@ -45,6 +45,28 @@ An invocation MUST resolve its connection from `--connection-string` / `DGTP_CON
 - **WHEN** both are present
 - **THEN** the connection string is used
 
+### Requirement: Durable and safe connection feedback
+
+When establishing a Dataverse connection for a command, `dgtp` MUST leave a persistent success or failure line identifying the target environment and authentication type. Connection feedback MUST NOT echo raw connection strings or provider exception messages. Cancellation MUST propagate without being reported as a connection failure.
+
+#### Scenario: Connection verification succeeds
+
+- **WHEN** the command's connection passes connectivity verification
+- **THEN** a success line remains visible after the progress display ends
+- **AND** it identifies the target environment and authentication type
+
+#### Scenario: Connection establishment fails
+
+- **WHEN** connection creation or connectivity verification fails
+- **THEN** a failure line remains visible after the progress display ends
+- **AND** the original exception propagates to the command's error handling
+- **AND** the failure line contains neither the raw connection string nor the provider exception message
+
+#### Scenario: A connection attempt is cancelled
+
+- **WHEN** connection establishment throws an `OperationCanceledException`
+- **THEN** cancellation propagates without a connection failure line
+
 ### Requirement: Non-interactive authentication
 
 When `--non-interactive` or `DGTP_NON_INTERACTIVE` is set, authentication MUST NOT open a browser or start a device-code flow. If interactive sign-in is required, the command MUST print an `AUTH_REQUIRED:` message and exit with code `2`.
