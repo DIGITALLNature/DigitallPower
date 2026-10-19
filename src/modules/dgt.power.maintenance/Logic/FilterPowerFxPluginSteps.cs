@@ -5,7 +5,9 @@ using dgt.power.common;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -31,14 +33,17 @@ public class FilterPowerFxPluginSteps(
             return false;
         }
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        return Run(service, powerfxpluginConfig);
+        var service = await connection.GetServiceAsync();
+        return await RunAsync(service, powerfxpluginConfig, cancellationToken);
     }
 
-    private bool Run(IOrganizationService service, List<PowerFxPluginsConfig> powerfxpluginConfig)
+    private async Task<bool> RunAsync(
+        IOrganizationServiceAsync2 service,
+        List<PowerFxPluginsConfig> powerfxpluginConfig,
+        CancellationToken cancellationToken)
     {
-        Console.Status()
-            .Start("Working on PowerFX Plugin Steps...", ctx =>
+        await Console.Status()
+            .StartAsync("Working on PowerFX Plugin Steps...", async ctx =>
             {
                 ctx.Spinner(Spinner.Known.Smiley);
                 ctx.SpinnerStyle(Style.Parse("green"));
@@ -48,7 +53,11 @@ public class FilterPowerFxPluginSteps(
                 foreach (var config in powerfxpluginConfig)
                 {
                     ctx.Status($"Search {config.Name}");
-                    var step = SearchPowerFxPluginStep(service, config.Name,config.MessageName);
+                    var step = await SearchPowerFxPluginStepAsync(
+                        service,
+                        config.Name,
+                        config.MessageName,
+                        cancellationToken);
 
                     ctx.Status($"Build filter for {config.Name}");
                     var filter = config.FilterAttributes.Count > 0
@@ -58,7 +67,7 @@ public class FilterPowerFxPluginSteps(
                     step.FilteringAttributesField = filter;
 
                     ctx.Status($"Update {config.Name}");
-                    service.Update(step);
+                    await service.ExecuteAsync(new UpdateRequest { Target = step }, cancellationToken);
                     Console.MarkupLine($"Filtered {config.Name} <{config.Message}> | {step.Id}");
                 }
 
@@ -68,9 +77,12 @@ public class FilterPowerFxPluginSteps(
         return true;
     }
 
-    private static SdkMessageProcessingStep SearchPowerFxPluginStep(IOrganizationService service, string name, string? message)
+    private static async Task<SdkMessageProcessingStep> SearchPowerFxPluginStepAsync(
+        IOrganizationServiceAsync2 service,
+        string name,
+        string? message,
+        CancellationToken cancellationToken)
     {
-// Instantiate QueryExpression query
         var query = new QueryExpression("sdkmessageprocessingstep")
         {
             NoLock = true,
@@ -83,7 +95,7 @@ public class FilterPowerFxPluginSteps(
         query.AddLink("fxexpression", "fxexpressionid", "fxexpressionid");
         query.AddLink("sdkmessage", "sdkmessageid", "sdkmessageid");
 
-        var result = service.RetrieveMultiple(query);
+        var result = await service.RetrieveMultipleAsync(query, cancellationToken);
 
         if (result.Entities.Count != 1)
         {

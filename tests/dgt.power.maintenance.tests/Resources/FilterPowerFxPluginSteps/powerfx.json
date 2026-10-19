@@ -1,0 +1,7 @@
+[
+  {
+    "name": "Example Power Fx step",
+    "filter": ["name", "emailaddress1"],
+    "message": "update"
+  }
+]
