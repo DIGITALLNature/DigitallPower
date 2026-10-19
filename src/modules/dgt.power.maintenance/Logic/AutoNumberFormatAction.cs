@@ -6,7 +6,7 @@ using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Base.Config;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Spectre.Console;
 
@@ -34,19 +34,22 @@ public sealed class AutoNumberFormatAction(
             return false;
         }
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var service = await connection.GetServiceAsync();
 
         //process
         var result = true;
         foreach (var autoNumberFormat in autoNumberFormats)
         {
-            result = Process(service, autoNumberFormat) && result;
+            result = await ProcessAsync(service, autoNumberFormat, cancellationToken) && result;
         }
 
         return result;
     }
 
-    private bool Process(IOrganizationService service, AutoNumberFormat autoNumberFormat)
+    private async Task<bool> ProcessAsync(
+        IOrganizationServiceAsync2 service,
+        AutoNumberFormat autoNumberFormat,
+        CancellationToken cancellationToken)
     {
         Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
             $"[grey]Check the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field}[/]");
@@ -57,9 +60,16 @@ public sealed class AutoNumberFormatAction(
             LogicalName = autoNumberFormat.Field,
             RetrieveAsIfPublished = true
         };
-        var attributeResponse = (RetrieveAttributeResponse)service.Execute(attributeRequest);
+        var (retrieved, response) =
+            await service.TryExecuteAsync<RetrieveAttributeRequest, RetrieveAttributeResponse>(
+                attributeRequest,
+                cancellationToken);
+        if (!retrieved || response is null)
+        {
+            return false;
+        }
 
-        var format = attributeResponse.AttributeMetadata.AutoNumberFormat;
+        var format = response.AttributeMetadata.AutoNumberFormat;
 
         if (autoNumberFormat.Format.Equals(format, StringComparison.Ordinal))
         {
@@ -70,7 +80,7 @@ public sealed class AutoNumberFormatAction(
             $"Update the auto number format for {autoNumberFormat.Entity}.{autoNumberFormat.Field} from {format} to {autoNumberFormat.Format}");
 
         // Modify the retrieved attribute
-        var retrievedAttributeMetadata = attributeResponse.AttributeMetadata;
+        var retrievedAttributeMetadata = response.AttributeMetadata;
         retrievedAttributeMetadata.AutoNumberFormat = autoNumberFormat.Format;
 
         var updateRequest = new UpdateAttributeRequest
@@ -80,6 +90,10 @@ public sealed class AutoNumberFormatAction(
             MergeLabels = false
         };
 
-        return service.TryExecute<UpdateAttributeRequest, UpdateAttributeResponse>(updateRequest, out _);
+        var (updated, _) =
+            await service.TryExecuteAsync<UpdateAttributeRequest, UpdateAttributeResponse>(
+                updateRequest,
+                cancellationToken);
+        return updated;
     }
 }
