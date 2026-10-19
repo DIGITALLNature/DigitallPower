@@ -62,7 +62,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
     }
 
     [Test]
-    public async Task GetServiceAsync_InvalidConnectionString_DoesNotWriteConnectionStringToConsole()
+    public async Task GetServiceAsync_InvalidConnectionString_PropagatesOriginalExceptionWithoutWritingSecret()
     {
         const string secret = "do-not-display-this-secret";
         var invocationContext = new ConnectionInvocationContext();
@@ -76,9 +76,10 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
             invocationContext,
             TestConsole);
 
-        await Assert.That(connection.GetServiceAsync()).Throws<FailedConnectionException>();
+        await Assert.That(connection.GetServiceAsync()).Throws<NullReferenceException>();
 
         await Assert.That(TestConsole.Output).DoesNotContain(secret);
+        await Assert.That(TestConsole.Output).Contains("Connection to Dataverse environment (Connection String) failed");
     }
 
     [Test]

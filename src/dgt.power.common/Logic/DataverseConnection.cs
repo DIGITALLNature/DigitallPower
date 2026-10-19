@@ -56,9 +56,8 @@ public sealed partial class DataverseConnection(
                 ?? "Dataverse environment";
             return await ConnectUsingAsync(
                 new ConnectionStringConnector(invocationContext.ConnectionString),
-                "ConnectionString",
                 url,
-                "ConnectionString");
+                "Connection String");
         }
 
         var (name, definition) = ResolveConnection();
@@ -69,7 +68,6 @@ public sealed partial class DataverseConnection(
             invocationContext.AllowUnencryptedStorage);
         return await ConnectUsingAsync(
             new CredentialConnector(definition.Url, credential, invocationContext.NonInteractive),
-            name,
             definition.Url,
             definition.TypeDisplayName);
     }
@@ -157,28 +155,26 @@ public sealed partial class DataverseConnection(
 
     private async Task<IOrganizationServiceAsync2> ConnectUsingAsync(
         IDataverseConnector connector,
-        string name,
         string url,
         string connectionType)
     {
+        var target = $"{Markup.Escape(url)} ({Markup.Escape(connectionType)})";
         return await console.Status().StartAsync(
-            $"Connecting to {Markup.Escape(url)} ({Markup.Escape(connectionType)})...",
-            async ctx =>
+            $"Connecting to {target}...",
+            async _ =>
             {
                 try
                 {
                     var service = await connector.CreateOrganizationServiceProxyAsync();
                     await CheckWhoAmIAsync(service);
-                    ctx.Status = $"[green]{Emoji.Known.CheckMark}[/] Connected to {Markup.Escape(url)}";
+                    console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Connected to {target}");
                     return service;
                 }
-#pragma warning disable CA1031 // Wrap connector failures with the selected connection context.
-                catch (Exception exception)
+                catch (Exception exception) when (exception is not OperationCanceledException)
                 {
-                    ctx.Status = $"[red]{Emoji.Known.CrossMark}[/] Connection to {Markup.Escape(url)} failed: {Markup.Escape(exception.Message)}";
-                    throw new FailedConnectionException(name, exception);
+                    console.MarkupLine($"[red]{Emoji.Known.CrossMark}[/] Connection to {target} failed");
+                    throw;
                 }
-#pragma warning restore CA1031
             });
     }
 
