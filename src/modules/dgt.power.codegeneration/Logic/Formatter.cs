@@ -89,6 +89,7 @@ public static partial class Formatter
         return validValues.Contains(character, StringComparison.Ordinal);
     }
 
+    // ReSharper disable once MemberCanBePrivate.Global -- retain the public formatting API for module consumers
     public static string PreventFirstNumber(string input, bool allowFirstNumber = false)
     {
         if (!allowFirstNumber && int.TryParse(input.FirstOrDefault().ToString(CultureInfo.InvariantCulture), out _))

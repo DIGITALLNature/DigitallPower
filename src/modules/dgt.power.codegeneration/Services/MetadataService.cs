@@ -21,7 +21,7 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services;
 
-public partial class MetadataService(IDataverseConnection connection, ObjectCache metadataCache, IAnsiConsole console)
+public class MetadataService(IDataverseConnection connection, ObjectCache metadataCache, IAnsiConsole console)
     : IMetadataService
 {
     private readonly Dictionary<string, List<string>> _usedTokens = new();

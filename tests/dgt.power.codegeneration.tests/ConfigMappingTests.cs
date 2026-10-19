@@ -165,7 +165,9 @@ public class ConfigMappingTests
     {
         var exception = ResolveAndCaptureException(json);
 
+        await Assert.That(exception).IsTypeOf<InvalidOperationException>();
         await Assert.That(exception.Message).Contains(expectedMessage);
+        await Assert.That(exception.Message).Contains("docs/migrations/2.x-to-3.x.md");
     }
 
     private static string WriteConfigFile(string fileName, string json)

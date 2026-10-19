@@ -2,7 +2,6 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Runtime.Caching;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Xml;
 using dgt.power.codegeneration.Base;
@@ -137,7 +136,6 @@ public class CodeGenerationContextBuilder
 {
     private readonly List<Entity> _data = [];
     private readonly List<EntityMetadata> _metadata = [];
-    private readonly List<RelationshipMetadataBase> _relationships = [];
     private readonly List<IOrganizationRequestFake> _requestFakes = [];
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = [];
     private readonly IAnsiConsole _console;
@@ -170,11 +168,6 @@ public class CodeGenerationContextBuilder
         if (_metadata.Count != 0)
         {
             service.AddMetadata(_metadata);
-        }
-
-        if (_relationships.Count > 0)
-        {
-            service.AddRelationships(_relationships);
         }
 
         foreach (var config in _customConfigurations)
@@ -224,28 +217,12 @@ public class CodeGenerationContextBuilder
 
     public CodeGenerationContextBuilder WithData(Entity data) => WithData([data]);
 
-    public CodeGenerationContextBuilder WithData(ITuple tuple)
-    {
-        var data = Enumerable.Range(0, tuple.Length)
-            .Select(i => tuple[i])
-            .OfType<Entity>()
-            .ToList();
-        WithData(data);
-        return this;
-    }
-
     public CodeGenerationContextBuilder WithMetaData(EntityMetadata metadata) =>
         WithMetaData([metadata]);
 
     public CodeGenerationContextBuilder WithMetaData(IEnumerable<EntityMetadata> metadata)
     {
         _metadata.AddRange(metadata);
-        return this;
-    }
-
-    public CodeGenerationContextBuilder WithRelationship(RelationshipMetadataBase relationship)
-    {
-        _relationships.Add(relationship);
         return this;
     }
 

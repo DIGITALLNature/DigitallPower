@@ -52,12 +52,12 @@ public class CodeGenerationCommandTests
     [Test]
     public async Task ShouldExecuteALlCommands() =>
         await Assert.That(
-            _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
+            await _command.ExecuteAsync(new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
                 new CodeGenerationVerb
                 {
                     Config = "Resources/CodeGenerationCommand/config.json"
                 }, CancellationToken.None
-            ).GetAwaiter().GetResult()).IsEqualTo(0);
+            )).IsEqualTo(0);
 
     [Test]
     public async Task ShouldFailOnMissingConfiguration() =>
@@ -77,11 +77,12 @@ public class CodeGenerationCommandTests
         var outputDirectory = Path.Combine(tempDirectory, "Model");
         var existingOutput = Path.Combine(outputDirectory, "custom-file.ts");
         Directory.CreateDirectory(outputDirectory);
-        File.WriteAllText(configPath, """{"version":1,"type":"typescript"}""");
-        File.WriteAllText(existingOutput, "keep this file");
 
         try
         {
+            await File.WriteAllTextAsync(configPath, """{"version":1,"type":"typescript"}""");
+            await File.WriteAllTextAsync(existingOutput, "keep this file");
+
             await Assert.That(
                 () => _command.ExecuteAsync(
                     new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
@@ -94,7 +95,7 @@ public class CodeGenerationCommandTests
                 )).Throws<InvalidOperationException>();
 
             await Assert.That(_connection.GetServiceCallCount).IsEqualTo(0);
-            await Assert.That(File.ReadAllText(existingOutput)).IsEqualTo("keep this file");
+            await Assert.That(await File.ReadAllTextAsync(existingOutput)).IsEqualTo("keep this file");
         }
         finally
         {

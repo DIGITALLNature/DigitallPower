@@ -20,7 +20,7 @@ namespace dgt.power.codegeneration.Generators;
 
 public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole console) : ITypeScriptGenerator
 {
-    protected IAnsiConsole Console { get; } = console;
+    private IAnsiConsole Console { get; } = console;
 
     private readonly TemplateOptions _templateOptions = TslTemplateOptionsFactory.Create();
 
