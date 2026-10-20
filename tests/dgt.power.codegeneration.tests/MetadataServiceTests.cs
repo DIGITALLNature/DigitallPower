@@ -20,7 +20,8 @@ public class MetadataServiceTests
     public async Task NullArgument_ShouldThrowSynchronously(string argument)
     {
         using var cache = new MemoryCache(nameof(NullArgument_ShouldThrowSynchronously));
-        var service = new MetadataService(Mock.Of<IDataverseConnection>().Object, cache, new TestConsole());
+        using var console = new TestConsole();
+        var service = new MetadataService(Mock.Of<IDataverseConnection>().Object, cache, console);
         Action invoke = argument switch
         {
             "entity" => () => { _ = service.RetrieveEntityMetadataAsync(null!); }
