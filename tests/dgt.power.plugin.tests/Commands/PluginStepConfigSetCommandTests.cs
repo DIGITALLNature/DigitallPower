@@ -349,6 +349,37 @@ public class PluginStepConfigSetCommandTests : CommandTestsBase<PluginStepConfig
     }
 
     [Test]
+    public async Task Execute_WithoutSecureConfigOption_PreservesExistingSecureConfigAndLink()
+    {
+        var service = CreateFakeService();
+        var entities = CreateTestStep(service, _stepId, _messageId, _pluginTypeId, "account");
+        var secureConfig = new SdkMessageProcessingStepSecureConfig(Guid.NewGuid())
+        {
+            SecureConfig = "existing-secure-value"
+        };
+        entities.Add(secureConfig);
+        var step = entities.OfType<SdkMessageProcessingStep>().Single();
+        step.Configuration = "existing-unsecure-value";
+        step.SdkMessageProcessingStepSecureConfigId = secureConfig.ToEntityReference();
+        var context = GetBuilder()
+            .WithData(entities)
+            .WithAnsiConsole(TestConsole)
+            .Build();
+
+        await context.Execute(new PluginStepConfigSetSettings
+        {
+            StepId = _stepId,
+            UnsecureConfig = "updated-unsecure-value"
+        }).Succeed();
+
+        var updatedStep = context.GetById<SdkMessageProcessingStep>(_stepId);
+        await Assert.That(updatedStep.SdkMessageProcessingStepSecureConfigId?.Id).IsEqualTo(secureConfig.Id);
+        await Assert.That(context.GetById<SdkMessageProcessingStepSecureConfig>(secureConfig.Id).SecureConfig)
+            .IsEqualTo("existing-secure-value");
+        await Assert.That(updatedStep.Configuration).IsEqualTo("updated-unsecure-value");
+    }
+
+    [Test]
     public async Task Execute_WithSecureConfigFile_ReadsRawTextAndPreservesUnsecureConfiguration()
     {
         var service = CreateFakeService();
