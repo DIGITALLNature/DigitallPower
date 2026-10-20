@@ -1,3 +1,10 @@
+# [3.0.0-beta.12](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.11...v3.0.0-beta.12) (2026-10-20)
+
+
+### Performance Improvements
+
+* migrate Dataverse operations to async ([#203](https://github.com/DIGITALLNature/DigitallPower/issues/203)) ([12f5363](https://github.com/DIGITALLNature/DigitallPower/commit/12f5363dd5e6d1b5e5565186f79c4315c96e4b57))
+
 # [3.0.0-beta.11](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.10...v3.0.0-beta.11) (2026-10-16)
 
 
