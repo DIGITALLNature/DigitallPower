@@ -133,7 +133,6 @@ internal static class CommandTree
             import.AddCommand<TeamTemplateImport>("teamtemplates");
             import.AddCommand<BulkDeleteImport>("bulkdeletes");
             import.AddCommand<DocumentTemplateImport>("documenttemplates");
-            import.AddCommand<SecureConfigImport>("secureconfigs");
             import.AddCommand<CalendarImport>("calendar");
             import.AddCommand<SlaConfigImport>("slaconfigs");
             import.AddCommand<RoutingRuleConfigImport>("routingruleconfigs");
