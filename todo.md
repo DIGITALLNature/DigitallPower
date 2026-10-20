@@ -18,69 +18,6 @@ step in a single transaction; the legacy import still creates and links separate
 
 Source: #203, Copilot review discussion `discussion_r4313851799`.
 
-## Async Migration: IOrganizationServiceAsync2
-
-All command classes currently implement `RunAsync` but internally use the synchronous
-`IOrganizationService` (via `DataContext` LINQ queries and blocking SDK calls).
-
-**Goal:** Migrate each module's logic to use `IOrganizationServiceAsync2` with true `async/await`
-instead of `Task.FromResult(...)` wrappers.
-
-### Why
-- `Task.FromResult` wraps sync work — no thread is released on blocking I/O calls to Dataverse
-- `IOrganizationServiceAsync2` enables true non-blocking SDK calls (`ExecuteAsync`, `RetrieveMultipleAsync`, etc.)
-- Already used in truly async commands (`EnsureSdkStepStatus`, `UpdateWorkflowState`) — pattern proven
-
-### Pattern (after migration)
-```csharp
-// Before (current interim)
-protected override Task<bool> RunAsync(TSettings settings, CancellationToken cancellationToken) =>
-    Task.FromResult(RunCore(settings));
-
-private bool RunCore(TSettings settings)
-{
-    var result = ((IOrganizationService)connection).Execute(request);  // blocking
-}
-
-// After (target)
-protected override async Task<bool> RunAsync(TSettings settings, CancellationToken cancellationToken)
-{
-    var result = await (await connection.GetServiceAsync()).ExecuteAsync(request, cancellationToken);  // non-blocking
-}
-```
-
-### Scope (per module)
-
-| Module | Classes | Notes |
-|--------|---------|-------|
-| `dgt.power.analyzer` | 6 classes | Use `RetrieveMultipleAsync` instead of LINQ DataContext |
-| `dgt.power.export` | 9 classes | Mix of LINQ DataContext + direct SDK calls |
-| `dgt.power.import` | 10 classes | Direct SDK calls — most straightforward to migrate |
-| `dgt.power.maintenance` | 7 classes | Mixed; some already async (`EnsureSdkStepStatus`, `UpdateWorkflowState`) |
-
-### Note on DataContext
-`DataContext` (LINQ to CRM) is fundamentally synchronous. Replacing it requires switching to
-`QueryExpression` + `RetrieveMultipleAsync`. This is the main effort per class.
-
-### Note on the connection
-Commands already acquire the service lazily via `IDataverseConnection.GetServiceAsync()`, which returns
-`IOrganizationServiceAsync2`. Only the remaining `(IOrganizationService)` casts and synchronous calls need to go.
-
----
-
-## Shared paging helper
-
-`IOrganizationServiceAsync2.RetrieveAllAsync` (`dgt.power.common`) is the shared paged read and is used by
-the plugin and solution modules.
-
-**Remaining:** the synchronous `MoreRecords`/`PagingCookie` loops in analyzer (`SolutionComponentReader`,
-`RedundantComponentsAnalyze`), export (`QueueExport`, `UserRoleExport`), import (`QueueImport`) and
-maintenance (`RemoveRedundantComponents`). Replace them with `RetrieveAllAsync` as part of the async
-migration of those classes; they cannot use it before they have an `IOrganizationServiceAsync2`.
-
----
-
-
 ## Global `--verbose` flag
 
 Add a global `--verbose` option (shared settings base, tracer behavior and every module) for
