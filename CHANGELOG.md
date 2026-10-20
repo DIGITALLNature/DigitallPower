@@ -1,3 +1,13 @@
+# [3.0.0-beta.13](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.12...v3.0.0-beta.13) (2026-10-20)
+
+
+* feat(import)!: remove legacy secure configuration import ([#205](https://github.com/DIGITALLNature/DigitallPower/issues/205)) ([b6ad5ec](https://github.com/DIGITALLNature/DigitallPower/commit/b6ad5ec1673b6ca148f817b2ab70f89ec938220f))
+
+
+### BREAKING CHANGES
+
+* Remove dgtp import secureconfigs. Configure each plugin step individually with dgtp plugin step config set, using --step-id or a complete composite key and --secure/--secure-file. There is no bulk one-to-one replacement; users who previously configured multiple steps at once must run their own script.
+
 # [3.0.0-beta.12](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.11...v3.0.0-beta.12) (2026-10-20)
 
 
