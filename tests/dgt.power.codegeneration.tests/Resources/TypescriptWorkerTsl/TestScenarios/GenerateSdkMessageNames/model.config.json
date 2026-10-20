@@ -1,5 +1,8 @@
 {
-    "Entities": [],
-    "SuppressDotNet": true,
-    "TypescriptGeneratorVersion": "Light"
+  "version": 2,
+  "type": "typescript",
+  "requests": [
+    "Assign", "Create", "Delete", "GrantAccess", "ModifyAccess", "Retrieve", "RetrieveMultiple",
+    "RetrievePrincipalAccess", "RetrieveSharedPrincipalsAndAccess", "RevokeAccess", "SetState", "Update"
+  ]
 }

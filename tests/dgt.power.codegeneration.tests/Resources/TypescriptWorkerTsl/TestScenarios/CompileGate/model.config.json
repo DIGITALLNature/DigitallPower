@@ -1,8 +1,6 @@
 {
-    "Entities": [],
-    "GlobalOptionSets": [
-        "dgt_choice_global"
-    ],
-    "SuppressDotNet": true,
-    "TypescriptGeneratorVersion": "Light"
+  "version": 2,
+  "type": "typescript",
+  "requests": ["WhoAmI"],
+  "optionSets": ["dgt_choice_global"]
 }

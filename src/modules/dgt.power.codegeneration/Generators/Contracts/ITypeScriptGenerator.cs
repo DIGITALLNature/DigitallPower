@@ -8,12 +8,7 @@ namespace dgt.power.codegeneration.Generators.Contracts;
 public interface ITypeScriptGenerator
 {
     /// <summary>
-    ///     Runs the TypeScript code generation pipeline for a V2 config (Light mode only).
+    ///     Runs the TypeScript code generation pipeline for a typed configuration.
     /// </summary>
     Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Runs the TypeScript code generation pipeline for a V1 legacy config (Full or Light mode).
-    /// </summary>
-    Task<bool> GenerateAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken = default);
 }

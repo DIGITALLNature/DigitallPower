@@ -9,6 +9,7 @@ public class TypeScriptOutput
     /// <summary>
     ///     Form generation configuration. When null, all forms for all scoped entities are generated.
     /// </summary>
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global -- populated by System.Text.Json
     public TypeScriptFormsOutput? Forms { get; init; }
 
     /// <summary>

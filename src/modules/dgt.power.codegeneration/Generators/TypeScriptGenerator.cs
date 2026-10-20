@@ -1,39 +1,525 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Diagnostics;
 using dgt.power.codegeneration.Base;
+using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Generators.Contracts;
-using dgt.power.codegeneration.Generators.Strategy;
+using dgt.power.codegeneration.Logic;
+using dgt.power.codegeneration.Model;
+using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
+using dgt.power.codegeneration.Templates;
+using dgt.power.codegeneration.Templates.tsl.ViewModels;
+using dgt.power.dataverse;
+using Fluid;
+using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 
 namespace dgt.power.codegeneration.Generators;
 
-public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole console)
-    : ITypeScriptGenerator
+public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole console) : ITypeScriptGenerator
 {
-    /// <inheritdoc />
+    private const string TslResourcePrefix = "dgt.power.codegeneration.Templates.tsl";
+
+    private void CreateFile(string content, string name, CodeGenerationVerb args, string extension, string[]? outputPath = null)
+    {
+        Debug.Assert(content != null, $"{nameof(content)} != null");
+        Debug.Assert(args != null, $"{nameof(args)} != null");
+        Debug.Assert(name != null, $"{nameof(name)} != null");
+
+        var path = Path.Combine([
+            args.TargetDirectory,
+            args.Folder,
+            Folders.Typescript,
+            ..outputPath ?? [],
+            $"{name}.{extension}"
+        ]);
+
+        CreateDirectoryWhenNeeded(Path.GetDirectoryName(path));
+        using var file = File.CreateText(path);
+        console.MarkupLine($"Creating File: [bold green] {path} [/]");
+        file.Write(content);
+    }
+
+    private void CopyTemplateFileContent(CodeGenerationVerb args, string templateFileName, string extension)
+    {
+        Debug.Assert(templateFileName != null, $"{nameof(templateFileName)} != null");
+        Debug.Assert(args != null, $"{nameof(args)} != null");
+        Debug.Assert(extension != null, $"{nameof(extension)} != null");
+
+        console.MarkupLine($"Reading File: [bold green] {templateFileName}.{extension} [/]");
+
+        using var reader = new StreamReader(typeof(TypeScriptGenerator).Assembly
+            .GetManifestResourceStream($"dgt.power.codegeneration.Templates.tsl.{templateFileName}.{extension}")!);
+
+        var content = reader.ReadToEnd();
+        CreateFile(content, templateFileName, args, extension);
+    }
+
+    private static void PrepareDirectory(CodeGenerationVerb args)
+    {
+        Debug.Assert(args != null, $"{nameof(args)} != null");
+
+        var mainFolderPath = Path.Combine(args.TargetDirectory, args.Folder);
+        CreateDirectoryWhenNeeded(mainFolderPath);
+
+        var typescriptFolderPath = Path.Combine(mainFolderPath, Folders.Typescript);
+        if (CreateDirectoryWhenNeeded(typescriptFolderPath))
+        {
+            return;
+        }
+
+        var directory = new DirectoryInfo(typescriptFolderPath);
+        foreach (var file in directory.GetFiles())
+        {
+            file.Delete();
+        }
+
+        foreach (var dir in directory.GetDirectories())
+        {
+            dir.Delete(true);
+        }
+    }
+
+    private static bool CreateDirectoryWhenNeeded(string? directoryPath)
+    {
+        Debug.Assert(directoryPath != null, $"{nameof(directoryPath)} != null");
+        if (Directory.Exists(directoryPath))
+        {
+            return false;
+        }
+
+        Directory.CreateDirectory(directoryPath);
+        return true;
+    }
+
+    private static IFluidTemplate InitializeLiquidTemplate(string templateName)
+    {
+        return LiquidTemplateEngine.LoadTemplate(TslResourcePrefix, templateName);
+    }
+
     public async Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        var strategy = new TypescriptLightGenerationStrategy(metadataService, console);
-        return await strategy.GenerateAsync(args, config, cancellationToken);
+        var templateOptions = TslTemplateOptionsFactory.Create();
+        PrepareDirectory(args);
+        await GenerateEntitiesAsync(args, config, templateOptions, cancellationToken);
+        await GenerateEntityFormsAsync(args, config, templateOptions, cancellationToken);
+        await GenerateOptionSetsAsync(args, config, templateOptions, cancellationToken);
+        await GenerateSdkMessagesAsync(args, config, templateOptions, cancellationToken);
+        await GenerateCustomApisAsync(args, config, templateOptions, cancellationToken);
+        return true;
     }
 
-    /// <inheritdoc />
-    public async Task<bool> GenerateAsync(CodeGenerationVerb args, CodeGenerationConfig config, CancellationToken cancellationToken = default)
+    private async Task GenerateEntitiesAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
     {
-        cancellationToken.ThrowIfCancellationRequested();
-        ArgumentNullException.ThrowIfNull(args);
-        ArgumentNullException.ThrowIfNull(config);
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
 
-        ITypescriptGenerationStrategy strategy = config.TypescriptGeneratorVersion switch
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.Entity);
+
+        var languageCode = config.Language;
+        if (config.Language == null)
         {
-            TypescriptGeneratorVersion.Full => new TypescriptFullGenerationStrategy(metadataService, console),
-            TypescriptGeneratorVersion.Light => new TypescriptLightGenerationStrategy(metadataService, console),
-            _ => throw new ArgumentOutOfRangeException(nameof(config), config.TypescriptGeneratorVersion, "Unknown TypeScript generator version.")
+            languageCode = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
+            console.MarkupLine($"Using Base Language: {languageCode}");
+        }
+
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.TsAuxiliaryExtTypes, FileNames.Typescript.FileExtension.TypeExtension);
+
+        foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
+        {
+            var metadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
+
+            var viewModel = new EntityViewModel
+            {
+                SchemaName = metadata.SchemaName,
+                LogicalName = metadata.LogicalName,
+                LanguageCode = languageCode,
+                Attributes = FilterEntityMetadataAttributes(metadata)
+            };
+
+            var formEntityName = metadata.LogicalName.ToLowerInvariant().Trim();
+            var artifactName = $"{formEntityName}.{FileNames.Typescript.FileNamePart.Entity}.{FileNames.Typescript.FileExtension.TypeExtension}";
+            var content = RenderTemplateWithDiagnostics(
+                liquidTemplate,
+                LiquidTemplates.Entity,
+                viewModel,
+                templateOptions,
+                entityKey: metadata.LogicalName,
+                artifact: artifactName);
+
+            CreateFile(content,
+                $"{formEntityName}.{FileNames.Typescript.FileNamePart.Entity}",
+                args,
+                FileNames.Typescript.FileExtension.TypeExtension,
+                GetEntityFolderName(metadata.LogicalName, Folders.TypescriptEntity));
+        }
+    }
+
+    private async Task GenerateEntityFormsAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
+    {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
+        var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
+
+        var languageCode = config.Language ?? await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
+        console.MarkupLine($"Using Language: {languageCode}");
+
+        await WarnIfSessionLanguageMismatchAsync(languageCode, cancellationToken);
+
+        var bpfControls = await GetCompleteEntityBpfControlListAsync(config, cancellationToken);
+        var entityWithParsedFormList = await GenerateEntityWithMetadataAsync(config, bpfControls, cancellationToken);
+        var flatListParseForm = GetFlatFormDetail(entityWithParsedFormList);
+        foreach (var entityParsedForm in entityWithParsedFormList)
+        {
+            var entityMetada = entityParsedForm.EntityMetadata;
+            var bpfControlsForEntity = bpfControls.GetValueOrDefault(entityMetada.LogicalName) ?? [];
+
+            foreach (var parsedForm in entityParsedForm.ParsedFormDetail)
+            {
+                var formName = $"{entityMetada.LogicalName.Trim()}.{Formatter.Sanitize(parsedForm.Key.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.Form}";
+                if (ShouldSkipFormForConfig(config.Output.Forms?.Filter ?? [], formName))
+                {
+                    console.MarkupLine($"Skip: {formName}");
+                    continue;
+                }
+                FormParser.MapQuickFormId(parsedForm.Value, flatListParseForm);
+                var renderContext = new FormFileRenderContext(
+                    parsedForm,
+                    entityMetada,
+                    liquidTemplateForm,
+                    LiquidTemplates.EntityForm,
+                    args,
+                    formName,
+                    bpfControlsForEntity,
+                    languageCode);
+
+                CreateFormFile(renderContext, templateOptions);
+                if (config.Output.Forms?.TestHelpers ?? false)
+                {
+                    CreateFormTestHelperFile(renderContext with
+                    {
+                        LiquidTemplate = liquidTemplateFormTestHelpers,
+                        TemplateName = LiquidTemplates.EntityFormTestHelper,
+                        FormName = $"{formName}.{FileNames.Typescript.FileNamePart.TestHelper}",
+                    }, templateOptions);
+                }
+            }
+        }
+
+        if (!(config.Output.Forms?.TestHelpers ?? false))
+        {
+            return;
+        }
+
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormODataFilter, FileNames.Typescript.FileExtension.TsExtension);
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormContextBuilder, FileNames.Typescript.FileExtension.TsExtension);
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockFormContextTypes, FileNames.Typescript.FileExtension.TsExtension);
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockTestTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
+    }
+
+    private async Task GenerateSdkMessagesAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
+    {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (config.Requests.Count == 0)
+        {
+            return;
+        }
+
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.SdkMessages);
+        var sdkMessages = await metadataService.RetrieveSdkMessageNamesAsync(config.Requests, cancellationToken);
+
+        var viewModel = new SdkMessagesViewModel
+        {
+            SdkMessages = sdkMessages.Select(sdkm => new SdkMessageViewModel(sdkm)).ToList()
         };
 
-        return await strategy.GenerateAsync(args, config, cancellationToken);
+        var content = RenderTemplateWithDiagnostics(
+            liquidTemplate,
+            LiquidTemplates.SdkMessages,
+            viewModel,
+            templateOptions,
+            artifact: $"{FileNames.Typescript.FileNames.SdkMessageNames}.{FileNames.Typescript.FileExtension.TypeExtension}");
+
+        CreateFile(content, FileNames.Typescript.FileNames.SdkMessageNames, args, FileNames.Typescript.FileExtension.TypeExtension);
+    }
+
+    private async Task GenerateOptionSetsAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
+    {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (config.OptionSets.Count == 0)
+        {
+            return;
+        }
+
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.OptionSets);
+        var optionSets = await metadataService.RetrieveOptionSetsAsync(config.OptionSets, cancellationToken);
+
+        var viewModel = new OptionSetViewModel
+        {
+            OptionSets = [.. optionSets]
+        };
+
+        var content = RenderTemplateWithDiagnostics(
+            liquidTemplate,
+            LiquidTemplates.OptionSets,
+            viewModel,
+            templateOptions,
+            artifact: $"{FileNames.Typescript.FileNames.OptionSetValues}.{FileNames.Typescript.FileExtension.TypeExtension}");
+
+        CreateFile(content, FileNames.Typescript.FileNames.OptionSetValues, args, FileNames.Typescript.FileExtension.TypeExtension);
+    }
+
+    private async Task GenerateCustomApisAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
+    {
+        Debug.Assert(args != null, nameof(args) + " != null");
+        Debug.Assert(config != null, nameof(config) + " != null");
+
+        if (config.Requests.Count == 0 || !config.Output.CustomApis)
+        {
+            return;
+        }
+
+        // RetrieveRequests auto-detects custom APIs vs actions vs built-in messages.
+        // Filter to only entries that have parameters (i.e. actual custom APIs, not plain name constants).
+        var allRequests = await metadataService.RetrieveRequestsAsync(config.Requests, cancellationToken);
+        var customApis = allRequests.Where(r => r.InParameters.Count > 0 || r.OutParameters.Count > 0).ToList();
+
+        if (customApis.Count == 0)
+        {
+            return;
+        }
+
+        CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
+        var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.CustomApi);
+
+        foreach (var customApi in customApis)
+        {
+            var viewModel = new CustomApiViewModel
+            {
+                Name = customApi.LogicalName,
+                InParameters = customApi.InParameters,
+                OutParameters = customApi.OutParameters
+            };
+
+            var customApiName = $"{Formatter.Sanitize(customApi.LogicalName.ToLowerInvariant().Trim(), true).Replace(' ', '_')}.{FileNames.Typescript.FileNamePart.CustomApi}";
+            var content = RenderTemplateWithDiagnostics(
+                liquidTemplate,
+                LiquidTemplates.CustomApi,
+                viewModel,
+                templateOptions,
+                entityKey: customApi.LogicalName,
+                artifact: $"{customApiName}.{FileNames.Typescript.FileExtension.TypeExtension}");
+
+            CreateFile(content, customApiName, args, FileNames.Typescript.FileExtension.TypeExtension, [Folders.TypescriptCustomApis]);
+        }
+    }
+
+    private async Task<List<EntityWithMetadataFormData>> GenerateEntityWithMetadataAsync(TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls, CancellationToken cancellationToken)
+    {
+        var entityWithMetadataForms = new List<EntityWithMetadataFormData>();
+
+        foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
+        {
+            var entityMetadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
+            if (entityMetadata.IsBPFEntity == true)
+            {
+                console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
+                continue;
+            }
+
+            var bpfControlsForEntity = bpfControls.GetValueOrDefault(entity) ?? [];
+
+            var forms = config.Output.Forms?.FromSolutions ?? false
+                ? await metadataService.RetrieveFormsDetailsFromSolutionsAsync(entityMetadata.LogicalName, [.. config.Entities.FromSolutions], bpfControlsForEntity, cancellationToken)
+                : await metadataService.RetrieveFormsDetailsAsync(entityMetadata.LogicalName, bpfControlsForEntity, cancellationToken);
+
+            entityWithMetadataForms.Add(new EntityWithMetadataFormData
+            {
+                EntityMetadata = entityMetadata,
+                ParsedFormDetail = forms
+            });
+        }
+        return entityWithMetadataForms;
+    }
+
+    private async Task<Dictionary<string, SortedSet<BpfControlDetail>>> GetCompleteEntityBpfControlListAsync(TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
+    {
+        var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
+        foreach (var entityName in config.Entities.Names.OrderBy(entityName => entityName))
+        {
+            var bpfControlsForEntityMain = await metadataService.RetrieveBusinessProcessFlowControlsForMainEntityAsync(config.Requests, entityName, cancellationToken);
+            foreach (var bpfControlForEntityMain in bpfControlsForEntityMain)
+            {
+                if (bpfControls.TryGetValue(bpfControlForEntityMain.EntityName, out var value))
+                {
+                    value.Add(bpfControlForEntityMain);
+                }
+                else
+                {
+                    bpfControls.Add(bpfControlForEntityMain.EntityName, [bpfControlForEntityMain]);
+                }
+            }
+        }
+        return bpfControls;
+    }
+
+    #region Shared Helpers
+
+    private sealed record FormFileRenderContext(
+        KeyValuePair<string, FormDetail> FormDetail,
+        EntityMetadata Metadata,
+        IFluidTemplate LiquidTemplate,
+        string TemplateName,
+        CodeGenerationVerb Args,
+        string FormName,
+        SortedSet<BpfControlDetail> BpfControls,
+        int LanguageCode);
+
+    private void CreateFormFile(FormFileRenderContext context, TemplateOptions templateOptions)
+    {
+        var artifact = $"{context.FormName}.{FileNames.Typescript.FileExtension.TypeExtension}";
+        var content = CreateFormFileContent(context, artifact, templateOptions);
+        CreateFile(content, context.FormName, context.Args, FileNames.Typescript.FileExtension.TypeExtension, GetEntityFolderName(context.Metadata.LogicalName, Folders.TypescriptEntityForms));
+    }
+
+    private void CreateFormTestHelperFile(FormFileRenderContext context, TemplateOptions templateOptions)
+    {
+        var artifact = $"{context.FormName}.{FileNames.Typescript.FileExtension.TsExtension}";
+        var content = CreateFormFileContent(context, artifact, templateOptions);
+        CreateFile(content, context.FormName, context.Args, FileNames.Typescript.FileExtension.TsExtension, GetEntityFolderName(context.Metadata.LogicalName, Folders.TypescriptEntityTestHelper));
+    }
+
+    private string CreateFormFileContent(FormFileRenderContext context, string artifact, TemplateOptions templateOptions)
+    {
+        var formname = context.FormDetail.Key
+                    .Replace(".main", "Main", StringComparison.Ordinal)
+                    .Replace(".quickview", "QuickView", StringComparison.Ordinal)
+                    .Replace(".quickcreate", "QuickCreate", StringComparison.Ordinal);
+
+        var viewModel = new FormViewModel
+        {
+            Name = formname,
+            FormDetail = context.FormDetail.Value,
+            Attributes = FilterEntityMetadataAttributes(context.Metadata),
+            BpfControls = context.FormDetail.Value.FormType == SystemForm.Options.Type.QuickViewForm ? [] : context.BpfControls.ToList(),
+            LanguageCode = context.LanguageCode
+        };
+        return RenderTemplateWithDiagnostics(
+            context.LiquidTemplate,
+            context.TemplateName,
+            viewModel,
+            templateOptions,
+            entityKey: context.Metadata.LogicalName,
+            formKey: context.FormDetail.Key,
+            artifact: artifact);
+    }
+
+    private static List<FormDetail> GetFlatFormDetail(List<EntityWithMetadataFormData> entityWithMetadataFormDatas)
+    {
+        return entityWithMetadataFormDatas.Select(x => x.ParsedFormDetail.Values.ToList()).SelectMany(x => x).ToList();
+    }
+
+    private bool ShouldSkipFormForConfig(IReadOnlyCollection<string> configForms, string form)
+    {
+        if (configForms.Count == 0)
+        {
+            return false;
+        }
+        configForms.Where(e => e.EndsWith(".ts", StringComparison.InvariantCulture))
+            .ToList()
+            .ForEach(_ => console.MarkupLine(Warnings.TsExtensionDeprecation));
+        configForms = configForms.Select(e => e.EndsWith(".ts", StringComparison.InvariantCulture)
+                    ? e.Remove(e.LastIndexOf(".ts", StringComparison.Ordinal))
+                    : e)
+            .ToArray();
+
+        return !configForms.Contains(form);
+    }
+
+    private static List<AttributeMetadata> FilterEntityMetadataAttributes(EntityMetadata metadata)
+    {
+        return metadata.Attributes
+            .Where(IsVisibleInTsEntity)
+            .Where(a => !a.LogicalName.Contains("entityimage", StringComparison.Ordinal))
+            .Where(a => a.AttributeType != AttributeTypeCode.ManagedProperty)
+            .OrderBy(a => a.LogicalName).ToList();
+    }
+
+    private static bool IsVisibleInTsEntity(AttributeMetadata attribute)
+    {
+        var isVisibleInLayout = attribute.IsValidForGrid == true
+                                || attribute.IsValidForForm == true
+                                || attribute.IsValidODataAttribute
+                                || attribute.IsPrimaryId == true;
+        if (!isVisibleInLayout)
+        {
+            return false;
+        }
+
+        return attribute.IsValidForCreate == true
+               || attribute.IsValidForUpdate == true
+               || attribute.IsValidForRead == true;
+    }
+
+    private static string[] GetEntityFolderName(string entityLogicalName, string subFolder)
+    {
+        var formEntityName = entityLogicalName.ToLowerInvariant().Trim();
+        return [Folders.TypescriptEntities, Formatter.CamelCase(Formatter.Sanitize(formEntityName)), subFolder];
+    }
+
+    /// <summary>
+    ///     Warns once when the connecting user's session UI language differs from the language configured for
+    ///     code generation, since Dataverse resolves translatable out-of-box record text (e.g. system form
+    ///     <c>name</c>) using the session language - not the configured one. See <see cref="Warnings.FormNameLanguageMismatch"/>.
+    /// </summary>
+    private async Task WarnIfSessionLanguageMismatchAsync(int configuredLanguageCode, CancellationToken cancellationToken)
+    {
+        var sessionLanguageCode = await metadataService.RetrieveConnectionUserLanguageAsync(cancellationToken);
+        if (sessionLanguageCode != configuredLanguageCode)
+        {
+            console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, configuredLanguageCode));
+        }
+    }
+
+    private TemplateContext CreateTemplateContext(object viewModel, TemplateOptions templateOptions)
+    {
+        var context = new TemplateContext(viewModel, templateOptions);
+        CustomLiquidFilters.ConfigureTemplateContext(context, console);
+        return context;
+    }
+
+    private string RenderTemplateWithDiagnostics(
+        IFluidTemplate template,
+        string templateName,
+        object viewModel,
+        TemplateOptions templateOptions,
+        string? entityKey = null,
+        string? formKey = null,
+        string? artifact = null)
+    {
+        var context = CreateTemplateContext(viewModel, templateOptions);
+        return TslRenderDiagnostics.Render(template, context, templateName, entityKey, formKey, artifact);
+    }
+
+
+    #endregion
+
+    private static class LiquidTemplates
+    {
+        public const string Entity = "Entity.liquid";
+        public const string EntityForm = "EntityForm.liquid";
+        public const string EntityFormTestHelper = "EntityFormTestHelper.liquid";
+        public const string SdkMessages = "SdkMessages.liquid";
+        public const string OptionSets = "OptionSets.liquid";
+        public const string CustomApi = "CustomApi.liquid";
     }
 }

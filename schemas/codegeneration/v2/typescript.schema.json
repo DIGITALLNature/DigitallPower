@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "title": "TypeScriptCodeGenerationConfig",
-  "description": "V2 configuration for TypeScript code generation (Light mode only). Produces entity definitions, form typings, OptionSet constants, SDK message name constants, and Custom API wrappers.",
-  "required": ["type"],
+  "description": "V2 configuration for TypeScript code generation. Produces entity definitions, form typings, OptionSet constants, SDK message name constants, and Custom API wrappers.",
+  "required": ["version", "type"],
   "properties": {
     "$schema":  { "type": "string", "description": "A field for the JSON schema specification: https://json-schema.org/" },
     "type":      { "type": "string", "const": "typescript" },

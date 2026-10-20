@@ -19,14 +19,8 @@ public static class FileNames
         {
             public static string CustomApi => "customapi";
             public static string Entity => "entity";
-            public static string EntityRef => "entityref";
             public static string Form => "form";
-            public static string Model => "model";
-            public static string Odata => "odata";
-            public static string Services => "services";
             public static string TestHelper => "mock.form";
-            public static string Utils => "utils";
-            public static string Webapi => "webapi";
         }
 
         internal static class FileExtension

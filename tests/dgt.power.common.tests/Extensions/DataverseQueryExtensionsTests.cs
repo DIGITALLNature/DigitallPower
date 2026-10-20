@@ -69,6 +69,7 @@ public class DataverseQueryExtensionsTests
         {
             if (page == 1)
             {
+                // ReSharper disable once AccessToDisposedClosure -- invoked during the awaited query, before disposal
                 cancellation.Cancel();
             }
         });

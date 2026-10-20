@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
@@ -27,15 +27,14 @@ public class MetadataGeneratorTests : CodeGenerationTestsBase
             .WithMetaData(accountMetadata)
             .Build();
 
-        var config = new CodeGenerationConfig
+        var config = new DotNetCodeGenerationConfig
         {
-            Entities = [accountMetadata.LogicalName]
+            Entities = new EntityScopeConfig { Names = [accountMetadata.LogicalName] }
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         context.MetadataGenerator.PrepareDirectory(args);
-        await context.MetadataGenerator.GenerateEntitiesAsync(args,
-            config.ToDotNetConfig());
+        await context.MetadataGenerator.GenerateEntitiesAsync(args, config);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";

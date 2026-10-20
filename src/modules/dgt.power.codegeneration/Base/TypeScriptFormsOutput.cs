@@ -1,6 +1,11 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+// Configuration objects and properties are populated by System.Text.Json.
+// ReSharper disable ClassNeverInstantiated.Global
+// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+
 namespace dgt.power.codegeneration.Base;
 
 /// <summary>Form generation configuration for TypeScript code generation.</summary>

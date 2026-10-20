@@ -22,7 +22,7 @@ using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services;
 
-public partial class MetadataService(IDataverseConnection connection, ObjectCache metadataCache, IAnsiConsole console)
+public class MetadataService(IDataverseConnection connection, ObjectCache metadataCache, IAnsiConsole console)
     : IMetadataService
 {
     private readonly Dictionary<string, List<string>> _usedTokens = new();
@@ -326,7 +326,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
             _ => "object"
         };
 
-    #region V2 API
+    #region Metadata API
 
     public async Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken = default)
     {
@@ -585,7 +585,7 @@ public partial class MetadataService(IDataverseConnection connection, ObjectCach
 
     #endregion
 
-    #region V2 internal helpers
+    #region Metadata helpers
 
     private async Task<List<WfAction>> RetrieveCustomApisByNamesAsync(IReadOnlyCollection<string> names, CancellationToken cancellationToken)
     {

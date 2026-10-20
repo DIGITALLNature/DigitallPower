@@ -1,11 +1,8 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Runtime.Caching;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Xml;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
@@ -103,13 +100,6 @@ public abstract class CodeGenerationTestsBase : IDisposable
 /// </summary>
 public class CodeGenerationContext
 {
-    private static readonly JsonSerializerOptions s_jsonOptions = new()
-    {
-        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
-        AllowTrailingCommas = true,
-        PropertyNameCaseInsensitive = true
-    };
-
     public IDotNetGenerator DotNetGenerator { get; }
     public ITypeScriptGenerator TypeScriptGenerator { get; }
     public IMetadataGenerator MetadataGenerator { get; }
@@ -125,15 +115,17 @@ public class CodeGenerationContext
     }
 
     /// <summary>
-    ///     Reads a V1 <see cref="CodeGenerationConfig"/> from the verb's config file path
-    ///     and runs the TypeScript facade. Convenience method for tests that use on-disk config files.
+    ///     Reads a V2 TypeScript config from the verb's config file path and runs the TypeScript generator.
+    ///     Convenience method for tests that use on-disk config files.
     /// </summary>
-    public async Task<bool> ExecuteTypescriptFromConfigFileAsync(CodeGenerationVerb verb)
+    public Task<bool> ExecuteTypescriptFromConfigFileAsync(CodeGenerationVerb verb, CancellationToken cancellationToken = default)
     {
-        var json = File.ReadAllText(verb.Config);
-        var config = JsonSerializer.Deserialize<CodeGenerationConfig>(json, s_jsonOptions)
-                     ?? throw new InvalidOperationException($"Failed to deserialize config from '{verb.Config}'.");
-        return await TypeScriptGenerator.GenerateAsync(verb, config);
+        if (CodeGenerationConfigLoader.LoadFromFile(verb.Config) is not TypeScriptCodeGenerationConfig config)
+        {
+            throw new InvalidOperationException($"Expected a V2 TypeScript config in '{verb.Config}'.");
+        }
+
+        return TypeScriptGenerator.GenerateAsync(verb, config, cancellationToken);
     }
 }
 
@@ -144,7 +136,6 @@ public class CodeGenerationContextBuilder
 {
     private readonly List<Entity> _data = [];
     private readonly List<EntityMetadata> _metadata = [];
-    private readonly List<RelationshipMetadataBase> _relationships = [];
     private readonly List<IOrganizationRequestFake> _requestFakes = [];
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = [];
     private readonly IAnsiConsole _console;
@@ -177,11 +168,6 @@ public class CodeGenerationContextBuilder
         if (_metadata.Count != 0)
         {
             service.AddMetadata(_metadata);
-        }
-
-        if (_relationships.Count > 0)
-        {
-            service.AddRelationships(_relationships);
         }
 
         foreach (var config in _customConfigurations)
@@ -231,28 +217,12 @@ public class CodeGenerationContextBuilder
 
     public CodeGenerationContextBuilder WithData(Entity data) => WithData([data]);
 
-    public CodeGenerationContextBuilder WithData(ITuple tuple)
-    {
-        var data = Enumerable.Range(0, tuple.Length)
-            .Select(i => tuple[i])
-            .OfType<Entity>()
-            .ToList();
-        WithData(data);
-        return this;
-    }
-
     public CodeGenerationContextBuilder WithMetaData(EntityMetadata metadata) =>
         WithMetaData([metadata]);
 
     public CodeGenerationContextBuilder WithMetaData(IEnumerable<EntityMetadata> metadata)
     {
         _metadata.AddRange(metadata);
-        return this;
-    }
-
-    public CodeGenerationContextBuilder WithRelationship(RelationshipMetadataBase relationship)
-    {
-        _relationships.Add(relationship);
         return this;
     }
 
