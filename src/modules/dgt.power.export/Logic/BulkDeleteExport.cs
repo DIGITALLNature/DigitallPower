@@ -2,11 +2,12 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
-using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.export.Logic;
@@ -30,19 +31,29 @@ public sealed class BulkDeleteExport(
             return false;
         }
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        IList<AsyncOperation> operations;
-        using (var context = new DataContext(service))
+        var service = await connection.GetServiceAsync();
+        var query = new QueryExpression(AsyncOperation.EntityLogicalName)
         {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            operations = (from ao in context.AsyncOperationSet
-                where ao.OperationType != null
-                where ao.OperationType.Value == AsyncOperation.Options.OperationType.BulkDelete
-                where ao.RecurrenceStartTime != null
-                orderby ao.Name
-                select ao).ToList();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-        }
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                AsyncOperation.LogicalNames.Name,
+                AsyncOperation.LogicalNames.Data,
+                AsyncOperation.LogicalNames.RecurrencePattern,
+                AsyncOperation.LogicalNames.RecurrenceStartTime,
+                AsyncOperation.LogicalNames.OperationType),
+            Criteria = new FilterExpression
+            {
+                Conditions =
+                {
+                    new ConditionExpression(AsyncOperation.LogicalNames.OperationType, ConditionOperator.Equal,
+                        AsyncOperation.Options.OperationType.BulkDelete),
+                    new ConditionExpression(AsyncOperation.LogicalNames.RecurrenceStartTime, ConditionOperator.NotNull)
+                }
+            },
+            Orders = { new OrderExpression(AsyncOperation.LogicalNames.Name, OrderType.Ascending) }
+        };
+        var operations = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<AsyncOperation>()).ToList();
 
         var export = new BulkDeletes
         {

@@ -3,6 +3,8 @@
 
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
+using dgt.power.codegeneration.Generators;
+using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.codegeneration.tests.Base;
 using dgt.power.dataverse;
 using dgt.power.tests.FakeExecutor;
@@ -54,7 +56,7 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
             .WithData(GetTestTableMainForm())
             .Build();
 
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)
@@ -95,7 +97,7 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
         };
 
         var context = GetBuilder().Build();
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)
@@ -124,7 +126,7 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
         };
 
         var context = GetBuilder().Build();
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = GetArtifactPath($"{args.Folder}/{Folders.Typescript}");
         var generatedFiles = new DirectoryInfo(typescriptPath)
@@ -178,7 +180,7 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         var config = new TypeScriptCodeGenerationConfig { Requests = [customApi.UniqueName] };
 
-        await Assert.That(context.TypeScriptGenerator.Generate(args, config)).IsTrue();
+        await Assert.That(await context.TypeScriptGenerator.GenerateAsync(args, config)).IsTrue();
 
         var customApiPath = Path.Combine(
             ArtifactDirectory,
@@ -202,7 +204,7 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
             Requests = [customApi.UniqueName],
             Output = new TypeScriptOutput { CustomApis = false }
         };
-        await Assert.That(context.TypeScriptGenerator.Generate(noCustomApiArgs, noCustomApiConfig)).IsTrue();
+        await Assert.That(await context.TypeScriptGenerator.GenerateAsync(noCustomApiArgs, noCustomApiConfig)).IsTrue();
 
         var noCustomApiOutputPath = Path.Combine(
             noCustomApiArgs.TargetDirectory,
@@ -210,6 +212,22 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
             Folders.Typescript);
         await Assert.That(Directory.Exists(Path.Combine(noCustomApiOutputPath, Folders.TypescriptCustomApis))).IsFalse();
         await Assert.That(File.Exists(Path.Combine(noCustomApiOutputPath, FileNames.Typescript.FileNames.XrmWebApiTypingsFileName + ".d.ts"))).IsFalse();
+    }
+
+    [Test]
+    public async Task ShouldPropagateCancellationFromSessionLanguageLookup()
+    {
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+        var metadataService = Mock.Of<IMetadataService>();
+        metadataService.RetrieveConnectionUserLanguageAsync(cancellationToken)
+            .Throws(new OperationCanceledException(cancellationToken));
+        var generator = new TypeScriptGenerator(metadataService.Object, TestConsole);
+
+        await Assert.That(() => generator.GenerateAsync(
+            new CodeGenerationVerb { TargetDirectory = ArtifactDirectory },
+            new TypeScriptCodeGenerationConfig { Language = 1031 },
+            cancellationToken)).Throws<OperationCanceledException>();
     }
 
     private static string GetScenarioFilePath(string scenarioName, string fileName) =>

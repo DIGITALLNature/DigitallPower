@@ -7,7 +7,10 @@ using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
+using Microsoft.Crm.Sdk.Messages;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Queue = dgt.power.dataverse.Queue;
 using RoutingRuleItem = dgt.power.dataverse.RoutingRuleItem;
@@ -41,20 +44,34 @@ public sealed class RoutingRuleConfigImport(
 
         var result = true;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service);
+        var service = await connection.GetServiceAsync();
 
         foreach (var rule in rules)
         {
-            result = HandleRoutingRule(service, args, context, rule) && result;
+            result = await HandleRoutingRuleAsync(service, args, rule, cancellationToken) && result;
         }
 
         return result;
     }
 
-    private bool HandleRoutingRule(IOrganizationService service, ImportVerb args, DataContext context, RoutingRuleConfig rule)
+    private async Task<bool> HandleRoutingRuleAsync(IOrganizationServiceAsync2 service, ImportVerb args, RoutingRuleConfig rule,
+        CancellationToken cancellationToken)
     {
-        var ruleInTarget = context.RoutingRuleSet.SingleOrDefault(rr => rr.Id == rule.RoutingRuleId);
+        var ruleQuery = new QueryExpression(RoutingRule.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(RoutingRule.LogicalNames.RoutingRuleId, RoutingRule.LogicalNames.Name,
+                RoutingRule.LogicalNames.StatusCode, RoutingRule.LogicalNames.StateCode, RoutingRule.LogicalNames.OwnerId),
+            Criteria =
+            {
+                Conditions =
+                {
+                    new ConditionExpression(RoutingRule.LogicalNames.RoutingRuleId, ConditionOperator.Equal, rule.RoutingRuleId)
+                }
+            }
+        };
+        var ruleInTarget = (await service.RetrieveAllAsync(ruleQuery, cancellationToken: cancellationToken))
+            .SingleOrDefault()?.ToEntity<RoutingRule>();
 
         Console.WriteLine($"Check Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
@@ -67,36 +84,61 @@ public sealed class RoutingRuleConfigImport(
         }
 
         var result = true;
-        var ruleItemsInTarget = context.RoutingRuleItemSet
-            .Where(rri =>
-                rri.RoutingRuleId != null && rri.RoutingRuleId.Id == rule.RoutingRuleId)
-            .Select(rri => new RoutingRuleItem
+        var itemQuery = new QueryExpression(RoutingRuleItem.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                RoutingRuleItem.LogicalNames.RoutingRuleItemId,
+                RoutingRuleItem.LogicalNames.RoutingRuleId,
+                RoutingRuleItem.LogicalNames.RoutedQueueId,
+                RoutingRuleItem.LogicalNames.AssignObjectId,
+                "msdyn_routeto"),
+            Criteria =
             {
-                RoutingRuleItemId = rri.RoutingRuleItemId,
-                RoutingRuleId = rri.RoutingRuleId,
-                MsdynRouteto = rri.MsdynRouteto,
-                RoutedQueueId = rri.RoutedQueueId,
-                AssignObjectIdType = rri.AssignObjectIdType,
-                AssignObjectId = rri.AssignObjectId
-            });
+                Conditions =
+                {
+                    new ConditionExpression(RoutingRuleItem.LogicalNames.RoutingRuleId, ConditionOperator.Equal, rule.RoutingRuleId)
+                }
+            }
+        };
+        var ruleItemsInTarget = (await service.RetrieveAllAsync(itemQuery, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<RoutingRuleItem>()).ToList();
 
         var owner = ImportAssignee.GetAssignee(args.Assignee, rule);
 
         if (!string.IsNullOrWhiteSpace(owner))
         {
-            var systemUser =
-                context.SystemUserSet.SingleOrDefault(sysU => sysU.Id == ruleInTarget.OwnerId!.Id);
+            var ownerQuery = new QueryExpression(SystemUser.EntityLogicalName)
+            {
+                NoLock = true,
+                ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(SystemUser.LogicalNames.SystemUserId, ConditionOperator.Equal,
+                            ruleInTarget.OwnerId!.Id)
+                    }
+                }
+            };
+            var systemUser = (await service.RetrieveAllAsync(ownerQuery, cancellationToken: cancellationToken))
+                .SingleOrDefault()?.ToEntity<SystemUser>();
 
             if (systemUser?.DomainName != owner)
             {
-                result = AssignRule(service, ruleInTarget, owner, ref isDeactivatedToUpdate) && result;
+                var (assignResult, deactivated) = await AssignRuleAsync(service, ruleInTarget, owner, isDeactivatedToUpdate,
+                    cancellationToken);
+                result = assignResult && result;
+                isDeactivatedToUpdate = deactivated;
             }
         }
 
         foreach (var item in rule.RoutingRuleItems)
         {
-            result = HandleRoutingRuleItem(service, context, rule, ruleItemsInTarget, item, ruleInTarget,
-                ref isDeactivatedToUpdate) && result;
+            var (itemResult, deactivated) = await HandleRoutingRuleItemAsync(service, rule, ruleItemsInTarget, item,
+                ruleInTarget, isDeactivatedToUpdate, cancellationToken);
+            result = itemResult && result;
+            isDeactivatedToUpdate = deactivated;
         }
 
 
@@ -105,111 +147,131 @@ public sealed class RoutingRuleConfigImport(
         {
             Console.WriteLine($"Activate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
-            result &= service.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Active,
-                RoutingRule.Options.StatusCode.Active);
+            result = await SetRoutingRuleStateAsync(service, ruleInTarget, RoutingRule.Options.StateCode.Active,
+                RoutingRule.Options.StatusCode.Active, cancellationToken) && result;
         }
         else if (!isDeactivatedToUpdate && !rule.Active &&
                  ruleInTarget.StatusCode?.Value == RoutingRule.Options.StatusCode.Active)
         {
             Console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
-            result &= service.TrySetState(ruleInTarget.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
-                RoutingRule.Options.StatusCode.Draft);
+            result = await SetRoutingRuleStateAsync(service, ruleInTarget, RoutingRule.Options.StateCode.Draft,
+                RoutingRule.Options.StatusCode.Draft, cancellationToken) && result;
         }
 
         return result;
     }
 
-    private bool HandleRoutingRuleItem(IOrganizationService service, DataContext context, RoutingRuleConfig rule,
-        IQueryable<RoutingRuleItem> ruleItemsInTarget, common.DTO.RoutingRuleItem item, RoutingRule ruleInTarget,
-        ref bool isDeactivatedToUpdate)
+    private async Task<(bool Result, bool IsDeactivatedToUpdate)> HandleRoutingRuleItemAsync(
+        IOrganizationServiceAsync2 service, RoutingRuleConfig rule, List<RoutingRuleItem> ruleItemsInTarget,
+        common.DTO.RoutingRuleItem item, RoutingRule ruleInTarget, bool isDeactivatedToUpdate,
+        CancellationToken cancellationToken)
     {
-        var ruleItemInTarget =
-            ruleItemsInTarget.SingleOrDefault(riit => riit.RoutingRuleItemId == item.RoutingRuleItemId);
+        var ruleItemInTarget = ruleItemsInTarget.SingleOrDefault(riit => riit.Id == item.RoutingRuleItemId);
 
         if (ruleItemInTarget == null)
         {
             Console.MarkupLineInterpolated(
                 CultureInfo.InvariantCulture,
                 $"[yellow]Routing Rule  {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) does not exist[/]");
-            return false;
+            return (false, isDeactivatedToUpdate);
         }
 
-        var result = true;
         if (item.MsdynRouteto == RoutingRuleItem.Options.MsdynRouteto.Queue)
         {
             if (item.RoutedQueueId != ruleItemInTarget.RoutedQueueId?.Id ||
                 item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
             {
-                result = UpdateRoutingRuleItem(service, new RoutingRuleItem(item.RoutingRuleItemId)
-                    {
-                        RoutedQueueId = new EntityReference(Queue.EntityLogicalName,
-                            item.RoutedQueueId ?? Guid.Empty),
-                        MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.Queue),
-                        AssignObjectId = null
-                    }, ruleInTarget,
-                    ref isDeactivatedToUpdate);
+                return await UpdateRoutingRuleItemAsync(service, new RoutingRuleItem(item.RoutingRuleItemId)
+                {
+                    RoutedQueueId = new EntityReference(Queue.EntityLogicalName, item.RoutedQueueId ?? Guid.Empty),
+                    MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.Queue),
+                    AssignObjectId = null
+                }, ruleInTarget, isDeactivatedToUpdate, cancellationToken);
             }
         }
         else
         {
             if (item.AssignObjectIdType == SystemUser.EntityLogicalName)
             {
-                var systemuser = context.SystemUserSet.SingleOrDefault(sysU =>
-                    sysU.DomainName != null && sysU.DomainName == item.AssignObjectIdName);
+                var userQuery = new QueryExpression(SystemUser.EntityLogicalName)
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName),
+                    Criteria =
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, item.AssignObjectIdName)
+                        }
+                    }
+                };
+                var systemuser = (await service.RetrieveAllAsync(userQuery, cancellationToken: cancellationToken))
+                    .SingleOrDefault()?.ToEntity<SystemUser>();
 
                 if (systemuser == null)
                 {
                     Console.MarkupLineInterpolated(
                         CultureInfo.InvariantCulture,
                         $"[yellow]Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) for User {item.AssignObjectIdName} does not exist[/]");
-                    return result;
+                    return (true, isDeactivatedToUpdate);
                 }
 
                 if (systemuser.Id != ruleItemInTarget.AssignObjectId?.Id ||
                     item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
                 {
-                    result = UpdateRoutingRuleItem(service, new RoutingRuleItem(item.RoutingRuleItemId)
-                        {
-                            AssignObjectId = systemuser.ToEntityReference(),
-                            MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
-                            RoutedQueueId = null
-                        }, ruleInTarget,
-                        ref isDeactivatedToUpdate);
+                    return await UpdateRoutingRuleItemAsync(service, new RoutingRuleItem(item.RoutingRuleItemId)
+                    {
+                        AssignObjectId = systemuser.ToEntityReference(),
+                        MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
+                        RoutedQueueId = null
+                    }, ruleInTarget, isDeactivatedToUpdate, cancellationToken);
                 }
             }
             else if (item.AssignObjectIdType == Team.EntityLogicalName)
             {
-                var team = context.TeamSet.SingleOrDefault(t =>
-                    t.Name != null && t.Name == item.AssignObjectIdName);
+                var teamQuery = new QueryExpression(Team.EntityLogicalName)
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet(Team.LogicalNames.TeamId, Team.LogicalNames.Name),
+                    Criteria =
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(Team.LogicalNames.Name, ConditionOperator.Equal, item.AssignObjectIdName)
+                        }
+                    }
+                };
+                var team = (await service.RetrieveAllAsync(teamQuery, cancellationToken: cancellationToken))
+                    .SingleOrDefault()?.ToEntity<Team>();
 
                 if (team == null)
                 {
                     Console.MarkupLineInterpolated(
                         CultureInfo.InvariantCulture,
                         $"[yellow]Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D}) for Team {item.AssignObjectIdName} does not exist[/]");
-                    return result;
+                    return (true, isDeactivatedToUpdate);
                 }
 
                 if (team.Id != ruleItemInTarget.AssignObjectId?.Id ||
                     item.MsdynRouteto != ruleItemInTarget.MsdynRouteto?.Value)
                 {
-                    result = UpdateRoutingRuleItem(service, new RoutingRuleItem(item.RoutingRuleItemId)
-                        {
-                            AssignObjectId = team.ToEntityReference(),
-                            MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
-                            RoutedQueueId = null
-                        }, ruleInTarget,
-                        ref isDeactivatedToUpdate);
+                    return await UpdateRoutingRuleItemAsync(service, new RoutingRuleItem(item.RoutingRuleItemId)
+                    {
+                        AssignObjectId = team.ToEntityReference(),
+                        MsdynRouteto = new OptionSetValue(RoutingRuleItem.Options.MsdynRouteto.User_Team),
+                        RoutedQueueId = null
+                    }, ruleInTarget, isDeactivatedToUpdate, cancellationToken);
                 }
             }
         }
 
-        return result;
+        return (true, isDeactivatedToUpdate);
     }
 
-    private bool UpdateRoutingRuleItem(IOrganizationService service, RoutingRuleItem item, RoutingRule rule,
-        ref bool isDeactivatedToUpdate)
+    private async Task<(bool Result, bool IsDeactivatedToUpdate)> UpdateRoutingRuleItemAsync(
+        IOrganizationServiceAsync2 service, RoutingRuleItem item, RoutingRule rule, bool isDeactivatedToUpdate,
+        CancellationToken cancellationToken)
     {
         var result = true;
 
@@ -217,8 +279,8 @@ public sealed class RoutingRuleConfigImport(
         {
             Console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
-            result &= service.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
-                RoutingRule.Options.StatusCode.Draft);
+            result = await SetRoutingRuleStateAsync(service, rule, RoutingRule.Options.StateCode.Draft,
+                RoutingRule.Options.StatusCode.Draft, cancellationToken) && result;
 
             isDeactivatedToUpdate = true;
         }
@@ -226,41 +288,61 @@ public sealed class RoutingRuleConfigImport(
         Console.WriteLine(
             $"Update: Routing Rule {rule.Name}({rule.RoutingRuleId:D}) -> Item {item.Name}({item.RoutingRuleItemId:D})");
 
-        result &= service.TryUpdate(item);
+        result = await service.TryUpdateAsync(item, cancellationToken) && result;
 
-        return result;
+        return (result, isDeactivatedToUpdate);
     }
 
-    private bool AssignRule(IOrganizationService service, RoutingRule rule, string owner, ref bool isDeactivatedToUpdate)
+    private async Task<(bool Result, bool IsDeactivatedToUpdate)> AssignRuleAsync(
+        IOrganizationServiceAsync2 service, RoutingRule rule, string owner, bool isDeactivatedToUpdate,
+        CancellationToken cancellationToken)
     {
         var result = true;
-
-        SystemUser? ownerSystemUser;
-
-        using (var context = new DataContext(service))
+        var ownerQuery = new QueryExpression(SystemUser.EntityLogicalName)
         {
-            ownerSystemUser =
-                context.SystemUserSet.SingleOrDefault(sysU => sysU.DomainName != null && sysU.DomainName == owner);
-        }
+            NoLock = true,
+            ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName),
+            Criteria =
+            {
+                Conditions =
+                {
+                    new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, owner)
+                }
+            }
+        };
+        var ownerSystemUser = (await service.RetrieveAllAsync(ownerQuery, cancellationToken: cancellationToken))
+            .SingleOrDefault()?.ToEntity<SystemUser>();
 
         if (ownerSystemUser == null)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Cannot find Assignee: {owner}[/]");
-            return true;
+            return (true, isDeactivatedToUpdate);
         }
 
         if (rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active)
         {
             Console.WriteLine($"Deactivate: Routing Rule {rule.Name}({rule.RoutingRuleId:D})");
 
-            result &= service.TrySetState(rule.ToEntityReference(), RoutingRule.Options.StateCode.Draft,
-                RoutingRule.Options.StatusCode.Draft);
+            result = await SetRoutingRuleStateAsync(service, rule, RoutingRule.Options.StateCode.Draft,
+                RoutingRule.Options.StatusCode.Draft, cancellationToken) && result;
 
             isDeactivatedToUpdate = true;
         }
 
         Console.WriteLine($"Assign: {rule.Name}({rule.RoutingRuleId:D}) to {ownerSystemUser.DomainName}");
-        result &= service.TryAssign(rule.ToEntityReference(), ownerSystemUser);
-        return result;
+        var (assigned, _) = await service.TryExecuteAsync<AssignRequest, AssignResponse>(new AssignRequest
+        {
+            Target = rule.ToEntityReference(),
+            Assignee = ownerSystemUser.ToEntityReference()
+        }, cancellationToken);
+        return (assigned && result, isDeactivatedToUpdate);
     }
+
+    private static Task<bool> SetRoutingRuleStateAsync(IOrganizationServiceAsync2 service, RoutingRule rule, int state, int status,
+        CancellationToken cancellationToken) =>
+        service.TryUpdateAsync(new RoutingRule(rule.Id)
+        {
+            StateCode = new OptionSetValue(state),
+            StatusCode = new OptionSetValue(status)
+        }, cancellationToken);
 }

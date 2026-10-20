@@ -9,6 +9,7 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
@@ -24,7 +25,7 @@ public sealed class UserRoleExport(
 {
     protected override async Task<bool> RunAsync(ExportVerb args, CancellationToken cancellationToken)
     {
-        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var service = await connection.GetServiceAsync();
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "userrole.json" : args.FileName;
 
@@ -40,18 +41,20 @@ public sealed class UserRoleExport(
             }
         }
 
-        if (!GetQueryExpression(Console, service, filter, out var query))
+        var query = await GetQueryExpressionAsync(Console, service, filter, cancellationToken);
+        if (query == null)
         {
             return false;
         }
 
-        var json = ExportJson.GetJson(GetUsers(service, query!.Criteria, separator));
+        var json = ExportJson.GetJson(await GetUsersAsync(service, query.Criteria, separator, cancellationToken));
 
         Console.WriteLine($"Export {fileService.ExportFile(fileDir, fileName, json)} ");
         return true;
     }
 
-    private static List<UserRole> GetUsers(IOrganizationService service, FilterExpression filter, string separator)
+    private static async Task<List<UserRole>> GetUsersAsync(IOrganizationServiceAsync2 service, FilterExpression filter, string separator,
+        CancellationToken cancellationToken)
     {
         var userRoles = new Dictionary<Guid, UserRole>();
 
@@ -72,12 +75,6 @@ public sealed class UserRoleExport(
             {
                 new OrderExpression(SystemUser.LogicalNames.DomainName, OrderType.Ascending)
             },
-            PageInfo = new PagingInfo
-            {
-                Count = 5000,
-                PageNumber = 1,
-                PagingCookie = null
-            }
         };
 
         // business unit
@@ -104,43 +101,30 @@ public sealed class UserRoleExport(
         );
         roLink.EntityAlias = "ro";
 
-        var moreRecords = true;
-        while (moreRecords)
+        var results = await service.RetrieveAllAsync(userQuery, cancellationToken: cancellationToken);
+        foreach (var entity in results)
         {
-            // Retrieve the page.
-            var results = service.RetrieveMultiple(userQuery);
-            foreach (var entity in results.Entities)
+            var systemUser = entity.ToEntity<SystemUser>();
+            if (!userRoles.TryGetValue(systemUser.Id, out var userRole))
             {
-                var systemUser = entity.ToEntity<SystemUser>();
-                if (!userRoles.TryGetValue(systemUser.Id, out var userRole))
+                var bu = GetAttribute<string>(systemUser, $"bu.{BusinessUnit.LogicalNames.Name}");
+                var pbu = GetAttribute<string>(systemUser, $"pbu.{BusinessUnit.LogicalNames.Name}");
+                userRole = new UserRole
                 {
-                    var bu = GetAttribute<string>(systemUser, $"bu.{BusinessUnit.LogicalNames.Name}");
-                    var pbu = GetAttribute<string>(systemUser, $"pbu.{BusinessUnit.LogicalNames.Name}");
-                    userRole = new UserRole
-                    {
-                        UserName = systemUser.DomainName,
+                    UserName = systemUser.DomainName,
 #pragma warning disable CS8601
-                        BusinessUnit = string.IsNullOrWhiteSpace(pbu) ? bu : $"{bu}{separator[0]}{pbu}",
+                    BusinessUnit = string.IsNullOrWhiteSpace(pbu) ? bu : $"{bu}{separator[0]}{pbu}",
 #pragma warning restore CS8601
-                        BusinessUnitSeparator = separator[0]
-                    };
-                    userRoles.Add(systemUser.Id, userRole);
-                }
-
-                var role = GetAttribute<string>(systemUser, $"ro.{Role.LogicalNames.Name}");
-                if (!string.IsNullOrWhiteSpace(role))
-                {
-                    userRole.SecurityRoles.Add(role);
-                }
+                    BusinessUnitSeparator = separator[0]
+                };
+                userRoles.Add(systemUser.Id, userRole);
             }
 
-            if (results.MoreRecords)
+            var role = GetAttribute<string>(systemUser, $"ro.{Role.LogicalNames.Name}");
+            if (!string.IsNullOrWhiteSpace(role))
             {
-                userQuery.PageInfo.PageNumber++;
-                userQuery.PageInfo.PagingCookie = results.PagingCookie;
+                userRole.SecurityRoles.Add(role);
             }
-
-            moreRecords = results.MoreRecords;
         }
 
         foreach (var userRole in userRoles)
@@ -155,10 +139,10 @@ public sealed class UserRoleExport(
         where T : class =>
         entity.Attributes.ContainsKey(attribute) ? (T)entity.GetAttributeValue<AliasedValue>(attribute).Value : null;
 
-    private static bool GetQueryExpression(IAnsiConsole console, IOrganizationService service, string filter, out QueryExpression? query)
+    private static async Task<QueryExpression?> GetQueryExpressionAsync(IAnsiConsole console, IOrganizationServiceAsync2 service, string filter,
+        CancellationToken cancellationToken)
     {
         var fetchXml = string.Empty;
-        query = null;
         try
         {
             fetchXml = "<fetch no-lock=\"true\" >" +
@@ -170,17 +154,21 @@ public sealed class UserRoleExport(
                        "</filter>" +
                        "</entity>" +
                        "</fetch>";
-            var response = (FetchXmlToQueryExpressionResponse)service.Execute(new FetchXmlToQueryExpressionRequest
+            var response = (FetchXmlToQueryExpressionResponse)await service.ExecuteAsync(new FetchXmlToQueryExpressionRequest
             {
                 FetchXml = fetchXml
-            });
-            query = response.Query;
-            return true;
+            }, cancellationToken);
+            response.Query.NoLock = true;
+            return response.Query;
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
         }
         catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
         {
             console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Invalid fetch-xml: {e.RootMessage()}; check fetch: {fetchXml}[/]");
-            return false;
+            return null;
         }
     }
 }

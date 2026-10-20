@@ -7,8 +7,9 @@ using dgt.power.analyzer.Base.Config;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.common.DTO;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -39,10 +40,10 @@ public sealed class EntityAllAssetsAnalyze(
         }
 
         var service = await connection.GetServiceAsync();
-        return Run(args, entitiesAllAssets, service);
+        return await RunAsync(args, entitiesAllAssets, service, cancellationToken);
     }
 
-    private bool Run(AnalyzeVerb args, List<EntityAllAssets> entitiesAllAssets, IOrganizationService service)
+    private async Task<bool> RunAsync(AnalyzeVerb args, List<EntityAllAssets> entitiesAllAssets, IOrganizationServiceAsync2 service, CancellationToken cancellationToken)
     {
         var result = true;
 
@@ -58,7 +59,7 @@ public sealed class EntityAllAssetsAnalyze(
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(request, cancellationToken);
         var entities = response.EntityMetadata.ToList();
 
         foreach (var entityAllAssets in entitiesAllAssets)
@@ -68,9 +69,8 @@ public sealed class EntityAllAssetsAnalyze(
 
             Console.Write(solutionTag);
 
-            using var context = new DataContext(service);
-            var solution = GetSolution(context, entityAllAssets);
-            var components = GetSolutionComponents(service, solution);
+            var solution = await SolutionComponentReader.GetSolutionAsync(service, entityAllAssets.Solution, cancellationToken);
+            var components = await GetSolutionComponentsAsync(service, solution, cancellationToken);
 
             components.Sort((one, two) => string.Compare(entities.Single(e => e.MetadataId == one.ObjectId).LogicalName, entities.Single(e => e.MetadataId == two.ObjectId).LogicalName, StringComparison.Ordinal));
 
@@ -232,7 +232,7 @@ public sealed class EntityAllAssetsAnalyze(
         return result;
     }
 
-    private static List<SolutionComponent> GetSolutionComponents(IOrganizationService service, Solution solution)
+    private static async Task<List<SolutionComponent>> GetSolutionComponentsAsync(IOrganizationServiceAsync2 service, Solution solution, CancellationToken cancellationToken)
     {
         var query = new QueryExpression
         {
@@ -263,12 +263,8 @@ public sealed class EntityAllAssetsAnalyze(
             }
         );
         query.Criteria = filter;
-        var components = service.RetrieveMultiple(query).Entities.Select(s => s.ToEntity<SolutionComponent>()).ToList();
+        var components = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(s => s.ToEntity<SolutionComponent>()).ToList();
         return components;
     }
-
-    private static Solution GetSolution(DataContext context, EntityAllAssets entityAllAssets) =>
-        (from su in context.SolutionSet
-            where su.UniqueName == entityAllAssets.Solution
-            select su).Single();
 }

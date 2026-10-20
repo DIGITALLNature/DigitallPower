@@ -1,9 +1,11 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using System.Runtime.Caching;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Generators;
 using dgt.power.codegeneration.Generators.Contracts;
+using dgt.power.codegeneration.Services;
 using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
 using dgt.power.tests;
@@ -27,7 +29,7 @@ public class CodeGenerationCommandTests
         var metadataServiceMock = Mock.Of<IMetadataService>();
 
         _connection = new StubConnection();
-        _command = new CodeGenerationCommand(new TestSpanFactory(), _connection,
+        _command = new CodeGenerationCommand(new TestSpanFactory(),
             _dotNetGenerator, _typeScriptGenerator,
             metadataServiceMock.Object, AnsiConsole.Console);
     }
@@ -35,22 +37,26 @@ public class CodeGenerationCommandTests
     private sealed class StubDotNetGenerator : IDotNetGenerator
     {
         public int GenerateCallCount { get; private set; }
+        public CancellationToken LastCancellationToken { get; private set; }
 
-        public bool Generate(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+        public Task<bool> GenerateAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken = default)
         {
             GenerateCallCount++;
-            return true;
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(true);
         }
     }
 
     private sealed class StubTypeScriptGenerator : ITypeScriptGenerator
     {
         public int GenerateCallCount { get; private set; }
+        public CancellationToken LastCancellationToken { get; private set; }
 
-        public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+        public Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default)
         {
             GenerateCallCount++;
-            return true;
+            LastCancellationToken = cancellationToken;
+            return Task.FromResult(true);
         }
     }
 
@@ -90,6 +96,69 @@ public class CodeGenerationCommandTests
             )).Throws<FileNotFoundException>();
 
     [Test]
+    public async Task ShouldHonorCancellationBeforeLoadingConfiguration()
+    {
+        using var cancellationTokenSource = new CancellationTokenSource();
+        await cancellationTokenSource.CancelAsync();
+        var cancellationToken = cancellationTokenSource.Token;
+
+        await Assert.That(
+            () => _command.ExecuteAsync(
+                new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
+                new CodeGenerationVerb { Config = "missing.json" },
+                cancellationToken)).Throws<OperationCanceledException>();
+    }
+
+    [Test]
+    [Arguments("dotnet")]
+    [Arguments("typescript")]
+    public async Task ShouldForwardCancellationToSelectedGenerator(string target)
+    {
+        var configPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        using var cancellationTokenSource = new CancellationTokenSource();
+        try
+        {
+            await File.WriteAllTextAsync(configPath, $$"""{"version":2,"type":"{{target}}"}""", cancellationTokenSource.Token);
+
+            var result = await _command.ExecuteAsync(
+                new CommandContext([], new EmptyRemainingArguments(), "codegeneration", null),
+                new CodeGenerationVerb { Config = configPath }, cancellationTokenSource.Token);
+
+            await Assert.That(result).IsEqualTo(0);
+            await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(target == "dotnet" ? 1 : 0);
+            await Assert.That(_typeScriptGenerator.GenerateCallCount).IsEqualTo(target == "typescript" ? 1 : 0);
+            var actualToken = target == "dotnet"
+                ? _dotNetGenerator.LastCancellationToken
+                : _typeScriptGenerator.LastCancellationToken;
+            await Assert.That(actualToken).IsEqualTo(cancellationTokenSource.Token);
+        }
+        finally
+        {
+            File.Delete(configPath);
+        }
+    }
+
+    [Test]
+    public async Task ShouldPropagateMetadataCancellationBeforeGenerating()
+    {
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
+        var metadataService = Mock.Of<IMetadataService>();
+        metadataService.PopulateEntitiesAndSolutionsAsync(Any<CodeGenerationConfigBase>(), cancellationToken)
+            .Throws(new OperationCanceledException(cancellationToken));
+        var command = new CodeGenerationCommand(new TestSpanFactory(),
+            _dotNetGenerator, _typeScriptGenerator, metadataService.Object, AnsiConsole.Console);
+
+        await Assert.That(() => command.ExecuteAsync(
+            new CommandContext([], new EmptyRemainingArguments(), "codegeneration", null),
+            new CodeGenerationVerb { Config = "Resources/CodeGenerationCommand/config.json" },
+            cancellationToken)).Throws<OperationCanceledException>();
+
+        await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(0);
+        await Assert.That(_typeScriptGenerator.GenerateCallCount).IsEqualTo(0);
+    }
+
+    [Test]
     public async Task InvalidConfiguration_ShouldNotConnectOrModifyExistingOutput()
     {
         var tempDirectory = Path.Combine(Path.GetTempPath(), $"dgtp-codegeneration-{Guid.NewGuid():N}");
@@ -102,9 +171,13 @@ public class CodeGenerationCommandTests
         {
             await File.WriteAllTextAsync(configPath, """{"version":1,"type":"typescript"}""");
             await File.WriteAllTextAsync(existingOutput, "keep this file");
+            using var cache = new MemoryCache(nameof(InvalidConfiguration_ShouldNotConnectOrModifyExistingOutput));
+            var command = new CodeGenerationCommand(new TestSpanFactory(),
+                _dotNetGenerator, _typeScriptGenerator,
+                new MetadataService(_connection, cache, AnsiConsole.Console), AnsiConsole.Console);
 
             await Assert.That(
-                () => _command.ExecuteAsync(
+                () => command.ExecuteAsync(
                     new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
                     new CodeGenerationVerb
                     {
@@ -133,7 +206,7 @@ public class CodeGenerationCommandTests
         {
             Environment.SetEnvironmentVariable("DGTP_TSL_MAX_STEPS", "0");
             var metadataService = Mock.Of<IMetadataService>().Object;
-            var command = new CodeGenerationCommand(new TestSpanFactory(), _connection,
+            var command = new CodeGenerationCommand(new TestSpanFactory(),
                 _dotNetGenerator, new TypeScriptGenerator(metadataService, AnsiConsole.Console),
                 metadataService, AnsiConsole.Console);
 
@@ -166,7 +239,7 @@ public class CodeGenerationCommandTests
             await File.WriteAllTextAsync(existingOutput, "keep this file");
             var generator = new TypeScriptGenerator(Mock.Of<IMetadataService>().Object, AnsiConsole.Console);
 
-            await Assert.That(() => generator.Generate(
+            await Assert.That(() => generator.GenerateAsync(
                     new CodeGenerationVerb { TargetDirectory = tempDirectory },
                     new TypeScriptCodeGenerationConfig()))
                 .Throws<InvalidOperationException>();
@@ -176,6 +249,36 @@ public class CodeGenerationCommandTests
         finally
         {
             Environment.SetEnvironmentVariable("DGTP_TSL_MAX_STEPS", originalMaxSteps);
+            Directory.Delete(tempDirectory, true);
+        }
+
+    }
+
+    [Test]
+    public async Task CancelledTypeScriptGeneration_ShouldNotModifyExistingOutput()
+    {
+        var tempDirectory = Path.Combine(Path.GetTempPath(), $"dgtp-codegeneration-{Guid.NewGuid():N}");
+        var outputDirectory = Path.Combine(tempDirectory, "Model", "TypeScript");
+        var existingOutput = Path.Combine(outputDirectory, "custom-file.ts");
+        Directory.CreateDirectory(outputDirectory);
+        using var cancellationTokenSource = new CancellationTokenSource();
+        await cancellationTokenSource.CancelAsync();
+        var cancellationToken = cancellationTokenSource.Token;
+
+        try
+        {
+            await File.WriteAllTextAsync(existingOutput, "keep this file", CancellationToken.None);
+            var generator = new TypeScriptGenerator(Mock.Of<IMetadataService>().Object, AnsiConsole.Console);
+
+            await Assert.That(() => generator.GenerateAsync(
+                new CodeGenerationVerb { TargetDirectory = tempDirectory },
+                new TypeScriptCodeGenerationConfig(),
+                cancellationToken)).Throws<OperationCanceledException>();
+
+            await Assert.That(await File.ReadAllTextAsync(existingOutput, CancellationToken.None)).IsEqualTo("keep this file");
+        }
+        finally
+        {
             Directory.Delete(tempDirectory, true);
         }
     }

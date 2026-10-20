@@ -2,10 +2,10 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dto;
 using dgt.power.export.Base;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Queue = dgt.power.dataverse.Queue;
@@ -24,7 +24,7 @@ public sealed class QueueExport(
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "queue.json" : args.FileName;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var service = await connection.GetServiceAsync();
 
         var query = new QueryExpression
         {
@@ -53,33 +53,8 @@ public sealed class QueueExport(
         query.Criteria.AddCondition(startsWith);
         query.Criteria.AddCondition(endsWith);
         query.Orders.Add(order);
-        query.PageInfo = new PagingInfo
-        {
-            Count = 5000,
-            PageNumber = 1,
-            PagingCookie = null
-        };
-        List<Queue> queues = new List<Queue>();
-        var moreRecords = true;
-        while (moreRecords)
-        {
-            // Retrieve the page.
-            var results = service.RetrieveMultiple(query);
-            foreach (var entity in results.Entities)
-            {
-                queues.Add(entity.ToEntity<Queue>());
-            }
-
-            if (results.MoreRecords)
-            {
-                // Increment the page number to retrieve the next page.
-                query.PageInfo.PageNumber++;
-                // Set the paging cookie to the paging cookie returned from current results.
-                query.PageInfo.PagingCookie = results.PagingCookie;
-            }
-
-            moreRecords = results.MoreRecords;
-        }
+        var queues = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<Queue>()).ToList();
 
         var export = new Queues
         {

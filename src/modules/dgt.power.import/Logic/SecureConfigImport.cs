@@ -2,10 +2,10 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -33,12 +33,30 @@ public sealed class SecureConfigImport(
         }
 
         var data = config.Data ?? args.InlineData;
+        if (string.IsNullOrWhiteSpace(config.PluginStep))
+        {
+            Console.MarkupLine("[yellow]Can't find PluginStep...[/]");
+            return false;
+        }
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service);
-        var pluginStep = (from ps in context.SdkMessageProcessingStepSet
-            where ps.Name == config.PluginStep
-            select ps).SingleOrDefault();
+        var service = await connection.GetServiceAsync();
+        var pluginStepQuery = new QueryExpression(SdkMessageProcessingStep.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepId,
+                SdkMessageProcessingStep.LogicalNames.Name,
+                SdkMessageProcessingStep.LogicalNames.SdkMessageProcessingStepSecureConfigId),
+            Criteria =
+            {
+                Conditions =
+                {
+                    new ConditionExpression(SdkMessageProcessingStep.LogicalNames.Name, ConditionOperator.Equal, config.PluginStep)
+                }
+            }
+        };
+        var pluginStep = (await service.RetrieveAllAsync(pluginStepQuery, cancellationToken: cancellationToken))
+            .SingleOrDefault()?.ToEntity<SdkMessageProcessingStep>();
 
         if (pluginStep == null)
         {
@@ -54,13 +72,28 @@ public sealed class SecureConfigImport(
             var created = false;
             try
             {
-                CreateSecureConfig(service, secureConfig, pluginStep, out created);
+                secureConfig.Id = await service.CreateAsync(secureConfig, cancellationToken);
+                created = true;
+                await service.UpdateAsync(new SdkMessageProcessingStep(pluginStep.Id)
+                {
+                    SdkMessageProcessingStepSecureConfigId = secureConfig.ToEntityReference()
+                }, cancellationToken);
+                Console.WriteLine("created SecureConfig!");
+            }
+            catch (OperationCanceledException)
+            {
+                if (created)
+                {
+                    await service.DeleteAsync(SdkMessageProcessingStepSecureConfig.EntityLogicalName, secureConfig.Id, CancellationToken.None);
+                }
+
+                throw;
             }
             catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
             {
                 if (created)
                 {
-                    service.Delete(SdkMessageProcessingStepSecureConfig.EntityLogicalName, secureConfig.Id);
+                    await service.DeleteAsync(SdkMessageProcessingStepSecureConfig.EntityLogicalName, secureConfig.Id, cancellationToken);
                 }
 
                 Console.MarkupLine($"[red]{Markup.Escape(e.Message)}[/]");
@@ -70,17 +103,22 @@ public sealed class SecureConfigImport(
         }
         else if (pluginStep.SdkMessageProcessingStepSecureConfigId != null)
         {
-            secureConfig = service.Retrieve(
+            secureConfig = (await service.RetrieveAsync(
                 pluginStep.SdkMessageProcessingStepSecureConfigId.LogicalName,
                 pluginStep.SdkMessageProcessingStepSecureConfigId.Id,
-                new ColumnSet(true)).ToEntity<SdkMessageProcessingStepSecureConfig>();
+                new ColumnSet(true),
+                cancellationToken)).ToEntity<SdkMessageProcessingStepSecureConfig>();
             if (data != secureConfig.SecureConfig)
             {
                 secureConfig.SecureConfig = data;
                 try
                 {
-                    service.Update(secureConfig);
+                    await service.UpdateAsync(secureConfig, cancellationToken);
                     Console.WriteLine("updated SecureConfig!");
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
                 }
                 catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
                 {
@@ -94,18 +132,4 @@ public sealed class SecureConfigImport(
         return true;
     }
 
-    private void CreateSecureConfig(IOrganizationService service, SdkMessageProcessingStepSecureConfig secureConfig, SdkMessageProcessingStep pluginStep,
-        out bool created)
-    {
-        created = false;
-        secureConfig.Id = service.Create(secureConfig);
-        created = true;
-        service.Update(new SdkMessageProcessingStep(pluginStep.Id)
-        {
-            SdkMessageProcessingStepSecureConfigId = secureConfig.ToEntityReference()
-        });
-
-
-        Console.WriteLine("created SecureConfig!");
-    }
 }

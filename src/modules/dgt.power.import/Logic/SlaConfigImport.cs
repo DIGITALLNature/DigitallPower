@@ -8,6 +8,7 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Calendar = dgt.power.dataverse.Calendar;
 
@@ -40,11 +41,24 @@ public class SlaConfigImport(
 
         var result = true;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service);
+        var service = await connection.GetServiceAsync();
         foreach (var sla in slaConfigs)
         {
-            var slaCrm = context.SLASet.SingleOrDefault(s => s.Id == sla.SlaId);
+            var slaQuery = new QueryExpression(SLA.EntityLogicalName)
+            {
+                NoLock = true,
+                ColumnSet = new ColumnSet(SLA.LogicalNames.SLAId, SLA.LogicalNames.Name, SLA.LogicalNames.BusinessHoursId,
+                    SLA.LogicalNames.StatusCode, SLA.LogicalNames.OwnerId),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(SLA.LogicalNames.SLAId, ConditionOperator.Equal, sla.SlaId)
+                    }
+                }
+            };
+            var slaCrm = (await service.RetrieveAllAsync(slaQuery, cancellationToken: cancellationToken))
+                .SingleOrDefault()?.ToEntity<SLA>();
 
             Console.WriteLine($"Check Sla {sla.Name}({sla.SlaId:D})");
 
@@ -55,10 +69,23 @@ public class SlaConfigImport(
             }
 
             var owner = ImportAssignee.GetAssignee(args.Assignee, sla);
-            var systemuser = default(SystemUser);
+            SystemUser? systemuser = null;
             if (!string.IsNullOrWhiteSpace(owner))
             {
-                systemuser = context.SystemUserSet.SingleOrDefault(s => s.DomainName != null && s.DomainName == owner);
+                var userQuery = new QueryExpression(SystemUser.EntityLogicalName)
+                {
+                    NoLock = true,
+                    ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName),
+                    Criteria =
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, owner)
+                        }
+                    }
+                };
+                systemuser = (await service.RetrieveAllAsync(userQuery, cancellationToken: cancellationToken))
+                    .SingleOrDefault()?.ToEntity<SystemUser>();
             }
 
             if (RequiresUpdate(sla, slaCrm, systemuser))
@@ -67,7 +94,11 @@ public class SlaConfigImport(
 
                 if (slaCrm.StatusCode?.Value != SLA.Options.StatusCode.Draft)
                 {
-                    result &= service.TrySetState(slaCrm.ToEntityReference(), SLA.Options.StateCode.Draft, SLA.Options.StatusCode.Draft);
+                    result = await service.TryUpdateAsync(new SLA(slaCrm.Id)
+                    {
+                        StateCode = new OptionSetValue(SLA.Options.StateCode.Draft),
+                        StatusCode = new OptionSetValue(SLA.Options.StatusCode.Draft)
+                    }, cancellationToken) && result;
                 }
 
                 var slatoUpdate = new SLA
@@ -81,11 +112,15 @@ public class SlaConfigImport(
                     slatoUpdate.OwnerId = systemuser.ToEntityReference();
                 }
 
-                result &= service.TryUpdate(slatoUpdate);
+                result = await service.TryUpdateAsync(slatoUpdate, cancellationToken) && result;
 
                 if (sla.Active == true)
                 {
-                    result &= service.TrySetState(slaCrm.ToEntityReference(), SLA.Options.StateCode.Active, SLA.Options.StatusCode.Active);
+                    result = await service.TryUpdateAsync(new SLA(slaCrm.Id)
+                    {
+                        StateCode = new OptionSetValue(SLA.Options.StateCode.Active),
+                        StatusCode = new OptionSetValue(SLA.Options.StatusCode.Active)
+                    }, cancellationToken) && result;
                 }
             }
         }

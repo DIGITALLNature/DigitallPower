@@ -39,12 +39,31 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         .Select(name => new SdkMessage(Guid.NewGuid()) { Name = name });
 
     [Test]
+    public async Task ShouldFlushMetadataBeforeGenerationCompletes()
+    {
+        var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
+        var context = GetBuilder().WithMetaData(accountMetadata).Build();
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
+        var config = new DotNetCodeGenerationConfig
+        {
+            Entities = new EntityScopeConfig { Names = [accountMetadata.LogicalName] },
+            Output = new DotNetOutput { Include = new DotNetInclude { Metadata = true } }
+        };
+
+        await Assert.That(await context.DotNetGenerator.GenerateAsync(args, config)).IsTrue();
+
+        var metadata = GetEntityMetadataArtifact(accountMetadata.LogicalName);
+        await Assert.That(metadata.LogicalName).IsEqualTo(accountMetadata.LogicalName);
+        await Assert.That(metadata.EntitySetName).IsEqualTo(accountMetadata.EntitySetName);
+    }
+
+    [Test]
     public async Task ShouldCreateModelDirectoryStructureIfNotExistent()
     {
         var config = new DotNetCodeGenerationConfig();
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         var context = GetContext();
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         await Assert.That(Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.DotNet}")).IsTrue();
@@ -63,7 +82,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var existingFilePath = $"{dotNetPath}/Testentity.cs";
         await File.WriteAllTextAsync(existingFilePath, "public class TestEntity : Entity { }");
 
-        GetContext().DotNetGenerator.Generate(args, config);
+        await GetContext().DotNetGenerator.GenerateAsync(args, config);
 
         await Assert.That(Directory.Exists(modelPath)).IsTrue();
         await Assert.That(Directory.Exists(dotNetPath)).IsTrue();
@@ -78,7 +97,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs")).IsTrue();
@@ -95,7 +114,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
 
         var context = GetBuilder().Build();
 
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
@@ -112,7 +131,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.Context}.cs")).IsTrue();
@@ -136,7 +155,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithData(additionalMessage)
             .Build();
 
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -170,7 +189,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithData(mergeMessage)
             .Build();
 
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -204,7 +223,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -264,7 +283,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithData(customApiResponseProperty)
             .Build();
 
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -282,7 +301,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
@@ -303,7 +322,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithMetaData(activityPointerMetadata)
             .Build();
 
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotnetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
         var optionSetPath = Path.Combine(dotnetPath, $"{FileNames.DotNet.OptionSetValues}.cs");
@@ -324,7 +343,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithMetaData(accountMetadata)
             .Build();
 
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotnetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
         var accountPath = Path.Combine(dotnetPath, "Account.cs");
@@ -352,7 +371,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             var context = GetBuilder()
                 .WithMetaData(accountMetadata)
                 .Build();
-            context.DotNetGenerator.Generate(args, config);
+            await context.DotNetGenerator.GenerateAsync(args, config);
 
             var dotNetPath = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet);
             var accountFile = Path.Combine(dotNetPath, "Account.cs");
@@ -397,7 +416,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             Entities = new EntityScopeConfig { Names = [attributeMetadata.LogicalName] }
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
-        context.DotNetGenerator.Generate(args, config);
+        await context.DotNetGenerator.GenerateAsync(args, config);
 
         var dotNetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
         var attributePath = Path.Combine(dotNetPath, "Attribute.cs");

@@ -14,17 +14,17 @@ public interface IMetadataService
     ///     Retrieves request metadata (actions, custom APIs, built-in SDK messages) for the given names.
     ///     Auto-detects type per entry: custom API → CustomAPI table, classic action → Workflow XAML, built-in → name only.
     /// </summary>
-    IReadOnlyList<WfAction> RetrieveRequests(IReadOnlyCollection<string> requestNames);
+    Task<IReadOnlyList<WfAction>> RetrieveRequestsAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Returns SDK message name constants. Includes hardcoded defaults (Create, Update, etc.)
     ///     plus any additional names from the provided requests collection.
     /// </summary>
-    IReadOnlyList<(string Name, string Message)> RetrieveSdkMessageNames(IReadOnlyCollection<string> requestNames);
-    SortedDictionary<string, List<Option>> RetrieveOptionSets(IReadOnlyCollection<string> globalOptionSets);
+    Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default);
+    Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsAsync(IReadOnlyCollection<string> globalOptionSets, CancellationToken cancellationToken = default);
 
-    EntityMetadata RetrieveEntityMetadata(string entity, EntityFilters filter = EntityFilters.Default);
-    int RetrieveOrganizationLanguage();
+    Task<EntityMetadata> RetrieveEntityMetadataAsync(string entity, EntityFilters filter = EntityFilters.Default, CancellationToken cancellationToken = default);
+    Task<int> RetrieveOrganizationLanguageAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Returns the UI language (LCID) of the currently connected user, as configured in their personal
@@ -32,15 +32,17 @@ public interface IMetadataService
     ///     <c>name</c>) based on this session language, not on any per-request parameter - so it can differ
     ///     from the language configured for code generation. Used to warn about this known limitation.
     /// </summary>
-    int RetrieveConnectionUserLanguage();
+    Task<int> RetrieveConnectionUserLanguageAsync(CancellationToken cancellationToken = default);
 
-    IReadOnlyList<Tuple<string, string, Guid, string>> RetrieveBusinessProcessFlows(IReadOnlyCollection<string> businessProcessFlows);
-    IReadOnlyList<Tuple<string, string, List<Guid>>> RetrieveBusinessProcessFlowStages(Guid processId);
+    Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(IReadOnlyCollection<string> businessProcessFlows, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Tuple<string, string, List<Guid>>>> RetrieveBusinessProcessFlowStagesAsync(Guid processId, CancellationToken cancellationToken = default);
 
-    Dictionary<string, FormDetail> RetrieveFormsDetailsFromSolutions(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls);
-    Dictionary<string, FormDetail> RetrieveFormsDetails(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls);
+    Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsAsync(
+        string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default);
+    Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsAsync(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default);
 
-    IReadOnlyList<BpfControlDetail> RetrieveBusinessProcessFlowControlsForMainEntity(IReadOnlyCollection<string> businessProcessFlows, string entityName);
+    Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(
+        IReadOnlyCollection<string> businessProcessFlows, string entityName, CancellationToken cancellationToken = default);
 
-    void PopulateEntitiesAndSolutions(CodeGenerationConfigBase config);
+    Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken = default);
 }

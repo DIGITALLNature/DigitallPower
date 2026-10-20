@@ -21,7 +21,7 @@ public class RemoveRedundantComponentsVerb: BaseProgramSettings
     [CommandOption("--dryrun")]
     [Description("Report only what would be removed")]
     [DefaultValue(false)]
-    public bool DryRun { get; set; }
+    public bool DryRun { get; init; }
 
     [CommandOption("--includeEntities")]
     [Description("Also remove Entities (experimental)!")]

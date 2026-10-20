@@ -118,14 +118,14 @@ public class CodeGenerationContext
     ///     Reads a V2 TypeScript config from the verb's config file path and runs the TypeScript generator.
     ///     Convenience method for tests that use on-disk config files.
     /// </summary>
-    public bool ExecuteTypescriptFromConfigFile(CodeGenerationVerb verb)
+    public Task<bool> ExecuteTypescriptFromConfigFileAsync(CodeGenerationVerb verb, CancellationToken cancellationToken = default)
     {
         if (CodeGenerationConfigLoader.LoadFromFile(verb.Config) is not TypeScriptCodeGenerationConfig config)
         {
             throw new InvalidOperationException($"Expected a V2 TypeScript config in '{verb.Config}'.");
         }
 
-        return TypeScriptGenerator.Generate(verb, config);
+        return TypeScriptGenerator.GenerateAsync(verb, config, cancellationToken);
     }
 }
 

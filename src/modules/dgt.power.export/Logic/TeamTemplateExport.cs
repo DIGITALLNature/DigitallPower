@@ -2,12 +2,13 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.export.Base;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.export.Logic;
@@ -24,21 +25,28 @@ public sealed class TeamTemplateExport(
         var fileDir = args.FileDir;
         var fileName = string.IsNullOrWhiteSpace(args.FileName) ? "teamtemplate.json" : args.FileName;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var service = await connection.GetServiceAsync();
         var request = new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(request, cancellationToken);
         var records = response.EntityMetadata.ToList();
 
-        IList<TeamTemplate> teamTemplates;
-        using (var context = new DataContext(service))
+        var query = new QueryExpression(TeamTemplate.EntityLogicalName)
         {
-            teamTemplates = (from tt in context.TeamTemplateSet
-                orderby tt.TeamTemplateName
-                select tt).ToList();
-        }
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                TeamTemplate.LogicalNames.TeamTemplateId,
+                TeamTemplate.LogicalNames.TeamTemplateName,
+                TeamTemplate.LogicalNames.Description,
+                TeamTemplate.LogicalNames.IsSystem,
+                TeamTemplate.LogicalNames.DefaultAccessRightsMask,
+                TeamTemplate.LogicalNames.ObjectTypeCode),
+            Orders = { new OrderExpression(TeamTemplate.LogicalNames.TeamTemplateName, OrderType.Ascending) }
+        };
+        var teamTemplates = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<TeamTemplate>()).ToList();
 
         var export = new List<dto.TeamTemplate>();
 

@@ -8,7 +8,7 @@ using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using Microsoft.Crm.Sdk.Messages;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -41,10 +41,8 @@ public sealed class BulkDeleteImport(
 
         var result = true;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service);
-
-        var (system, techUser, operations) = GetUserAndExistingBulkDeleteJobs(service, context);
+        var service = await connection.GetServiceAsync();
+        var (system, techUser, operations) = await GetUserAndExistingBulkDeleteJobsAsync(service, cancellationToken);
 
 
         //find bulk deletes which are missing
@@ -64,52 +62,86 @@ public sealed class BulkDeleteImport(
         Console.WriteLine("disable check");
         foreach (var disable in operations.Where(e => bulkDeletes.Deletes.Exists(c => e.Name == c.Name && c.Disable)))
         {
-            result = DisableBulkDeleteJobs(service, disable) && result;
+            result = await DisableBulkDeleteJobsAsync(service, disable, cancellationToken) && result;
         }
 
         //find bulk deletes which need to be updated
         Console.WriteLine("update check");
         foreach (var xupdate in operations.Where(e => bulkDeletes.Deletes.Exists(c => e.Name == c.Name && !c.Disable)))
         {
-            result = UpdateBulkDeleteJobs(service, xupdate, bulkDeletes, context, system, techUser) && result;
+            result = await UpdateBulkDeleteJobsAsync(service, xupdate, bulkDeletes, system, techUser, cancellationToken) && result;
         }
 
         //find bulk deletes which need to be created
         Console.WriteLine("create check");
         foreach (var create in bulkDeletes.Deletes.Where(e => operations.All(c => e.Name != c.Name)))
         {
-            result = DeleteBulkDeleteJobs(service, create) && result;
+            result = await DeleteBulkDeleteJobsAsync(service, create, cancellationToken) && result;
         }
 
         return result;
     }
 
-    private static (SystemUser system, SystemUser techUser, ICollection<AsyncOperation> operations)
-        GetUserAndExistingBulkDeleteJobs(IOrganizationService service, DataContext context)
+    private static async Task<(SystemUser system, SystemUser techUser, IReadOnlyList<AsyncOperation> operations)>
+        GetUserAndExistingBulkDeleteJobsAsync(IOrganizationServiceAsync2 service, CancellationToken cancellationToken)
     {
-        var system = (from su in context.SystemUserSet
-            where su.LastName == "SYSTEM"
-            where su.IsDisabled == true
-            where su.FirstName == null || su.FirstName == ""
-            select su).Single();
+        var systemQuery = new QueryExpression(SystemUser.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.LastName,
+                SystemUser.LogicalNames.IsDisabled, SystemUser.LogicalNames.FirstName),
+            Criteria =
+            {
+                Conditions =
+                {
+                    new ConditionExpression(SystemUser.LogicalNames.LastName, ConditionOperator.Equal, "SYSTEM"),
+                    new ConditionExpression(SystemUser.LogicalNames.IsDisabled, ConditionOperator.Equal, true)
+                },
+                Filters =
+                {
+                    new FilterExpression(LogicalOperator.Or)
+                    {
+                        Conditions =
+                        {
+                            new ConditionExpression(SystemUser.LogicalNames.FirstName, ConditionOperator.Null),
+                            new ConditionExpression(SystemUser.LogicalNames.FirstName, ConditionOperator.Equal, string.Empty)
+                        }
+                    }
+                }
+            }
+        };
+        var system = (await service.RetrieveAllAsync(systemQuery, cancellationToken: cancellationToken))
+            .Single().ToEntity<SystemUser>();
 
-        var userId = ((WhoAmIResponse)service.Execute(new WhoAmIRequest())).UserId;
-        var techUser = (from su in context.SystemUserSet
-            where su.Id == userId
-            select su).Single();
+        var whoAmIResponse = (WhoAmIResponse)await service.ExecuteAsync(new WhoAmIRequest(), cancellationToken);
+        var techUser = (await service.RetrieveAsync(SystemUser.EntityLogicalName, whoAmIResponse.UserId,
+            new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.FullName), cancellationToken))
+            .ToEntity<SystemUser>();
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var operations = (from ao in context.AsyncOperationSet
-            where ao.OperationType != null
-            where ao.OperationType.Value == AsyncOperation.Options.OperationType.BulkDelete
-            where ao.RecurrenceStartTime != null
-            orderby ao.Name
-            select ao).ToList();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        var operationQuery = new QueryExpression(AsyncOperation.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(AsyncOperation.LogicalNames.AsyncOperationId, AsyncOperation.LogicalNames.Name,
+                AsyncOperation.LogicalNames.OperationType, AsyncOperation.LogicalNames.RecurrenceStartTime,
+                AsyncOperation.LogicalNames.RecurrencePattern, AsyncOperation.LogicalNames.OwnerId, AsyncOperation.LogicalNames.Data),
+            Criteria =
+            {
+                Conditions =
+                {
+                    new ConditionExpression(AsyncOperation.LogicalNames.OperationType, ConditionOperator.Equal,
+                        AsyncOperation.Options.OperationType.BulkDelete),
+                    new ConditionExpression(AsyncOperation.LogicalNames.RecurrenceStartTime, ConditionOperator.NotNull)
+                }
+            },
+            Orders = { new OrderExpression(AsyncOperation.LogicalNames.Name, OrderType.Ascending) }
+        };
+        var operations = (await service.RetrieveAllAsync(operationQuery, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<AsyncOperation>()).ToList();
         return (system, techUser, operations);
     }
 
-    private bool DeleteBulkDeleteJobs(IOrganizationService service, BulkDelete create)
+    private async Task<bool> DeleteBulkDeleteJobsAsync(IOrganizationServiceAsync2 service, BulkDelete create,
+        CancellationToken cancellationToken)
     {
         if (create.Disable)
         {
@@ -130,7 +162,8 @@ public sealed class BulkDeleteImport(
         {
             FetchXml = create.FetchXml
         };
-        var response = (FetchXmlToQueryExpressionResponse)service.Execute(request);
+        var response = (FetchXmlToQueryExpressionResponse)await service.ExecuteAsync(request, cancellationToken);
+        response.Query.NoLock = true;
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = create.Name,
@@ -143,12 +176,12 @@ public sealed class BulkDeleteImport(
         };
         Console.WriteLine(
             $"create bulk delete '{create.Name}'; StartTime:{create.RecurrenceStartTime}; Pattern:{create.RecurrencePattern}");
-        return service.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
-            out _);
+        var (succeeded, _) = await service.TryExecuteAsync<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest, cancellationToken);
+        return succeeded;
     }
 
-    private bool UpdateBulkDeleteJobs(IOrganizationService service, AsyncOperation xupdate, BulkDeletes bulkDeletes, DataContext context, SystemUser system,
-        SystemUser techUser)
+    private async Task<bool> UpdateBulkDeleteJobsAsync(IOrganizationServiceAsync2 service, AsyncOperation xupdate,
+        BulkDeletes bulkDeletes, SystemUser system, SystemUser techUser, CancellationToken cancellationToken)
     {
         var update = xupdate;
         var bulkDelete = bulkDeletes.Deletes.Single(e => e.Name == update.Name);
@@ -167,25 +200,36 @@ public sealed class BulkDeleteImport(
             if (string.IsNullOrWhiteSpace(update.RecurrencePattern))
             {
                 Console.WriteLine("disabled once cannot be reactivated, but copied!");
-                result = CopyBulkDeleteJob(service, update, startTime, bulkDelete.RecurrencePattern);
+                result = await CopyBulkDeleteJobAsync(service, update, startTime, bulkDelete.RecurrencePattern, cancellationToken);
             }
             else
             {
-                result = service.TryUpdate(new AsyncOperation(update.Id)
+                result = await service.TryUpdateAsync(new AsyncOperation(update.Id)
                 {
                     RecurrencePattern = bulkDelete.RecurrencePattern,
                     RecurrenceStartTime = startTime
-                });
+                }, cancellationToken);
             }
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            update = (from ao in context.AsyncOperationSet
-                where ao.OperationType != null
-                where ao.OperationType.Value == AsyncOperation.Options.OperationType.BulkDelete
-                where ao.RecurrenceStartTime != null
-                where ao.Name == xupdate.Name
-                select ao).Single(); //reload after update
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            var operationQuery = new QueryExpression(AsyncOperation.EntityLogicalName)
+            {
+                NoLock = true,
+                ColumnSet = new ColumnSet(AsyncOperation.LogicalNames.AsyncOperationId, AsyncOperation.LogicalNames.Name,
+                    AsyncOperation.LogicalNames.OperationType, AsyncOperation.LogicalNames.RecurrenceStartTime,
+                    AsyncOperation.LogicalNames.RecurrencePattern, AsyncOperation.LogicalNames.OwnerId, AsyncOperation.LogicalNames.Data),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(AsyncOperation.LogicalNames.OperationType, ConditionOperator.Equal,
+                            AsyncOperation.Options.OperationType.BulkDelete),
+                        new ConditionExpression(AsyncOperation.LogicalNames.RecurrenceStartTime, ConditionOperator.NotNull),
+                        new ConditionExpression(AsyncOperation.LogicalNames.Name, ConditionOperator.Equal, xupdate.Name)
+                    }
+                }
+            };
+            update = (await service.RetrieveAllAsync(operationQuery, cancellationToken: cancellationToken))
+                .Single().ToEntity<AsyncOperation>();
         }
 
         if (update.OwnerId!.Id != system.Id && update.OwnerId.Id != techUser.Id)
@@ -195,12 +239,14 @@ public sealed class BulkDeleteImport(
             if (!string.IsNullOrWhiteSpace(update.RecurrencePattern))
             {
                 Console.WriteLine("bulk deletes cannot be assigned, but copied!");
-                result = service.TryUpdate(new AsyncOperation(update.Id)
+                result = await service.TryUpdateAsync(new AsyncOperation(update.Id)
                 {
                     RecurrencePattern = "",
                     RecurrenceStartTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(-10))
-                }) && result;
-                result = CopyBulkDeleteJob(service, update, update.RecurrenceStartTime.GetValueOrDefault(DateTime.UtcNow.AddDays(1)), update.RecurrencePattern) && result;
+                }, cancellationToken) && result;
+                result = await CopyBulkDeleteJobAsync(service, update,
+                    update.RecurrenceStartTime.GetValueOrDefault(DateTime.UtcNow.AddDays(1)), update.RecurrencePattern,
+                    cancellationToken) && result;
             }
         }
 
@@ -208,18 +254,19 @@ public sealed class BulkDeleteImport(
         return result;
     }
 
-    private bool DisableBulkDeleteJobs(IOrganizationService service, AsyncOperation disable)
+    private async Task<bool> DisableBulkDeleteJobsAsync(IOrganizationServiceAsync2 service, AsyncOperation disable,
+        CancellationToken cancellationToken)
     {
         var result = true;
         if (!string.IsNullOrEmpty(disable.RecurrencePattern))
         {
             //set to run once, delete afterwards, nice hack
             Console.WriteLine($"disable bulk delete '{disable.Name}'");
-            result = service.TryUpdate(new AsyncOperation(disable.Id)
+            result = await service.TryUpdateAsync(new AsyncOperation(disable.Id)
             {
                 RecurrencePattern = "",
                 RecurrenceStartTime = DateTime.UtcNow.Add(TimeSpan.FromMinutes(10))
-            });
+            }, cancellationToken);
         }
         else
         {
@@ -229,7 +276,8 @@ public sealed class BulkDeleteImport(
         return result;
     }
 
-    private bool CopyBulkDeleteJob(IOrganizationService service, AsyncOperation bulkDeleteJob, DateTime startTime, string recurrencePattern)
+    private async Task<bool> CopyBulkDeleteJobAsync(IOrganizationServiceAsync2 service, AsyncOperation bulkDeleteJob, DateTime startTime,
+        string recurrencePattern, CancellationToken cancellationToken)
     {
         var result = true;
         var data = bulkDeleteJob.Data!;
@@ -241,7 +289,8 @@ public sealed class BulkDeleteImport(
             FetchXml = fetchXml
         };
         var fetchXmlToQueryExpressionResponse = (FetchXmlToQueryExpressionResponse)
-            service.Execute(fetchXmlToQueryExpressionRequest);
+            await service.ExecuteAsync(fetchXmlToQueryExpressionRequest, cancellationToken);
+        fetchXmlToQueryExpressionResponse.Query.NoLock = true;
         var bulkDeleteRequest = new BulkDeleteRequest
         {
             JobName = bulkDeleteJob.Name,
@@ -252,16 +301,16 @@ public sealed class BulkDeleteImport(
             ToRecipients = [],
             CCRecipients = []
         };
-        if (service.TryExecute<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest,
-                out _))
+        var (succeeded, _) = await service.TryExecuteAsync<BulkDeleteRequest, BulkDeleteResponse>(bulkDeleteRequest, cancellationToken);
+        if (succeeded)
         {
             Console.WriteLine($"bulk delete '{bulkDeleteJob.Name}' copied!");
             Console.WriteLine($"delete old bulk delete '{bulkDeleteJob.Name}'!");
-            if (service.TryRetrieve(AsyncOperation.EntityLogicalName, bulkDeleteJob.Id,
-                    new ColumnSet(AsyncOperation.LogicalNames.AsyncOperationId),
-                    out AsyncOperation reloaded))
+            var (retrieved, reloaded) = await service.TryRetrieveAsync<AsyncOperation>(AsyncOperation.EntityLogicalName,
+                bulkDeleteJob.Id, new ColumnSet(AsyncOperation.LogicalNames.AsyncOperationId), cancellationToken);
+            if (retrieved)
             {
-                result = service.TryDelete(AsyncOperation.EntityLogicalName, reloaded.Id);
+                result = await service.TryDeleteAsync(AsyncOperation.EntityLogicalName, reloaded!.Id, cancellationToken);
             }
         }
         else

@@ -3,6 +3,7 @@
 
 using dgt.power.common;
 using dgt.power.maintenance.Base;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -18,19 +19,16 @@ public sealed class ProtectCalculatedFields(
 {
     protected override async Task<bool> RunAsync(MaintenanceVerb args, CancellationToken cancellationToken)
     {
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        return Run(service);
+        var service = await connection.GetServiceAsync();
+        return await RunAsync(service, cancellationToken);
     }
 
-    #pragma warning disable S1135 // Async migration tracked in todo.md
-    // TODO(async): migrate to IOrganizationServiceAsync2
-    #pragma warning restore S1135
-    private bool Run(IOrganizationService service)
+    private async Task<bool> RunAsync(IOrganizationServiceAsync2 service, CancellationToken cancellationToken)
     {
         var updated = 0;
 
-        Console.Status()
-            .Start("Retrieve Metadata...", ctx =>
+        await Console.Status()
+            .StartAsync("Retrieve Metadata...", async ctx =>
             {
                 ctx.Spinner(Spinner.Known.Smiley);
                 ctx.SpinnerStyle(Style.Parse("green"));
@@ -41,7 +39,7 @@ public sealed class ProtectCalculatedFields(
                 {
                     EntityFilters = EntityFilters.Attributes
                 };
-                var response = (RetrieveAllEntitiesResponse)service.Execute(request);
+                var response = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(request, cancellationToken);
                 var attributeMetadatas = response.EntityMetadata.SelectMany(a => a.Attributes).Where(a => a.SourceType == 1 && a.IsManaged == false);
 
                 foreach (var attributeMetadata in attributeMetadatas)
@@ -61,12 +59,12 @@ public sealed class ProtectCalculatedFields(
                     {
                         Console.MarkupLine($"Protect  <{attributeMetadata.EntityLogicalName}> {attributeMetadata.LogicalName}");
                         attributeMetadata.IsCustomizable = new BooleanManagedProperty(false);
-                        service.Execute(new UpdateAttributeRequest
+                        await service.ExecuteAsync(new UpdateAttributeRequest
                         {
                             Attribute = attributeMetadata,
                             EntityName = attributeMetadata.EntityLogicalName,
                             MergeLabels = false
-                        });
+                        }, cancellationToken);
                         updated++;
                     }
                 }

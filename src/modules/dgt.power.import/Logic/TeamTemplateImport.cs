@@ -4,11 +4,11 @@
 using System.Globalization;
 using dgt.power.common;
 using dgt.power.common.Extensions;
-using dgt.power.dataverse;
 using dgt.power.import.Base;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using TeamTemplate = dgt.power.dto.TeamTemplate;
 
@@ -40,44 +40,54 @@ public sealed class TeamTemplateImport(
 
         var result = true;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var service = await connection.GetServiceAsync();
         var request = new RetrieveAllEntitiesRequest
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(request, cancellationToken);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(service);
-        var teamTemplates = (from tt in context.TeamTemplateSet
-            orderby tt.TeamTemplateName
-            select tt).ToList();
+        var query = new QueryExpression(dataverse.TeamTemplate.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                dataverse.TeamTemplate.LogicalNames.TeamTemplateId,
+                dataverse.TeamTemplate.LogicalNames.TeamTemplateName,
+                dataverse.TeamTemplate.LogicalNames.Description,
+                dataverse.TeamTemplate.LogicalNames.DefaultAccessRightsMask,
+                dataverse.TeamTemplate.LogicalNames.ObjectTypeCode),
+            Orders = { new OrderExpression(dataverse.TeamTemplate.LogicalNames.TeamTemplateName, OrderType.Ascending) }
+        };
+        var teamTemplates = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<dataverse.TeamTemplate>()).ToList();
 
         //find templates which need to be removed
         Console.WriteLine("delete check");
         foreach (var teamTemplate in teamTemplates.Where(e => templates.TrueForAll(c => e.Id != c.TeamTemplateId)))
         {
-            result = DeleteTeamTemplate(service, teamTemplate) && result;
+            result = await DeleteTeamTemplateAsync(service, teamTemplate, cancellationToken) && result;
         }
 
         //find templates which need to be updated
         Console.WriteLine("update check");
         foreach (var updateTemplate in templates.Where(c => teamTemplates.Exists(e => e.Id == c.TeamTemplateId)))
         {
-            result = UpdateTeamTemplate(service, teamTemplates, updateTemplate, entities) && result;
+            result = await UpdateTeamTemplateAsync(service, teamTemplates, updateTemplate, entities, cancellationToken) && result;
         }
 
         //find templates which need to be created
         Console.WriteLine("create check");
         foreach (var newTemplate in templates.Where(c => teamTemplates.TrueForAll(e => e.Id != c.TeamTemplateId)))
         {
-            result = CreateTeamTemplate(service, entities, newTemplate) && result;
+            result = await CreateTeamTemplateAsync(service, entities, newTemplate, cancellationToken) && result;
         }
 
         return result;
     }
 
-    private bool CreateTeamTemplate(IOrganizationService service, List<EntityMetadata> entities, TeamTemplate newTemplate)
+    private async Task<bool> CreateTeamTemplateAsync(IOrganizationServiceAsync2 service, List<EntityMetadata> entities, TeamTemplate newTemplate,
+        CancellationToken cancellationToken)
     {
         var entity = entities.Find(e => e.LogicalName == newTemplate.Entity);
 
@@ -95,17 +105,17 @@ public sealed class TeamTemplateImport(
 
         //create template
         Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create template: {newTemplate.TeamTemplateName}[/]");
-        return service.TryCreate(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
+        return await service.TryCreateAsync(new dataverse.TeamTemplate(newTemplate.TeamTemplateId)
         {
             TeamTemplateName = newTemplate.TeamTemplateName,
             Description = newTemplate.Description,
             DefaultAccessRightsMask = newTemplate.DefaultAccessRightsMask,
             ObjectTypeCode = entity.ObjectTypeCode
-        }, out _);
+        }, cancellationToken);
     }
 
-    private bool UpdateTeamTemplate(IOrganizationService service, IEnumerable<dataverse.TeamTemplate> teamTemplates, TeamTemplate updateTemplate,
-        List<EntityMetadata> entities)
+    private async Task<bool> UpdateTeamTemplateAsync(IOrganizationServiceAsync2 service, IEnumerable<dataverse.TeamTemplate> teamTemplates,
+        TeamTemplate updateTemplate, List<EntityMetadata> entities, CancellationToken cancellationToken)
     {
         var existingTemplate = teamTemplates.Single(e => e.Id == updateTemplate.TeamTemplateId);
 
@@ -128,24 +138,25 @@ public sealed class TeamTemplateImport(
         {
             //update template
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update template: {updateTemplate.TeamTemplateName}[/]");
-            result = service.TryUpdate(new dataverse.TeamTemplate(existingTemplate.Id)
+            result = await service.TryUpdateAsync(new dataverse.TeamTemplate(existingTemplate.Id)
             {
                 TeamTemplateName = updateTemplate.TeamTemplateName,
                 Description = updateTemplate.Description,
                 //IsSystem = updateTemplate.IsSystem,
                 DefaultAccessRightsMask = updateTemplate.DefaultAccessRightsMask,
                 ObjectTypeCode = entity
-            });
+            }, cancellationToken);
         }
 
         return result;
     }
 
-    private bool DeleteTeamTemplate(IOrganizationService service, dataverse.TeamTemplate teamTemplate)
+    private async Task<bool> DeleteTeamTemplateAsync(IOrganizationServiceAsync2 service, dataverse.TeamTemplate teamTemplate,
+        CancellationToken cancellationToken)
     {
         //delete template
         Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]delete template: {teamTemplate.TeamTemplateName}[/]");
-        return service.TryDelete(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id);
+        return await service.TryDeleteAsync(dataverse.TeamTemplate.EntityLogicalName, teamTemplate.Id, cancellationToken);
     }
 
     private static bool Unchanged(dataverse.TeamTemplate existing, int entity, TeamTemplate config)

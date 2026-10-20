@@ -7,7 +7,10 @@ using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
+using Microsoft.Crm.Sdk.Messages;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Queue = dgt.power.dto.Queue;
@@ -41,10 +44,10 @@ public sealed class QueueImport(
 
         var result = true;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        var alternativeOwner = GetAlternativeOwner(service, args, queuesToTransport);
+        var service = await connection.GetServiceAsync();
+        var alternativeOwner = await GetAlternativeOwnerAsync(service, args, queuesToTransport, cancellationToken);
 
-        var queues = GetQueues(service);
+        var queues = await GetQueuesAsync(service, cancellationToken);
 
         //TODO: delete vs. deactivate
         //find queues which need to be removed
@@ -58,7 +61,7 @@ public sealed class QueueImport(
         Console.WriteLine("update check");
         foreach (var updateQueue in queuesToTransport.QueuesToTransport.Where(c => queues.Exists(e => e.Id == c.QueueId)))
         {
-            result = UpdateQueue(service, queues, updateQueue, alternativeOwner) && result;
+            result = await UpdateQueueAsync(service, queues, updateQueue, alternativeOwner, cancellationToken) && result;
         }
 
         //find queues which need to be created
@@ -66,14 +69,24 @@ public sealed class QueueImport(
         Console.WriteLine("create check");
         foreach (var newQueue in queuesToTransport.QueuesToTransport.Where(c => queues.TrueForAll(e => e.Id != c.QueueId)))
         {
-            var isCreated = CreateQueue(service, newQueue, out var id);
+            var (isCreated, response) = await CreateQueueAsync(service, newQueue, cancellationToken);
             if (!isCreated)
             {
                 result = false;
                 continue;
             }
 
-            if (alternativeOwner != null && !service.TryAssign(new EntityReference(dataverse.Queue.EntityLogicalName, id), alternativeOwner))
+            var assigned = true;
+            if (alternativeOwner != null)
+            {
+                (assigned, _) = await service.TryExecuteAsync<AssignRequest, AssignResponse>(new AssignRequest
+                {
+                    Target = new EntityReference(dataverse.Queue.EntityLogicalName, response!.id),
+                    Assignee = alternativeOwner.ToEntityReference()
+                }, cancellationToken);
+            }
+
+            if (!assigned)
             {
                 result = false;
             }
@@ -82,21 +95,23 @@ public sealed class QueueImport(
         return result;
     }
 
-    private bool CreateQueue(IOrganizationService service, Queue newQueue, out Guid id)
+    private async Task<(bool Succeeded, CreateResponse? Response)> CreateQueueAsync(IOrganizationServiceAsync2 service, Queue newQueue, CancellationToken cancellationToken)
     {
         Console.MarkupLine("[grey]--->[/]");
         //create queue
         Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create queue: {newQueue.Name}[/]");
-        var isCreated = service.TryCreate(new dataverse.Queue(newQueue.QueueId)
+        return await service.TryExecuteAsync<CreateRequest, CreateResponse>(new CreateRequest
         {
-            Name = newQueue.Name,
-            QueueViewType = new OptionSetValue((int)newQueue.ViewType),
-            IncomingEmailFilteringMethod = new OptionSetValue((int)newQueue.IncomingEmailFiltering),
-            IncomingEmailDeliveryMethod = new OptionSetValue((int)newQueue.IncomingEmailDelivery),
-            OutgoingEmailDeliveryMethod = new OptionSetValue((int)newQueue.OutgoingEmailDelivery),
-            Description = newQueue.Description
-        }, out id);
-        return isCreated;
+            Target = new dataverse.Queue(newQueue.QueueId)
+            {
+                Name = newQueue.Name,
+                QueueViewType = new OptionSetValue((int)newQueue.ViewType),
+                IncomingEmailFilteringMethod = new OptionSetValue((int)newQueue.IncomingEmailFiltering),
+                IncomingEmailDeliveryMethod = new OptionSetValue((int)newQueue.IncomingEmailDelivery),
+                OutgoingEmailDeliveryMethod = new OptionSetValue((int)newQueue.OutgoingEmailDelivery),
+                Description = newQueue.Description
+            }
+        }, cancellationToken);
     }
 
     private void DeleteQueue(dataverse.Queue deleteQueue)
@@ -107,7 +122,8 @@ public sealed class QueueImport(
         // Deleting obsolete queues is intentionally deactivated.
     }
 
-    private bool UpdateQueue(IOrganizationService service, IEnumerable<dataverse.Queue> queues, Queue updateQueue, SystemUser? alternativeOwner)
+    private async Task<bool> UpdateQueueAsync(IOrganizationServiceAsync2 service, IEnumerable<dataverse.Queue> queues, Queue updateQueue,
+        SystemUser? alternativeOwner, CancellationToken cancellationToken)
     {
         Console.MarkupLine("[grey]--->[/]");
         var existingQueue = queues.Single(e => e.Id == updateQueue.QueueId);
@@ -115,7 +131,12 @@ public sealed class QueueImport(
         //check the owner
         if (alternativeOwner != null && existingQueue.OwnerId!.Id != alternativeOwner.Id)
         {
-            if (!service.TryAssign(existingQueue.ToEntityReference(), alternativeOwner))
+            var (assigned, _) = await service.TryExecuteAsync<AssignRequest, AssignResponse>(new AssignRequest
+            {
+                Target = existingQueue.ToEntityReference(),
+                Assignee = alternativeOwner.ToEntityReference()
+            }, cancellationToken);
+            if (!assigned)
             {
                 return false;
             }
@@ -132,7 +153,7 @@ public sealed class QueueImport(
         {
             //update queue
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update queue: {updateQueue.Name}[/]");
-            result = service.TryUpdate(new dataverse.Queue(existingQueue.Id)
+            result = await service.TryUpdateAsync(new dataverse.Queue(existingQueue.Id)
             {
                 Name = updateQueue.Name,
                 QueueViewType = new OptionSetValue((int)updateQueue.ViewType),
@@ -140,28 +161,39 @@ public sealed class QueueImport(
                 IncomingEmailDeliveryMethod = new OptionSetValue((int)updateQueue.IncomingEmailDelivery),
                 OutgoingEmailDeliveryMethod = new OptionSetValue((int)updateQueue.OutgoingEmailDelivery),
                 Description = updateQueue.Description
-            });
+            }, cancellationToken);
         }
 
         return result;
     }
 
-    private static SystemUser? GetAlternativeOwner(IOrganizationService service, ImportVerb args, Queues queuesToTransport)
+    private static async Task<SystemUser?> GetAlternativeOwnerAsync(IOrganizationServiceAsync2 service, ImportVerb args, Queues queuesToTransport,
+        CancellationToken cancellationToken)
     {
         var alternativeOwner = default(SystemUser);
         var owner = ImportAssignee.GetAssignee(args.Assignee, queuesToTransport);
         if (!string.IsNullOrWhiteSpace(owner))
         {
-            using var context = new DataContext(service);
-            alternativeOwner = (from su in context.SystemUserSet
-                where su.DomainName == owner
-                select su).SingleOrDefault();
+            var query = new QueryExpression(SystemUser.EntityLogicalName)
+            {
+                NoLock = true,
+                ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, owner)
+                    }
+                }
+            };
+            alternativeOwner = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+                .SingleOrDefault()?.ToEntity<SystemUser>();
         }
 
         return alternativeOwner;
     }
 
-    private static List<dataverse.Queue> GetQueues(IOrganizationService service)
+    private static async Task<List<dataverse.Queue>> GetQueuesAsync(IOrganizationServiceAsync2 service, CancellationToken cancellationToken)
     {
         var query = new QueryExpression
         {
@@ -190,35 +222,8 @@ public sealed class QueueImport(
         query.Criteria.AddCondition(startsWith);
         query.Criteria.AddCondition(endsWith);
         query.Orders.Add(order);
-        query.PageInfo = new PagingInfo
-        {
-            Count = 5000,
-            PageNumber = 1,
-            PagingCookie = null
-        };
-        List<dataverse.Queue> queues = new List<dataverse.Queue>();
-        var moreRecords = true;
-        while (moreRecords)
-        {
-            // Retrieve the page.
-            var results = service.RetrieveMultiple(query);
-            foreach (var entity in results.Entities)
-            {
-                queues.Add(entity.ToEntity<dataverse.Queue>());
-            }
-
-            if (results.MoreRecords)
-            {
-                // Increment the page number to retrieve the next page.
-                query.PageInfo.PageNumber++;
-                // Set the paging cookie to the paging cookie returned from current results.
-                query.PageInfo.PagingCookie = results.PagingCookie;
-            }
-
-            moreRecords = results.MoreRecords;
-        }
-
-        return queues;
+        return (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<dataverse.Queue>()).ToList();
     }
 
     private static bool Unchanged(dataverse.Queue existing, Queue config)

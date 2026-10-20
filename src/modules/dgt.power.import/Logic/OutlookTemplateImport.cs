@@ -43,6 +43,7 @@ public sealed class OutlookTemplateImport(
 
         var savedQueryExpression = new QueryExpression(SavedQuery.EntityLogicalName)
         {
+            NoLock = true,
             ColumnSet = new ColumnSet(
                 SavedQuery.LogicalNames.Name,
                 SavedQuery.LogicalNames.IsDefault,
@@ -155,6 +156,7 @@ public sealed class OutlookTemplateImport(
         var queryResponse = (FetchXmlToQueryExpressionResponse)await orgAsync.ExecuteAsync(
             new FetchXmlToQueryExpressionRequest { FetchXml = fetchXml },
             cancellationToken);
+        queryResponse.Query.NoLock = true;
         var xmlResponse = (QueryExpressionToFetchXmlResponse)await orgAsync.ExecuteAsync(
             new QueryExpressionToFetchXmlRequest { Query = queryResponse.Query },
             cancellationToken);

@@ -8,7 +8,7 @@ using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.maintenance.Model.Serialization;
 using dgt.power.maintenance.Model.Settings;
-using Microsoft.Xrm.Sdk;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
@@ -30,23 +30,29 @@ public class ExportCarrierInfo(
 
     protected override async Task<bool> RunAsync(CarrierInfoSettings settings, CancellationToken cancellationToken)
     {
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        return Run(service, settings);
+        var service = await connection.GetServiceAsync();
+        return await RunAsync(service, settings, cancellationToken);
     }
 
-    private bool Run(IOrganizationService service, CarrierInfoSettings settings)
+    private async Task<bool> RunAsync(
+        IOrganizationServiceAsync2 service,
+        CarrierInfoSettings settings,
+        CancellationToken cancellationToken)
     {
-        var isSuccessfulOld = service.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
-        {
-            EntityFilters = EntityFilters.Entity,
-            LogicalName = Ec4UCarrierEntityName
-        }, out _);
-
-        var isSuccessfulDgt = service.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(new RetrieveEntityRequest
-        {
-            EntityFilters = EntityFilters.Entity,
-            LogicalName = DgtCarrierEntityName
-        }, out _);
+        var (isSuccessfulOld, _) = await service.TryExecuteAsync<RetrieveEntityRequest, RetrieveEntityResponse>(
+            new RetrieveEntityRequest
+            {
+                EntityFilters = EntityFilters.Entity,
+                LogicalName = Ec4UCarrierEntityName
+            },
+            cancellationToken);
+        var (isSuccessfulDgt, _) = await service.TryExecuteAsync<RetrieveEntityRequest, RetrieveEntityResponse>(
+            new RetrieveEntityRequest
+            {
+                EntityFilters = EntityFilters.Entity,
+                LogicalName = DgtCarrierEntityName
+            },
+            cancellationToken);
 
         if (!isSuccessfulDgt && !isSuccessfulOld)
         {
@@ -57,15 +63,15 @@ public class ExportCarrierInfo(
         List<CarrierRecord> carriers;
         if (isSuccessfulDgt)
         {
-            carriers = RetrieveCarriers(service, DgtCarrierEntityName, "dgt_carrierid", "dgt_reference",
+            carriers = await RetrieveCarriersAsync(service, DgtCarrierEntityName, "dgt_carrierid", "dgt_reference",
                 "dgt_solutionversion", "dgt_solutionid", "dgt_solutionuniquename",
-                "dgt_solutionfriendlyname", "dgt_transport_order_no");
+                "dgt_solutionfriendlyname", "dgt_transport_order_no", cancellationToken);
         }
         else
         {
-            carriers = RetrieveCarriers(service, Ec4UCarrierEntityName, "ec4u_carrierid", "ec4u_car_reference",
+            carriers = await RetrieveCarriersAsync(service, Ec4UCarrierEntityName, "ec4u_carrierid", "ec4u_car_reference",
                 "ec4u_car_solutionversion", "ec4u_car_solutionid", "ec4u_car_solutionuniquename",
-                "ec4u_car_solutionfriendlyname", "ec4u_car_transport_order_no");
+                "ec4u_car_solutionfriendlyname", "ec4u_car_transport_order_no", cancellationToken);
         }
 
         if (carriers.Count == 0)
@@ -74,16 +80,16 @@ public class ExportCarrierInfo(
             return false;
         }
 
-        using var dataContext = new DataContext(service);
         var carrierInfo = new List<Carrier>();
         foreach (var carrier in carriers)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!IsCarrierValid(carrier))
             {
                 continue;
             }
 
-            var solutionLookup = GetSolution(dataContext, carrier);
+            var solutionLookup = await GetSolutionAsync(service, carrier, cancellationToken);
             if (solutionLookup == null)
             {
                 continue;
@@ -98,12 +104,22 @@ public class ExportCarrierInfo(
     }
 
 #pragma warning disable S107
-    private static List<CarrierRecord> RetrieveCarriers(IOrganizationService service, string entityName, string idField, string referenceField,
-        string versionField, string solutionIdField, string uniqueNameField, string friendlyNameField, string orderField)
+    private static async Task<List<CarrierRecord>> RetrieveCarriersAsync(
+        IOrganizationServiceAsync2 service,
+        string entityName,
+        string idField,
+        string referenceField,
+        string versionField,
+        string solutionIdField,
+        string uniqueNameField,
+        string friendlyNameField,
+        string orderField,
+        CancellationToken cancellationToken)
 #pragma warning restore S107
     {
         var query = new QueryExpression(entityName)
         {
+            NoLock = true,
             ColumnSet = new ColumnSet(idField, referenceField, versionField, solutionIdField,
                 uniqueNameField, friendlyNameField, orderField, "statecode"),
             Criteria = new FilterExpression
@@ -113,7 +129,8 @@ public class ExportCarrierInfo(
             Orders = { new OrderExpression(orderField, OrderType.Ascending) }
         };
 
-        return service.RetrieveMultiple(query).Entities
+        var entities = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        return entities
             .Select(e => new CarrierRecord
             {
                 Id = e.Id,
@@ -148,19 +165,24 @@ public class ExportCarrierInfo(
         return false;
     }
 
-    private Solution? GetSolution(DataContext dataContext, CarrierRecord carrier)
+    private async Task<Solution?> GetSolutionAsync(
+        IOrganizationServiceAsync2 service,
+        CarrierRecord carrier,
+        CancellationToken cancellationToken)
     {
         var solutionId = Guid.Parse(carrier.SolutionId!, CultureInfo.InvariantCulture);
-        var solution = dataContext.SolutionSet.Where(x => x.Id == solutionId)
-            .Select(x => new Solution
-            {
-                Id = x.Id,
-                SolutionId = x.SolutionId,
-                FriendlyName = x.FriendlyName,
-                UniqueName = x.UniqueName,
-                Version = x.Version
-            })
-            .SingleOrDefault();
+        var query = new QueryExpression(Solution.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                Solution.LogicalNames.SolutionId,
+                Solution.LogicalNames.FriendlyName,
+                Solution.LogicalNames.UniqueName,
+                Solution.LogicalNames.Version)
+        };
+        query.Criteria.AddCondition(Solution.LogicalNames.SolutionId, ConditionOperator.Equal, solutionId);
+        var entities = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        var solution = entities.Select(static entity => entity.ToEntity<Solution>()).SingleOrDefault();
 
         Console.MarkupLine(solution != null ? $"found carrier solution [green]{solution.UniqueName}[/]" : $"[yellow]Solution carrier with ID '{solutionId}' not found[/]");
 

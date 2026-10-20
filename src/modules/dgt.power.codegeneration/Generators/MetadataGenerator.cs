@@ -38,20 +38,20 @@ public class MetadataGenerator(IMetadataService metadataService, IAnsiConsole co
         }
     }
 
-    public void GenerateEntities(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
+    public async Task GenerateEntitiesAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
 
         foreach (var entity in config.Entities.Names)
         {
-            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.All);
+            var metadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.All, cancellationToken);
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, "MetaData",
                 $"{metadata.LogicalName.ToLowerInvariant()}.xml");
             var serializer = new DataContractSerializer(typeof(EntityMetadata));
-            var settings = new XmlWriterSettings {Indent = true, IndentChars = "\t", Encoding = Encoding.UTF8};
+            var settings = new XmlWriterSettings {Indent = true, IndentChars = "\t", Encoding = Encoding.UTF8, Async = true};
 
-            using var file = XmlWriter.Create(fileName, settings);
+            await using var file = XmlWriter.Create(fileName, settings);
             console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
             serializer.WriteObject(file, metadata);
         }

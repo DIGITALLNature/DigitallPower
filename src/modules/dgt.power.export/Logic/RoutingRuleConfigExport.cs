@@ -2,11 +2,14 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common;
+using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using RoutingRuleItem = dgt.power.common.DTO.RoutingRuleItem;
 
@@ -27,28 +30,27 @@ public sealed class RoutingRuleConfigExport(
 
         var export = new List<RoutingRuleConfig>();
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service);
-        context.RoutingRuleSet
-            .Select(rr => new RoutingRule
-                {
-                    RoutingRuleId = rr.RoutingRuleId,
-                    StatusCode = rr.StatusCode,
-                    StateCode = rr.StateCode
-                }
-            ).ToList()
-            .ForEach(rule =>
-                {
-                    export.Add(new RoutingRuleConfig
-                        {
-                            Name = rule.Name!,
-                            RoutingRuleId = rule.RoutingRuleId ?? Guid.Empty,
-                            Active = rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active,
-                            RoutingRuleItems = GetRuleItems(context, service, rule)
-                        }
-                    );
-                }
-            );
+        var service = await connection.GetServiceAsync();
+        var rulesQuery = new QueryExpression(RoutingRule.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(RoutingRule.LogicalNames.RoutingRuleId, RoutingRule.LogicalNames.Name,
+                RoutingRule.LogicalNames.StatusCode, RoutingRule.LogicalNames.StateCode)
+        };
+        var rules = await service.RetrieveAllAsync(rulesQuery, cancellationToken: cancellationToken);
+        var userNames = new Dictionary<Guid, string?>();
+        foreach (var entity in rules)
+        {
+            var rule = entity.ToEntity<RoutingRule>();
+            var ruleId = rule.RoutingRuleId ?? Guid.Empty;
+            export.Add(new RoutingRuleConfig
+            {
+                Name = rule.Name!,
+                RoutingRuleId = ruleId,
+                Active = rule.StatusCode?.Value == RoutingRule.Options.StatusCode.Active,
+                RoutingRuleItems = await GetRuleItemsAsync(service, ruleId, userNames, cancellationToken)
+            });
+        }
 
         var json = ExportJson.GetJson(export);
 
@@ -56,21 +58,46 @@ public sealed class RoutingRuleConfigExport(
         return true;
     }
 
-    private static List<RoutingRuleItem> GetRuleItems(DataContext context, IOrganizationService service, RoutingRule rule) =>
-        context.RoutingRuleItemSet
-            .Where(rri => rri.RoutingRuleId != null && rri.RoutingRuleId.Id == rule.RoutingRuleId)
-            .AsEnumerable()
-            .Select(rri => new RoutingRuleItem
+    private static async Task<List<RoutingRuleItem>> GetRuleItemsAsync(IOrganizationServiceAsync2 service, Guid routingRuleId,
+        Dictionary<Guid, string?> userNames, CancellationToken cancellationToken)
+    {
+        var query = new QueryExpression(dataverse.RoutingRuleItem.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                dataverse.RoutingRuleItem.LogicalNames.Name,
+                dataverse.RoutingRuleItem.LogicalNames.RoutingRuleItemId,
+                dataverse.RoutingRuleItem.LogicalNames.RoutingRuleId,
+                "msdyn_routeto",
+                dataverse.RoutingRuleItem.LogicalNames.RoutedQueueId,
+                dataverse.RoutingRuleItem.LogicalNames.AssignObjectId),
+            Criteria =
+            {
+                Conditions =
                 {
-                    Name = rri.Name!,
-                    RoutingRuleItemId = rri.RoutingRuleItemId ?? Guid.Empty,
-                    RoutingRuleId = rri.RoutingRuleId!.Id,
-                    MsdynRouteto = ResolveRouteTarget(rri),
-                    RoutedQueueId = rri.RoutedQueueId?.Id,
-                    AssignObjectIdType = rri.AssignObjectId?.LogicalName,
-                    AssignObjectIdName = ResolveAssignedObjectName(service, rri.AssignObjectId)
+                    new ConditionExpression(dataverse.RoutingRuleItem.LogicalNames.RoutingRuleId, ConditionOperator.Equal, routingRuleId)
                 }
-            ).ToList();
+            }
+        };
+        var entities = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        var items = new List<RoutingRuleItem>(entities.Count);
+        foreach (var entity in entities)
+        {
+            var ruleItem = entity.ToEntity<dataverse.RoutingRuleItem>();
+            items.Add(new RoutingRuleItem
+            {
+                Name = ruleItem.Name!,
+                RoutingRuleItemId = ruleItem.RoutingRuleItemId ?? Guid.Empty,
+                RoutingRuleId = ruleItem.RoutingRuleId!.Id,
+                MsdynRouteto = ResolveRouteTarget(ruleItem),
+                RoutedQueueId = ruleItem.RoutedQueueId?.Id,
+                AssignObjectIdType = ruleItem.AssignObjectId?.LogicalName,
+                AssignObjectIdName = await ResolveAssignedObjectNameAsync(service, ruleItem.AssignObjectId, userNames, cancellationToken)
+            });
+        }
+
+        return items;
+    }
 
     private static int ResolveRouteTarget(dataverse.RoutingRuleItem ruleItem)
     {
@@ -84,7 +111,8 @@ public sealed class RoutingRuleConfigExport(
             : dataverse.RoutingRuleItem.Options.MsdynRouteto.User_Team;
     }
 
-    private static string? ResolveAssignedObjectName(IOrganizationService service, EntityReference? assignObjectId)
+    private static async Task<string?> ResolveAssignedObjectNameAsync(IOrganizationServiceAsync2 service, EntityReference? assignObjectId,
+        Dictionary<Guid, string?> userNames, CancellationToken cancellationToken)
     {
         if (assignObjectId == null)
         {
@@ -96,12 +124,14 @@ public sealed class RoutingRuleConfigExport(
             return assignObjectId.Name;
         }
 
-        return GetSystemUserDomainName(service, assignObjectId.Id);
-    }
+        if (!userNames.TryGetValue(assignObjectId.Id, out var domainName))
+        {
+            var user = await service.RetrieveAsync(SystemUser.EntityLogicalName, assignObjectId.Id,
+                new ColumnSet(SystemUser.LogicalNames.DomainName), cancellationToken);
+            domainName = user.GetAttributeValue<string>(SystemUser.LogicalNames.DomainName);
+            userNames.Add(assignObjectId.Id, domainName);
+        }
 
-    private static string? GetSystemUserDomainName(IOrganizationService service, Guid systemuserId)
-    {
-        using var context = new DataContext(service);
-        return context.SystemUserSet.SingleOrDefault(sysU => sysU.Id == systemuserId)?.DomainName;
+        return domainName;
     }
 }

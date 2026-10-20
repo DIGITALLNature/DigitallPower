@@ -10,5 +10,5 @@ public interface ITypeScriptGenerator
     /// <summary>
     ///     Runs the TypeScript code generation pipeline for a typed configuration.
     /// </summary>
-    bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config);
+    Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default);
 }

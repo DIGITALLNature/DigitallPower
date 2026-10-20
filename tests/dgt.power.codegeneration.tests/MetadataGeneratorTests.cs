@@ -34,7 +34,7 @@ public class MetadataGeneratorTests : CodeGenerationTestsBase
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         context.MetadataGenerator.PrepareDirectory(args);
-        context.MetadataGenerator.GenerateEntities(args, config);
+        await context.MetadataGenerator.GenerateEntitiesAsync(args, config);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         var metadataDirectoryPath = $"{GetArtifactPath(args.Folder)}/{Folders.Metadata}";

@@ -20,15 +20,15 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 {
     public delegate void TaskStatusCallback(string taskName, string message, int progress, double? total = null);
 
-    public async Task<Workflow[]> LoadAllWorkflowsAsync()
+    public async Task<Workflow[]> LoadAllWorkflowsAsync(CancellationToken cancellationToken = default)
     {
         taskStatusCallback?.Invoke("Loading all workflows", "preparing tasks", -1);
         console.MarkupLine("[grey]Loading all workflows: starting tasks[/]");
 
         var loadTasks = new[]
         {
-            LoadDirectWorkflowsAsync(),
-            LoadIndirectBusinessRulesAsync()
+            LoadDirectWorkflowsAsync(cancellationToken),
+            LoadIndirectBusinessRulesAsync(cancellationToken)
         };
 
         taskStatusCallback?.Invoke("Loading all workflows", "loading", 0, loadTasks.Length);
@@ -41,8 +41,9 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
         console.MarkupLine("[grey]Loading all workflows: all tasks completed[/]");
 
-        var uniqueWorkflows = loadTasks
-            .SelectMany(w => w.Result)
+        var loadedWorkflows = await Task.WhenAll(loadTasks);
+        var uniqueWorkflows = loadedWorkflows
+            .SelectMany(static workflows => workflows)
             .DistinctBy(w => w.WorkflowId)
             .ToArray();
 
@@ -52,7 +53,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         return uniqueWorkflows;
     }
 
-    private async Task<Workflow[]> LoadDirectWorkflowsAsync()
+    private async Task<Workflow[]> LoadDirectWorkflowsAsync(CancellationToken cancellationToken)
     {
         console.MarkupLine("[grey]Loading workflows in solution: preparing query[/]");
         taskStatusCallback?.Invoke("Workflows in solution", "preparing query", -1);
@@ -101,7 +102,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         console.MarkupLine("[grey]Loading workflows in solution: executing query[/]");
         taskStatusCallback?.Invoke("Workflows in solution", "loading", 0);
 
-        var workflows = await RetrieveMultipleWorkflowsAsync(query);
+        var workflows = await RetrieveMultipleWorkflowsAsync(query, cancellationToken);
 
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows in solution: {workflows.Length} workflows loaded[/]");
         taskStatusCallback?.Invoke("Workflows in solution", "loaded", workflows.Length, workflows.Length);
@@ -109,22 +110,22 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         return workflows;
     }
 
-    private async Task<Workflow[]> LoadIndirectBusinessRulesAsync()
+    private async Task<Workflow[]> LoadIndirectBusinessRulesAsync(CancellationToken cancellationToken)
     {
         console.MarkupLine("[grey]Loading workflows indirectly: load full tables[/]");
         taskStatusCallback?.Invoke("Business rules", "starting tasks", -1);
 
-        var tableIds = await LoadIndirectBusinessRuleTablesAsync();
+        var tableIds = await LoadIndirectBusinessRuleTablesAsync(cancellationToken);
 
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: found {tableIds.Length} tables with potential business rules[/]");
         taskStatusCallback?.Invoke("Business rules", "resolving table names", 0, tableIds.Length + 1);
 
         var index = 0;
         List<string> tableNames = [];
-        await Parallel.ForEachAsync(tableIds, async (tableId, _) =>
+        await Parallel.ForEachAsync(tableIds, cancellationToken, async (tableId, token) =>
         {
             console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly {tableId}: resolving table name[/]");
-            var tableName = await GetTableNameFromMetadataAsync(tableId);
+            var tableName = await GetTableNameFromMetadataAsync(tableId, token);
 
             if (tableName != null)
             {
@@ -143,7 +144,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: resolved {tableNames.Count} tables with potential business rules[/]");
         taskStatusCallback?.Invoke("Business rules", "loading business rules", tableIds.Length, tableIds.Length + 1);
 
-        var workflows = tableNames.Count > 0 ? await LoadBusinessRulesAsync(tableNames.ToArray()) : [];
+        var workflows = tableNames.Count > 0 ? await LoadBusinessRulesAsync(tableNames.ToArray(), cancellationToken) : [];
 
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: {workflows.Length} business rules loaded[/]");
         taskStatusCallback?.Invoke("Business rules", "loaded", tableIds.Length + 1, tableIds.Length + 1);
@@ -151,7 +152,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         return workflows.ToArray();
     }
 
-    private async Task<Workflow[]> LoadBusinessRulesAsync(string[] tableNames)
+    private async Task<Workflow[]> LoadBusinessRulesAsync(string[] tableNames, CancellationToken cancellationToken)
     {
         var tablesString = string.Join(",", tableNames);
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading business rules ({tablesString}): preparing query[/]");
@@ -167,14 +168,14 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading business rules ({tablesString}): executing query[/]");
 
-        var workflows = await RetrieveMultipleWorkflowsAsync(query);
+        var workflows = await RetrieveMultipleWorkflowsAsync(query, cancellationToken);
 
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading business rules ({tablesString}): {workflows.Length} business rules loaded[/]");
 
         return workflows;
     }
 
-    private async Task<string?> GetTableNameFromMetadataAsync(Guid tableId)
+    private async Task<string?> GetTableNameFromMetadataAsync(Guid tableId, CancellationToken cancellationToken)
     {
         var metadataRequest = new RetrieveEntityRequest
         {
@@ -185,17 +186,17 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
 
         try
         {
-            var metadataResponse = await ExecuteAsync<RetrieveEntityResponse>(metadataRequest);
+            var metadataResponse = await ExecuteAsync<RetrieveEntityResponse>(metadataRequest, cancellationToken);
             return metadataResponse.EntityMetadata.LogicalName;
         }
-        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException)
+        catch (Exception e) when (e is not OutOfMemoryException and not StackOverflowException and not OperationCanceledException)
         {
             console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]Failed to resolve table name for id '{tableId}' with error '{e.Message}'[/]");
             return null;
         }
     }
 
-    private async Task<Guid[]> LoadIndirectBusinessRuleTablesAsync()
+    private async Task<Guid[]> LoadIndirectBusinessRuleTablesAsync(CancellationToken cancellationToken)
     {
         console.MarkupLine("[grey]Loading workflows indirectly: preparing query[/]");
         taskStatusCallback?.Invoke("Business rules", "preparing table query", -1);
@@ -246,7 +247,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         {
             Query = query
         };
-        var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultipleRequest);
+        var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultipleRequest, cancellationToken);
         var solutionComponents = response.EntityCollection.Entities.Cast<SolutionComponent>().ToArray();
 
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Loading workflows indirectly: {solutionComponents.Length} tables loaded[/]");
@@ -257,7 +258,7 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
             .ToArray();
     }
 
-    private async Task<Workflow[]> RetrieveMultipleWorkflowsAsync(QueryExpression query)
+    private async Task<Workflow[]> RetrieveMultipleWorkflowsAsync(QueryExpression query, CancellationToken cancellationToken)
     {
         query.ColumnSet.AddColumns
         (
@@ -280,18 +281,20 @@ public class WorkflowStateManager(IOrganizationServiceAsync2 organizationService
         {
             Query = query
         };
-        var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultpipleRequest);
+        var response = await ExecuteAsync<RetrieveMultipleResponse>(retrieveMultpipleRequest, cancellationToken);
         var workflows = response.EntityCollection.Entities.Cast<Workflow>().ToArray();
 
         return workflows;
     }
 
-    private async Task<TResponse> ExecuteAsync<TResponse>(OrganizationRequest request)
+    private async Task<TResponse> ExecuteAsync<TResponse>(
+        OrganizationRequest request,
+        CancellationToken cancellationToken)
         where TResponse : OrganizationResponse
     {
         console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]Executing request: {request.RequestName}[/]");
 
-        var response = await organizationService.ExecuteAsync(request);
+        var response = await organizationService.ExecuteAsync(request, cancellationToken);
         return (TResponse)response;
     }
 }

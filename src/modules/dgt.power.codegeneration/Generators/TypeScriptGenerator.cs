@@ -99,19 +99,20 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         return LiquidTemplateEngine.LoadTemplate(TslResourcePrefix, templateName);
     }
 
-    public bool Generate(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config)
+    public async Task<bool> GenerateAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var templateOptions = TslTemplateOptionsFactory.Create();
         PrepareDirectory(args);
-        GenerateEntities(args, config, templateOptions);
-        GenerateEntityForms(args, config, templateOptions);
-        GenerateOptionSets(args, config, templateOptions);
-        GenerateSdkMessages(args, config, templateOptions);
-        GenerateCustomApis(args, config, templateOptions);
+        await GenerateEntitiesAsync(args, config, templateOptions, cancellationToken);
+        await GenerateEntityFormsAsync(args, config, templateOptions, cancellationToken);
+        await GenerateOptionSetsAsync(args, config, templateOptions, cancellationToken);
+        await GenerateSdkMessagesAsync(args, config, templateOptions, cancellationToken);
+        await GenerateCustomApisAsync(args, config, templateOptions, cancellationToken);
         return true;
     }
 
-    private void GenerateEntities(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
+    private async Task GenerateEntitiesAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -121,7 +122,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         var languageCode = config.Language;
         if (config.Language == null)
         {
-            languageCode = metadataService.RetrieveOrganizationLanguage();
+            languageCode = await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
             console.MarkupLine($"Using Base Language: {languageCode}");
         }
 
@@ -129,7 +130,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
 
         foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
         {
-            var metadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var metadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
 
             var viewModel = new EntityViewModel
             {
@@ -157,7 +158,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
     }
 
-    private void GenerateEntityForms(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
+    private async Task GenerateEntityFormsAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -165,13 +166,13 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         var liquidTemplateForm = InitializeLiquidTemplate(LiquidTemplates.EntityForm);
         var liquidTemplateFormTestHelpers = InitializeLiquidTemplate(LiquidTemplates.EntityFormTestHelper);
 
-        var languageCode = config.Language ?? metadataService.RetrieveOrganizationLanguage();
+        var languageCode = config.Language ?? await metadataService.RetrieveOrganizationLanguageAsync(cancellationToken);
         console.MarkupLine($"Using Language: {languageCode}");
 
-        WarnIfSessionLanguageMismatch(languageCode);
+        await WarnIfSessionLanguageMismatchAsync(languageCode, cancellationToken);
 
-        var bpfControls = GetCompleteEntityBpfControlList(config);
-        var entityWithParsedFormList = GenerateEntityWithMetadata(config, bpfControls);
+        var bpfControls = await GetCompleteEntityBpfControlListAsync(config, cancellationToken);
+        var entityWithParsedFormList = await GenerateEntityWithMetadataAsync(config, bpfControls, cancellationToken);
         var flatListParseForm = GetFlatFormDetail(entityWithParsedFormList);
         foreach (var entityParsedForm in entityWithParsedFormList)
         {
@@ -221,7 +222,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         CopyTemplateFileContent(args, FileNames.Typescript.FileNames.XrmMockTestTypingsFileName, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateSdkMessages(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
+    private async Task GenerateSdkMessagesAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -232,7 +233,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
 
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.SdkMessages);
-        var sdkMessages = metadataService.RetrieveSdkMessageNames(config.Requests);
+        var sdkMessages = await metadataService.RetrieveSdkMessageNamesAsync(config.Requests, cancellationToken);
 
         var viewModel = new SdkMessagesViewModel
         {
@@ -249,7 +250,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         CreateFile(content, FileNames.Typescript.FileNames.SdkMessageNames, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateOptionSets(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
+    private async Task GenerateOptionSetsAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -260,7 +261,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
 
         var liquidTemplate = InitializeLiquidTemplate(LiquidTemplates.OptionSets);
-        var optionSets = metadataService.RetrieveOptionSets(config.OptionSets);
+        var optionSets = await metadataService.RetrieveOptionSetsAsync(config.OptionSets, cancellationToken);
 
         var viewModel = new OptionSetViewModel
         {
@@ -277,7 +278,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         CreateFile(content, FileNames.Typescript.FileNames.OptionSetValues, args, FileNames.Typescript.FileExtension.TypeExtension);
     }
 
-    private void GenerateCustomApis(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions)
+    private async Task GenerateCustomApisAsync(CodeGenerationVerb args, TypeScriptCodeGenerationConfig config, TemplateOptions templateOptions, CancellationToken cancellationToken)
     {
         Debug.Assert(args != null, nameof(args) + " != null");
         Debug.Assert(config != null, nameof(config) + " != null");
@@ -289,7 +290,7 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
 
         // RetrieveRequests auto-detects custom APIs vs actions vs built-in messages.
         // Filter to only entries that have parameters (i.e. actual custom APIs, not plain name constants).
-        var allRequests = metadataService.RetrieveRequests(config.Requests);
+        var allRequests = await metadataService.RetrieveRequestsAsync(config.Requests, cancellationToken);
         var customApis = allRequests.Where(r => r.InParameters.Count > 0 || r.OutParameters.Count > 0).ToList();
 
         if (customApis.Count == 0)
@@ -322,13 +323,14 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
     }
 
-    private List<EntityWithMetadataFormData> GenerateEntityWithMetadata(TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls)
+    private async Task<List<EntityWithMetadataFormData>> GenerateEntityWithMetadataAsync(
+        TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls, CancellationToken cancellationToken)
     {
         var entityWithMetadataForms = new List<EntityWithMetadataFormData>();
 
         foreach (var entity in config.Entities.Names.OrderBy(entityName => entityName))
         {
-            var entityMetadata = metadataService.RetrieveEntityMetadata(entity, EntityFilters.Attributes | EntityFilters.Entity);
+            var entityMetadata = await metadataService.RetrieveEntityMetadataAsync(entity, EntityFilters.Attributes | EntityFilters.Entity, cancellationToken);
             if (entityMetadata.IsBPFEntity == true)
             {
                 console.MarkupLine($"Skip form generation for BPF Entity {entityMetadata.LogicalName}");
@@ -338,8 +340,8 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
             var bpfControlsForEntity = bpfControls.GetValueOrDefault(entity) ?? [];
 
             var forms = config.Output.Forms?.FromSolutions ?? false
-                ? metadataService.RetrieveFormsDetailsFromSolutions(entityMetadata.LogicalName, [.. config.Entities.FromSolutions], bpfControlsForEntity)
-                : metadataService.RetrieveFormsDetails(entityMetadata.LogicalName, bpfControlsForEntity);
+                ? await metadataService.RetrieveFormsDetailsFromSolutionsAsync(entityMetadata.LogicalName, [.. config.Entities.FromSolutions], bpfControlsForEntity, cancellationToken)
+                : await metadataService.RetrieveFormsDetailsAsync(entityMetadata.LogicalName, bpfControlsForEntity, cancellationToken);
 
             entityWithMetadataForms.Add(new EntityWithMetadataFormData
             {
@@ -350,12 +352,12 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         return entityWithMetadataForms;
     }
 
-    private Dictionary<string, SortedSet<BpfControlDetail>> GetCompleteEntityBpfControlList(TypeScriptCodeGenerationConfig config)
+    private async Task<Dictionary<string, SortedSet<BpfControlDetail>>> GetCompleteEntityBpfControlListAsync(TypeScriptCodeGenerationConfig config, CancellationToken cancellationToken)
     {
         var bpfControls = new Dictionary<string, SortedSet<BpfControlDetail>>();
         foreach (var entityName in config.Entities.Names.OrderBy(entityName => entityName))
         {
-            var bpfControlsForEntityMain = metadataService.RetrieveBusinessProcessFlowControlsForMainEntity(config.Requests, entityName);
+            var bpfControlsForEntityMain = await metadataService.RetrieveBusinessProcessFlowControlsForMainEntityAsync(config.Requests, entityName, cancellationToken);
             foreach (var bpfControlForEntityMain in bpfControlsForEntityMain)
             {
                 if (bpfControls.TryGetValue(bpfControlForEntityMain.EntityName, out var value))
@@ -480,9 +482,9 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
     ///     code generation, since Dataverse resolves translatable out-of-box record text (e.g. system form
     ///     <c>name</c>) using the session language - not the configured one. See <see cref="Warnings.FormNameLanguageMismatch"/>.
     /// </summary>
-    private void WarnIfSessionLanguageMismatch(int configuredLanguageCode)
+    private async Task WarnIfSessionLanguageMismatchAsync(int configuredLanguageCode, CancellationToken cancellationToken)
     {
-        var sessionLanguageCode = metadataService.RetrieveConnectionUserLanguage();
+        var sessionLanguageCode = await metadataService.RetrieveConnectionUserLanguageAsync(cancellationToken);
         if (sessionLanguageCode != configuredLanguageCode)
         {
             console.MarkupLine(Warnings.FormNameLanguageMismatch(sessionLanguageCode, configuredLanguageCode));

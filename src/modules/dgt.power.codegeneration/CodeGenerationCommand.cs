@@ -11,7 +11,6 @@ namespace dgt.power.codegeneration;
 
 public class CodeGenerationCommand(
     ICommandSpanFactory spans,
-    IDataverseConnection connection,
     IDotNetGenerator dotNetGenerator,
     ITypeScriptGenerator typeScriptGenerator,
     IMetadataService metadataService,
@@ -20,23 +19,21 @@ public class CodeGenerationCommand(
 {
     protected override async Task<bool> RunAsync(CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         var config = CodeGenerationConfigLoader.LoadFromFile(verb.Config);
-
-        // The synchronous metadata service reads the connection's cached service; connect before it is used.
-        await connection.GetServiceAsync();
 
         var success = true;
 
-        Console.Status()
+        await Console.Status()
             .Spinner(Spinner.Known.Pong)
             .SpinnerStyle(Style.Parse("green bold"))
-            .Start("Generate Model ...", _ =>
+            .StartAsync("Generate Model ...", async _ =>
                 {
-                    metadataService.PopulateEntitiesAndSolutions(config);
+                    await metadataService.PopulateEntitiesAndSolutionsAsync(config, cancellationToken);
                     success = config switch
                     {
-                        DotNetCodeGenerationConfig dotnetConfig => dotNetGenerator.Generate(verb, dotnetConfig),
-                        TypeScriptCodeGenerationConfig tsConfig => typeScriptGenerator.Generate(verb, tsConfig),
+                        DotNetCodeGenerationConfig dotnetConfig => await dotNetGenerator.GenerateAsync(verb, dotnetConfig, cancellationToken),
+                        TypeScriptCodeGenerationConfig tsConfig => await typeScriptGenerator.GenerateAsync(verb, tsConfig, cancellationToken),
                         _ => throw new InvalidOperationException($"Unsupported configuration type '{config.GetType().Name}'.")
                     };
                 }

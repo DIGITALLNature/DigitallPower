@@ -7,7 +7,9 @@ using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.common.DTO;
+using dgt.power.common.Extensions;
 using dgt.power.dataverse;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -23,8 +25,6 @@ public sealed class RedundantComponentsAnalyze(
     IAnsiConsole console)
     : PowerCommand<AnalyzeVerb>(spans, console)
 {
-    private const int PageSize = 5000;
-
     protected override async Task<bool> RunAsync(AnalyzeVerb args, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(args.InlineData))
@@ -34,10 +34,10 @@ public sealed class RedundantComponentsAnalyze(
         }
 
         var service = await connection.GetServiceAsync();
-        return Run(args, service);
+        return await RunAsync(args, service, cancellationToken);
     }
 
-    private bool Run(AnalyzeVerb args, IOrganizationService service)
+    private async Task<bool> RunAsync(AnalyzeVerb args, IOrganizationServiceAsync2 service, CancellationToken cancellationToken)
     {
         var summary = new AnalyzerSummary
         {
@@ -50,10 +50,9 @@ public sealed class RedundantComponentsAnalyze(
         {
             EntityFilters = EntityFilters.Entity
         };
-        var response = (RetrieveAllEntitiesResponse)service.Execute(request);
+        var response = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(request, cancellationToken);
         var entities = response.EntityMetadata.ToList();
 
-        using var context = new DataContext(service);
         foreach (var uniqueName in args.InlineData.Split(','))
         {
             var solutionTag = new Rule($"solution unique name: [lime]{uniqueName}[/]");
@@ -61,11 +60,11 @@ public sealed class RedundantComponentsAnalyze(
 
             Console.Write(solutionTag);
 
-            var components = reader.GetSolutionComponents(service, context, uniqueName);
+            var components = await reader.GetSolutionComponentsAsync(service, uniqueName, cancellationToken);
 
             var table = new Table();
-            Console.Live(Align.Center(table))
-                .Start(ctx =>
+            await Console.Live(Align.Center(table))
+                .StartAsync(async ctx =>
                 {
                     table.AddColumn("Component");
                     table.AddColumn("Type");
@@ -78,7 +77,7 @@ public sealed class RedundantComponentsAnalyze(
 
                     foreach (var component in components)
                     {
-                        var otherSolutions = GetSolutionsForComponent(service, component, args.NotePatch);
+                        var otherSolutions = await GetSolutionsForComponentAsync(service, component, args.NotePatch, cancellationToken);
                         foreach (var otherSolution in otherSolutions)
                         {
                             var nameColumn = new StringBuilder();
@@ -153,9 +152,9 @@ public sealed class RedundantComponentsAnalyze(
         return true;
     }
 
-    private List<Solution> GetSolutionsForComponent(IOrganizationService service, SolutionComponent component, bool notePatches)
+    private async Task<List<Solution>> GetSolutionsForComponentAsync(IOrganizationServiceAsync2 service, SolutionComponent component, bool notePatches, CancellationToken cancellationToken)
     {
-        var parallelSolutionComponents = GetParallelSolutionComponentsForComponent(service, component, notePatches);
+        var parallelSolutionComponents = await GetParallelSolutionComponentsForComponentAsync(service, component, notePatches, cancellationToken);
 
         var result = new List<Solution>();
         foreach (var solutionComponent in parallelSolutionComponents)
@@ -172,7 +171,8 @@ public sealed class RedundantComponentsAnalyze(
         return result;
     }
 
-    private List<SolutionComponent> GetParallelSolutionComponentsForComponent(IOrganizationService service, SolutionComponent originComponent, bool notePatches)
+    private async Task<List<SolutionComponent>> GetParallelSolutionComponentsForComponentAsync(
+        IOrganizationServiceAsync2 service, SolutionComponent originComponent, bool notePatches, CancellationToken cancellationToken)
     {
         var pagequery = new QueryExpression
         {
@@ -241,28 +241,7 @@ public sealed class RedundantComponentsAnalyze(
             OrderType = OrderType.Ascending
         });
 
-        pagequery.PageInfo = new PagingInfo
-        {
-            Count = PageSize,
-            PageNumber = 1,
-            PagingCookie = null
-        };
-        var components = new List<SolutionComponent>();
-        var moreRecords = true;
-        while (moreRecords)
-        {
-            // Retrieve the page.
-            var results = service.RetrieveMultiple(pagequery);
-            components.AddRange(results.Entities.Select(e => e.ToEntity<SolutionComponent>()));
-            if (results.MoreRecords)
-            {
-                pagequery.PageInfo.PageNumber++;
-                pagequery.PageInfo.PagingCookie = results.PagingCookie;
-            }
-
-            moreRecords = results.MoreRecords;
-        }
-
-        return components;
+        var components = await service.RetrieveAllAsync(pagequery, cancellationToken: cancellationToken);
+        return components.Select(e => e.ToEntity<SolutionComponent>()).ToList();
     }
 }

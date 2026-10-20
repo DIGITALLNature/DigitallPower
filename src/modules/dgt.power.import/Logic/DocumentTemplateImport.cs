@@ -7,14 +7,14 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using dgt.power.common;
 using dgt.power.common.Extensions;
-using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
 using DocumentFormat.OpenXml.Packaging;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using Microsoft.Xrm.Sdk.Query;
 using static dgt.power.dataverse.DocumentTemplate.Options;
 using DocumentTemplate = dgt.power.dto.DocumentTemplate;
 using IAnsiConsole = Spectre.Console.IAnsiConsole;
@@ -49,20 +49,28 @@ public sealed class DocumentTemplateImport(
 
         var result = true;
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
-        using var context = new DataContext(service) { MergeOption = MergeOption.NoTracking };
-
-        var documentTemplates = (from dt in context.DocumentTemplateSet
-            //where dt.Status == Model.DocumentTemplate.Options.Status.On
-            orderby dt.Name
-            select dt).ToList();
+        var service = await connection.GetServiceAsync();
+        var query = new QueryExpression(dataverse.DocumentTemplate.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(
+                dataverse.DocumentTemplate.LogicalNames.DocumentTemplateId,
+                dataverse.DocumentTemplate.LogicalNames.Name,
+                dataverse.DocumentTemplate.LogicalNames.DocumentType,
+                dataverse.DocumentTemplate.LogicalNames.Status,
+                dataverse.DocumentTemplate.LogicalNames.Description,
+                dataverse.DocumentTemplate.LogicalNames.LanguageCode),
+            Orders = { new OrderExpression(dataverse.DocumentTemplate.LogicalNames.Name, OrderType.Ascending) }
+        };
+        var documentTemplates = (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<dataverse.DocumentTemplate>()).ToList();
 
         //find document template which need to be disabled (missing)
         Console.WriteLine("disable check");
         foreach (var deleteTemplate in documentTemplates.Where(e =>
                      templates.Templates.All(c => (e.Name, e.DocumentType?.Value) != (c.Name, (int)c.DocumentType))))
         {
-            result = DisableTemplate(service, templates, deleteTemplate) && result;
+            result = await DisableTemplateAsync(service, templates, deleteTemplate, cancellationToken) && result;
         }
 
         //find queues need to be updated
@@ -70,7 +78,7 @@ public sealed class DocumentTemplateImport(
         foreach (var updateTemplate in documentTemplates.Where(e =>
                      templates.Templates.Any(c => (e.Name, e.DocumentType?.Value) == (c.Name, (int)c.DocumentType))))
         {
-            result = UpdateTemplate(service, args, templates, updateTemplate) && result;
+            result = await UpdateTemplateAsync(service, args, templates, updateTemplate, cancellationToken) && result;
         }
 
         //find bulk deletes which need to be created
@@ -78,13 +86,14 @@ public sealed class DocumentTemplateImport(
         foreach (var createTemplate in templates.Templates.Where(e =>
                      documentTemplates.TrueForAll(c => (c.Name, c.DocumentType?.Value) != (e.Name, (int)e.DocumentType))))
         {
-            result = CreateTemplate(service, args, createTemplate)&& result;
+            result = await CreateTemplateAsync(service, args, createTemplate, cancellationToken) && result;
         }
 
         return result;
     }
 
-    private bool CreateTemplate(IOrganizationService service, ImportVerb args, DocumentTemplate createTemplate)
+    private async Task<bool> CreateTemplateAsync(IOrganizationServiceAsync2 service, ImportVerb args, DocumentTemplate createTemplate,
+        CancellationToken cancellationToken)
     {
         Console.MarkupLine("[grey]--->[/]");
         var name = createTemplate.Name.Trim().Replace(".xlsx", "", StringComparison.Ordinal).Replace(".docx", "", StringComparison.Ordinal);
@@ -99,33 +108,39 @@ public sealed class DocumentTemplateImport(
                 : new OptionSetValue(DocumentType.MicrosoftWord),
             Description = createTemplate.Description,
             LanguageCode = createTemplate.LanguageCode ?? 1033,
-            Content = GetContent(service, args, createTemplate.File, createTemplate.DocumentType,
-                createTemplate.AssociatedEntityTypeCode)
+            Content = await GetContentAsync(service, args, createTemplate.File, createTemplate.DocumentType,
+                createTemplate.AssociatedEntityTypeCode, cancellationToken)
         };
-        var result = service.TryCreate(template, out var id);
-        return SetTemplateStatus(service, createTemplate, id) && result;
+        var (result, id) = await TryCreateTemplateAsync(service, template, cancellationToken);
+        return await SetTemplateStatusAsync(service, createTemplate, id, cancellationToken) && result;
     }
 
-    private static bool SetTemplateStatus(IOrganizationService service, DocumentTemplate template, Guid id)
+    private static async Task<(bool Succeeded, Guid Id)> TryCreateTemplateAsync(IOrganizationServiceAsync2 service,
+        dataverse.DocumentTemplate template, CancellationToken cancellationToken)
     {
-        var result = true;
+        var (succeeded, response) = await service.TryExecuteAsync<CreateRequest, CreateResponse>(
+            new CreateRequest { Target = template }, cancellationToken);
+        return (succeeded, response?.id ?? Guid.Empty);
+    }
+
+    private static Task<bool> SetTemplateStatusAsync(IOrganizationServiceAsync2 service, DocumentTemplate template, Guid id,
+        CancellationToken cancellationToken)
+    {
         if ((template.DocumentStatus ?? false) == Status.Activated) //enable
         {
-            result = service.TrySetStateDocumentTemplate(
-                new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
-                Status.Activated);
-        }
-        else if ((template.DocumentStatus ?? false) == Status.Draft) //disable
-        {
-            result = service.TrySetStateDocumentTemplate(
-                new EntityReference(dataverse.DocumentTemplate.EntityLogicalName, id),
-                Status.Draft);
+            return service.TryUpdateAsync(new dataverse.DocumentTemplate(id) { Status = Status.Activated }, cancellationToken);
         }
 
-        return result;
+        if ((template.DocumentStatus ?? false) == Status.Draft) //disable
+        {
+            return service.TryUpdateAsync(new dataverse.DocumentTemplate(id) { Status = Status.Draft }, cancellationToken);
+        }
+
+        return Task.FromResult(true);
     }
 
-    private bool DisableTemplate(IOrganizationService service, DocumentTemplates templates, dataverse.DocumentTemplate deleteTemplate)
+    private async Task<bool> DisableTemplateAsync(IOrganizationServiceAsync2 service, DocumentTemplates templates,
+        dataverse.DocumentTemplate deleteTemplate, CancellationToken cancellationToken)
     {
         Console.MarkupLine("[grey]--->[/]");
         var result = true;
@@ -133,7 +148,8 @@ public sealed class DocumentTemplateImport(
         {
             //disable document template
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]disable document template: {deleteTemplate.Name}[/]");
-            result = service.TrySetStateDocumentTemplate(deleteTemplate.ToEntityReference(), Status.Draft);
+            result = await service.TryUpdateAsync(new dataverse.DocumentTemplate(deleteTemplate.Id) { Status = Status.Draft },
+                cancellationToken);
         }
         else
         {
@@ -143,7 +159,8 @@ public sealed class DocumentTemplateImport(
         return result;
     }
 
-    private bool UpdateTemplate(IOrganizationService service, ImportVerb args, DocumentTemplates templates, dataverse.DocumentTemplate updateTemplate)
+    private async Task<bool> UpdateTemplateAsync(IOrganizationServiceAsync2 service, ImportVerb args, DocumentTemplates templates,
+        dataverse.DocumentTemplate updateTemplate, CancellationToken cancellationToken)
     {
         Console.MarkupLine("[grey]--->[/]");
         var existingTemplate = templates.Templates.Single(e =>
@@ -152,7 +169,8 @@ public sealed class DocumentTemplateImport(
         if (currentStatus != existingTemplate.DocumentStatus && currentStatus == Status.Activated) //disable
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]disable document template: {updateTemplate.Name}[/]");
-            return service.TrySetStateDocumentTemplate(updateTemplate.ToEntityReference(), Status.Draft);
+            return await service.TryUpdateAsync(new dataverse.DocumentTemplate(updateTemplate.Id) { Status = Status.Draft },
+                cancellationToken);
         }
 
         var result = true;
@@ -160,7 +178,7 @@ public sealed class DocumentTemplateImport(
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]update document template: {updateTemplate.Name}[/]");
             //delete old
-            result = service.TryDelete(dataverse.DocumentTemplate.EntityLogicalName, updateTemplate.Id);
+            result = await service.TryDeleteAsync(dataverse.DocumentTemplate.EntityLogicalName, updateTemplate.Id, cancellationToken);
 
             //create
             var template = new dataverse.DocumentTemplate
@@ -172,10 +190,11 @@ public sealed class DocumentTemplateImport(
                     : new OptionSetValue(DocumentType.MicrosoftWord),
                 Description = existingTemplate.Description ?? updateTemplate.Description,
                 LanguageCode = existingTemplate.LanguageCode ?? updateTemplate.LanguageCode,
-                Content = GetContent(service, args, existingTemplate.File, existingTemplate.DocumentType,
-                    existingTemplate.AssociatedEntityTypeCode)
+                Content = await GetContentAsync(service, args, existingTemplate.File, existingTemplate.DocumentType,
+                    existingTemplate.AssociatedEntityTypeCode, cancellationToken)
             };
-            result = service.TryCreate(template, out var id) && result;
+            var (created, id) = await TryCreateTemplateAsync(service, template, cancellationToken);
+            result = created && result;
             updateTemplate.Id = id;
         }
         else
@@ -187,23 +206,29 @@ public sealed class DocumentTemplateImport(
                 {
                     Description = existingTemplate.Description
                 };
-                result = service.TryUpdate(template);
+                result = await service.TryUpdateAsync(template, cancellationToken);
             }
         }
 
-        return SetTemplateStatus(service, existingTemplate, updateTemplate.Id) && result;
+        return await SetTemplateStatusAsync(service, existingTemplate, updateTemplate.Id, cancellationToken) && result;
     }
 
-    private static int GetEntityTypeCode(IOrganizationService service, string entity)
+    private static async Task<int> GetEntityTypeCodeAsync(IOrganizationServiceAsync2 service, string entity,
+        CancellationToken cancellationToken)
     {
-        service.TryExecute<RetrieveEntityRequest, RetrieveEntityResponse>(
-            new RetrieveEntityRequest { LogicalName = entity, EntityFilters = EntityFilters.Entity }, out var response);
+        var (succeeded, response) = await service.TryExecuteAsync<RetrieveEntityRequest, RetrieveEntityResponse>(
+            new RetrieveEntityRequest { LogicalName = entity, EntityFilters = EntityFilters.Entity }, cancellationToken);
+        if (!succeeded || response == null)
+        {
+            throw new InvalidOperationException($"Could not retrieve metadata for {nameof(entity)} '{entity}'.");
+        }
+
         // ReSharper disable once PossibleInvalidOperationException
         return response.EntityMetadata.ObjectTypeCode!.Value;
     }
 
-    private string GetContent(IOrganizationService service, ImportVerb args, string templateFile, DocumentTemplate.DocumentTemplateType type,
-        string entity)
+    private async Task<string> GetContentAsync(IOrganizationServiceAsync2 service, ImportVerb args, string templateFile,
+        DocumentTemplate.DocumentTemplateType type, string entity, CancellationToken cancellationToken)
     {
         var fileName = Path.GetFileName(templateFile);
         byte[] obj;
@@ -231,7 +256,7 @@ public sealed class DocumentTemplateImport(
             if (DocumentTemplate.DocumentTemplateType.MicrosoftWord == type)
             {
                 using var memoryStream = new MemoryStream();
-                memoryStream.Write(obj, 0, obj.Length);
+                await memoryStream.WriteAsync(obj, cancellationToken);
                 memoryStream.Position = 0;
 
                 using (var doc = WordprocessingDocument.Open(memoryStream, true,
@@ -243,7 +268,7 @@ public sealed class DocumentTemplateImport(
                         throw new InvalidDataException("Word template does not contain a main document part.");
                     }
 
-                    var etc = GetEntityTypeCode(service, entity);
+                    var etc = await GetEntityTypeCodeAsync(service, entity, cancellationToken);
                     var matcher = $"({entity}/" + @"\d{1,5})";
                     var replacement = $"{entity}/{etc}";
                     var match = Regex.Match(mainDocumentPart.Document.InnerXml, matcher,

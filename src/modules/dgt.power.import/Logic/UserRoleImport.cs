@@ -7,7 +7,9 @@ using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
+using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
@@ -36,18 +38,29 @@ public sealed class UserRoleImport(
             return false;
         }
 
-        var service = (IOrganizationService)await connection.GetServiceAsync();
+        var service = await connection.GetServiceAsync();
         var result = true;
         foreach (var userRole in userRoles)
         {
             Console.WriteLine(
                 $"UserName: {userRole.UserName}; BusinessUnit:{userRole.BusinessUnit}; SecurityRoles:[{string.Join("|", userRole.SecurityRoles)}]");
 
-            using var context = new DataContext(service);
             // SystemUser
-            var user = (from su in context.SystemUserSet
-                where su.DomainName == userRole.UserName
-                select su).SingleOrDefault();
+            var userQuery = new QueryExpression(SystemUser.EntityLogicalName)
+            {
+                NoLock = true,
+                ColumnSet = new ColumnSet(SystemUser.LogicalNames.SystemUserId, SystemUser.LogicalNames.DomainName,
+                    SystemUser.LogicalNames.BusinessUnitId),
+                Criteria =
+                {
+                    Conditions =
+                    {
+                        new ConditionExpression(SystemUser.LogicalNames.DomainName, ConditionOperator.Equal, userRole.UserName)
+                    }
+                }
+            };
+            var user = (await service.RetrieveAllAsync(userQuery, cancellationToken: cancellationToken))
+                .SingleOrDefault()?.ToEntity<SystemUser>();
             if (user == null)
             {
                 Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[yellow]Can't find User '{userRole.UserName}' ...[/]");
@@ -64,7 +77,7 @@ public sealed class UserRoleImport(
                 return false;
             }
 
-            var businessUnit = GetBusinessUnit(businessUnits, context);
+            var businessUnit = await GetBusinessUnitAsync(service, businessUnits, cancellationToken);
 
             if (businessUnit == null)
             {
@@ -78,7 +91,7 @@ public sealed class UserRoleImport(
             if (userRole.SecurityRoles.Count > 0)
             {
                 // SecurityRoles
-                securityRoles = GetSecurityRoles(service, businessUnit, userRole.SecurityRoles);
+                securityRoles = await GetSecurityRolesAsync(service, businessUnit, userRole.SecurityRoles, cancellationToken);
                 if (securityRoles.Count != userRole.SecurityRoles.Count)
                 {
                     Console.MarkupLine("[red]Not all SecurityRoles found, please check manually[/]");
@@ -97,10 +110,10 @@ public sealed class UserRoleImport(
                 {
                     BusinessUnitId = businessUnit.ToEntityReference()
                 };
-                result = service.TryUpdate(update);
+                result = await service.TryUpdateAsync(update, cancellationToken);
             }
 
-            var assignedRoles = GetAssignedRoles(service, user.Id);
+            var assignedRoles = await GetAssignedRolesAsync(service, user.Id, cancellationToken);
             var missingRoles = (from role in securityRoles
                 where assignedRoles.Find(r => r.Id == role.Id) == null
                 select new EntityReference(Role.EntityLogicalName, role.Id) { Name = role.Name }).ToList();
@@ -108,9 +121,13 @@ public sealed class UserRoleImport(
             {
                 Console.WriteLine(
                     $"Associate SecurityRoles:[{string.Join("|", missingRoles.Select(r => r.Name).ToList())}]");
-                result = service.TryAssociate(SystemUser.EntityLogicalName, user.Id,
-                    new Relationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation),
-                    new EntityReferenceCollection(missingRoles)) && result;
+                var (succeeded, _) = await service.TryExecuteAsync<AssociateRequest, AssociateResponse>(new AssociateRequest
+                {
+                    Target = new EntityReference(SystemUser.EntityLogicalName, user.Id),
+                    Relationship = new Relationship(SystemUser.Relations.ManyToMany.SystemuserrolesAssociation),
+                    RelatedEntities = new EntityReferenceCollection(missingRoles)
+                }, cancellationToken);
+                result = succeeded && result;
             }
 
             var spareRoles = (from role in assignedRoles
@@ -120,46 +137,54 @@ public sealed class UserRoleImport(
             {
                 Console.WriteLine(
                     $"Disassociate SecurityRoles:[{string.Join("|", spareRoles.Select(r => r.Name).ToList())}]");
-                result = service.TryDisassociate(SystemUser.EntityLogicalName, user.Id,
-                    new Relationship($"{SystemUserRoles.EntityLogicalName}_association"),
-                    new EntityReferenceCollection(spareRoles)) && result;
+                var (succeeded, _) = await service.TryExecuteAsync<DisassociateRequest, DisassociateResponse>(new DisassociateRequest
+                {
+                    Target = new EntityReference(SystemUser.EntityLogicalName, user.Id),
+                    Relationship = new Relationship($"{SystemUserRoles.EntityLogicalName}_association"),
+                    RelatedEntities = new EntityReferenceCollection(spareRoles)
+                }, cancellationToken);
+                result = succeeded && result;
             }
         }
 
         return result;
     }
 
-    private static BusinessUnit? GetBusinessUnit(string[] businessUnits, DataContext context)
+    private static async Task<BusinessUnit?> GetBusinessUnitAsync(IOrganizationServiceAsync2 service, string[] businessUnits,
+        CancellationToken cancellationToken)
     {
-        BusinessUnit? businessUnit;
+        var query = new QueryExpression(BusinessUnit.EntityLogicalName)
+        {
+            NoLock = true,
+            ColumnSet = new ColumnSet(BusinessUnit.LogicalNames.BusinessUnitId, BusinessUnit.LogicalNames.Name,
+                BusinessUnit.LogicalNames.ParentBusinessUnitId)
+        };
         if (businessUnits.Length == 1)
         {
-            businessUnit = (from bu in context.BusinessUnitSet
-                where bu.ParentBusinessUnitId == null
-                where bu.Name == businessUnits[0]
-                select bu).SingleOrDefault();
+            query.Criteria.AddCondition(BusinessUnit.LogicalNames.ParentBusinessUnitId, ConditionOperator.Null);
+            query.Criteria.AddCondition(BusinessUnit.LogicalNames.Name, ConditionOperator.Equal, businessUnits[0]);
         }
-        else
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+        else if (businessUnits.Length == 2)
         {
-            businessUnit = (from bu in context.BusinessUnitSet
-                join pbu in context.BusinessUnitSet on bu.ParentBusinessUnitId.Id equals pbu.Id
-                where bu.ParentBusinessUnitId != null
-                where bu.Name == businessUnits[0]
-                where pbu.Name == businessUnits[1]
-                select bu).SingleOrDefault();
+            query.Criteria.AddCondition(BusinessUnit.LogicalNames.Name, ConditionOperator.Equal, businessUnits[0]);
+            var parentLink = query.AddLink(BusinessUnit.EntityLogicalName, BusinessUnit.LogicalNames.ParentBusinessUnitId,
+                BusinessUnit.LogicalNames.BusinessUnitId, JoinOperator.Inner);
+            parentLink.EntityAlias = "parent";
+            parentLink.LinkCriteria.AddCondition(BusinessUnit.LogicalNames.Name, ConditionOperator.Equal, businessUnits[1]);
         }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-        return businessUnit;
+        return (await service.RetrieveAllAsync(query, cancellationToken: cancellationToken))
+            .SingleOrDefault()?.ToEntity<BusinessUnit>();
     }
 
-    private static List<Role> GetSecurityRoles(IOrganizationService service, BusinessUnit businessUnit, IEnumerable<string> securityRoles)
+    private static async Task<List<Role>> GetSecurityRolesAsync(IOrganizationServiceAsync2 service, BusinessUnit businessUnit,
+        IEnumerable<string> securityRoles, CancellationToken cancellationToken)
     {
         var securityRolesQuery = new QueryExpression
         {
             EntityName = Role.EntityLogicalName,
             ColumnSet = new ColumnSet(Role.LogicalNames.Name),
+            NoLock = true,
             Criteria =
             {
                 Conditions =
@@ -172,11 +197,12 @@ public sealed class UserRoleImport(
             }
         };
 
-        var securityRolesResponse = service.RetrieveMultiple(securityRolesQuery);
-        return securityRolesResponse.Entities.Select(s => s.ToEntity<Role>()).ToList();
+        return (await service.RetrieveAllAsync(securityRolesQuery, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<Role>()).ToList();
     }
 
-    private static List<Role> GetAssignedRoles(IOrganizationService service, Guid systemUserId)
+    private static async Task<List<Role>> GetAssignedRolesAsync(IOrganizationServiceAsync2 service, Guid systemUserId,
+        CancellationToken cancellationToken)
     {
         // Establish a SystemUser link for a query.
         var systemUserLink = new LinkEntity
@@ -199,6 +225,7 @@ public sealed class UserRoleImport(
         {
             EntityName = Role.EntityLogicalName,
             ColumnSet = new ColumnSet(Role.LogicalNames.Name),
+            NoLock = true,
             LinkEntities =
             {
                 new LinkEntity
@@ -213,6 +240,7 @@ public sealed class UserRoleImport(
         };
 
         // Retrieve matching roles.
-        return service.RetrieveMultiple(linkQuery).Entities.Select(e => e.ToEntity<Role>()).ToList();
+        return (await service.RetrieveAllAsync(linkQuery, cancellationToken: cancellationToken))
+            .Select(entity => entity.ToEntity<Role>()).ToList();
     }
 }

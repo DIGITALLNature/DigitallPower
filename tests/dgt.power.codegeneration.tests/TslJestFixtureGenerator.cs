@@ -1,4 +1,4 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.codegeneration.Base;
@@ -46,7 +46,7 @@ public class TslJestFixtureGenerator : CodeGenerationTestsBase
             .WithData(GetTestTableMainForm())
             .Build();
 
-        await Assert.That(context.ExecuteTypescriptFromConfigFile(args)).IsTrue();
+        await Assert.That(await context.ExecuteTypescriptFromConfigFileAsync(args)).IsTrue();
 
         var typescriptPath = Path.Combine(args.TargetDirectory, Folders.Typescript);
         var generatedFiles = new DirectoryInfo(typescriptPath)
