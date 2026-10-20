@@ -6,7 +6,6 @@ using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.export.Base;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;

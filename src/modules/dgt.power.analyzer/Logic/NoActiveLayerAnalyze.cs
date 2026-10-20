@@ -5,7 +5,6 @@ using dgt.power.analyzer.Base;
 using dgt.power.analyzer.Reports;
 using dgt.power.common;
 using dgt.power.common.DTO;
-using dgt.power.dataverse;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.PowerPlatform.Dataverse.Client;

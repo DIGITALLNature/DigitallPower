@@ -218,15 +218,16 @@ public class TypeScriptGeneratorTests : CodeGenerationTestsBase
     public async Task ShouldPropagateCancellationFromSessionLanguageLookup()
     {
         using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         var metadataService = Mock.Of<IMetadataService>();
-        metadataService.RetrieveConnectionUserLanguageAsync(cancellationTokenSource.Token)
-            .Throws(new OperationCanceledException(cancellationTokenSource.Token));
+        metadataService.RetrieveConnectionUserLanguageAsync(cancellationToken)
+            .Throws(new OperationCanceledException(cancellationToken));
         var generator = new TypeScriptGenerator(metadataService.Object, TestConsole);
 
         await Assert.That(() => generator.GenerateAsync(
             new CodeGenerationVerb { TargetDirectory = ArtifactDirectory },
             new TypeScriptCodeGenerationConfig { Language = 1031 },
-            cancellationTokenSource.Token)).Throws<OperationCanceledException>();
+            cancellationToken)).Throws<OperationCanceledException>();
     }
 
     private static string GetScenarioFilePath(string scenarioName, string fileName) =>

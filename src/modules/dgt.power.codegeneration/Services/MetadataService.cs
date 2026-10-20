@@ -17,7 +17,6 @@ using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Spectre.Console;
 
 namespace dgt.power.codegeneration.Services;
@@ -27,7 +26,7 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
 {
     private readonly Dictionary<string, List<string>> _usedTokens = new();
 
-    public async Task<Solution?> FetchSolutionAsync(string uniqueName, CancellationToken cancellationToken = default)
+    private async Task<Solution?> FetchSolutionAsync(string uniqueName, CancellationToken cancellationToken)
     {
         var service = await connection.GetServiceAsync();
         return (await service.RetrieveMultipleAsync(new QueryExpression(Solution.EntityLogicalName)
@@ -45,9 +44,14 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
         }, cancellationToken)).Entities.SingleOrDefault()?.ToEntity<Solution>();
     }
 
-    public async Task<EntityMetadata> RetrieveEntityMetadataAsync(string entity, EntityFilters filter = EntityFilters.Default, CancellationToken cancellationToken = default)
+    public Task<EntityMetadata> RetrieveEntityMetadataAsync(string entity, EntityFilters filter = EntityFilters.Default, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entity);
+        return RetrieveEntityMetadataCoreAsync(entity, filter, cancellationToken);
+    }
+
+    private async Task<EntityMetadata> RetrieveEntityMetadataCoreAsync(string entity, EntityFilters filter, CancellationToken cancellationToken)
+    {
         var key = $"{entity.ToLowerInvariant()}_{filter:D}";
         if (!metadataCache.Contains(key))
         {
@@ -150,11 +154,17 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
         return result;
     }
 
-    public async Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsAsync(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default)
+    public Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsAsync(
+        string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(configSolutions);
-        var querySystemForm = new QueryExpression(SystemForm.EntityLogicalName);
-        querySystemForm.NoLock = true;
+        return RetrieveFormsDetailsFromSolutionsCoreAsync(entityLogicalName, configSolutions, bpfControls, cancellationToken);
+    }
+
+    private async Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsCoreAsync(
+        string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken)
+    {
+        var querySystemForm = new QueryExpression(SystemForm.EntityLogicalName) { NoLock = true };
         querySystemForm.ColumnSet.AddColumns(
             SystemForm.LogicalNames.ObjectTypeCode,
             SystemForm.LogicalNames.FormXml,
@@ -328,9 +338,14 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
 
     #region Metadata API
 
-    public async Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken = default)
+    public Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(config);
+        return PopulateEntitiesAndSolutionsCoreAsync(config, cancellationToken);
+    }
+
+    private async Task PopulateEntitiesAndSolutionsCoreAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken)
+    {
         var service = await connection.GetServiceAsync();
         var entities = (RetrieveAllEntitiesResponse)await service.ExecuteAsync(new RetrieveAllEntitiesRequest
         {
@@ -393,9 +408,14 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
         config.Entities.Names = entitySet;
     }
 
-    public async Task<IReadOnlyList<WfAction>> RetrieveRequestsAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<WfAction>> RetrieveRequestsAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestNames);
+        return RetrieveRequestsCoreAsync(requestNames, cancellationToken);
+    }
+
+    private async Task<IReadOnlyList<WfAction>> RetrieveRequestsCoreAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken)
+    {
         if (requestNames.Count == 0) return [];
 
         var remaining = requestNames.ToHashSet(StringComparer.OrdinalIgnoreCase);
@@ -430,7 +450,7 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
     /// <summary>
     ///     Built-in SDK messages that every Dataverse environment provides, regardless of the requested
     ///     messages — always merged into the query in
-    ///     <see cref="RetrieveSdkMessageNamesAsync(IReadOnlyCollection{string})"/> so they're only ever generated
+    ///     <see cref="RetrieveSdkMessageNamesAsync"/> so they're only ever generated
     ///     once (deduplicated with any caller-requested name) and verified against the connected environment
     ///     like every other requested message.
     /// </summary>
@@ -440,9 +460,16 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
         "RetrievePrincipalAccess", "RetrieveSharedPrincipalsAndAccess", "RevokeAccess", "SetState", "Update"
     ];
 
-    public async Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesAsync(IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesAsync(
+        IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestNames);
+        return RetrieveSdkMessageNamesCoreAsync(requestNames, cancellationToken);
+    }
+
+    private async Task<IReadOnlyList<(string Name, string Message)>> RetrieveSdkMessageNamesCoreAsync(
+        IReadOnlyCollection<string> requestNames, CancellationToken cancellationToken)
+    {
 
         // Merge the built-in defaults with any caller-requested names into a single deduplicated set, then
         // resolve all of them in one query. This guarantees each name is generated exactly once, even if a
@@ -489,9 +516,16 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
         return result;
     }
 
-    public async Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsAsync(IReadOnlyCollection<string> globalOptionSets, CancellationToken cancellationToken = default)
+    public Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsAsync(
+        IReadOnlyCollection<string> globalOptionSets, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(globalOptionSets);
+        return RetrieveOptionSetsCoreAsync(globalOptionSets, cancellationToken);
+    }
+
+    private async Task<SortedDictionary<string, List<Option>>> RetrieveOptionSetsCoreAsync(
+        IReadOnlyCollection<string> globalOptionSets, CancellationToken cancellationToken)
+    {
         var result = new SortedDictionary<string, List<Option>>();
         var service = await connection.GetServiceAsync();
         var systemLanguage = await RetrieveOrganizationLanguageAsync(cancellationToken);
@@ -514,7 +548,8 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
         return result;
     }
 
-    public async Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(IReadOnlyCollection<string> businessProcessFlows, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(
+        IReadOnlyCollection<string> businessProcessFlows, CancellationToken cancellationToken = default)
     {
         var result = new List<Tuple<string, string, Guid, string>>();
         var query = new QueryExpression(Workflow.EntityLogicalName)
@@ -548,7 +583,8 @@ public class MetadataService(IDataverseConnection connection, ObjectCache metada
         return result;
     }
 
-    public async Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(IReadOnlyCollection<string> businessProcessFlows, string entityName, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(
+        IReadOnlyCollection<string> businessProcessFlows, string entityName, CancellationToken cancellationToken = default)
     {
         var queryWorkflow = new QueryExpression(Workflow.EntityLogicalName)
         {

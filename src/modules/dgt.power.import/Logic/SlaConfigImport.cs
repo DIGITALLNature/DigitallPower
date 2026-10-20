@@ -7,7 +7,6 @@ using dgt.power.common.Extensions;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.import.Base;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;

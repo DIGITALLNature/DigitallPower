@@ -171,7 +171,8 @@ public sealed class RedundantComponentsAnalyze(
         return result;
     }
 
-    private async Task<List<SolutionComponent>> GetParallelSolutionComponentsForComponentAsync(IOrganizationServiceAsync2 service, SolutionComponent originComponent, bool notePatches, CancellationToken cancellationToken)
+    private async Task<List<SolutionComponent>> GetParallelSolutionComponentsForComponentAsync(
+        IOrganizationServiceAsync2 service, SolutionComponent originComponent, bool notePatches, CancellationToken cancellationToken)
     {
         var pagequery = new QueryExpression
         {

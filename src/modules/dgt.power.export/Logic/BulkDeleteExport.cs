@@ -7,7 +7,6 @@ using dgt.power.common.FileAccess;
 using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 

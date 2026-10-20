@@ -67,13 +67,13 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.Actions}.cs");
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
-        using var file = File.CreateText(fileName);
+        await using var file = File.CreateText(fileName);
         var context = DotNetLiquidRenderer.CreateContext();
         context.SetValue("NameSpace", config.Namespace);
         context.SetValue("Actions", requests);
 
         var content = DotNetLiquidRenderer.Render("Action.dotnet.liquid", context);
-        file.Write(content);
+        await file.WriteAsync(content.AsMemory(), cancellationToken);
     }
 
     private async Task GenerateSdkMessageNamesAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken)
@@ -84,7 +84,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         var sdkMessages = await metadataService.RetrieveSdkMessageNamesAsync(config.Requests, cancellationToken);
 
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.SdkMessageNames}.cs");
-        using var file = File.CreateText(fileName);
+        await using var file = File.CreateText(fileName);
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         var context = DotNetLiquidRenderer.CreateContext();
@@ -92,7 +92,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         context.SetValue("SdkMessages", sdkMessages.Select(s => new SdkMessageViewModel(s)).ToArray());
 
         var content = DotNetLiquidRenderer.Render("SdkMessages.dotnet.liquid", context);
-        file.Write(content);
+        await file.WriteAsync(content.AsMemory(), cancellationToken);
     }
 
     private async Task GenerateOptionSetsAsync(CodeGenerationVerb args, DotNetCodeGenerationConfig config, CancellationToken cancellationToken)
@@ -108,7 +108,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         var optionSets = await metadataService.RetrieveOptionSetsAsync(config.OptionSets, cancellationToken);
         var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet, $"{DotNet.OptionSetValues}.cs");
 
-        using var file = File.CreateText(fileName);
+        await using var file = File.CreateText(fileName);
         console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
         var context = DotNetLiquidRenderer.CreateContext();
@@ -116,7 +116,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
         context.SetValue("OptionSets", optionSets.Select(kvp => new OptionViewModel(kvp)).ToArray());
 
         var content = DotNetLiquidRenderer.Render("OptionSets.dotnet.liquid", context);
-        file.Write(content);
+        await file.WriteAsync(content.AsMemory(), cancellationToken);
     }
 
     private void GenerateContext(CodeGenerationVerb args, DotNetCodeGenerationConfig config)
@@ -161,7 +161,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet,
                 $"{Formatter.CamelCase(metadata.SchemaName)}.cs");
 
-            using var file = File.CreateText(fileName);
+            await using var file = File.CreateText(fileName);
             console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
 
             var builder = new DotNetEntityViewModelBuilder(
@@ -177,7 +177,7 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
                 context.SetValue(key, value);
             }
 
-            file.Write(DotNetLiquidRenderer.Render("Entity.dotnet.liquid", context));
+            await file.WriteAsync(DotNetLiquidRenderer.Render("Entity.dotnet.liquid", context).AsMemory(), cancellationToken);
         }
     }
 
@@ -208,9 +208,9 @@ public class DotNetGenerator(IMetadataService metadataService, IAnsiConsole cons
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, Folders.Metadata,
                 $"{metadata.LogicalName.ToLowerInvariant()}.xml");
             var serializer = new System.Runtime.Serialization.DataContractSerializer(typeof(EntityMetadata));
-            var settings = new System.Xml.XmlWriterSettings { Indent = true, IndentChars = "\t", Encoding = System.Text.Encoding.UTF8 };
+            var settings = new System.Xml.XmlWriterSettings { Indent = true, IndentChars = "\t", Encoding = System.Text.Encoding.UTF8, Async = true };
 
-            using var file = System.Xml.XmlWriter.Create(fileName, settings);
+            await using var file = System.Xml.XmlWriter.Create(fileName, settings);
             console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
             serializer.WriteObject(file, metadata);
         }

@@ -59,6 +59,7 @@ public class UpdateWorkflowState(
     /// <param name="workflowConfig">The underlying workflow config</param>
     /// <param name="solutions">Optional solution filter</param>
     /// <param name="publishers">Optional publisher filter</param>
+    /// <param name="cancellationToken">Cancels workflow retrieval and updates.</param>
     /// <returns>True if no errors occured otherwise False</returns>
     private async Task<bool> UpdateWorkflowStatesAsync(
         IOrganizationServiceAsync2 service,
@@ -358,6 +359,7 @@ public class UpdateWorkflowState(
     /// </summary>
     /// <param name="service">Organization service to query with</param>
     /// <param name="username">Domain name to look for</param>
+    /// <param name="cancellationToken">Cancels the user lookup.</param>
     /// <returns>Found user or default object if not found</returns>
     private async Task<SystemUser?> ResolveSystemUserAsync(
         IOrganizationServiceAsync2 service,

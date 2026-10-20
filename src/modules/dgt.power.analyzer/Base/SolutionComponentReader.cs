@@ -17,8 +17,6 @@ namespace dgt.power.analyzer.Base;
 /// </summary>
 public sealed class SolutionComponentReader
 {
-    private const int PageSize = 5000;
-
     public SolutionComponentReader()
     {
         var type = typeof(SolutionComponent.Options.ComponentType);
@@ -38,6 +36,7 @@ public sealed class SolutionComponentReader
     /// </summary>
     /// <param name="service">The async organization service.</param>
     /// <param name="uniqueName">The unique name of the solution.</param>
+    /// <param name="cancellationToken">Cancels solution and component retrieval.</param>
     /// <returns>A list of solution components.</returns>
     public async Task<IList<SolutionComponent>> GetSolutionComponentsAsync(IOrganizationServiceAsync2 service, string uniqueName, CancellationToken cancellationToken)
     {
@@ -50,11 +49,17 @@ public sealed class SolutionComponentReader
     /// </summary>
     /// <param name="service">The async organization service.</param>
     /// <param name="solutionId">The Id of the solution to retrieve components for.</param>
+    /// <param name="cancellationToken">Cancels component retrieval.</param>
     /// <returns>A list of SolutionComponent objects.</returns>
-    public async Task<IList<SolutionComponent>> GetSolutionComponentsAsync(IOrganizationServiceAsync2 service, Guid solutionId, CancellationToken cancellationToken)
+    public Task<IList<SolutionComponent>> GetSolutionComponentsAsync(IOrganizationServiceAsync2 service, Guid solutionId, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(service);
+        return GetSolutionComponentsCoreAsync(service, solutionId, cancellationToken);
+    }
 
+    private async Task<IList<SolutionComponent>> GetSolutionComponentsCoreAsync(
+        IOrganizationServiceAsync2 service, Guid solutionId, CancellationToken cancellationToken)
+    {
         // Create query expression to retrieve solution components
         var pagequery = new QueryExpression
         {
@@ -118,7 +123,7 @@ public sealed class SolutionComponentReader
         });
 
         // Set paging information
-        var results = await service.RetrieveAllAsync(pagequery, PageSize, cancellationToken);
+        var results = await service.RetrieveAllAsync(pagequery, cancellationToken: cancellationToken);
         return results.Select(e => e.ToEntity<SolutionComponent>()).ToList();
     }
 
@@ -146,11 +151,16 @@ public sealed class SolutionComponentReader
         return first.MsdynSolutionname == "Active" ? GetTopNotActiveLayer(layers.Skip(1).ToList()) : first;
     }
 
-    public async Task<IList<MsdynComponentlayer>> GetSolutionLayersAsync(IOrganizationServiceAsync2 service, SolutionComponent component, CancellationToken cancellationToken)
+    public Task<IList<MsdynComponentlayer>> GetSolutionLayersAsync(IOrganizationServiceAsync2 service, SolutionComponent component, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(service);
         Debug.Assert(component != null, nameof(component) + " != null");
+        return GetSolutionLayersCoreAsync(service, component, cancellationToken);
+    }
 
+    private async Task<IList<MsdynComponentlayer>> GetSolutionLayersCoreAsync(
+        IOrganizationServiceAsync2 service, SolutionComponent component, CancellationToken cancellationToken)
+    {
         var query = new QueryExpression
         {
             EntityName = MsdynComponentlayer.EntityLogicalName,
@@ -187,10 +197,16 @@ public sealed class SolutionComponentReader
         return layers;
     }
 
-    public static async Task<Solution> GetSolutionAsync(IOrganizationServiceAsync2 service, string uniqueName, CancellationToken cancellationToken)
+    public static Task<Solution> GetSolutionAsync(IOrganizationServiceAsync2 service, string uniqueName, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(uniqueName);
+        return GetSolutionCoreAsync(service, uniqueName, cancellationToken);
+    }
+
+    private static async Task<Solution> GetSolutionCoreAsync(
+        IOrganizationServiceAsync2 service, string uniqueName, CancellationToken cancellationToken)
+    {
         var query = new QueryExpression(Solution.EntityLogicalName)
         {
             NoLock = true,

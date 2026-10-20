@@ -4,11 +4,9 @@
 using dgt.power.common;
 using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
-using dgt.power.dataverse;
 using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using SavedQuery = dgt.power.dataverse.SavedQuery;
@@ -42,7 +40,7 @@ public sealed class OutlookTemplateExport(
                 Conditions =
                 {
                     new ConditionExpression(SavedQuery.LogicalNames.QueryType, ConditionOperator.Equal,
-                        (int)SavedQueryQueryType.OutlookTemplate)
+                        SavedQueryQueryType.OutlookTemplate)
                 }
             },
             Orders = { new OrderExpression(SavedQuery.LogicalNames.Name, OrderType.Ascending) }

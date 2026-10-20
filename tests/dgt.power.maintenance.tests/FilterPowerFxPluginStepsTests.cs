@@ -5,7 +5,6 @@ using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.tests.Base;
 using dgt.power.dataverse;
-using dgt.power.tests;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.OrganizationRequests;
 using Microsoft.Xrm.Sdk;

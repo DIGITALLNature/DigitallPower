@@ -39,6 +39,25 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         .Select(name => new SdkMessage(Guid.NewGuid()) { Name = name });
 
     [Test]
+    public async Task ShouldFlushMetadataBeforeGenerationCompletes()
+    {
+        var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
+        var context = GetBuilder().WithMetaData(accountMetadata).Build();
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
+        var config = new DotNetCodeGenerationConfig
+        {
+            Entities = new EntityScopeConfig { Names = [accountMetadata.LogicalName] },
+            Output = new DotNetOutput { Include = new DotNetInclude { Metadata = true } }
+        };
+
+        await Assert.That(await context.DotNetGenerator.GenerateAsync(args, config)).IsTrue();
+
+        var metadata = GetEntityMetadataArtifact(accountMetadata.LogicalName);
+        await Assert.That(metadata.LogicalName).IsEqualTo(accountMetadata.LogicalName);
+        await Assert.That(metadata.EntitySetName).IsEqualTo(accountMetadata.EntitySetName);
+    }
+
+    [Test]
     public async Task ShouldCreateModelDirectoryStructureIfNotExistent()
     {
         var config = new DotNetCodeGenerationConfig();

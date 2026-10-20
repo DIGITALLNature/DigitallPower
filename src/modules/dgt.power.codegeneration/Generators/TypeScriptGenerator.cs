@@ -323,7 +323,8 @@ public class TypeScriptGenerator(IMetadataService metadataService, IAnsiConsole 
         }
     }
 
-    private async Task<List<EntityWithMetadataFormData>> GenerateEntityWithMetadataAsync(TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls, CancellationToken cancellationToken)
+    private async Task<List<EntityWithMetadataFormData>> GenerateEntityWithMetadataAsync(
+        TypeScriptCodeGenerationConfig config, Dictionary<string, SortedSet<BpfControlDetail>> bpfControls, CancellationToken cancellationToken)
     {
         var entityWithMetadataForms = new List<EntityWithMetadataFormData>();
 

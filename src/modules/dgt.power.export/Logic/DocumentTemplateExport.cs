@@ -9,7 +9,6 @@ using dgt.power.dto;
 using dgt.power.export.Base;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using DocumentTemplate = dgt.power.dataverse.DocumentTemplate;

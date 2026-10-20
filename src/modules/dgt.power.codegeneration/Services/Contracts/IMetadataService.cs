@@ -37,10 +37,12 @@ public interface IMetadataService
     Task<IReadOnlyList<Tuple<string, string, Guid, string>>> RetrieveBusinessProcessFlowsAsync(IReadOnlyCollection<string> businessProcessFlows, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Tuple<string, string, List<Guid>>>> RetrieveBusinessProcessFlowStagesAsync(Guid processId, CancellationToken cancellationToken = default);
 
-    Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsAsync(string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default);
+    Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsFromSolutionsAsync(
+        string entityLogicalName, string[] configSolutions, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default);
     Task<Dictionary<string, FormDetail>> RetrieveFormsDetailsAsync(string entityLogicalName, SortedSet<BpfControlDetail>? bpfControls, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(IReadOnlyCollection<string> businessProcessFlows, string entityName, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<BpfControlDetail>> RetrieveBusinessProcessFlowControlsForMainEntityAsync(
+        IReadOnlyCollection<string> businessProcessFlows, string entityName, CancellationToken cancellationToken = default);
 
     Task PopulateEntitiesAndSolutionsAsync(CodeGenerationConfigBase config, CancellationToken cancellationToken = default);
 }

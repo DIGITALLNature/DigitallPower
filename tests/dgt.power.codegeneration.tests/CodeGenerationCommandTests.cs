@@ -99,13 +99,14 @@ public class CodeGenerationCommandTests
     public async Task ShouldHonorCancellationBeforeLoadingConfiguration()
     {
         using var cancellationTokenSource = new CancellationTokenSource();
-        cancellationTokenSource.Cancel();
+        await cancellationTokenSource.CancelAsync();
+        var cancellationToken = cancellationTokenSource.Token;
 
         await Assert.That(
             () => _command.ExecuteAsync(
                 new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
                 new CodeGenerationVerb { Config = "missing.json" },
-                cancellationTokenSource.Token)).Throws<OperationCanceledException>();
+                cancellationToken)).Throws<OperationCanceledException>();
     }
 
     [Test]
@@ -113,11 +114,11 @@ public class CodeGenerationCommandTests
     [Arguments("typescript")]
     public async Task ShouldForwardCancellationToSelectedGenerator(string target)
     {
-        var configPath = Path.GetTempFileName();
+        var configPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         using var cancellationTokenSource = new CancellationTokenSource();
         try
         {
-            await File.WriteAllTextAsync(configPath, $$"""{"version":2,"type":"{{target}}"}""");
+            await File.WriteAllTextAsync(configPath, $$"""{"version":2,"type":"{{target}}"}""", cancellationTokenSource.Token);
 
             var result = await _command.ExecuteAsync(
                 new CommandContext([], new EmptyRemainingArguments(), "codegeneration", null),
@@ -141,16 +142,17 @@ public class CodeGenerationCommandTests
     public async Task ShouldPropagateMetadataCancellationBeforeGenerating()
     {
         using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         var metadataService = Mock.Of<IMetadataService>();
-        metadataService.PopulateEntitiesAndSolutionsAsync(Any<CodeGenerationConfigBase>(), cancellationTokenSource.Token)
-            .Throws(new OperationCanceledException(cancellationTokenSource.Token));
+        metadataService.PopulateEntitiesAndSolutionsAsync(Any<CodeGenerationConfigBase>(), cancellationToken)
+            .Throws(new OperationCanceledException(cancellationToken));
         var command = new CodeGenerationCommand(new TestSpanFactory(),
             _dotNetGenerator, _typeScriptGenerator, metadataService.Object, AnsiConsole.Console);
 
         await Assert.That(() => command.ExecuteAsync(
             new CommandContext([], new EmptyRemainingArguments(), "codegeneration", null),
             new CodeGenerationVerb { Config = "Resources/CodeGenerationCommand/config.json" },
-            cancellationTokenSource.Token)).Throws<OperationCanceledException>();
+            cancellationToken)).Throws<OperationCanceledException>();
 
         await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(0);
         await Assert.That(_typeScriptGenerator.GenerateCallCount).IsEqualTo(0);
@@ -260,19 +262,20 @@ public class CodeGenerationCommandTests
         var existingOutput = Path.Combine(outputDirectory, "custom-file.ts");
         Directory.CreateDirectory(outputDirectory);
         using var cancellationTokenSource = new CancellationTokenSource();
-        cancellationTokenSource.Cancel();
+        await cancellationTokenSource.CancelAsync();
+        var cancellationToken = cancellationTokenSource.Token;
 
         try
         {
-            await File.WriteAllTextAsync(existingOutput, "keep this file");
+            await File.WriteAllTextAsync(existingOutput, "keep this file", CancellationToken.None);
             var generator = new TypeScriptGenerator(Mock.Of<IMetadataService>().Object, AnsiConsole.Console);
 
             await Assert.That(() => generator.GenerateAsync(
                 new CodeGenerationVerb { TargetDirectory = tempDirectory },
                 new TypeScriptCodeGenerationConfig(),
-                cancellationTokenSource.Token)).Throws<OperationCanceledException>();
+                cancellationToken)).Throws<OperationCanceledException>();
 
-            await Assert.That(await File.ReadAllTextAsync(existingOutput)).IsEqualTo("keep this file");
+            await Assert.That(await File.ReadAllTextAsync(existingOutput, CancellationToken.None)).IsEqualTo("keep this file");
         }
         finally
         {

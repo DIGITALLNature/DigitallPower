@@ -9,7 +9,6 @@ using dgt.power.dataverse;
 using dgt.power.maintenance.Model.Serialization;
 using dgt.power.maintenance.Model.Settings;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;

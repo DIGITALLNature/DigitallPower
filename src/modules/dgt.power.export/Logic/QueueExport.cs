@@ -6,7 +6,6 @@ using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.dto;
 using dgt.power.export.Base;
-using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Queue = dgt.power.dataverse.Queue;

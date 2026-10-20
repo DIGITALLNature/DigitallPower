@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
-using System.Threading.Tasks;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.codegeneration.Generators.Contracts;
@@ -50,9 +49,9 @@ public class MetadataGenerator(IMetadataService metadataService, IAnsiConsole co
             var fileName = Path.Combine(args.TargetDirectory, args.Folder, "MetaData",
                 $"{metadata.LogicalName.ToLowerInvariant()}.xml");
             var serializer = new DataContractSerializer(typeof(EntityMetadata));
-            var settings = new XmlWriterSettings {Indent = true, IndentChars = "\t", Encoding = Encoding.UTF8};
+            var settings = new XmlWriterSettings {Indent = true, IndentChars = "\t", Encoding = Encoding.UTF8, Async = true};
 
-            using var file = XmlWriter.Create(fileName, settings);
+            await using var file = XmlWriter.Create(fileName, settings);
             console.MarkupLine($"Creating File: [bold green]{fileName}[/]");
             serializer.WriteObject(file, metadata);
         }
