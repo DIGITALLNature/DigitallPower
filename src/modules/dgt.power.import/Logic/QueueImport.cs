@@ -10,6 +10,7 @@ using dgt.power.import.Base;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 using Queue = dgt.power.dto.Queue;
@@ -68,8 +69,7 @@ public sealed class QueueImport(
         Console.WriteLine("create check");
         foreach (var newQueue in queuesToTransport.QueuesToTransport.Where(c => queues.TrueForAll(e => e.Id != c.QueueId)))
         {
-            var isCreated = await CreateQueueAsync(service, newQueue, cancellationToken);
-            var id = newQueue.QueueId;
+            var (isCreated, response) = await CreateQueueAsync(service, newQueue, cancellationToken);
             if (!isCreated)
             {
                 result = false;
@@ -81,7 +81,7 @@ public sealed class QueueImport(
             {
                 (assigned, _) = await service.TryExecuteAsync<AssignRequest, AssignResponse>(new AssignRequest
                 {
-                    Target = new EntityReference(dataverse.Queue.EntityLogicalName, id),
+                    Target = new EntityReference(dataverse.Queue.EntityLogicalName, response!.id),
                     Assignee = alternativeOwner.ToEntityReference()
                 }, cancellationToken);
             }
@@ -95,19 +95,22 @@ public sealed class QueueImport(
         return result;
     }
 
-    private async Task<bool> CreateQueueAsync(IOrganizationServiceAsync2 service, Queue newQueue, CancellationToken cancellationToken)
+    private async Task<(bool Succeeded, CreateResponse? Response)> CreateQueueAsync(IOrganizationServiceAsync2 service, Queue newQueue, CancellationToken cancellationToken)
     {
         Console.MarkupLine("[grey]--->[/]");
         //create queue
         Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[grey]create queue: {newQueue.Name}[/]");
-        return await service.TryCreateAsync(new dataverse.Queue(newQueue.QueueId)
+        return await service.TryExecuteAsync<CreateRequest, CreateResponse>(new CreateRequest
         {
-            Name = newQueue.Name,
-            QueueViewType = new OptionSetValue((int)newQueue.ViewType),
-            IncomingEmailFilteringMethod = new OptionSetValue((int)newQueue.IncomingEmailFiltering),
-            IncomingEmailDeliveryMethod = new OptionSetValue((int)newQueue.IncomingEmailDelivery),
-            OutgoingEmailDeliveryMethod = new OptionSetValue((int)newQueue.OutgoingEmailDelivery),
-            Description = newQueue.Description
+            Target = new dataverse.Queue(newQueue.QueueId)
+            {
+                Name = newQueue.Name,
+                QueueViewType = new OptionSetValue((int)newQueue.ViewType),
+                IncomingEmailFilteringMethod = new OptionSetValue((int)newQueue.IncomingEmailFiltering),
+                IncomingEmailDeliveryMethod = new OptionSetValue((int)newQueue.IncomingEmailDelivery),
+                OutgoingEmailDeliveryMethod = new OptionSetValue((int)newQueue.OutgoingEmailDelivery),
+                Description = newQueue.Description
+            }
         }, cancellationToken);
     }
 

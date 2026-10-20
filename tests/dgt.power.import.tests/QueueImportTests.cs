@@ -217,6 +217,35 @@ public class QueueImportTests : ImportTestBase<QueueImport>
         await Assert.That(createdQueue.OwnerId.Id).IsEqualTo(owner.Id);
     }
 
+    [Test]
+    public async Task ShouldAssignGeneratedQueueIdToAlternativeOwner()
+    {
+        var (owner, _) = GetData();
+        var context = GetBuilder().WithData(owner).Build();
+        var queueToBeCreated = new Queue
+        {
+            Name = "Generated ID Queue",
+            QueueId = Guid.Empty,
+            ViewType = Queue.QueueViewType.Public,
+            IncomingEmailFiltering = Queue.IncomingEmailFilteringMethod.AllEmailMessages
+        };
+        var config = new Queues
+        {
+            Owner = owner.DomainName,
+            QueuesToTransport = [queueToBeCreated]
+        };
+
+        await Assert.That(context.Execute(new ImportVerb
+        {
+            FileName = WriteConfigurationArtifact(config).Name,
+            FileDir = ArtifactDirectory
+        })).IsTrue();
+
+        var createdQueue = context.GetSingle<dataverse.Queue>();
+        await Assert.That(createdQueue.Id).IsNotEqualTo(Guid.Empty);
+        await Assert.That(createdQueue.OwnerId?.Id).IsEqualTo(owner.Id);
+    }
+
     private static Queue GetNewConfig() =>
         new()
         {
