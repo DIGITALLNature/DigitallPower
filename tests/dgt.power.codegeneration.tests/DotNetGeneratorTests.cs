@@ -41,10 +41,10 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     [Test]
     public async Task ShouldCreateModelDirectoryStructureIfNotExistent()
     {
-        var config = new CodeGenerationConfig();
+        var config = new DotNetCodeGenerationConfig();
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
         var context = GetContext();
-        context.DotNetGenerator.Generate(args, config.ToDotNetConfig() ?? throw new InvalidOperationException());
+        context.DotNetGenerator.Generate(args, config);
 
         await Assert.That(Directory.Exists(GetArtifactPath(args.Folder))).IsTrue();
         await Assert.That(Directory.Exists($"{GetArtifactPath(args.Folder)}/{Folders.DotNet}")).IsTrue();
@@ -53,7 +53,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     [Test]
     public async Task ShouldDeleteAllExistingFilesInModelFolder()
     {
-        var config = new CodeGenerationConfig();
+        var config = new DotNetCodeGenerationConfig();
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var modelPath = GetArtifactPath(args.Folder);
@@ -63,8 +63,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var existingFilePath = $"{dotNetPath}/Testentity.cs";
         await File.WriteAllTextAsync(existingFilePath, "public class TestEntity : Entity { }");
 
-        GetContext().DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        GetContext().DotNetGenerator.Generate(args, config);
 
         await Assert.That(Directory.Exists(modelPath)).IsTrue();
         await Assert.That(Directory.Exists(dotNetPath)).IsTrue();
@@ -75,12 +74,11 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     [Test]
     public async Task ShouldAlwaysGenerateSdkMessageNames()
     {
-        var config = new CodeGenerationConfig();
+        var config = new DotNetCodeGenerationConfig();
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs")).IsTrue();
@@ -92,13 +90,12 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         // "Create" is one of the always-generated built-in SDK messages (already seeded via GetBuilder's
         // BuiltInSdkMessages). Explicitly requesting it again (e.g. via AdditionalSdkMessages) must not
         // produce a second, duplicate constant in SdkMessageNames.cs, which would be a compile error.
-        var config = new CodeGenerationConfig { AdditionalSdkMessages = ["Create"] };
+        var config = new DotNetCodeGenerationConfig { Requests = ["Create"] };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
 
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.SdkMessageNames}.cs";
@@ -111,12 +108,11 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     [Test]
     public async Task ShouldGenerateDataContext()
     {
-        var config = new CodeGenerationConfig { SuppressSdkMessages = true, SuppressActions = true };
+        var config = new DotNetCodeGenerationConfig();
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         await Assert.That(File.Exists($"{dotNetPath}/{FileNames.DotNet.Context}.cs")).IsTrue();
@@ -128,11 +124,9 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var customApi = new SdkMessage(Guid.NewGuid()) { Name = "Custom API Message" };
         var action = new SdkMessage(Guid.NewGuid()) { Name = "Action" };
         var additionalMessage = new SdkMessage(Guid.NewGuid()) { Name = "AdditionalMessage" };
-        var config = new CodeGenerationConfig
+        var config = new DotNetCodeGenerationConfig
         {
-            Actions = [action.Name],
-            CustomAPIs = [customApi.Name],
-            AdditionalSdkMessages = [additionalMessage.Name]
+            Requests = [action.Name, customApi.Name, additionalMessage.Name]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -142,8 +136,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithData(additionalMessage)
             .Build();
 
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -166,9 +159,9 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     {
         var associateMessage = new SdkMessage(Guid.NewGuid()) { Name = "Associate" };
         var mergeMessage = new SdkMessage(Guid.NewGuid()) { Name = "Merge" };
-        var config = new CodeGenerationConfig
+        var config = new DotNetCodeGenerationConfig
         {
-            AdditionalSdkMessages = [associateMessage.Name, mergeMessage.Name]
+            Requests = [associateMessage.Name, mergeMessage.Name]
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
@@ -177,8 +170,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithData(mergeMessage)
             .Build();
 
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -208,12 +200,11 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         // environment (no SdkMessage entity is registered for it below) — it should be dropped entirely
         // instead of silently producing an empty request/response class pair, and the user should be
         // warned so they can catch a possible typo.
-        var config = new CodeGenerationConfig { AdditionalSdkMessages = ["DoesNotExist"] };
+        var config = new DotNetCodeGenerationConfig { Requests = ["DoesNotExist"] };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -261,7 +252,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             Type = new OptionSetValue(CustomAPIResponseProperty.Options.Type.String),
             CustomAPIId = customApi.ToEntityReference()
         };
-        var config = new CodeGenerationConfig { Actions = [actionMessage.Name], CustomAPIs = [customApi.UniqueName] };
+        var config = new DotNetCodeGenerationConfig { Requests = [actionMessage.Name, customApi.UniqueName] };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder()
@@ -273,8 +264,7 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithData(customApiResponseProperty)
             .Build();
 
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
 
@@ -288,12 +278,11 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     [Test]
     public async Task ShouldSuppressGenerationOfActions()
     {
-        var config = new CodeGenerationConfig { SuppressActions = true };
+        var config = new DotNetCodeGenerationConfig();
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder().Build();
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath($"{args.Folder}/{Folders.DotNet}");
         var messagesPath = $"{dotNetPath}/{FileNames.DotNet.Actions}.cs";
@@ -307,15 +296,14 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         var globalOptionSet = activityPointerMetadata.Attributes.OfType<PicklistAttributeMetadata>()
             .Select(x => x.OptionSet)
             .First(x => x.IsGlobal == true);
-        var config = new CodeGenerationConfig { GlobalOptionSets = [globalOptionSet.Name] };
+        var config = new DotNetCodeGenerationConfig { OptionSets = [globalOptionSet.Name] };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder()
             .WithMetaData(activityPointerMetadata)
             .Build();
 
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotnetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
         var optionSetPath = Path.Combine(dotnetPath, $"{FileNames.DotNet.OptionSetValues}.cs");
@@ -326,19 +314,64 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
     public async Task ShouldGenerateSpecificEntity()
     {
         var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
-        var config = new CodeGenerationConfig { Entities = [accountMetadata.LogicalName] };
+        var config = new DotNetCodeGenerationConfig
+        {
+            Entities = new EntityScopeConfig { Names = [accountMetadata.LogicalName] }
+        };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
 
         var context = GetBuilder()
             .WithMetaData(accountMetadata)
             .Build();
 
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotnetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
         var accountPath = Path.Combine(dotnetPath, "Account.cs");
         await Assert.That(File.Exists(accountPath)).IsTrue();
+    }
+
+    [Test]
+    public async Task ShouldGenerateTypedConfigEntityForModernAndFrameworkTargets()
+    {
+        var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
+
+        foreach (var target in new[] { DotNetTarget.Modern, DotNetTarget.Framework })
+        {
+            var args = new CodeGenerationVerb
+            {
+                TargetDirectory = Path.Combine(ArtifactDirectory, target.ToString())
+            };
+            var config = new DotNetCodeGenerationConfig
+            {
+                Namespace = "Contoso.Dataverse.Model",
+                Entities = new EntityScopeConfig { Names = [accountMetadata.LogicalName] },
+                Output = new DotNetOutput { Target = target }
+            };
+
+            var context = GetBuilder()
+                .WithMetaData(accountMetadata)
+                .Build();
+            context.DotNetGenerator.Generate(args, config);
+
+            var dotNetPath = Path.Combine(args.TargetDirectory, args.Folder, Folders.DotNet);
+            var accountFile = Path.Combine(dotNetPath, "Account.cs");
+            await Assert.That(File.Exists(accountFile)).IsTrue();
+            await Assert.That(File.Exists(Path.Combine(dotNetPath, $"{FileNames.DotNet.Context}.cs"))).IsTrue();
+            var generatedEntity = await File.ReadAllTextAsync(accountFile);
+            await Assert.That(generatedEntity).Contains("namespace Contoso.Dataverse.Model");
+            if (target == DotNetTarget.Modern)
+            {
+                await Assert.That(generatedEntity).Contains("GetAttributeValue<string?>(");
+                await Assert.That(generatedEntity).DoesNotContain("using System;");
+            }
+            else
+            {
+                await Assert.That(generatedEntity).Contains("GetAttributeValue<string>(");
+                await Assert.That(generatedEntity).Contains("using System;");
+                await Assert.That(generatedEntity).DoesNotContain("GetAttributeValue<string?>(");
+            }
+        }
     }
 
     [Test]
@@ -359,13 +392,12 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
             .WithMetaData(attributeMetadata)
             .Build();
 
-        var config = new CodeGenerationConfig
+        var config = new DotNetCodeGenerationConfig
         {
-            Entities = [attributeMetadata.LogicalName], UseBaseLanguage = true
+            Entities = new EntityScopeConfig { Names = [attributeMetadata.LogicalName] }
         };
         var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
-        context.DotNetGenerator.Generate(args,
-            config.ToDotNetConfig());
+        context.DotNetGenerator.Generate(args, config);
 
         var dotNetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
         var attributePath = Path.Combine(dotNetPath, "Attribute.cs");

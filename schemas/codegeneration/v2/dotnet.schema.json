@@ -3,7 +3,7 @@
   "type": "object",
   "title": "DotNetCodeGenerationConfig",
   "description": "V2 configuration for .NET code generation. Produces C# early-bound entity classes, typed request/response wrappers, SDK message constants, and optionally XML metadata.",
-  "required": ["type"],
+  "required": ["version", "type"],
   "properties": {
     "$schema":  { "type": "string", "description": "A field for the JSON schema specification: https://json-schema.org/" },
     "type":      { "type": "string", "const": "dotnet" },

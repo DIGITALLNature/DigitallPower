@@ -4,7 +4,7 @@
 namespace dgt.power.codegeneration.Base;
 
 /// <summary>
-///     V2 configuration for TypeScript code generation (Light mode only).
+///     V2 configuration for TypeScript code generation.
 ///     Produces entity definitions, form typings, OptionSet constants,
 ///     SDK message names, and Custom API wrappers.
 /// </summary>

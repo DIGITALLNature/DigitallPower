@@ -1,9 +1,5 @@
 {
-    "Entities": [],
-    "GlobalOptionSets": [
-        "dgt_choice_global"
-    ],
-    "SuppressDotNet": true,
-    "SuppressSdkMessages": true,
-    "TypescriptGeneratorVersion": "Light"
+  "version": 2,
+  "type": "typescript",
+  "optionSets": ["dgt_choice_global"]
 }

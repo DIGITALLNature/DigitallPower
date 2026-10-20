@@ -1,8 +1,0 @@
-﻿{
-    "Entities": [],
-    "GlobalOptionSets": [
-        "dgt_choice_global"
-    ],
-    "SuppressDotNet": true,
-    "SuppressSdkMessages": true
-}

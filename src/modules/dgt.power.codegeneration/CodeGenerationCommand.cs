@@ -20,7 +20,7 @@ public class CodeGenerationCommand(
 {
     protected override async Task<bool> RunAsync(CodeGenerationVerb verb, CancellationToken cancellationToken)
     {
-        var result = CodeGenerationConfigFactory.ResolveFromFile(verb.Config, Console);
+        var config = CodeGenerationConfigLoader.LoadFromFile(verb.Config);
 
         // The synchronous metadata service reads the connection's cached service; connect before it is used.
         await connection.GetServiceAsync();
@@ -32,45 +32,15 @@ public class CodeGenerationCommand(
             .SpinnerStyle(Style.Parse("green bold"))
             .Start("Generate Model ...", _ =>
                 {
-                    success = result switch
+                    metadataService.PopulateEntitiesAndSolutions(config);
+                    success = config switch
                     {
-                        CodeGenerationConfigResult.V2(var config) => ExecuteV2(verb, config),
-                        CodeGenerationConfigResult.V1(var config) => ExecuteV1(verb, config),
-                        _ => false
+                        DotNetCodeGenerationConfig dotnetConfig => dotNetGenerator.Generate(verb, dotnetConfig),
+                        TypeScriptCodeGenerationConfig tsConfig => typeScriptGenerator.Generate(verb, tsConfig),
+                        _ => throw new InvalidOperationException($"Unsupported configuration type '{config.GetType().Name}'.")
                     };
                 }
             );
-
-        return success;
-    }
-
-    private bool ExecuteV2(CodeGenerationVerb verb, CodeGenerationConfigBase config)
-    {
-        metadataService.PopulateEntitiesAndSolutions(config);
-
-        return config switch
-        {
-            DotNetCodeGenerationConfig dotnetConfig => dotNetGenerator.Generate(verb, dotnetConfig),
-            TypeScriptCodeGenerationConfig tsConfig => typeScriptGenerator.Generate(verb, tsConfig),
-            _ => false
-        };
-    }
-
-    private bool ExecuteV1(CodeGenerationVerb verb, CodeGenerationConfig config)
-    {
-        metadataService.PopulateEntitiesAndSolutions(config);
-
-        var success = true;
-
-        if (!config.SuppressDotNet)
-        {
-            success &= dotNetGenerator.Generate(verb, config.ToDotNetConfig());
-        }
-
-        if (!config.SuppressTypeScript)
-        {
-            success &= typeScriptGenerator.Generate(verb, config);
-        }
 
         return success;
     }

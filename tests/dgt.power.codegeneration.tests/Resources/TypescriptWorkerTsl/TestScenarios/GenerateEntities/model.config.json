@@ -1,8 +1,7 @@
 {
-    "Entities": [
-        "dgt_test_table"
-    ],
-    "SuppressDotNet": true,
-    "SuppressSdkMessages": true,
-    "TypescriptGeneratorVersion": "Light"
+  "version": 2,
+  "type": "typescript",
+  "entities": {
+    "names": ["dgt_test_table"]
+  }
 }

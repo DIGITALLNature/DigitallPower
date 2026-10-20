@@ -568,93 +568,50 @@ dgtp cg ./generated -c ./genconfig.json
 | `-f`, `--folder` | Alternate name for the model folder (default: `Model`) |
 | `-c`, `--config` | Full path to the config file (default: `config.json`) |
 
-JSON schemas for all config versions are available under [`schemas/codegeneration/`](schemas/codegeneration).
+Supported V2 JSON schemas are available under [`schemas/codegeneration/v2/`](schemas/codegeneration/v2).
+See the [2.x-to-3.x migration guide](docs/migrations/2.x-to-3.x.md#code-generation) when upgrading.
 
-#### V2 config (recommended)
+#### Supported outputs
 
-V2 configs use `"version": 2` and a `"type"` discriminator to produce one focused file per output target. The design separates two concerns:
+Code generation reads Dataverse metadata and requires an authenticated Dataverse connection. Each
+config selects one target; create separate config files and invoke the command once for every target
+you want to generate:
 
-- **Scope** — what to load from Dataverse (`entities`, `requests`, `optionSets`)
-- **Output** — what artefacts to write (type-specific `output` object)
+- **.NET** — C# early-bound classes for Modern or Framework targets, request wrappers and message
+  constants, and global option-set constants. XML metadata files are optional.
+- **TypeScript** — ambient entity and form typings, option-set and SDK message declarations,
+  parameterized Custom API wrappers, and optional XrmMock form test helpers.
 
-Only `"type"` is required; every other property has a sensible default and may be omitted.
+Generated files are written below `<target-directory>/<folder>` (the default folder is `Model`):
+`.NET` files go in `DotNet`, optional XML metadata in `MetaData`, and TypeScript output in
+`TypeScript`. Generation replaces generated files in the selected output area; keep custom files
+and edits elsewhere or back them up before regenerating. TypeScript generation clears its entire
+`TypeScript` subtree.
 
-> **Tip:** Run one command per config file — `dgtp cg ./generated -c ./genconfig.dotnet.json` and `dgtp cg ./generated -c ./genconfig.typescript.json`.
+#### Configuration
 
-##### Shared root properties
+Every config must declare `"version": 2` and a case-sensitive `"type"` value of `"dotnet"` or
+`"typescript"`. Put `$schema` in the config to enable editor validation and completion. The
+supported schemas list all settings and defaults:
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `version` | integer | `1` | Must be `2` to use the V2 engine |
-| `type` | `"dotnet"` \| `"typescript"` | — | **Required.** Selects generator and schema |
-| `namespace` | string \| null | `null` (TS) / `"Digitall.Dataverse.Model"` (.NET) | Root namespace for generated classes |
-| `language` | integer \| null | `null` | LCID for label localization (e.g. `1033` for English). `null` or omitted = use the organization's base language |
+- [.NET config schema](schemas/codegeneration/v2/dotnet.schema.json)
+- [TypeScript config schema](schemas/codegeneration/v2/typescript.schema.json)
 
-##### Scope properties (shared by both types)
+Entity scope can combine explicit logical names (`entities.names`), all entities from listed
+solutions (`entities.fromSolutions`), and a wildcard logical-name mask (`entities.mask`). These
+are additive: matching any of the configured selectors includes the entity. Requests and global
+option sets are independently selected with `requests` and `optionSets`.
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `entities.names` | string[] | `[]` | Explicit list of entity logical names |
-| `entities.fromSolutions` | string[] | `[]` | Include all entities from these solutions |
-| `entities.mask` | string \| null | `null` | Publisher-prefix wildcard (e.g. `"contoso_*"`) |
-| `requests` | string[] | `[]` | SDK message / custom action names; generates message constants |
-| `optionSets` | string[] | `[]` | Global option set logical names |
+#### .NET generation
 
-The three entity inputs are combined as an **additive union** — an entity matches if it appears in `names`, belongs to any listed solution, or matches the `mask` pattern.
+The default target is `Modern`, intended for .NET 8 and later. Select `Framework` for .NET Framework
+4.6.2 projects. The `output.include` settings control context, option-set constants, logical-name
+constants, relationship constants, navigation properties, entity type codes, alternate keys, and
+optional metadata XML. These sections are enabled by default except metadata. `output.virtual`
+makes entity properties virtual, while `output.editableReadOnly` emits setters for read-only
+attributes.
 
-##### TypeScript output properties
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `output.forms` | object \| absent | *(all forms)* | Omit entirely to generate all forms for all scoped entities |
-| `output.forms.filter` | string[] | `[]` | Restrict to specific forms by `"entityLogicalName.formName"`; empty = all forms |
-| `output.forms.fromSolutions` | boolean | `false` | Only include forms that belong to the solutions listed in `entities.fromSolutions` |
-| `output.forms.testHelpers` | boolean | `false` | Generate XrmMock test helper files alongside form helpers |
-| `output.customApis` | boolean | `true` | Generate typed Custom API request/response wrappers for parameterised messages |
-
-##### .NET output properties
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `output.target` | `"Modern"` \| `"Framework"` | `"Modern"` | `Modern` = net8.0+ (nullable, implicit usings); `Framework` = .NET Framework 4.6.2 (Dataverse plugins, no nullable) |
-| `output.virtual` | boolean | `false` | Add the `virtual` keyword to generated entity properties, enabling mocking and subclass overrides |
-| `output.editableReadOnly` | boolean | `false` | Treat read-only attributes as editable |
-| `output.include.context` | boolean | `true` | Generate `DataContext` class |
-| `output.include.options` | boolean | `true` | Generate `OptionSetValues` enum classes |
-| `output.include.logicalNames` | boolean | `true` | Generate logical-name string constants |
-| `output.include.relations` | boolean | `true` | Generate relationship metadata |
-| `output.include.navigationProps` | boolean | `true` | Generate navigation properties |
-| `output.include.entityTypeCode` | boolean | `true` | Generate entity type code constants |
-| `output.include.alternateKeys` | boolean | `true` | Generate alternate-key members |
-| `output.include.metadata` | boolean | `false` | Write `metadata.xml` sidecar files |
-
-##### Minimal examples
-
-Minimal .NET config (entities from a solution, all defaults):
-
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/dotnet.schema.json",
-  "version": 2,
-  "type": "dotnet",
-  "entities": { "fromSolutions": ["ContosoCore"] }
-}
-```
-
-Minimal TypeScript config (entities from a solution, all forms, no test helpers):
-
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/typescript.schema.json",
-  "version": 2,
-  "type": "typescript",
-  "entities": { "fromSolutions": ["ContosoCore"] }
-}
-```
-
-##### Full examples
-
-**.NET** — `genconfig.dotnet.json`:
+This example generates entities from a solution and writes metadata XML as well:
 
 ```json
 {
@@ -662,114 +619,80 @@ Minimal TypeScript config (entities from a solution, all forms, no test helpers)
   "version": 2,
   "type": "dotnet",
   "namespace": "Contoso.Dataverse.Model",
-  "entities": {
-    "names": ["account", "contact"],
-    "fromSolutions": ["ContosoCore"],
-    "mask": "contoso_*"
-  },
+  "entities": { "fromSolutions": ["ContosoCore"] },
   "requests": ["contoso_ApproveOrder"],
-  "optionSets": ["contoso_status"],
+  "optionSets": ["contoso_orderstatus"],
   "output": {
     "target": "Modern",
-    "virtual": false,
-    "editableReadOnly": false,
-    "include": {
-      "context": true,
-      "options": true,
-      "logicalNames": true,
-      "relations": true,
-      "navigationProps": true,
-      "entityTypeCode": true,
-      "alternateKeys": true,
-      "metadata": false
-    }
+    "include": { "metadata": true }
   }
 }
 ```
 
-**TypeScript** — `genconfig.typescript.json`:
+`requests` generates SDK message name constants, and messages with parameter metadata also produce
+typed request/response wrappers. `optionSets` selects global option sets to emit as constants.
+
+#### TypeScript generation
+
+TypeScript generation emits entity declarations for scoped entities and form typings for their
+forms. By default, all forms for each scoped entity are generated. Set `output.forms.filter` to an
+allowlist of form identifiers to narrow this, or set `output.forms.fromSolutions` to include only
+forms belonging to the configured entity solutions. Set `output.forms.testHelpers` to generate
+XrmMock helpers alongside form typings; this is disabled by default.
+
+Form identifiers include the entity, environment-specific form name, and form type. Generate without
+a filter first, then use the generated form declaration's filename without `.d.ts` as its identifier
+(for example, `account.account_main.form` for a main form named `Account`).
+
+Requests generate SDK message name declarations. Parameterized Custom APIs also generate typed
+wrappers by default; set `output.customApis` to `false` to omit those wrappers. Option-set
+declarations are controlled by `optionSets`.
+
+The optional `language` is a Dataverse LCID used to localize generated labels. When omitted or
+`null`, the organization base language is used. Form names are resolved using the connecting user's
+Dataverse UI language; if that differs from the configured label language, `dgtp` warns because
+form names and form filters may not match. The TypeScript `namespace` property is accepted but is
+currently unused.
 
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/codegeneration/v2/typescript.schema.json",
   "version": 2,
   "type": "typescript",
-  "entities": {
-    "names": ["account", "contact"],
-    "fromSolutions": ["ContosoCore"],
-    "mask": "contoso_*"
-  },
+  "entities": { "names": ["account"], "fromSolutions": ["ContosoCore"] },
   "requests": ["contoso_ApproveOrder"],
-  "optionSets": ["contoso_status"],
+  "optionSets": ["contoso_orderstatus"],
   "output": {
     "forms": {
-      "filter": ["account.Account Main Form"],
-      "fromSolutions": false,
       "testHelpers": true
-    },
-    "customApis": true
+    }
   }
 }
 ```
 
-#### V1 config (legacy, deprecated)
+#### Run generation
 
-V1 configs use a single file for both .NET and TypeScript output and are detected by `"version": 1` (or the absence of a `version` field). They continue to work unchanged — they are mapped internally to the V2 runtime shape before execution.
+Save the .NET and TypeScript examples as separate config files, then run the command once per
+target. Both invocations can write to the same model directory because the outputs use separate
+subdirectories:
 
-```json
-{
-  "version": 1,
-  "Entities": ["account", "contact"],
-  "Solutions": ["ContosoCore"],
-  "Actions": ["contoso_ApproveOrder"],
-  "GlobalOptionSets": ["contoso_status"],
-  "NameSpace": "Contoso.Dataverse.Model",
-  "TypescriptGeneratorVersion": "Light",
-  "SuppressMetaData": true
-}
+```bash
+dgtp codegeneration ./generated -c ./genconfig.dotnet.json
+dgtp codegeneration ./generated -c ./genconfig.typescript.json
 ```
 
-##### V1 → V2 migration
+Use `--folder` (or `-f`) to change the `Model` folder name, and `--config` (or `-c`) to select the
+config file. Without `--config`, the command reads `config.json`.
 
-| V1 property | V2 equivalent |
-|-------------|--------------|
-| `Entities` | `entities.names` |
-| `Solutions` | `entities.fromSolutions` |
-| `EntityMask` | `entities.mask` |
-| `Actions` / `SdkMessages` | `requests` |
-| `GlobalOptionSets` | `optionSets` |
-| `NameSpace` | `namespace` |
-| `XrmMockFormHelpers` | `output.forms.testHelpers` |
-| `OnlyFormsFromSolutions` | `output.forms.fromSolutions` |
-| `SuppressMetaData` | `output.include.metadata: false` |
-| `Target` | `output.target` |
-
-> **Note:** V1 attribute-level filters (`EntityFilters`, `EntityRefFilters`, `EntityFormFilters`) have no V2 equivalent — they were removed by design to keep the V2 schema focused.
-
-#### TypeScript environment variables
+#### TypeScript template settings
 
 | Environment variable | Purpose | Default |
 |---|---|---|
-| `DGTP_TSL_STRICT_MODE` | Enables fail-fast handling for undefined Liquid values (`1` / `true` / `yes`) | Falls back to CI-agent detection |
-| `DGTP_TSL_MAX_STEPS` | Overrides Fluid template execution step limit with a positive integer | `20000` |
+| `DGTP_TSL_STRICT_MODE` | Enables fail-fast errors for undefined Liquid template values (`1`, `true`, or `yes`) | Enabled automatically in CI environments |
+| `DGTP_TSL_MAX_STEPS` | Sets the positive maximum number of Fluid template execution steps | `20000` |
 
-#### Known limitations
-
-**Form names depend on the connection's UI language, not the configured `language`.** Dataverse resolves the
-`name` attribute of out-of-box records (including system forms) using the *connecting user's personal UI
-language setting* (`usersettings.uilanguageid`), not any per-request parameter. This means:
-
-- Labels rendered *inside* generated form/option-set typings (e.g. option set labels) correctly follow the
-  `language`/`UseBaseLanguage` config value, since those come from metadata `Label`/`LocalizedLabels`, which
-  *do* support per-request LCID resolution.
-- The system form's own `name` — used to build the generated file name and to match entries in `Forms` —
-  is retrieved in whatever language the connecting user's Dataverse profile is set to. If that differs from
-  the language configured for code generation, form names may not match `Forms` filter entries, and matching
-  forms can be silently skipped.
-
-`dgtp` detects this mismatch and prints a warning at generation time when the connection's UI language differs
-from the configured language. **Mitigation:** set the connecting user's personal Dataverse UI language (Settings
-→ Personalization Settings → Language) to match the `language` configured for code generation.
+See the [2.x-to-3.x migration guide](docs/migrations/2.x-to-3.x.md#code-generation) for changes
+when upgrading existing generation configs or code that consumes generated output.
 
 ### `plugin` — Manage plugin assemblies/packages
 

@@ -13,7 +13,6 @@ internal sealed class OptionField
     public OptionField(AttributeMetadata attributeMetadata, bool useBaseLanguage, int systemLanguage)
     {
         SchemaName = attributeMetadata.SchemaName;
-        LogicalName = attributeMetadata.LogicalName;
         AttributeType = attributeMetadata.AttributeType;
         Options = new List<Option>();
 
@@ -73,8 +72,6 @@ internal sealed class OptionField
     }
 
     public string SchemaName { get; }
-
-    public string LogicalName { get; }
 
     public AttributeTypeCode? AttributeType { get; }
 
