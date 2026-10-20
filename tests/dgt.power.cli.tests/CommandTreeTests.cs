@@ -97,6 +97,44 @@ public class CommandTreeTests
     }
 
     [Test]
+    public async Task ImportSecureConfigs_IsRejectedAsUnknownCommand()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("import", "secureconfigs");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    public async Task ImportHelp_DoesNotListSecureConfigs_AndKeepsOtherCommands()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("import", "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.Output).DoesNotContain("secureconfigs");
+        await Assert.That(result.Output).Contains("outlooktemplates");
+    }
+
+    [Test]
+    public async Task PluginStepConfigSet_HelpListsSecureConfigurationOptions()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("plugin", "step", "config", "set", "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.Output).Contains("--secure");
+        await Assert.That(result.Output).Contains("--secure-file");
+    }
+
+    [Test]
     public async Task PluginStepEnable_HelpInvocation_Succeeds()
     {
         var tester = new CommandAppTester();

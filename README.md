@@ -505,7 +505,6 @@ Counterpart to `export`. Reads the previously exported JSON files and applies th
 | `import teamtemplates` | Team templates |
 | `import bulkdeletes` | Bulk delete jobs |
 | `import documenttemplates` | Document templates |
-| `import secureconfigs` | Secure configurations of plugin steps |
 | `import calendar` | Calendars |
 | `import slaconfigs` | SLAs |
 | `import routingruleconfigs` | Routing rules |

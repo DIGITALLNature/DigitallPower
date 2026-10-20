@@ -1,23 +1,5 @@
 # Technical Debt & Backlog
 
-## Retire legacy secure configuration import
-
-`import secureconfigs` (`SecureConfigImport`) duplicates secure configuration provisioning in
-`plugin step config set`. The plugin module's
-`SdkMessageProcessingStepSecureConfigRepository` creates the secure configuration and links the
-step in a single transaction; the legacy import still creates and links separately.
-
-- Plan removal of the legacy command, DTO/schema, and dedicated tests after checking other consumers.
-- Document migration from the legacy JSON (`pluginStep` display name plus `data`/inline data) to
-  `plugin step config set --step-id` or composite-key selection with `--secure`/`--secure-file`.
-- Update command-tree coverage, README, migration guidance, and OpenSpec requirements when removing it.
-- Until removal, the legacy path remains exposed: after creation succeeds and linking fails, its
-  general exception handler uses the command token for cleanup. Concurrent cancellation can abort
-  deletion and leave an orphaned secure configuration. Track or fix this separately if removal is
-  deferred; the plugin module's transactional creation does not have this rollback gap.
-
-Source: #203, Copilot review discussion `discussion_r4313851799`.
-
 ## Global `--verbose` flag
 
 Add a global `--verbose` option (shared settings base, tracer behavior and every module) for
