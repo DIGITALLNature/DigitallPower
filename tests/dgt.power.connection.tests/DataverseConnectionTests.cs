@@ -7,13 +7,16 @@ using dgt.power.common.Logic;
 using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
 using dgt.power.connection.tests.Base;
+using Spectre.Console;
 
 namespace dgt.power.connection.tests;
 
 public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusCommand, ConnectionSettings>
 {
     [Test]
-    public async Task GetServiceAsync_MissingClientSecret_ReportsFailureAndPropagatesOriginalError()
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task GetServiceAsync_MissingClientSecret_ReportsFailureAndPropagatesOriginalError(bool activeDisplay)
     {
         const string name = "private-connection-name";
         ConnectionStore.Upsert(name, new ClientSecretConnection
@@ -22,16 +25,27 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
             TenantId = "tenant",
             ClientId = "client"
         });
-        TestConsole.Profile.Width = 200;
+        // TestConsole disables exclusivity; use a real console over its captured output.
+        var console = AnsiConsole.Create(new AnsiConsoleSettings
+        {
+            Out = TestConsole.Profile.Out,
+            Ansi = AnsiSupport.Yes,
+            Interactive = InteractionSupport.Yes
+        });
+        console.Profile.Width = 200;
         var invocationContext = new ConnectionInvocationContext();
         invocationContext.Capture(new ConnectionSettings { Connection = name });
         using var connection = new DataverseConnection(
             ConnectionStore,
-            new CredentialFactory(SecretStore, TestConsole),
+            new CredentialFactory(SecretStore, console),
             invocationContext,
-            TestConsole);
+            console);
 
-        await Assert.That(connection.GetServiceAsync()).Throws<InvalidOperationException>()
+        var attempt = activeDisplay
+            ? console.Status().StartAsync("Working...", _ => connection.GetServiceAsync())
+            : connection.GetServiceAsync();
+
+        await Assert.That(attempt).Throws<InvalidOperationException>()
             .WithMessageContaining($"Client secret is missing for connection '{name}'");
 
         await Assert.That(TestConsole.Output)
