@@ -1083,15 +1083,17 @@ each resource:
 ```text
 ./webresources
 ├── app
-│   └── main.js → contoso_/scripts/main.js Update
+│   └── main.js → contoso_/scripts/main.js ~ Update
 └── pages
-    └── index.html → contoso_/pages/home.html Unchanged
+    └── index.html → contoso_/pages/home.html
 
 Solution membership: ContosoCore
-  + WebResource contoso_/scripts/main.js
+WebResource contoso_/scripts/main.js + Add
 
 Obsolete webresources
-  − WebResource contoso_/obsolete.js
+WebResource contoso_/obsolete.js - Delete
+
+Destructive operations: 1
 ```
 
 When `--confirm` is specified, the command asks before executing a plan that creates, updates,
@@ -1101,7 +1103,7 @@ The prompt is skipped in CI and when `--non-interactive` is set; `--dry-run` nev
 The tree shows local directory structure; mapping files may intentionally produce a different
 Dataverse naming structure. For a normal run, the tree is followed by an execution phase with
 checkmarks for completed operations. With `--dry-run`, the tree, missing solution memberships,
-and any obsolete resources to delete are rendered, then execution stops. Obsolete deletion
+and any obsolete resources to delete are rendered without applying changes. Obsolete deletion
 requires a directory target and `--solution`. An empty directory is a no-op, including when
 `--delete-obsolete` is specified; it cannot be used to delete every webresource from a solution.
 

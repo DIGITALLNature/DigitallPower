@@ -40,13 +40,13 @@ public sealed class WebResourcePlanRenderer(IAnsiConsole console)
 
             var action = item.Action switch
             {
-                WebResourceAction.Create => "[green]Create[/]",
-                WebResourceAction.Update => "[blue]Update[/]",
-                _ => "[grey]Unchanged[/]"
+                WebResourceAction.Create => " [green]+ Create[/]",
+                WebResourceAction.Update => " [yellow]~ Update[/]",
+                _ => string.Empty
             };
             parent.AddNode(
                 $"{Markup.Escape(pathParts[^1])} [grey]→[/] " +
-                $"{Markup.Escape(item.Local.Name)} {action}");
+                $"{Markup.Escape(item.Local.Name)}{action}");
         }
 
         console.Write(tree);
@@ -59,6 +59,8 @@ public sealed class WebResourcePlanRenderer(IAnsiConsole console)
         if (plan.Obsolete.Count > 0)
         {
             RenderObsoleteResources(plan);
+            console.WriteLine();
+            console.MarkupLine($"[bold red]Destructive operations: {plan.Obsolete.Count}[/]");
         }
     }
 
@@ -68,28 +70,30 @@ public sealed class WebResourcePlanRenderer(IAnsiConsole console)
             .Where(resource => resource.AddToSolution)
             .OrderBy(resource => resource.Local.Name, StringComparer.OrdinalIgnoreCase)
             .ToList();
+        console.WriteLine();
         console.MarkupLine(
             $"[bold]Solution membership: {Markup.Escape(plan.SolutionUniqueName!)}[/]");
         if (missingMembership.Count == 0)
         {
-            console.MarkupLine($"  [green]{Emoji.Known.CheckMark}[/] All managed components are already present");
+            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] All components are already in the solution");
             return;
         }
 
         foreach (var resource in missingMembership)
         {
             console.MarkupLine(
-                $"  [green]{Emoji.Known.Plus}[/] WebResource {Markup.Escape(resource.Local.Name)}");
+                $"WebResource {Markup.Escape(resource.Local.Name)} [green]+ Add[/]");
         }
     }
 
     private void RenderObsoleteResources(WebResourcePushPlan plan)
     {
+        console.WriteLine();
         console.MarkupLine("[bold red]Obsolete webresources[/]");
         foreach (var obsolete in plan.Obsolete.OrderBy(resource => resource.Name, StringComparer.OrdinalIgnoreCase))
         {
             console.MarkupLine(
-                $"  [red]{Emoji.Known.Minus}[/] WebResource {Markup.Escape(obsolete.Name)}");
+                $"WebResource {Markup.Escape(obsolete.Name)} [red]- Delete[/]");
         }
     }
 }

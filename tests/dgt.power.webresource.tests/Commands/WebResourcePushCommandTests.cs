@@ -80,6 +80,8 @@ public class WebResourcePushCommandTests
             await Assert.That(TestConsole.Output).Contains("Update");
             await Assert.That(TestConsole.Output).Contains("Obsolete webresources");
             await Assert.That(TestConsole.Output).DoesNotContain("Execution");
+            await Assert.That(TestConsole.Output).Contains("Dry run for");
+            await Assert.That(TestConsole.Output).Contains("no changes were applied");
             await Assert.That(publishRequestCount).IsZero();
             await Assert.That(addSolutionComponentRequestCount).IsZero();
             await Assert.That(context.Get<WebResource>()).Count().IsEqualTo(2);
@@ -87,6 +89,71 @@ public class WebResourcePushCommandTests
                 .IsEqualTo(Convert.ToBase64String("old content"u8.ToArray()));
             await Assert.That(context.GetById<WebResource>(obsoleteResourceId)).IsNotNull();
             await Assert.That(context.Get<SolutionComponent>()).Count().IsEqualTo(1);
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Execute_UnchangedResource_ReportsUpToDateWithoutExecution(bool dryRun)
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            await File.WriteAllTextAsync(Path.Combine(directory.FullName, "main.js"), "content");
+            var context = GetBuilder()
+                .WithData([CreateWebResource(Guid.NewGuid(), "contoso_/main.js", "content")])
+                .Build();
+
+            var success = context.Execute(new WebResourcePushSettings
+            {
+                Target = directory.FullName,
+                PublisherPrefix = "contoso",
+                DryRun = dryRun
+            });
+
+            await Assert.That(success).IsTrue();
+            await Assert.That(TestConsole.Output).Contains("is up to date");
+            await Assert.That(TestConsole.Output).DoesNotContain("Execution");
+            await Assert.That(TestConsole.Output).DoesNotContain("Unchanged");
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Execute_ChangedResource_SeparatesExecutionAndResult(bool trailingSeparator)
+    {
+        TestConsole.Profile.Width = 200;
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            await File.WriteAllTextAsync(Path.Combine(directory.FullName, "main.js"), "content");
+            var context = GetBuilder()
+                .WithExecutionMock<PublishXmlRequest>(_ => new OrganizationResponse())
+                .Build();
+
+            var success = context.Execute(new WebResourcePushSettings
+            {
+                Target = trailingSeparator ? directory.FullName + Path.DirectorySeparatorChar : directory.FullName,
+                PublisherPrefix = "contoso",
+                NonInteractive = true
+            });
+
+            var output = TestConsole.Output.Replace("\r\n", "\n", StringComparison.Ordinal);
+            await Assert.That(success).IsTrue();
+            await Assert.That(output).Contains("\n\nExecution:\n");
+            await Assert.That(output).Contains("✔ Created WebResource contoso_/main.js");
+            await Assert.That(output).Contains("✔ Published WebResource contoso_/main.js");
+            await Assert.That(output).Contains($"\n\n✔ {directory.Name} deployed\n");
         }
         finally
         {
