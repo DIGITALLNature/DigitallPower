@@ -18,6 +18,14 @@ The CLI SHALL expose `duplicaterules init` and `duplicaterules apply` to capture
 - **WHEN** a configured rule cannot be found
 - **THEN** preflight fails rather than creating it
 
+### Requirement: Existing rules are identified by GUID
+
+Application SHALL identify existing rules by their configured GUID, relying on IDs transported separately through solutions. It SHALL NOT fall back to name or definition matching. A missing target GUID SHALL fail preflight even if a rule with the same display name exists.
+
+#### Scenario: Same name but different ID
+- **WHEN** the configured GUID is absent but a rule with the same name exists
+- **THEN** preflight fails without changing that rule
+
 ### Requirement: Rule changes express explicit intent
 
 Application SHALL leave unlisted rules and omitted properties unchanged. It SHALL support publishing, unpublishing, and ownership changes and avoid unnecessary writes when the requested state is already satisfied.
@@ -25,6 +33,10 @@ Application SHALL leave unlisted rules and omitted properties unchanged. It SHAL
 #### Scenario: State-only configuration
 - **WHEN** a rule requests publication without an ownership change
 - **THEN** application publishes the rule without changing its owner
+
+#### Scenario: Owner-only configuration
+- **WHEN** a rule requests only a supported ownership change and application succeeds
+- **THEN** the requested owner is applied and the rule retains its original publication state
 
 #### Scenario: Already satisfied rule
 - **WHEN** the target already matches all specified properties
@@ -41,6 +53,14 @@ Application SHALL resolve all configured rule and owner references and validate 
 #### Scenario: Dry-run
 - **WHEN** a valid batch is evaluated in dry-run mode
 - **THEN** planned publication and ownership changes are reported without writes
+
+### Requirement: Ownership uses shared target resolution
+
+Configured owners SHALL use the shared logical-owner and environment-mapping contract rather than resource-specific lookup heuristics. Duplicate-rule application SHALL validate resolved principal kinds against its own platform constraints before writes. Shared support for a principal kind SHALL NOT imply that duplicate rules accept that kind.
+
+#### Scenario: Resolved owner is not allowed
+- **WHEN** the shared resolver identifies a principal whose kind is unsupported for duplicate-rule ownership
+- **THEN** preflight fails without any rule writes
 
 ### Requirement: Duplicate-rule partial failures are observable
 
