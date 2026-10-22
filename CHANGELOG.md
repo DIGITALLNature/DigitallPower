@@ -1,3 +1,10 @@
+# [3.0.0-beta.14](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.13...v3.0.0-beta.14) (2026-10-22)
+
+
+### Bug Fixes
+
+* **connection:** avoid nested interactive displays during codegeneration ([#208](https://github.com/DIGITALLNature/DigitallPower/issues/208)) ([b1d439b](https://github.com/DIGITALLNature/DigitallPower/commit/b1d439b9697f09df992e8acc42657ce627a9b72e))
+
 # [3.0.0-beta.13](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.12...v3.0.0-beta.13) (2026-10-20)
 
 
