@@ -1,22 +1,22 @@
 # Tasks
 
-Feature evaluation can start now. No pending feature deletion or destination is approved. Removal tasks depend on explicit decisions and completed retained-feature migrations.
+All six feature removals are approved. Two deferred Solution feature requests do not block retirement. Preserve process commands and existing Dataverse data/metadata.
 
 ## 1. Feature disposition gates
 
-- [ ] 1.1 Review bulk-delete execution together with transfer functionality; verify both retirement designs record the same approved disposition, destination, and linked change.
-- [ ] 1.2 Review auto-number formatting with the user; verify the matrix records retain/replace/remove, rationale, and any destination.
-- [ ] 1.3 Review calculated-field protection with the user; verify the matrix records operational value, overlap, and approved disposition.
-- [ ] 1.4 Review carrier-information export with the user; verify the matrix records supported use cases and approved disposition.
-- [ ] 1.5 Review redundant-component removal and solution-operation overlap; verify approved retained behavior or removal and replacement are explicit.
-- [ ] 1.6 Review PowerFx plugin filtering and plugin-resource fit; verify approved behavior and destination or removal are recorded.
-- [ ] 1.7 Create separately reviewed proposals for retained migrations and refine this plan's deltas/tasks after all decisions; verify every matrix row is approved and every retained destination is linked.
+- [x] 1.1 Review bulk-delete execution together with transfer functionality; verify both designs approve complete removal without replacement, with existing Dataverse jobs unaffected.
+- [x] 1.2 Review auto-number formatting with the user; verify removal without replacement and rationale are recorded.
+- [x] 1.3 Review calculated-field protection with the user; verify standalone removal and a deferred `solution copy-components` best-practice request are recorded.
+- [x] 1.4 Review carrier-information export with the user; verify removal without replacement and rationale are recorded.
+- [x] 1.5 Review redundant-component removal with the user; verify standalone removal and a deferred Solution request are recorded.
+- [x] 1.6 Review PowerFx plugin filtering with the user; verify removal without replacement is recorded.
+- [x] 1.7 Capture the two requested Solution ideas as separate proposals and refine this plan; verify all dispositions are approved and neither deferred request is a retirement dependency or promised replacement.
 
 ## 2. Approved feature retirement
 
-- [ ] 2.1 Verify `introduce-process-resource` and every approved retained-feature migration are implemented before deleting their old code; verify their replacement commands and documented behavior are present.
-- [ ] 2.2 Implement only approved obsolete-feature removals, with focused rejection/regression tests per removal; verify no undecided capability is removed.
-- [ ] 2.3 Document each approved removal/replacement and configuration consequence in README and `docs/migrations/2.x-to-3.x.md`; verify every matrix row has migration guidance or an explicit no-replacement statement.
+- [ ] 2.1 Verify the completed `introduce-process-resource` migration before deleting shared dependencies; verify resource-oriented process commands and documented behavior remain available without requiring either deferred Solution request.
+- [ ] 2.2 Remove all six approved command registrations, implementations, and proven orphaned settings/helpers/tests, coordinating bulk-delete shared artifacts with transfer retirement; verify every retired path fails without a Dataverse operation, help/completion omit them, and retained resource commands remain available.
+- [ ] 2.3 Document all six removals and configuration consequences in README and `docs/migrations/2.x-to-3.x.md`; verify no available replacement is promised, the two Solution requests are deferred-only, and existing Dataverse data/metadata/jobs remain unchanged.
 
 ## 3. Container removal and integration
 

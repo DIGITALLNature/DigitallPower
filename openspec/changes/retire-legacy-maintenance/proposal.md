@@ -6,11 +6,11 @@ After process extraction, maintenance remains a collection of unrelated operatio
 
 ## What Changes
 
-- Evaluate bulk delete, auto number, calculated-field protection, carrier information, redundant-component removal, and PowerFx plugin filtering individually with the user.
-- Record retain/migrate, replace, or remove decisions and their rationale before changing each feature.
-- Create separately reviewed resource changes for retained functionality that needs migration; do not hide those implementations here.
-- **BREAKING**: Remove approved obsolete commands and finally the `maintenance` branch/module, only after every feature has an approved disposition and retained functionality has migrated.
-- Out of scope: unapproved feature removals, implementing process management, and unrelated analyzer redesign.
+- Remove all six remaining maintenance commands, as individually approved by the user.
+- Provide no replacement for bulk-delete execution, auto-number format updates, carrier-information export, or PowerFx plugin filtering.
+- Preserve calculated-field protection and redundant-component pruning only as independent, deferred Solution feature requests, not required replacements.
+- **BREAKING**: Remove the `maintenance` branch/module while preserving the completed resource-oriented process migration.
+- Out of scope: implementing the deferred requests, changing existing Dataverse data/metadata, implementing process management, and unrelated analyzer redesign.
 
 ## Capabilities
 
@@ -24,4 +24,4 @@ None.
 
 ## Impact
 
-Touches maintenance commands, module references and DI, obsolete schemas/DTOs/tests, host registration, README, and migration guidance. Final module removal depends on `introduce-process-resource` and every additionally approved maintenance migration. Feature decisions are intentionally pending, not implicit deletion approval.
+Touches maintenance commands, module references and DI, obsolete schemas/DTOs/tests, host registration, README, and migration guidance. Verify the completed `introduce-process-resource` migration; no other replacement must ship before maintenance retirement.
