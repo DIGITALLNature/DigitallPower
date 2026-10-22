@@ -22,7 +22,7 @@ See proposal.md - Why for motivation. This document is a design checkpoint, not 
 ## Decisions
 
 ### Resource root is `model`
-`model generate` is the shared command for both targets. The validated config identifies the generator; there are no target subcommands or duplicate CLI target selector. Require explicit config and output paths, with no conventional config filename or destination defaults. Exact flag names and aliases remain to be finalized.
+`model generate` is the shared command for both targets. The validated config identifies the generator; there are no target subcommands or duplicate CLI target selector. Require named `--config` / `-c` and `--output` / `-o` options, with no positional arguments or conventional config filename/destination defaults. Existing connection options remain available.
 
 *Alternatives:* `generate models` (keeps every resource a Dataverse object, but breaks resource-first grammar); `types`, `sdk`, `codegen`, `metadata` (rejected as too narrow, too broad, mechanism-named, or naming the input rather than the output).
 
@@ -31,7 +31,7 @@ The new generation contract is not constrained to preserve existing commands, V2
 
 Implement the new generator in `src/modules/dgt.power.modelgeneration`, with tests in `tests/dgt.power.modelgeneration.tests`. Retain `dgt.power.codegeneration` and its `codegeneration` / `cg` commands during a transition period. Do not redirect old commands to incompatible new behavior.
 
-Reuse the existing `DeprecationInterceptor` and `DeprecatedCommandAttribute` mechanism to direct legacy users to `model generate`; no new interceptor is needed. Transition duration, legacy maintenance scope, and removal criteria remain open.
+Reuse the existing `DeprecationInterceptor` and `DeprecatedCommandAttribute` mechanism to direct legacy users to `model generate`; no new interceptor is needed. New features belong only in the new generator. Maintain the legacy generator for significant bugs and compatibility/security issues without redesigning its contracts. Consider removal in a future major release after the replacement is released, migration guidance is available, and migration experience has been evaluated; no release/date is promised.
 
 Design the new module from scratch without constraining its contracts or architecture to the legacy implementation. Sharing logic or classes is allowed where it genuinely makes sense and does not compromise the new module. Neither sharing nor a common generation layer is required.
 
@@ -43,6 +43,15 @@ Each config describes one target. .NET and TypeScript contracts can evolve indep
 
 ### Explicit, independent artifact sections
 Artifact categories are opt-in: a section requests that artifact and omission means it is not generated. Categories can be selected independently (for example, TypeScript entities without forms). Required supporting declarations are dependencies of a requested artifact, not separate options. Defaults keep sections concise; there are no switches for every member.
+
+Each present section contains its own explicit selection. Do not provide a shared/global scope, empty-object opt-in, or Boolean shorthand. Repeated selection is accepted so a section can be understood without resolving inheritance or replacement rules. This supersedes the earlier shared-default-scope proposal.
+
+Use flat artifact sections: .NET `entities`, `metadata`, `messages`, and `optionSets`; TypeScript `tables`, `forms`, `operations`, `choices`, and `bpfs`. The working selection shape uses `include` objects with `tables`/`solutions` or `names`/`solutions`, and `exclude` objects with the supported exact-name lists. Standalone global choices and BPFs use simple `include` name arrays. Complete recipe review and placement of optional test support remain open.
+
+### New recipe schema family
+Use required `type` and numeric `version` fields, starting the new independent recipe family at version 1. `type` selects `dotnet` or `typescript`; each target's versions evolve independently. Unknown versions fail explicitly, without silently treating them as the latest format.
+
+Plan schemas at `schemas/modelgeneration/v1/dotnet.schema.json` and `schemas/modelgeneration/v1/typescript.schema.json`. Keep published legacy `schemas/codegeneration/v2/` URLs and legacy loading behavior unchanged; do not introduce codegeneration V3 merely to continue its numbering. Optional `$schema` provides editor assistance, not runtime target/version inference. Do not silently convert legacy configs in `model generate`.
 
 ### Minimal, artifact-specific selection
 Selection is the union of includes minus the union of excludes, with exclusion winning, duplicate elimination, and no order dependence. Missing includes never imply select-all. Do not introduce a universal selector language, wildcards, publisher-prefix selection, or arbitrary predicates. Those mechanisms make the generated set harder to predict; explicit names and maintained solution membership cover the initial use cases.
@@ -61,11 +70,6 @@ Solution selection does not discover platform messages/operations or classic Act
 
 Selecting a table always generates its full model definition, regardless of whether a solution includes the whole table or only selected components. Component-level solution scoping applies to components such as forms, not to partial entity models.
 
-### Shared default table scope, replaceable per section
-An optional shared table scope supplies the default selection for table models, forms, and XML snapshots only. Its includes accept table logical names and solution unique names; its excludes accept table logical names. Solution membership retains the consuming section's meaning: table components for models/snapshots, form components for forms.
-
-A section may declare its own selection, which replaces the default entirely. There is no narrowing or merging. The default never enables an omitted artifact section. Operations, standalone global choices, and BPFs have their own selections and do not interpret this shared scope.
-
 ### Resolve before writing
 All explicit references (tables, solutions, operations, choices, and so on) are resolved and checked before any output is produced or any directory is cleared. Unknown explicit references fail rather than silently disappearing, including in exclusions. Excluding an existing item outside the included set is valid. An existing solution with no relevant components is not an unknown reference.
 
@@ -76,7 +80,9 @@ Reject unknown/additional config properties at every level, both in JSON schemas
 ### Owned output directory
 The CLI supplies the destination. The tool owns that output directory and clears it on regeneration; no manifest, ownership marker, or mandatory overwrite guard is planned. Recipes must not share a destination if their outputs need to coexist. Help and migration guidance must explain directory ownership.
 
-The supplied output directory is the generation root. Do not add `Model`, `DotNet`, or `TypeScript` wrapper directories; remove the separate `--folder` concept. Category folders are described below. Protection against catastrophic paths remains to be designed. A possible `--confirm` parameter was raised for later consideration, not agreed as part of this checkpoint.
+The supplied output directory is the generation root. Do not add `Model`, `DotNet`, or `TypeScript` wrapper directories; remove the separate `--folder` concept. Category folders are described below. Do not add a `--confirm` flag or interactive overwrite prompt.
+
+Before clearing, reject a filesystem root, the current working directory or a lexical ancestor, and any destination containing the input recipe. Use normalized paths and platform-appropriate comparison. These are minimal best-effort safeguards, not a cross-platform guarantee against linked paths, mounts, aliases, or filesystem races. Do not add Git-root detection or a general output-safety framework. Exact deletion/link handling still requires implementation design. Clearly report the resolved output being cleared and document that it must be disposable.
 
 After config validation and reference resolution, clear the output and render/write directly. Do not introduce staging, backup, or rollback. Rendering errors, I/O failures, or cancellation after clearing may leave incomplete output; report failure explicitly. Recovery is to fix the cause and regenerate. This risk is accepted for reproducible, tool-owned artifacts; Git tracking is not assumed.
 
@@ -94,18 +100,32 @@ Target bundler-based TypeScript projects with exported modules and explicit impo
 
 Do not carry forward the generated `XrmForm`, `XrmTable`, and related ambient namespace hierarchy. Dataverse's standard `Xrm` API remains the platform API; generated modules do not replace it.
 
-Use category folders and one module per table, form, choice definition, operation, or BPF. Working categories are `tables`, `forms`, `choices`, `apis`, and `bpfs`; exact operation-folder naming, filenames, and support-file placement remain to be finalized now that platform operations are supported. Organize forms by table and form type. Use direct imports initially, without generated barrel files; barrels remain a possible later convenience.
+Use category folders and one module per table, form, choice definition, operation, or BPF: `tables`, `forms`, `choices`, `operations`, and `bpfs`. `operations` covers both Custom APIs and platform actions/functions. Organize forms by table and form type. Use direct imports initially, without generated barrel files; barrels remain a possible later convenience.
 
 Form modules use simple exports such as `FormContext` or `QuickFormControl`. Consumers choose descriptive import aliases. Supporting form export details remain open.
 
 ### TypeScript tables describe Web API records
 Generate one interface per selected table, combining read/write shapes initially. Do not generate separate read/create/update interfaces, a table-wide form context, hydration, or converters. Actual form contexts come only from selected forms.
 
-Retain exact Web API property names and representations, including GUID/date strings. Properties allow omission for partial projections; nullability follows the API rather than business-required metadata. Consumers remain responsible for sending properties appropriate to the operation. Full type mapping, including multi-select wire representations, still requires finalization.
+Retain exact Web API property names and representations. Properties allow omission for partial projections; nullability follows the API rather than business-required metadata. Consumers remain responsible for sending properties appropriate to the operation.
+
+| Value | Web API record non-null type | Form value non-null type |
+|---|---|---|
+| Text | `string` | `string` |
+| Boolean | `boolean` | `boolean` |
+| Ordinary integer, floating point, decimal, money | `number` | `number` where supported |
+| GUID | `string` | Follow the applicable form API |
+| Date/date-time | `string` | `Date` |
+| Single choice/state/status | `number` | `number` |
+| Multiple choices | Comma-separated `string` | `number[]` |
+
+No parsing, formatting, or hydration helpers are introduced. Specialized 64-bit integer, binary/file/image, and operation-specific mappings are deferred for verification. Do not infer `bigint` from `Int64` metadata; typings must reflect the actual standard client's representation and document numeric precision limits where applicable.
 
 Generate typed single/collection expanded navigation properties only where the related table is selected, using actual Web API navigation-property metadata. Do not expand table selection or introduce `any` for unselected targets. Lookup IDs and applicable bind properties remain usable independently of typed expansion.
 
-Include a grouped runtime metadata object alongside the interface: for example, `ContosoOrder` and `contosoOrderMetadata`, containing `logicalName`, `entitySetName`, `columns`, and `navigationProperties`. Read entity-set names from metadata, not pluralization. This is plain identifier data, not a query DSL.
+Expose lookup IDs such as `_primarycontactid_value?: string | null`, bind properties such as `"primarycontactid@odata.bind"?: string | null`, and expanded records such as `primarycontactid?: Contact | null` separately. Use actual target-specific navigation names for polymorphic lookups. Do not invent a plain logical-name string lookup property, use `Xrm.LookupValue`, or generate bind-URL builders.
+
+Include a grouped runtime metadata object alongside the interface, containing `logicalName`, `entitySetName`, `columns`, and `navigationProperties`. Read entity-set names from metadata, not pluralization. This is plain identifier data, not a query DSL. Whether to export a distinct camelCase metadata value (`contosoOrderMetadata`) or share the PascalCase interface name in the type/value spaces (`ContosoOrder`) is explicitly deferred; neither is required by TypeScript's runtime limitations.
 
 ### TypeScript naming distinguishes generated symbols from wire names
 Use PascalCase for generated types/classes and camelCase for generated metadata constants and property keys. Derive table types and column identifier keys from schema names using the agreed best-effort conversion below, lowercasing the initial character for camelCase. Preserve publisher prefixes and existing internal capitalization.
@@ -178,23 +198,29 @@ Include choices required by requested artifacts without a duplicate selection li
 
 TypeScript generates exported `as const` value objects and derived union types. Table single-choice properties and form choice attributes retain standard numeric types initially rather than narrowing to the generated union. Form single-choice values use `number | null`; multi-choice values use `number[] | null`, distinct from Web API wire representations. Stronger choice typing may be revisited after evaluating real generated-code usage; changing that exposed typing is a deliberate contract change, not an internal refactor.
 
-### .NET choice definitions favor enums; accessor types remain open
-Prefer enums over integer-constant containers for generated .NET choice definitions. Do not infer from that preference that entity properties must expose enums. Evaluate SDK query translation, serialization, null and unknown numeric values, and multi-select collection behavior before deciding property types. No dual raw/typed property surface or configuration switch is agreed.
+TypeScript global choice modules live directly under `choices`, named from their technical names; local modules live under `choices/<table-logical-name>/<column-logical-name>.ts`. Export a PascalCase enum-like value object and same-named derived union type. This deliberate type/value pairing is separate from the deferred table-metadata naming decision. Local modules support forms-only generation without selecting a table model. Align ownership/dependency semantics with .NET, not its physical nesting.
+
+### .NET option sets retain SDK types and integer constants
+Keep `OptionSetValue` for single-choice/state/status entity properties and `OptionSetValueCollection` for multi-select properties, with the profile-appropriate null annotations. Preserve SDK storage, unknown numeric values, query/serialization behavior, and collection semantics. No enum-valued accessor conversion, duplicate raw/typed properties, or configuration switch is introduced.
+
+Generate grouped integer constants rather than enums, avoiding casts when constructing `OptionSetValue`, comparing `.Value`, or composing SDK queries. This supersedes the earlier enum preference. Boolean columns remain Boolean properties; exact named-Boolean constant output still requires finalization.
+
+Local constants live in nested entity containers such as `Account.Options.AccountCategoryCode.PreferredCustomer` and `Account.Options.StatusCode.Active`. Global option sets have one standalone static constants class in the `OptionSets` namespace, named from the global technical name; do not duplicate/forward them into each entity or introduce table/Global subnamespaces. This avoids ambiguous imported `StatusCode` types and preserves entity-local discovery.
 
 ### Generation language and choice naming
 Default to the organization's base language, with an explicit config override. Never select labels based on the connecting user's language. If the selected language has no usable choice label, use the base-language label without a warning. If neither provides a usable label, fail before output changes; never omit the numeric value.
 
 Disambiguate choice labels that normalize to the same member name deterministically using their numeric values, for every member of the colliding group. Do not depend on metadata encounter order or require users to rename managed/platform choices. Exact suffix formatting remains open. Label/translation changes, or a newly introduced collision, may rename generated members; this trade-off is accepted.
 
-### Required logical .NET consumer profile
-Require a config target expressing consumer intent rather than framework or language version. Exact names and config shape remain open; `plugin` and `client` are working names only.
+### Required .NET compatibility profile
+Require `profile` in the .NET recipe. Use platform-family names rather than plugin/client roles: external clients can also target .NET Framework.
 
-| Consumer intent | Generated-code compatibility baseline |
+| Profile | Generated-code compatibility baseline |
 |---|---|
-| Dataverse plugin | .NET Framework net462-net481, default C# 7.3; framework API compatibility with net462 |
-| External client, for example ServiceClient | .NET 10, default C# 14 |
+| `netframework` | .NET Framework net462-net481, default C# 7.3; framework API compatibility with net462 |
+| `dotnet` | .NET 10, default C# 14 |
 
-The profile controls available syntax and framework APIs only, not model behavior or special plugin/client logic. Do not require a `LangVersion` override. Nullable value types work in both profiles; nullable-reference annotations are emitted only for the modern profile.
+Document these explicit baselines; `dotnet` does not promise every historical .NET version. The profile controls available syntax and framework APIs only, not model behavior or special plugin/client logic. Do not require a `LangVersion` override. Nullable value types work in both profiles; nullable-reference annotations are emitted only for `dotnet`. The generator itself still runs on .NET 10 for either profile.
 
 ### Thin SDK-compatible .NET entities
 Preserve partial-record semantics: a column can be absent or null regardless of business-required metadata. Do not infer C# required members or constructor validation from that metadata. Keep SDK-compatible ID behavior.
@@ -202,6 +228,8 @@ Preserve partial-record semantics: a column can be absent or null regardless of 
 Follow metadata read/write capabilities. Read-only columns have getter-only properties; remove the force-setter (`editableReadOnly`) option. A setter is allowed where metadata permits create or update, without attempting to infer the intended operation at runtime. Preserve testability by allowing tests to populate underlying SDK attributes and read them through generated accessors.
 
 Generate ordinary non-virtual properties and remove the virtual-property option. Classes remain partial. Include useful table/column logical names, relationship schema names, and alternate-key identifiers alongside entities without individual inclusion switches. These identifiers do not themselves implement alternate-key operations.
+
+Keep `EntityLogicalName` and applicable `PrimaryNameAttribute` directly on the entity. Use nested static `LogicalNames`, `Relationships`, `AlternateKeys`, and local `Options` containers. Prefer `Relationships` over legacy `Relations`. Do not introduce a separate `AccountMetadata` constants API; separate partial-class files remain possible without changing consumer syntax. The final overall constants shape should be reviewed together.
 
 Do not generate entity type-code constants: custom-table numeric codes are environment-specific. They may remain in an exported metadata snapshot.
 
@@ -216,7 +244,9 @@ Drop generated `OrganizationServiceContext`, typed query properties, and context
 ### Metadata snapshots are an independent artifact
 Retain XML metadata export as an opt-in artifact independent of C# entity output, using the same include/exclude semantics. Its purpose is an exported table-metadata snapshot usable to populate metadata in the consuming test library, including relationships.
 
-Keep it within the model-generation module for this scope. Do not introduce metadata re-import, offline generation, caching, or a separate metadata module. Serialization details and compatibility with the consuming test library must be resolved before implementation.
+Keep it within the model-generation module for this scope. Do not introduce metadata re-import, offline generation, caching, or a separate metadata module.
+
+Preserve the existing payload format: full table metadata retrieved with `EntityFilters.All`, serialized using `DataContractSerializer(typeof(EntityMetadata))`, one `<table-logical-name>.xml` file under `Metadata`. No custom wrapper/envelope. Consumers deserialize directly to SDK `EntityMetadata`. Verify representative attributes, keys, and relationships; do not promise byte-identical XML or compatibility across arbitrary future SDK versions.
 
 ### Required .NET namespace and schema-derived names
 Require an explicit root namespace in the .NET config, without vendor defaults or inference from solution names. Use fixed category subnamespaces and matching folders:
@@ -224,7 +254,7 @@ Require an explicit root namespace in the .NET config, without vendor defaults o
 | Content | Folder / subnamespace beneath configured root |
 |---|---|
 | Entity classes and their identifiers | `Entities` |
-| Choice enums | `OptionSets` |
+| Global option-set constants | `OptionSets` |
 | Custom API requests/responses and message-name constants | `Messages` |
 | XML snapshots | `Metadata` folder only; no C# namespace |
 
@@ -253,17 +283,22 @@ Emit diagnostics showing the source-to-symbol mapping. Compared with sorted unde
 
 Retain the specific form-ID and choice numeric-value suffix rules above. Final hash algorithm/length, escaping, generated-member conflicts, file/path collision handling, and final uniqueness checks still require specification; a short hash is not itself a uniqueness guarantee.
 
+### Filenames and consumer linting
+Use generated type names for C# type files, `MessageNames.cs` for message constants, and table logical names for XML snapshots. TypeScript table, operation, global-choice, and BPF files use their original technical names, preserving casing and underscores. Forms retain the agreed normalized display-name filenames and ID collision suffixes. Local TypeScript choice paths are described above.
+
+Document excluding the owned generated directory from consumer style linting, including ESLint. Do not add blanket generated `eslint-disable` comments, filename-style switches, or promise compatibility with every custom lint rule. Generated output must still pass strict TypeScript compilation against supported Xrm typings; lint exclusion is not a substitute.
+
 ## Risks / Trade-offs
 
-- [Clearing a mis-specified destination deletes user files] -> Document directory ownership and resolve references before clearing; path safeguards and optional confirmation still need discussion.
+- [Clearing a mis-specified destination deletes user files] -> Document disposable-directory ownership, resolve references before clearing, and apply minimal path checks without claiming comprehensive safety; no confirmation prompt/flag.
 - [Independent target shapes duplicate concepts] -> Share terminology where meaning is shared; share logic internally rather than the config shape.
 - [New contracts require consumer migration] -> Retain deprecated legacy commands during transition and provide before/after migration guidance.
-- [Parallel implementations increase maintenance cost] -> Define legacy maintenance scope and removal criteria; do not silently route old commands to incompatible new behavior.
+- [Parallel implementations increase maintenance cost] -> Keep legacy maintenance-only and evaluate removal in a future major release after migration experience; do not silently redirect commands.
 - [Broad form scope increases generation work and editor/file churn] -> Solution-based component selection keeps project scope manageable; avoid fragile per-form filters.
 - [Module output breaks consumers of generated globals] -> Document import migration, request construction, runtime values, and test-helper usage; validate against representative bundled consumers.
 - [Localization and duplicate form names destabilize generated APIs] -> Check the session language, accept display-name snapshot changes, and suffix colliding forms with stable IDs.
 - [Failure after clearing leaves incomplete output] -> Accept this risk, fail explicitly, and regenerate after fixing the cause; no staging or rollback.
-- [Label changes affect enum API names] -> Deterministic language fallback and collision handling; accept renaming when labels change.
+- [Label changes affect choice constant names] -> Deterministic language fallback and collision handling; accept renaming when labels change.
 - [Form snapshots diverge from runtime configuration] -> Preserve useful non-null FormXML accessors but nullable conditional elements; regenerate to recover precise typing, without promising runtime validation.
 - [Platform operation contracts introduce complex dependencies] -> Resolve CSDL contract dependencies without implicit artifact selection; fail explicitly for unsupported mappings and validate representative standard-Xrm consumers.
 
@@ -271,17 +306,12 @@ Retain the specific form-ID and choice numeric-value suffix rules above. Final h
 
 These are unresolved and can affect specs and tasks. They are blockers for completing the design, not details delegated to implementation:
 
-- Define legacy maintenance scope, transition duration, and eventual removal criteria for parallel deprecated commands.
-- Reconcile [#181](https://github.com/DIGITALLNature/DigitallPower/issues/181), including compatibility of separately shipped `dgt.power.common` message constants; their removal is not decided by the new generator's explicit-selection contract.
-- Complete TypeScript Web API property mappings, lookup/bind behavior, supporting form exports, and exact BPF typings.
-- Final filenames/module paths and supporting-type placement; the operation folder name now that platform actions/functions are included. Barrel files are deferred, not required initially.
+- Final combined review of both complete recipes and representative generated files, including the overall constants shape and optional test-support configuration.
+- TypeScript supporting form exports, exact dedicated BPF typings, and shared supporting-operation-type placement.
+- TypeScript table interface/runtime metadata shared-name versus separate exports is explicitly postponed. Barrel files remain deferred.
 - Identifier validity/keyword escaping, exact hash/ID/numeric suffix formats, generated-member conflicts, path collisions, and final uniqueness checks for both targets.
-- Final .NET enum representation and SDK property types; enum/type naming and remaining entity API details.
-- Exact logical .NET profile names/config shape and compatibility verification.
-- Metadata snapshot serialization compatibility with the consuming test library.
-- Operation binding/overload resolution and primitive/entity/collection/complex/enum mappings, including nullable values and response bodies that are not structured objects; validate standard execute compatibility rather than infer it from CSDL alone.
-- Concrete config syntax for the settled artifact-specific selections, independent sections, and shared default table scope.
+- Final named-Boolean constants and remaining entity/message member details; compile both compatibility profiles and round-trip metadata snapshots.
+- Specialized numeric/binary/file/image and operation binding/overload/entity/collection/complex/enum mappings, nullable inputs, and non-object response bodies are postponed for technical verification. Validate standard execute compatibility rather than infer it from CSDL alone; do not invent fallback contracts.
 - Form test-support adapter/library and helper API, without assuming the legacy mocking framework.
-- Exact CLI flags/aliases, output path safeguards, and whether optional confirmation adds value.
-- Config envelope, version/schema numbering, and legacy-config diagnostics.
+- Precise filesystem/link deletion handling behind the agreed minimal path checks, and actionable legacy/invalid-recipe diagnostics.
 - Internal API and implementation boundaries within `dgt.power.modelgeneration`, including worthwhile unconstrained reuse.

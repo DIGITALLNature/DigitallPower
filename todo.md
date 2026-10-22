@@ -1,5 +1,25 @@
 # Technical Debt & Backlog
 
+## Schema URL naming and versioning
+
+Review published schema paths for resource/capability alignment and establish a convention for
+versioning new schema contracts. Do not rename existing URLs solely for consistency or break
+configs that reference them.
+
+- `schemas/push/schema.json` describes legacy webresource mappings; current documentation uses
+  `schemas/webresource/schema.json`. Check remaining consumers and define legacy retention.
+- `schemas/analyzer/schema.json` describes the specific `analyze entityallassets` config rather
+  than a general analyzer contract. Consider a capability-specific path when redesigning that area.
+- `schemas/plugin/state/schema.json` describes plugin step state, while the CLI path is
+  `plugin step state set`. Review whether future schemas should include the `step` segment.
+- Existing versioned and unversioned paths coexist. Document a convention for future contracts;
+  preserve published legacy paths when introducing replacements and update relevant examples.
+
+The model-generation redesign plans a separate schema family under
+`schemas/modelgeneration/v1/`, leaving `schemas/codegeneration/v2/` unchanged.
+
+---
+
 ## Global `--verbose` flag
 
 Add a global `--verbose` option (shared settings base, tracer behavior and every module) for
