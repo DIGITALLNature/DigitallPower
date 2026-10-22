@@ -14,6 +14,7 @@ public class CodeGenerationCommand(
     IDotNetGenerator dotNetGenerator,
     ITypeScriptGenerator typeScriptGenerator,
     IMetadataService metadataService,
+    IDataverseConnection connection,
     IAnsiConsole console)
     : PowerCommand<CodeGenerationVerb>(spans, console)
 {
@@ -21,6 +22,9 @@ public class CodeGenerationCommand(
     {
         cancellationToken.ThrowIfCancellationRequested();
         var config = CodeGenerationConfigLoader.LoadFromFile(verb.Config);
+
+        // Initial authentication must finish before the generation display starts.
+        await connection.GetServiceAsync();
 
         var success = true;
 

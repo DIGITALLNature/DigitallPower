@@ -14,6 +14,10 @@ public interface IDataverseConnection
     /// Returns the service for the selected Dataverse environment. The first call connects and
     /// authenticates; later calls in the same process reuse the connected service.
     /// </summary>
+    /// <remarks>
+    /// Acquisition does not start a live console display, but authentication can require user
+    /// interaction. Complete the first acquisition before starting a work status or progress display.
+    /// </remarks>
     Task<IOrganizationServiceAsync2> GetServiceAsync();
 
     /// <summary>

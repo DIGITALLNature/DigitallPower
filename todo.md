@@ -1,5 +1,20 @@
 # Technical Debt & Backlog
 
+## Enforce initial connection acquisition before interactive work displays
+
+Connection acquisition no longer owns a live display, and codegeneration connects before its
+generation display. Commands and downstream services can still initiate first-time authentication
+inside work displays if a new command overlooks the ordering.
+
+Investigate a development-time safeguard rather than relying only on command conventions.
+Acceptance criteria: local validation failures and no-work outcomes do not authenticate; initial
+connection acquisition finishes before remote-work displays; connection failure prevents remote
+work; automated checks catch a representative new-command violation. Evaluate lifecycle hooks,
+connected-service injection, or architecture checks without committing to one design. Initial
+acquisition ordering does not eliminate later SDK credential refresh.
+
+---
+
 ## Global `--verbose` flag
 
 Add a global `--verbose` option (shared settings base, tracer behavior and every module) for

@@ -38,7 +38,7 @@ public sealed partial class DataverseConnection(
 
     public void Dispose()
     {
-        if(_service is IDisposable disposable)
+        if (_service is IDisposable disposable)
         {
             disposable.Dispose();
         }
@@ -152,33 +152,28 @@ public sealed partial class DataverseConnection(
         string connectionType)
     {
         var target = $"{Markup.Escape(url)} ({Markup.Escape(connectionType)})";
-        return await console.Status().StartAsync(
-            $"Connecting to {target}...",
-            async _ =>
+        ServiceClient? service = null;
+        var verified = false;
+        try
+        {
+            service = await connector.CreateServiceClientAsync();
+            await DataverseConnectionVerifier.VerifyAsync(service, CancellationToken.None);
+            console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Connected to {target}");
+            verified = true;
+            return service;
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            console.MarkupLine($"[red]{Emoji.Known.CrossMark}[/] Connection to {target} failed");
+            throw;
+        }
+        finally
+        {
+            if (!verified)
             {
-                ServiceClient? service = null;
-                var verified = false;
-                try
-                {
-                    service = await connector.CreateServiceClientAsync();
-                    await DataverseConnectionVerifier.VerifyAsync(service, CancellationToken.None);
-                    console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Connected to {target}");
-                    verified = true;
-                    return (IOrganizationServiceAsync2)service;
-                }
-                catch (Exception exception) when (exception is not OperationCanceledException)
-                {
-                    console.MarkupLine($"[red]{Emoji.Known.CrossMark}[/] Connection to {target} failed");
-                    throw;
-                }
-                finally
-                {
-                    if (!verified)
-                    {
-                        service?.Dispose();
-                    }
-                }
-            });
+                service?.Dispose();
+            }
+        }
     }
 
     private static Uri? ExtractUrlFromConnectionString(string connectionString)
