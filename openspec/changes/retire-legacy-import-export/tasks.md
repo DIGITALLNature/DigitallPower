@@ -1,23 +1,23 @@
 # Tasks
 
-Review starts independently; final removal is blocked on every disposition and retained migration. Approving this plan is not approval to remove any pending resource.
+All resource dispositions are approved. No additional resource migration is required. Implementation must preserve completed resource-oriented replacements and existing Dataverse data.
 
 ## 1. Resource disposition gates
 
-- [ ] 1.1 Review bulk-delete import/export together with maintenance execution; verify coordinated approved decisions and a single linked destination where retained.
-- [ ] 1.2 Review queue import/export with the user; verify both directions have an approved disposition and rationale.
-- [ ] 1.3 Review calendar import/export with the user; verify scope, path asymmetry, and each direction's disposition are recorded.
-- [ ] 1.4 Review SLA configuration import/export with the user; verify retained behavior or removal and any replacement are explicit.
-- [ ] 1.5 Review routing-rule configuration import/export with the user; verify each direction's approved disposition and destination.
-- [ ] 1.6 Review user-role assignment import/export with the user; verify operational use cases and approved behavior are recorded.
-- [ ] 1.7 Review Outlook template import/export with the user; verify both directions' approved disposition and rationale.
-- [ ] 1.8 Create separately reviewed changes for additional retained resources and refine this plan; verify every matrix cell is decided and every retained migration is linked.
+- [x] 1.1 Review bulk-delete import/export together with maintenance execution; verify both designs approve complete removal without replacement, with existing Dataverse jobs unaffected.
+- [x] 1.2 Review queue import/export with the user; verify removal of both directions without replacement and rationale are recorded.
+- [x] 1.3 Review calendar import/export with the user; verify both asymmetric paths are approved for removal without replacement.
+- [x] 1.4 Review SLA configuration import/export with the user; verify removal of both directions without replacement is explicit.
+- [x] 1.5 Review routing-rule configuration import/export with the user; verify removal of both directions without replacement is explicit.
+- [x] 1.6 Review user-role assignment import/export with the user; verify direct-role/BU synchronization is approved for removal without replacement.
+- [x] 1.7 Review Outlook template import/export with the user; verify synchronization-filter transfer is approved for removal without replacement.
+- [x] 1.8 Refine the plan to the approved removal of all seven resource pairs; verify every matrix cell is decided and no additional retained-resource migration is needed.
 
 ## 2. Approved transfer retirement
 
-- [ ] 2.1 Verify both template migrations and all additional retained migrations are implemented before removing their dependencies; verify replacement paths and behavior with their focused tests.
-- [ ] 2.2 Implement approved obsolete-resource removals with negative-path and unaffected-resource tests; verify no undecided direction is silently dropped.
-- [ ] 2.3 Document old-to-new commands, intentional format breaks, and no-replacement retirements in README and `docs/migrations/2.x-to-3.x.md`; verify full matrix coverage.
+- [ ] 2.1 Verify both completed template migrations before removing legacy dependencies; verify resource-oriented paths and behavior with focused tests.
+- [ ] 2.2 Remove all seven approved resource pairs and implementations, coordinating bulk-delete shared artifacts with maintenance retirement; verify all retired paths fail without a Dataverse operation, help/completion omit them, and migrated resource commands remain available.
+- [ ] 2.3 Document every retired path and unsupported legacy JSON contract in README and `docs/migrations/2.x-to-3.x.md`; verify all seven pairs have explicit no-replacement guidance, existing Dataverse data/jobs remain unchanged, and no exact PAC equivalence is promised.
 
 ## 3. Container removal and integration
 
