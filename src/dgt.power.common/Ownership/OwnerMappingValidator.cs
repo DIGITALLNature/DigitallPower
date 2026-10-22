@@ -4,18 +4,13 @@ namespace dgt.power.common.Ownership;
 
 internal static class OwnerMappingValidator
 {
-    public static void Validate(OwnerMapping mapping, bool ownersMissing = false)
+    public static void Validate(OwnerMapping mapping)
     {
         ArgumentNullException.ThrowIfNull(mapping);
 
         if (mapping.SchemaVersion != 1)
         {
             throw Invalid("schemaVersion", $"Unsupported schema version '{mapping.SchemaVersion}'.");
-        }
-
-        if (ownersMissing)
-        {
-            throw Invalid("owners", "The owners object is required.");
         }
 
         if (mapping.Schema is not null)
@@ -70,7 +65,7 @@ internal static class OwnerMappingValidator
                 ValidateOptionalGuid(entry.EntraObjectId, $"owners.{key}.entraObjectId");
                 var hasNoUserSelectors = entry.ApplicationId is null && entry.DomainName is null;
                 var groupSelector = entry.EntraObjectId.HasValue && entry.NamePattern is null && hasNoUserSelectors;
-                var hasNameAndUnit = entry.NamePattern is not null && entry.BusinessUnitName is not null;
+                var hasNameAndUnit = entry is { NamePattern: not null, BusinessUnitName: not null };
                 var noGroupOrMembership = entry.EntraObjectId is null && entry.MembershipType is null;
                 var nameSelector = hasNameAndUnit && hasNoUserSelectors && noGroupOrMembership;
                 EnsureSelectorFields(key, entry, groupSelector || nameSelector,

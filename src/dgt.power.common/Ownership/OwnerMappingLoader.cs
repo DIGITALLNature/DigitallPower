@@ -5,9 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace dgt.power.common.Ownership;
 
-public sealed class OwnerMappingLoader
+public static class OwnerMappingLoader
 {
-    private static readonly JsonSerializerOptions JsonOptions = CreateJsonOptions();
+    private static readonly JsonSerializerOptions s_jsonOptions = CreateJsonOptions();
 
     public static OwnerMapping Load(string path)
     {
@@ -41,19 +41,21 @@ public sealed class OwnerMappingLoader
             using var document = JsonDocument.Parse(json);
             EnsureNoDuplicateProperties(document.RootElement, "$");
             ValidateRequiredDiscriminators(document.RootElement);
-            var model = JsonSerializer.Deserialize<OwnerMappingDocument>(json, JsonOptions)
+            var model = JsonSerializer.Deserialize<OwnerMappingDocument>(json, s_jsonOptions)
                 ?? throw Invalid("$", "The mapping document cannot be null.");
             var owners = new Dictionary<string, OwnerMappingEntry>(StringComparer.Ordinal);
-            if (model.Owners is not null)
+            if (model.Owners is null)
             {
-                foreach (var (key, entry) in model.Owners)
-                {
-                    owners.Add(key, entry!);
-                }
+                throw Invalid("owners", "The owners object is required.");
+            }
+
+            foreach (var (key, entry) in model.Owners)
+            {
+                owners.Add(key, entry!);
             }
 
             var mapping = new OwnerMapping(ParseSchemaVersion(model.SchemaVersion), owners, model.Schema);
-            OwnerMappingValidator.Validate(mapping, model.Owners is null);
+            OwnerMappingValidator.Validate(mapping);
             return mapping;
         }
         catch (OwnerResolutionException)

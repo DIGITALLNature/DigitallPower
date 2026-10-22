@@ -67,9 +67,9 @@ public sealed class OwnerResolver : IOwnerResolver
         ArgumentNullException.ThrowIfNull(capturedOwners);
         OwnerMappingValidator.Validate(mapping);
         var ownerReferences = capturedOwners.ToArray();
-        if (Array.Exists(ownerReferences, owner => owner is null))
+        foreach (var owner in ownerReferences)
         {
-            throw new ArgumentException("Captured owner references cannot contain null values.", nameof(capturedOwners));
+            ArgumentNullException.ThrowIfNull(owner);
         }
 
         return CaptureCoreAsync(service, mapping, ownerReferences, cancellationToken);
@@ -87,7 +87,6 @@ public sealed class OwnerResolver : IOwnerResolver
         foreach (var capturedOwner in capturedOwners)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            ArgumentNullException.ThrowIfNull(capturedOwner);
             var matches = allOwners.Values
                 .Where(owner => owner.Principal.Id == capturedOwner.Id &&
                                 string.Equals(owner.Principal.LogicalName, capturedOwner.LogicalName, StringComparison.Ordinal))

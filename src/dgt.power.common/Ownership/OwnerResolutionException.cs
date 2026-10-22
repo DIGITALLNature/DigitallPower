@@ -4,7 +4,13 @@ using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.common.Ownership;
 
-public sealed class OwnerResolutionException : Exception
+public sealed class OwnerResolutionException(
+    OwnerResolutionFailure failure,
+    string message,
+    string? logicalKey = null,
+    string? selector = null,
+    EntityReference? capturedOwner = null,
+    Exception? innerException = null) : Exception(message, innerException)
 {
     public OwnerResolutionException()
         : this(OwnerResolutionFailure.InvalidMapping, "Owner resolution failed.")
@@ -21,26 +27,11 @@ public sealed class OwnerResolutionException : Exception
     {
     }
 
-    public OwnerResolutionException(
-        OwnerResolutionFailure failure,
-        string message,
-        string? logicalKey = null,
-        string? selector = null,
-        EntityReference? capturedOwner = null,
-        Exception? innerException = null)
-        : base(message, innerException)
-    {
-        Failure = failure;
-        LogicalKey = logicalKey;
-        Selector = selector;
-        CapturedOwner = capturedOwner;
-    }
+    public OwnerResolutionFailure Failure { get; } = failure;
 
-    public OwnerResolutionFailure Failure { get; }
+    public string? LogicalKey { get; } = logicalKey;
 
-    public string? LogicalKey { get; }
+    public string? Selector { get; } = selector;
 
-    public string? Selector { get; }
-
-    public EntityReference? CapturedOwner { get; }
+    public EntityReference? CapturedOwner { get; } = capturedOwner;
 }

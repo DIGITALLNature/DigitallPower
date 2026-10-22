@@ -122,7 +122,7 @@ public class OwnerMappingLoaderTests
     public async Task Schema_DeclaresV1AndStrictSelectorAlternatives()
     {
         var schemaPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../schemas/ownership/v1/schema.json"));
-        using var schema = JsonDocument.Parse(File.ReadAllText(schemaPath));
+        using var schema = JsonDocument.Parse(await File.ReadAllTextAsync(schemaPath));
 
         await Assert.That(schema.RootElement.GetProperty("properties").GetProperty("schemaVersion").GetProperty("const").GetInt32())
             .IsEqualTo(1);
@@ -140,7 +140,7 @@ public class OwnerMappingLoaderTests
     public async Task Schema_NonblankTrimmedPatternRejectsAnyWhitespaceAtEitherEnd()
     {
         var schemaPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../schemas/ownership/v1/schema.json"));
-        using var schema = JsonDocument.Parse(File.ReadAllText(schemaPath));
+        using var schema = JsonDocument.Parse(await File.ReadAllTextAsync(schemaPath));
         var pattern = schema.RootElement.GetProperty("$defs").GetProperty("nonblankTrimmed").GetProperty("pattern").GetString();
 
         await Assert.That(Regex.IsMatch("salesOwner", pattern!)).IsTrue();
@@ -156,7 +156,7 @@ public class OwnerMappingLoaderTests
     public async Task ReadmeOwnerMappingExamples_AreAcceptedByTheLoader()
     {
         var readmePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../README.md"));
-        var readme = File.ReadAllText(readmePath);
+        var readme = await File.ReadAllTextAsync(readmePath);
         var section = readme.Split("### Portable owner mappings", 2)[1].Split("## 📚 Command Reference", 2)[0];
         var examples = Regex.Matches(section, "```json\\s*(.*?)\\s*```", RegexOptions.Singleline);
 

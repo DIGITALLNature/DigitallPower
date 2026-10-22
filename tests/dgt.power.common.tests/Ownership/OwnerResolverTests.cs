@@ -12,8 +12,8 @@ namespace dgt.power.common.tests.Ownership;
 
 public class OwnerResolverTests
 {
-    private static readonly ConditionalWeakTable<FakeOrganizationServiceAsync, EntityPageExecutor> Executors = new();
-    private readonly OwnerResolver resolver = new();
+    private static readonly ConditionalWeakTable<FakeOrganizationServiceAsync, EntityPageExecutor> s_executors = new();
+    private readonly IOwnerResolver _resolver = new OwnerResolver();
 
     [Test]
     public async Task ResolveAsync_DomainName_IsOrdinalCaseInsensitiveAndReturnsDisabledStatus()
@@ -22,7 +22,7 @@ public class OwnerResolverTests
         var service = CreateService(user);
         var mapping = Mapping(("operator", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "deployment@example.org" }));
 
-        var result = await resolver.ResolveAsync(service, mapping, ["operator"]);
+        var result = await _resolver.ResolveAsync(service, mapping, ["operator"]);
 
         await Assert.That(result["operator"].Principal.Id).IsEqualTo(user.Id);
         await Assert.That(result["operator"].Kind).IsEqualTo(OwnerKind.User);
@@ -42,7 +42,7 @@ public class OwnerResolverTests
             });
         var mapping = Mapping(("user", new OwnerMappingEntry { Kind = OwnerKind.User, EntraObjectId = expectedObjectId }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["user"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["user"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.NotFound);
@@ -57,7 +57,7 @@ public class OwnerResolverTests
         var service = CreateService(user);
         var mapping = Mapping(("user", new OwnerMappingEntry { Kind = OwnerKind.User, EntraObjectId = objectId }));
 
-        var result = await resolver.ResolveAsync(service, mapping, ["user"]);
+        var result = await _resolver.ResolveAsync(service, mapping, ["user"]);
 
         await Assert.That(result["user"].Principal.Id).IsEqualTo(user.Id);
     }
@@ -70,7 +70,7 @@ public class OwnerResolverTests
         var service = CreateService(user);
         var mapping = Mapping(("automation", new OwnerMappingEntry { Kind = OwnerKind.ApplicationUser, ApplicationId = applicationId }));
 
-        var result = await resolver.ResolveAsync(service, mapping, ["automation"]);
+        var result = await _resolver.ResolveAsync(service, mapping, ["automation"]);
 
         await Assert.That(result["automation"].Kind).IsEqualTo(OwnerKind.ApplicationUser);
         await Assert.That(result["automation"].Principal.Id).IsEqualTo(user.Id);
@@ -84,7 +84,7 @@ public class OwnerResolverTests
         var service = CreateService(User(Guid.NewGuid(), "app@example.org", disabled: false, applicationId));
         var mapping = Mapping(("human", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "app@example.org" }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["human"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["human"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.UnsupportedKind);
@@ -98,7 +98,7 @@ public class OwnerResolverTests
         var service = CreateService(first, second);
         var mapping = Mapping(("human", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "same@example.org" }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["human"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["human"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.Ambiguous);
@@ -118,7 +118,7 @@ public class OwnerResolverTests
             BusinessUnitName = "Sales"
         }));
 
-        var result = await resolver.ResolveAsync(service, mapping, ["literal"]);
+        var result = await _resolver.ResolveAsync(service, mapping, ["literal"]);
 
         await Assert.That(result["literal"].Principal.Id).IsEqualTo(match.Id);
         await Assert.That(result["literal"].TeamType).IsEqualTo(OwnerTeamType.Owner);
@@ -139,7 +139,7 @@ public class OwnerResolverTests
             BusinessUnitName = "Sales"
         }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["sales"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["sales"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.Ambiguous);
@@ -159,28 +159,29 @@ public class OwnerResolverTests
             BusinessUnitName = "Sales"
         }));
 
-        var result = await resolver.ResolveAsync(service, mapping, ["sales"]);
+        var result = await _resolver.ResolveAsync(service, mapping, ["sales"]);
 
         await Assert.That(result["sales"].Principal.Id).IsEqualTo(team.Id);
     }
 
     [Test]
-    [Arguments("membersAndGuests", 0)]
-    [Arguments("members", 1)]
-    [Arguments("owners", 2)]
-    [Arguments("guests", 3)]
-    public async Task ResolveAsync_EntraTeamMembershipQualifierUsesDataverseValues(string membership, int expectedValue)
+    [Arguments("membersAndGuests", OwnerMembershipType.MembersAndGuests)]
+    [Arguments("members", OwnerMembershipType.Members)]
+    [Arguments("owners", OwnerMembershipType.Owners)]
+    [Arguments("guests", OwnerMembershipType.Guests)]
+    public async Task ResolveAsync_EntraTeamMembershipQualifierUsesDataverseValues(string membership, OwnerMembershipType expectedMembership)
     {
         var groupId = Guid.NewGuid();
         var businessUnitId = Guid.NewGuid();
-        var team = Team(Guid.NewGuid(), "Group team", businessUnitId, (int)OwnerTeamType.SecurityGroup, groupId, expectedValue);
+        var team = Team(Guid.NewGuid(), "Group team", businessUnitId, (int)OwnerTeamType.SecurityGroup, groupId, (int)expectedMembership);
         var service = CreateService(BusinessUnit(businessUnitId, "Sales"), team);
         var mapping = OwnerMappingLoader.Parse(
             $"{{\"schemaVersion\":1,\"owners\":{{\"teamOwner\":{{\"kind\":\"team\",\"entraObjectId\":\"{groupId:D}\",\"businessUnitName\":\"Sales\",\"membershipType\":\"{membership}\"}}}}}}");
 
-        var result = await resolver.ResolveAsync(service, mapping, ["teamOwner"]);
+        var result = await _resolver.ResolveAsync(service, mapping, ["teamOwner"]);
 
         await Assert.That(result["teamOwner"].TeamType).IsEqualTo(OwnerTeamType.SecurityGroup);
+        await Assert.That(result["teamOwner"].MembershipType).IsEqualTo(expectedMembership);
     }
 
     [Test]
@@ -201,7 +202,7 @@ public class OwnerResolverTests
             MembershipType = OwnerMembershipType.Members
         }));
 
-        var result = await resolver.ResolveAsync(service, mapping, ["group"]);
+        var result = await _resolver.ResolveAsync(service, mapping, ["group"]);
 
         await Assert.That(result["group"].Principal.Id).IsEqualTo(selected.Id);
     }
@@ -215,7 +216,7 @@ public class OwnerResolverTests
             Team(Guid.NewGuid(), "Microsoft 365", Guid.NewGuid(), (int)OwnerTeamType.Microsoft365Group, groupId, 1));
         var mapping = Mapping(("group", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["group"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["group"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.Ambiguous);
@@ -230,7 +231,7 @@ public class OwnerResolverTests
             Team(Guid.NewGuid(), "Classified", Guid.NewGuid(), (int)OwnerTeamType.Microsoft365Group, groupId, 1));
         var mapping = Mapping(("group", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["group"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["group"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.Ambiguous);
@@ -239,7 +240,6 @@ public class OwnerResolverTests
     [Test]
     public async Task ResolveAsync_BusinessUnitNameMustBeUniqueBeforeTeamLookup()
     {
-        var bu = Guid.NewGuid();
         var service = CreateService(BusinessUnit(Guid.NewGuid(), "Sales"), BusinessUnit(Guid.NewGuid(), "sales"));
         var mapping = Mapping(("team", new OwnerMappingEntry
         {
@@ -248,7 +248,7 @@ public class OwnerResolverTests
             BusinessUnitName = "Sales"
         }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["team"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["team"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.Ambiguous);
@@ -266,7 +266,7 @@ public class OwnerResolverTests
             BusinessUnitName = "Missing"
         }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["team"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["team"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.NotFound);
@@ -280,7 +280,7 @@ public class OwnerResolverTests
         var service = CreateService(Team(Guid.NewGuid(), "Access team", Guid.NewGuid(), (int)OwnerTeamType.Access, groupId));
         var mapping = Mapping(("access", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["access"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["access"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.UnsupportedKind);
@@ -303,7 +303,7 @@ public class OwnerResolverTests
             BusinessUnitName = "Sales"
         }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["team"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["team"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.UnsupportedKind);
@@ -322,7 +322,7 @@ public class OwnerResolverTests
             BusinessUnitName = "Sales"
         }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["team"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["team"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.UnsupportedKind);
@@ -336,7 +336,7 @@ public class OwnerResolverTests
         var service = CreateService(team);
         var mapping = Mapping(("group", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["group"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["group"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.UnsupportedKind);
@@ -350,12 +350,12 @@ public class OwnerResolverTests
             ("requested", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "valid@example.org" }),
             ("unused", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = " bad@example.org " }));
 
-        var invalidException = await Assert.That(async () => await resolver.ResolveAsync(service, invalid, ["requested"]))
+        var invalidException = await Assert.That(async () => await _resolver.ResolveAsync(service, invalid, ["requested"]))
             .Throws<OwnerResolutionException>();
         await Assert.That(invalidException!.Failure).IsEqualTo(OwnerResolutionFailure.InvalidMapping);
         await Assert.That(Queries(service)).IsEmpty();
 
-        var missingKeyException = await Assert.That(async () => await resolver.ResolveAsync(
+        var missingKeyException = await Assert.That(async () => await _resolver.ResolveAsync(
                 service,
                 Mapping(("known", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "known@example.org" })),
                 ["missing"]))
@@ -370,7 +370,7 @@ public class OwnerResolverTests
         var service = CreateService();
         var mapping = Mapping(("salesOwner", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "sales@example.org" }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["SalesOwner"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["SalesOwner"]))
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.MissingKey);
@@ -381,7 +381,7 @@ public class OwnerResolverTests
     public async Task ResolveAsync_EmptyRequestedKeysDoesNotRequireTargetMappingEntries()
     {
         var service = CreateService();
-        var result = await resolver.ResolveAsync(service, Mapping(), []);
+        var result = await _resolver.ResolveAsync(service, Mapping(), []);
 
         await Assert.That(result).IsEmpty();
         await Assert.That(Queries(service)).IsEmpty();
@@ -393,8 +393,8 @@ public class OwnerResolverTests
         var service = CreateService(User(Guid.NewGuid(), "owner@example.org", disabled: false));
         var mapping = Mapping(("owner", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "owner@example.org" }));
 
-        await resolver.ResolveAsync(service, mapping, ["owner"]);
-        await resolver.ResolveAsync(service, mapping, ["owner"]);
+        await _resolver.ResolveAsync(service, mapping, ["owner"]);
+        await _resolver.ResolveAsync(service, mapping, ["owner"]);
 
         await Assert.That(Queries(service).Count(query => query.EntityName == "systemuser")).IsEqualTo(2);
     }
@@ -412,16 +412,18 @@ public class OwnerResolverTests
             ("sharedB", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = sharedGroup }),
             ("unique", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = uniqueGroup }));
 
-        var applied = await resolver.ResolveAsync(service, mapping, ["sharedA", "sharedB"]);
+        var applied = await _resolver.ResolveAsync(service, mapping, ["sharedA", "sharedB"]);
         await Assert.That(applied["sharedA"].Principal.Id).IsEqualTo(applied["sharedB"].Principal.Id);
 
-        var captured = await resolver.ResolveForCaptureAsync(
+        var captured = await _resolver.ResolveForCaptureAsync(
             service,
             mapping,
             [new EntityReference("team", uniquePrincipal.Id)]);
         await Assert.That(captured[0].LogicalKey).IsEqualTo("unique");
+        await Assert.That(captured[0].Principal.LogicalName).IsEqualTo("team");
+        await Assert.That(captured[0].Principal.Id).IsEqualTo(uniquePrincipal.Id);
 
-        var exception = await Assert.That(async () => await resolver.ResolveForCaptureAsync(
+        var exception = await Assert.That(async () => await _resolver.ResolveForCaptureAsync(
                 service,
                 mapping,
                 [new EntityReference("team", sharedPrincipal.Id)]))
@@ -440,7 +442,7 @@ public class OwnerResolverTests
             ("captured", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = presentGroup }),
             ("unused", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = missingGroup }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveForCaptureAsync(
+        var exception = await Assert.That(async () => await _resolver.ResolveForCaptureAsync(
                 service,
                 mapping,
                 [new EntityReference("team", present.Id)]))
@@ -456,7 +458,7 @@ public class OwnerResolverTests
         var service = CreateService(Team(Guid.NewGuid(), "Mapped", Guid.NewGuid(), (int)OwnerTeamType.SecurityGroup, groupId, 1));
         var mapping = Mapping(("mapped", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveForCaptureAsync(
+        var exception = await Assert.That(async () => await _resolver.ResolveForCaptureAsync(
                 service,
                 mapping,
                 [new EntityReference("team", Guid.NewGuid())]))
@@ -470,10 +472,11 @@ public class OwnerResolverTests
     {
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
+        var cancellationToken = cancellation.Token;
         var service = CreateService();
         var mapping = Mapping(("user", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "user@example.org" }));
 
-        await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["user"], cancellation.Token))
+        await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["user"], cancellationToken))
             .Throws<OperationCanceledException>();
         await Assert.That(Queries(service)).IsEmpty();
     }
@@ -484,7 +487,7 @@ public class OwnerResolverTests
         var service = CreateService(failure: new InvalidOperationException("service failure"));
         var mapping = Mapping(("user", new OwnerMappingEntry { Kind = OwnerKind.User, DomainName = "user@example.org" }));
 
-        var exception = await Assert.That(async () => await resolver.ResolveAsync(service, mapping, ["user"]))
+        var exception = await Assert.That(async () => await _resolver.ResolveAsync(service, mapping, ["user"]))
             .Throws<InvalidOperationException>();
 
         await Assert.That(exception!.Message).IsEqualTo("service failure");
@@ -500,12 +503,12 @@ public class OwnerResolverTests
         var service = new FakeOrganizationServiceAsync();
         var executor = new EntityPageExecutor(entities, failure);
         service.AddRequests(executor);
-        Executors.Add(service, executor);
+        s_executors.Add(service, executor);
         return service;
     }
 
     private static List<QueryExpression> Queries(FakeOrganizationServiceAsync service) =>
-        Executors.GetValue(service, _ => throw new InvalidOperationException()).RecordedQueries;
+        s_executors.GetValue(service, _ => throw new InvalidOperationException()).RecordedQueries;
 
     private static OwnerMapping Mapping(params (string Key, OwnerMappingEntry Entry)[] entries) =>
         new(1, entries.ToDictionary(entry => entry.Key, entry => entry.Entry, StringComparer.Ordinal));

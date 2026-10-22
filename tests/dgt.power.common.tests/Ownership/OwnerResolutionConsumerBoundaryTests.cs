@@ -8,13 +8,13 @@ namespace dgt.power.common.tests.Ownership;
 
 public class OwnerResolutionConsumerBoundaryTests
 {
-    private readonly OwnerResolver resolver = new();
+    private readonly IOwnerResolver _resolver = new OwnerResolver();
 
     [Test]
     public async Task StateOnlyOperationWithoutOwnerIntent_DoesNotRequireMappingOrTargetLookup()
     {
         var service = new FakeOrganizationServiceAsync();
-        var boundary = new BoundaryHarness(resolver, service);
+        var boundary = new BoundaryHarness(_resolver, service);
 
         await boundary.RunAsync(mappingPath: null, requestedKeys: [], capturedOwners: [], beforeOutputWrite: () => { });
 
@@ -26,7 +26,7 @@ public class OwnerResolutionConsumerBoundaryTests
     public async Task SuppliedMappingIsValidatedEvenWhenNoOwnerWasRequested()
     {
         var path = FixturePath("invalid-unused-owner-mapping.json");
-        var boundary = new BoundaryHarness(resolver, new FakeOrganizationServiceAsync());
+        var boundary = new BoundaryHarness(_resolver, new FakeOrganizationServiceAsync());
 
         var exception = await Assert.That(async () => await boundary.RunAsync(
                 path,
@@ -44,7 +44,7 @@ public class OwnerResolutionConsumerBoundaryTests
     {
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new EmptyExecutor());
-        var boundary = new BoundaryHarness(resolver, service);
+        var boundary = new BoundaryHarness(_resolver, service);
         var outputWrites = 0;
 
         var exception = await Assert.That(async () => await boundary.RunAsync(
@@ -68,7 +68,7 @@ public class OwnerResolutionConsumerBoundaryTests
         };
         var service = new FakeOrganizationServiceAsync();
         service.AddRequests(new UserExecutor(user));
-        var boundary = new BoundaryHarness(resolver, service);
+        var boundary = new BoundaryHarness(_resolver, service);
 
         await boundary.RunAsync(
             FixturePath("owner-mapping.example.json"),
@@ -93,7 +93,7 @@ public class OwnerResolutionConsumerBoundaryTests
         service.AddRequests(executor);
         var mapping = OwnerMappingLoader.Parse("""{"schemaVersion":1,"owners":{"owner":{"kind":"user","domainName":"disabled@example.org"}}}""");
 
-        var resolved = await resolver.ResolveAsync(service, mapping, ["owner"]);
+        var resolved = await _resolver.ResolveAsync(service, mapping, ["owner"]);
 
         await Assert.That(resolved["owner"].IsDisabled).IsTrue();
         await Assert.That(resolved["owner"].Kind).IsEqualTo(OwnerKind.User);
@@ -102,7 +102,7 @@ public class OwnerResolutionConsumerBoundaryTests
     private static string FixturePath(string name) =>
         Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, $"../../../Ownership/Fixtures/{name}"));
 
-    private sealed class BoundaryHarness(OwnerResolver ownerResolver, FakeOrganizationServiceAsync service)
+    private sealed class BoundaryHarness(IOwnerResolver ownerResolver, FakeOrganizationServiceAsync service)
     {
         public OwnerMapping? LoadedMapping { get; private set; }
 
