@@ -63,10 +63,10 @@ internal static class OwnerMappingValidator
                 ValidateText(entry.BusinessUnitName, $"owners.{key}.businessUnitName", allowNull: true);
                 ValidateText(entry.NamePattern, $"owners.{key}.namePattern", allowNull: true);
                 ValidateOptionalGuid(entry.EntraObjectId, $"owners.{key}.entraObjectId");
-                var hasNoUserSelectors = entry.ApplicationId is null && entry.DomainName is null;
-                var groupSelector = entry.EntraObjectId.HasValue && entry.NamePattern is null && hasNoUserSelectors;
+                var hasNoUserSelectors = entry is { ApplicationId: null, DomainName: null };
+                var groupSelector = entry is { EntraObjectId: not null, NamePattern: null } && hasNoUserSelectors;
                 var hasNameAndUnit = entry is { NamePattern: not null, BusinessUnitName: not null };
-                var noGroupOrMembership = entry.EntraObjectId is null && entry.MembershipType is null;
+                var noGroupOrMembership = entry is { EntraObjectId: null, MembershipType: null };
                 var nameSelector = hasNameAndUnit && hasNoUserSelectors && noGroupOrMembership;
                 EnsureSelectorFields(key, entry, groupSelector || nameSelector,
                     entry.MembershipType is null || groupSelector,
