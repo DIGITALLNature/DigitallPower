@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "owners": {
+    "valid": {
+      "kind": "user",
+      "domainName": "valid@example.org"
+    },
+    "unused": {
+      "kind": "team",
+      "namePattern": "Sales-*"
+    }
+  }
+}
