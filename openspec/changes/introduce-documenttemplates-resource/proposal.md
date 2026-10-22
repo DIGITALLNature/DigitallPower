@@ -8,10 +8,15 @@ Documenttemplate import and export are separated by technical verb. Existing imp
 
 - Consolidate import and export into `dgt.power.documenttemplates`.
 - Expose `documenttemplates import` and `documenttemplates export`.
-- Leave unlisted templates unchanged by default; allow cleanup only explicitly within a clearly bounded target scope.
-- Specify Word/Excel transfer, target metadata adaptation, status changes, and destructive replacement.
+- Leave every unlisted template unchanged; do not offer cleanup.
+- Export only active Word/Excel templates, with additional filters narrowing that selection, and activate every imported template. Do not expose a configurable status in the new manifest or CLI.
+- Introduce a strict V1 manifest with portable identity, source IDs, explicit metadata, and document paths confined to the manifest directory.
+- Update existing templates without changing target IDs or deleting them. Verify regular content updates before implementing the lifecycle; do not provide delete/recreate as a fallback.
+- Validate used Word bindings and relationship paths against target metadata, including 1:N, N:1, and N:N relationships. Transfer structurally valid Excel files without content adaptation.
+- Provide import preflight and dry-run, followed by best-effort execution across independently prepared templates.
 - **BREAKING**: Remove `import documenttemplates` and `export documenttemplates` without compatibility aliases.
-- Out of scope: other template resources and general-purpose document processing.
+- **BREAKING**: Replace the legacy manifest and inline directives without compatibility parsing.
+- Out of scope: cleanup, destructive replacement, draft-state transfer, other template resources, and general-purpose document processing.
 
 ## Capabilities
 
