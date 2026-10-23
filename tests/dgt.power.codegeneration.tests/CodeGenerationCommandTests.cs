@@ -82,6 +82,15 @@ public class CodeGenerationCommandTests
             return service ?? Mock.Of<IOrganizationServiceAsync2>().Object;
         }
 
+        public Task<IOrganizationServiceAsync2> GetServiceAsync(Guid callerId)
+        {
+            if (callerId == Guid.Empty)
+            {
+                throw new ArgumentException("A Dataverse systemuser ID is required.", nameof(callerId));
+            }
+            throw new NotSupportedException("This code-generation test double does not support caller services.");
+        }
+
         public Task<bool> CheckAuthAsync() => Task.FromResult(true);
 
         public Task RefreshAuthAsync() => Task.CompletedTask;
@@ -137,6 +146,10 @@ public class CodeGenerationCommandTests
         using var console = new TestConsole();
         var connection = Mock.Of<IDataverseConnection>();
         connection.GetServiceAsync().Throws(new InvalidOperationException("Connection unavailable"));
+        connection.GetServiceAsync(Any<Guid>()).Throws(new NotSupportedException(
+            "This code-generation test double does not support caller services."));
+        connection.GetServiceAsync(Guid.Empty).Throws(new ArgumentException(
+            "A Dataverse systemuser ID is required."));
         var metadataService = Mock.Of<IMetadataService>();
         metadataService.PopulateEntitiesAndSolutionsAsync(Any<CodeGenerationConfigBase>(), Any<CancellationToken>())
             .Throws(new InvalidOperationException("Metadata should not run"));
@@ -151,6 +164,15 @@ public class CodeGenerationCommandTests
 
         await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(0);
         await Assert.That(_typeScriptGenerator.GenerateCallCount).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task StubConnection_RejectsUnsupportedCallerAcquisition()
+    {
+        var connection = new StubConnection();
+        await Assert.That(async () => await connection.GetServiceAsync(Guid.Empty)).Throws<ArgumentException>();
+        await Assert.That(async () => await connection.GetServiceAsync(Guid.NewGuid())).Throws<NotSupportedException>();
+        await Assert.That(connection.GetServiceCallCount).IsEqualTo(0);
     }
 
     [Test]

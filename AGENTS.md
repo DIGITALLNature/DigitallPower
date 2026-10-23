@@ -304,8 +304,9 @@ Do not create a proposal for a localized bug fix, test-only or documentation-onl
 1. Read the relevant main specs with `pnpm exec openspec list --specs` and inspect the implementation, tests, schemas, and README that define current behavior.
 2. For unclear or broad work, explore first. Otherwise create a proposal with `/opsx-propose`; include scope, affected capabilities, design constraints, and test/validation tasks.
 3. Review the proposal before implementation. Implement only after the user authorizes the work, using `/opsx-apply` where available.
-4. Update the main specs to match the implemented behavior, run focused tests and `pnpm exec openspec validate --all`, then archive the completed change with `/opsx-archive`.
-5. Refresh generated Copilot instructions with `pnpm run openspec:update` so OpenSpec CLI examples continue to use the repository-local pnpm installation.
+4. Update the main specs to match the implemented behavior, run focused tests and `pnpm exec openspec validate --all`, and submit the implementation PR. Keep the change active while the PR is open, even when all tasks and checks are complete.
+5. Archive with `/opsx-archive` only after verifying that the implementation PR for this change was successfully merged into `beta` or `main` (the exact, case-sensitive branch names). Verify the PR's `state`, `mergedAt`, and `baseRefName`, for example with `gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,url`. Require `MERGED`, a non-null merge timestamp, and an allowed target branch. An open PR, approval, green CI, a closed-but-unmerged PR, or a merge into another branch is insufficient. If verification fails or is unavailable, report the blocker and leave the change active. Perform archival as a separate post-merge follow-up, not in the implementation PR.
+6. Refresh generated Copilot instructions with `pnpm run openspec:update` so OpenSpec CLI examples use the repository-local pnpm installation and generated workflows retain the post-merge archive gate.
 
 ### Where knowledge belongs
 

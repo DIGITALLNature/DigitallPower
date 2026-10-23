@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://digitallpower.dev/schemas/ownership/v1/schema.json",
+  "title": "DigitallPower owner mapping",
+  "description": "Environment-specific mappings from logical owner keys to existing Dataverse principals.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "owners": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/$defs/nonblankTrimmed"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          { "$ref": "#/$defs/userByEntraId" },
+          { "$ref": "#/$defs/userByDomainName" },
+          { "$ref": "#/$defs/applicationUser" },
+          { "$ref": "#/$defs/teamByEntraId" },
+          { "$ref": "#/$defs/teamByNamePattern" }
+        ]
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "owners"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "nonblankTrimmed": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\S(?:[\\s\\S]*\\S)?(?![\\s\\S])"
+    },
+    "guid": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^(?!00000000-0000-0000-0000-000000000000$)[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+    },
+    "membershipType": {
+      "enum": [
+        "membersAndGuests",
+        "members",
+        "owners",
+        "guests"
+      ]
+    },
+    "userByEntraId": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "user" },
+        "entraObjectId": { "$ref": "#/$defs/guid" }
+      },
+      "required": [ "kind", "entraObjectId" ],
+      "additionalProperties": false
+    },
+    "userByDomainName": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "user" },
+        "domainName": { "$ref": "#/$defs/nonblankTrimmed" }
+      },
+      "required": [ "kind", "domainName" ],
+      "additionalProperties": false
+    },
+    "applicationUser": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "applicationUser" },
+        "applicationId": { "$ref": "#/$defs/guid" }
+      },
+      "required": [ "kind", "applicationId" ],
+      "additionalProperties": false
+    },
+    "teamByEntraId": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "team" },
+        "entraObjectId": { "$ref": "#/$defs/guid" },
+        "businessUnitName": { "$ref": "#/$defs/nonblankTrimmed" },
+        "membershipType": { "$ref": "#/$defs/membershipType" }
+      },
+      "required": [ "kind", "entraObjectId" ],
+      "additionalProperties": false
+    },
+    "teamByNamePattern": {
+      "type": "object",
+      "properties": {
+        "kind": { "const": "team" },
+        "namePattern": { "$ref": "#/$defs/nonblankTrimmed" },
+        "businessUnitName": { "$ref": "#/$defs/nonblankTrimmed" }
+      },
+      "required": [ "kind", "namePattern", "businessUnitName" ],
+      "additionalProperties": false
+    }
+  }
+}
