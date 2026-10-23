@@ -7,6 +7,7 @@ using Azure.Identity;
 using dgt.power.common.Connections;
 using dgt.power.common.Exceptions;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.PowerPlatform.Dataverse.Client.Utils;
 using Spectre.Console;
 
 namespace dgt.power.common.Logic;
@@ -20,6 +21,11 @@ public sealed partial class DataverseConnection(
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
     private IOrganizationServiceAsync2? _service;
+    private readonly Dictionary<Guid, ServiceClient> _callerServices = new();
+    private IDataverseConnector? _connector;
+    private string? _selectedUrl;
+    private string? _selectedType;
+    private bool _disposed;
 
     /// <inheritdoc />
     public async Task<IOrganizationServiceAsync2> GetServiceAsync()
@@ -27,6 +33,7 @@ public sealed partial class DataverseConnection(
         await _gate.WaitAsync();
         try
         {
+            ObjectDisposedException.ThrowIf(_disposed, this);
             // Only a successful connect is cached, so a failed one is retried on the next call.
             return _service ??= await ConnectCoreAsync();
         }
@@ -36,33 +43,99 @@ public sealed partial class DataverseConnection(
         }
     }
 
+    /// <inheritdoc />
+    public Task<IOrganizationServiceAsync2> GetServiceAsync(Guid callerId)
+    {
+        if (callerId == Guid.Empty)
+        {
+            throw new ArgumentException("A Dataverse systemuser ID is required.", nameof(callerId));
+        }
+
+        return GetCallerServiceAsync(callerId);
+    }
+
+    private async Task<IOrganizationServiceAsync2> GetCallerServiceAsync(Guid callerId)
+    {
+        await _gate.WaitAsync();
+        try
+        {
+            ObjectDisposedException.ThrowIf(_disposed, this);
+            _service ??= await ConnectCoreAsync();
+            if (_callerServices.TryGetValue(callerId, out var cached))
+            {
+                return cached;
+            }
+
+            ServiceClient? client = null;
+            var published = false;
+            try
+            {
+                client = await _connector!.CreateServiceClientAsync();
+                DataverseConnectionVerifier.EnsureReady(client);
+                client.CallerId = callerId;
+                if (client.CallerId != callerId)
+                {
+                    throw new DataverseConnectionException("Dataverse caller configuration failed.");
+                }
+                _callerServices.Add(callerId, client);
+                published = true;
+                return client;
+            }
+            finally
+            {
+                if (!published)
+                {
+                    client?.Dispose();
+                }
+            }
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     public void Dispose()
     {
+        if (_disposed)
+        {
+            return;
+        }
+        _disposed = true;
         if (_service is IDisposable disposable)
         {
             disposable.Dispose();
         }
+        foreach (var service in _callerServices.Values)
+        {
+            service.Dispose();
+        }
+        _callerServices.Clear();
         _gate.Dispose();
     }
 
     private async Task<IOrganizationServiceAsync2> ConnectCoreAsync()
     {
-        if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
+        if (_connector is null)
         {
-            var url = ExtractUrlFromConnectionString(invocationContext.ConnectionString)?
-                .GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)
-                ?? "Dataverse environment";
-            return await ConnectUsingAsync(
-                new ConnectionStringConnector(invocationContext.ConnectionString),
-                url,
-                "Connection String");
+            if (!string.IsNullOrWhiteSpace(invocationContext.ConnectionString))
+            {
+                _selectedUrl = ExtractUrlFromConnectionString(invocationContext.ConnectionString)?
+                    .GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)
+                    ?? "Dataverse environment";
+                _selectedType = "Connection String";
+                _connector = new ConnectionStringConnector(invocationContext.ConnectionString);
+            }
+            else
+            {
+                var resolved = ResolveConnection();
+                _selectedUrl = resolved.Definition.Url;
+                _selectedType = resolved.Definition.TypeDisplayName;
+                _connector = new CredentialConnector(credentialFactory, resolved, invocationContext);
+            }
         }
 
-        var resolved = ResolveConnection();
-        return await ConnectUsingAsync(
-            new CredentialConnector(credentialFactory, resolved, invocationContext),
-            resolved.Definition.Url,
-            resolved.Definition.TypeDisplayName);
+        return await ConnectUsingAsync(_connector, _selectedUrl!, _selectedType!);
     }
 
     /// <inheritdoc />
@@ -188,42 +261,4 @@ public sealed partial class DataverseConnection(
 
     [GeneratedRegex(@"(?:^|;)\s*(?:Url|ServiceUri)\s*=\s*([^;]+)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex ConnectionUrlRegex();
-
-    private sealed class CredentialConnector(
-        CredentialFactory credentialFactory,
-        ResolvedConnection connection,
-        ConnectionInvocationContext invocationContext) : IDataverseConnector
-    {
-        public Task<ServiceClient> CreateServiceClientAsync()
-        {
-            var credential = credentialFactory.Create(
-                connection.Name,
-                connection.Definition,
-                invocationContext.NonInteractive,
-                invocationContext.AllowUnencryptedStorage);
-            var url = connection.Definition.Url;
-            var uri = new Uri(url);
-            var scope = new TokenRequestContext([GetScope(url)]);
-            var service = new ServiceClient(uri, async _ => await GetTokenAsync(credential, scope));
-            return Task.FromResult(service);
-        }
-
-        private async Task<string> GetTokenAsync(TokenCredential tokenCredential, TokenRequestContext context)
-        {
-            try
-            {
-                return (await tokenCredential.GetTokenAsync(context, CancellationToken.None)).Token;
-            }
-            catch (AuthenticationRequiredException exception) when (invocationContext.NonInteractive)
-            {
-                throw new InteractiveLoginRequiredException(new Uri(connection.Definition.Url).Authority, exception);
-            }
-        }
-
-        public static string GetScope(string url)
-        {
-            var uri = new Uri(url);
-            return $"{uri.GetLeftPart(UriPartial.Authority)}/.default";
-        }
-    }
 }

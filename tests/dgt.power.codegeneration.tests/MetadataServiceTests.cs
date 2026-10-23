@@ -21,7 +21,12 @@ public class MetadataServiceTests
     {
         using var cache = new MemoryCache(nameof(NullArgument_ShouldThrowSynchronously));
         using var console = new TestConsole();
-        var service = new MetadataService(Mock.Of<IDataverseConnection>().Object, cache, console);
+        var connection = Mock.Of<IDataverseConnection>();
+        connection.GetServiceAsync(Any<Guid>()).Throws(new NotSupportedException(
+            "This metadata test double does not support caller services."));
+        connection.GetServiceAsync(Guid.Empty).Throws(new ArgumentException(
+            "A Dataverse systemuser ID is required."));
+        var service = new MetadataService(connection.Object, cache, console);
         Action invoke = argument switch
         {
             "entity" => () => { _ = service.RetrieveEntityMetadataAsync(null!); }

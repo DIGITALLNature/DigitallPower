@@ -15,6 +15,14 @@ context: |
   architecture changes, and work spanning capabilities. Trivial fixes, test-only changes, and
   behavior-preserving refactors do not need a proposal.
 
+  Keep implemented changes active until their implementation PR has successfully merged into
+  beta or main (exact, case-sensitive branch names). Before archiving, verify that the PR belongs
+  to this change, its state is MERGED, mergedAt is non-null, and baseRefName is beta or main.
+  Completed tasks, an open or approved PR, green CI, closing without merging, or merging into
+  another branch are insufficient. If verification fails or is unavailable, report the blocker
+  and leave the change active. Archive only as a separate post-merge follow-up, never in the
+  implementation PR.
+
   Language: English
   All artifacts must be written in English.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.

@@ -19,6 +19,15 @@ internal sealed class FakeDataverseConnection : IDataverseConnection
     public Task<IOrganizationServiceAsync2> GetServiceAsync() =>
         Task.FromException<IOrganizationServiceAsync2>(new NotSupportedException());
 
+    public Task<IOrganizationServiceAsync2> GetServiceAsync(Guid callerId)
+    {
+        if (callerId == Guid.Empty)
+        {
+            throw new ArgumentException("A Dataverse systemuser ID is required.", nameof(callerId));
+        }
+        throw new NotSupportedException("This authentication test double does not support caller services.");
+    }
+
     public Task<bool> CheckAuthAsync() => Task.FromResult(CheckAuthResult);
 
     public Task RefreshAuthAsync()

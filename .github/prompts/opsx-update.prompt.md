@@ -2,6 +2,27 @@
 description: "Update a change - revise existing planning artifacts and keep them coherent (Experimental)"
 ---
 
+<!-- digitallpower:post-merge-archive -->
+## Repository archive gate (required)
+
+This repository rule takes precedence over archive suggestions and completion examples below.
+Keep the change active until its implementation PR has successfully merged into `beta` or
+`main` (exact, case-sensitive branch names). Finished tasks, an open or approved PR, green CI,
+a closed-but-unmerged PR, or a merge into another branch do not permit archiving.
+
+Before any archive-related writes, verify the implementation PR for the selected change:
+`gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,url`.
+Require `state: MERGED`, non-null `mergedAt`, and `baseRefName` equal to `beta` or `main`.
+Confirm that this PR actually contains the selected change; do not use an unrelated merged PR
+or infer merge success from the current branch. If the PR is unknown, ask for it. If verification
+fails or is unavailable, report the blocker and stop without archiving; confirmation or optional
+operation guidance cannot bypass this gate.
+
+After implementation, report "Implementation complete; awaiting merge into beta or main" rather
+than offering immediate archival. After a verified merge, archive as a separate post-merge
+follow-up using a checkout containing the merged implementation, not in the implementation PR.
+<!-- /digitallpower:post-merge-archive -->
+
 Revise a change's existing planning artifacts and keep them coherent. Never edit code.
 
 **Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `pnpm exec openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `pnpm exec openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
