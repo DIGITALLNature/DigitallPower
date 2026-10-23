@@ -149,6 +149,19 @@ Load and validate recipe
 
 Resolve unsupported contracts and naming/path conflicts before clearing. Rendering consumes the resolved plan without Dataverse calls or recipe mutation. This moves predictable contract failures ahead of destructive output changes without promising that rendering or I/O cannot fail. Do not mandate a universal cross-target plan or common generation framework; each target can use the simplest suitable representation and share logic where useful.
 
+### Scriban renders resolved models through layout-only templates
+Use Scriban in the new module for embedded .NET and TypeScript source templates. Write new templates in native Scriban syntax rather than adopting Liquid compatibility mode or requiring reuse of legacy templates. Retain Fluid and existing templates unchanged in the legacy module.
+
+C# owns selection, localization, type/nullability mapping, identifier and literal escaping, collisions, imports, and output paths. Typed rendering models expose those resolved decisions. Templates stay deliberately simple: output layout, member iteration, and small structural conditions such as whether a setter exists. Do not expose raw Dataverse metadata or move semantic decisions into template functions/filters. Scriban's richer scripting language is not a reason to introduce a second business-logic layer.
+
+Choose Scriban for developer-oriented source-template ergonomics, particularly non-greedy whitespace trimming and configurable auto-indentation. Establish explicit whitespace/indentation conventions and verify blank lines, nested blocks, and inserted fragments through rendering tests. No measured performance advantage over Fluid is assumed; parse templates once and reuse parsed representations across generated artifacts.
+
+Fluid's published comparison uses Scriban's Liquid compatibility mode, not the native templates planned here; it does not establish the relative cost of this generator's workload. Check representative rendering cost during implementation. The resolved-model boundary keeps a later renderer/template replacement contained without a pluggable-engine abstraction.
+
+Parse and check embedded templates before clearing output. Configure strict missing-variable/member handling so rendering-model mismatches fail explicitly rather than emit missing text; include template identity and source location in diagnostics where available. Rendering failures after clearing retain the agreed direct-write failure semantics. Cover representative output and negative diagnostics alongside generated-code compilation, not snapshots alone.
+
+XML metadata snapshots continue to use SDK data-contract serialization, not Scriban. Do not introduce consumer template overrides, a new configuration surface, or a generic rendering framework. Select a compatible Scriban package during implementation, verify compatibility with repository signing/publishing constraints, and synchronize the affected dependency locks.
+
 ### Owned output directory
 The CLI supplies the destination. The tool owns that output directory and clears it on regeneration; no manifest, ownership marker, or mandatory overwrite guard is planned. Recipes must not share a destination if their outputs need to coexist. Help and migration guidance must explain directory ownership.
 
@@ -419,6 +432,7 @@ Document excluding the owned generated directory from consumer style linting, in
 - [Label changes affect choice constant names] -> Deterministic language fallback and collision handling; accept renaming when labels change.
 - [Form snapshots diverge from runtime configuration] -> Preserve useful non-null FormXML accessors but nullable conditional elements; regenerate and compile to catch removed names, without promising runtime validation.
 - [Platform operation contracts introduce complex dependencies] -> Resolve CSDL contract dependencies without implicit artifact selection; fail explicitly for unsupported mappings and validate representative standard-Xrm consumers.
+- [Dependency notices may not accompany distributed binaries] -> Verify the selected Scriban package's license and required notices. Dependency-wide license inventory, bundled notices, and artifact checks belong to a separate release/packaging change, including resolution of the existing Licence.md MS-PL versus package-metadata MS-RL mismatch. Track this as a release obligation, not as unique to Scriban; MIT dependencies also require notices.
 
 ## Implementation Verification and Refinement
 

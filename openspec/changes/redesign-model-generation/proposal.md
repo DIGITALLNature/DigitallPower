@@ -62,7 +62,8 @@ Existing main specs remain the current behavior until implementation and spec sy
 - Generated-code consumer migration, TypeScript templates/support files, and compilation/runtime coverage against standard Xrm typings.
 - Web API CSDL retrieval/parsing and operation-contract dependency resolution; no transport/execution abstraction in generated output.
 - README usage examples, shell-completion examples, and `docs/migrations/2.x-to-3.x.md` for applicable user-facing breaking changes.
-- No dependency additions or legacy project renames are decided. No linguistic naming dependency is needed for the agreed schema-name conversion.
+- Add Scriban for the new module's embedded .NET/TypeScript source templates, keeping semantic decisions in C# rendering models and templates limited to layout. Legacy Fluid remains unchanged; XML snapshots retain SDK serialization. Synchronize affected dependency locks. No legacy project rename or linguistic naming dependency is needed.
+- Verify the selected Scriban package's license/notices as part of dependency integration. General dependency-license inventory, notice distribution checks, and the existing MS-PL/MS-RL declaration mismatch belong to a separate release/packaging change, not an expansion of this redesign.
 
 ## References
 

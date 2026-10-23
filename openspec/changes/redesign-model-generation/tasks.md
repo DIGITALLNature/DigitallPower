@@ -9,6 +9,7 @@ All work below belongs to the new generator unless explicitly labeled legacy int
 - [ ] 1.3 Implement strict recipe diagnostics for unknown/nested/target-inapplicable settings, malformed or unsupported versions, invalid selection shapes, legacy recipes, and ambiguous duplicate assignments; verify failures occur before connection acquisition or output mutation.
 - [ ] 1.4 Add `schemas\modelgeneration\v1\dotnet.schema.json` and `typescript.schema.json` matching runtime properties, required fields, defaults, and additional-property rejection; verify positive/negative fixture parity without changing published legacy schemas.
 - [ ] 1.5 Document both recipe envelopes, target baselines, independent sections, and schema URLs in README and the applicable migration guide; verify examples against the schemas and loader. Synchronize dependency lock files if project/dependency changes affect the locked graph.
+- [ ] 1.6 Add a compatible Scriban dependency to the new module without changing legacy Fluid integration; verify signing/publishing compatibility, the exact package's license/required notices, and locked restore, synchronize affected lock files, and reflect the dependency in the README architecture/dependency description. Identify its notice requirements for the separate release/packaging work without implementing that broader change here.
 
 ## 2. Selection and metadata resolution
 
@@ -35,6 +36,8 @@ All work below belongs to the new generator unless explicitly labeled legacy int
 - [ ] 4.2 Implement normalized output-path checks for filesystem roots, cwd/lexical ancestors, recipe containment, and linked destinations; verify rejection leaves existing output untouched, including supported directory-link/junction cases.
 - [ ] 4.3 Implement owned-directory cleanup without traversing directory links/junctions, followed by direct writes with explicit error/cancellation reporting; verify external target sentinels survive, stale files are cleared, and post-clear failure is reported without staging/rollback.
 - [ ] 4.4 Document disposable-directory ownership, one recipe per destination, safeguards and their limits, and regeneration after partial failure; verify help/README examples introduce no wrapper folder, confirmation prompt, manifest, or Git-root requirement.
+- [ ] 4.5 Implement embedded native Scriban template parsing/reuse and strict missing-variable/member diagnostics over typed resolved rendering models; verify malformed templates fail before clearing, model mismatches fail explicitly with template context, and renderers require neither metadata access nor recipe mutation.
+- [ ] 4.6 Establish layout-only template and whitespace/auto-indentation conventions for both source targets; verify representative loops, optional setters, blank lines, nested blocks, and fragments with render tests plus the per-target compilation gates, and check representative rendering cost without assuming published Liquid-mode results apply to native Scriban. Keep metadata XML on SDK serialization and add no template-override API or generic rendering framework.
 
 ## 5. .NET entities, choices, and snapshots
 
@@ -93,6 +96,7 @@ All work below belongs to the new generator unless explicitly labeled legacy int
 
 ## Workflow follow-up
 
+- Address dependency-wide license inventory, bundled notice files, checks of actual distributed artifacts, and the MS-PL/MS-RL declaration mismatch in a separate release/packaging change; confirm the selected Scriban dependency's notice obligations are covered before release.
 - Review the completed implementation and explicitly reported live-environment validation limits before release.
 - Synchronize current specs with implemented behavior and archive through the OpenSpec archive workflow after acceptance; preserve retained-generator requirements.
 - Consider legacy removal only in a future major release after migration experience, without promising a removal date in this change.
