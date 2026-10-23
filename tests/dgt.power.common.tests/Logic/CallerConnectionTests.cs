@@ -85,8 +85,10 @@ public class CallerConnectionTests
         using var console = new TestConsole();
         using var connection = CreateConnection(console);
 
-        Action acquire = () => { _ = connection.GetServiceAsync(Guid.Empty); };
-        await Assert.That(acquire).Throws<ArgumentException>();
+        // ReSharper disable AccessToDisposedClosure -- the assertion invokes this function before connection disposal
+        void Acquire() => _ = connection.GetServiceAsync(Guid.Empty);
+        // ReSharper restore AccessToDisposedClosure
+        await Assert.That(Acquire).Throws<ArgumentException>();
         await Assert.That(console.Output).IsEqualTo(string.Empty);
     }
 

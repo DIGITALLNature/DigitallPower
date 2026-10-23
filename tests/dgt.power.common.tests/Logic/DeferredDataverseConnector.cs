@@ -17,6 +17,8 @@ internal sealed class DeferredDataverseConnector : IDataverseConnector
     public Task<ServiceClient> CreateServiceClientAsync()
     {
         Calls++;
+#pragma warning disable VSTHRD003 // This fixture owns the completion source; the test completes it without a UI-thread dependency.
         return _pending.Task;
+#pragma warning restore VSTHRD003
     }
 }

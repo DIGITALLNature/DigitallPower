@@ -13,7 +13,9 @@ namespace dgt.power.common.tests.Logic;
 
 internal static class SdkTestClient
 {
+#pragma warning disable S1075 // Fixed offline SDK fixture endpoint; no deployment configuration or network requests use it.
     internal const string EnvironmentUrl = "https://example.crm.dynamics.com";
+#pragma warning restore S1075
 
 #pragma warning disable S3011 // SDK internals are needed only to construct an offline caller-bearing test proxy.
     internal static ServiceClient Create(SdkTestTransport? transport = null)
