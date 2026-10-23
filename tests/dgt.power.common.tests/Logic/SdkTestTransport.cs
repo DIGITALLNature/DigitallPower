@@ -55,8 +55,10 @@ internal sealed class SdkTestTransport : TransportBindingElement
 
         public IAsyncResult BeginRequest(Message message, AsyncCallback callback, object state) =>
             BeginRequest(message, DefaultSendTimeout, callback, state);
+#pragma warning disable CA2000 // EndRequest transfers response ownership to the WCF caller, which disposes it.
         public IAsyncResult BeginRequest(Message message, TimeSpan timeout, AsyncCallback callback, object state) =>
             Complete(Request(message, timeout), callback, state);
+#pragma warning restore CA2000
         public Message EndRequest(IAsyncResult result) => ((Task<Message>)result).GetAwaiter().GetResult();
         protected override void OnAbort() { }
         protected override void OnClose(TimeSpan timeout) { }
@@ -85,7 +87,7 @@ internal sealed class SdkTestTransport : TransportBindingElement
     {
         var completion = new TaskCompletionSource<Message>(state);
         completion.SetResult(message!);
-        callback?.Invoke(completion.Task);
+        callback.Invoke(completion.Task);
         return completion.Task;
     }
 }

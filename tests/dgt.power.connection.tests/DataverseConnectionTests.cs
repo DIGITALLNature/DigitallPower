@@ -124,6 +124,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
             console);
 
         var attempt = activeDisplay
+            // ReSharper disable once AccessToDisposedClosure -- StartAsync is awaited before connection disposal
             ? console.Status().StartAsync("Working...", _ => connection.GetServiceAsync())
             : connection.GetServiceAsync();
 

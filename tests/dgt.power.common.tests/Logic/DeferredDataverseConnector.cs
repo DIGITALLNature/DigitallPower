@@ -5,13 +5,18 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 
 namespace dgt.power.common.tests.Logic;
 
-internal sealed class DeferredDataverseConnector(Task<ServiceClient> pending) : IDataverseConnector
+internal sealed class DeferredDataverseConnector : IDataverseConnector
 {
+    private readonly TaskCompletionSource<ServiceClient> _pending =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     internal int Calls { get; private set; }
+
+    internal void Complete(ServiceClient client) => _pending.SetResult(client);
 
     public Task<ServiceClient> CreateServiceClientAsync()
     {
         Calls++;
-        return pending;
+        return _pending.Task;
     }
 }

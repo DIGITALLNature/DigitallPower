@@ -13,13 +13,16 @@ namespace dgt.power.common.tests.Logic;
 
 internal static class SdkTestClient
 {
+    internal const string EnvironmentUrl = "https://example.crm.dynamics.com";
+
+#pragma warning disable S3011 // SDK internals are needed only to construct an offline caller-bearing test proxy.
     internal static ServiceClient Create(SdkTestTransport? transport = null)
     {
         // Initialize the SDK's real caller-bearing proxy without authentication or network I/O.
         var proxyType = typeof(ServiceClient).Assembly.GetType(
             "Microsoft.PowerPlatform.Dataverse.Client.Connector.OrganizationWebProxyClientAsync")!;
         var proxy = Activator.CreateInstance(proxyType,
-            new Uri("https://example.crm.dynamics.com/XRMServices/2011/Organization.svc"), false)!;
+            new Uri(new Uri(EnvironmentUrl), "XRMServices/2011/Organization.svc"), false)!;
         if (transport is not null)
         {
             var endpoint = (ServiceEndpoint)proxyType.GetProperty("Endpoint")!.GetValue(proxy)!;
@@ -39,4 +42,5 @@ internal static class SdkTestClient
 
     internal static void SetField(object target, string name, object? value) =>
         target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic)!.SetValue(target, value);
+#pragma warning restore S3011
 }

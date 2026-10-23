@@ -22,14 +22,14 @@ public class ConnectorIsolationTests
         var failure = new AuthenticationRequiredException("private-auth-details", new TokenRequestContext([]));
         var credential = new TestTokenCredential { Failure = failure };
         Func<string, Task<string>>? callback = null;
-        var connector = new CredentialConnector(() => credential, "https://example.crm.dynamics.com",
+        var connector = new CredentialConnector(() => credential, SdkTestClient.EnvironmentUrl,
             nonInteractive, (_, tokenProvider, _) =>
             {
                 callback = tokenProvider;
                 return SdkTestClient.Create();
             });
         using var client = await connector.CreateServiceClientAsync();
-        var attempt = callback!("https://example.crm.dynamics.com");
+        var attempt = callback!(SdkTestClient.EnvironmentUrl);
 
         if (nonInteractive)
         {
@@ -55,7 +55,7 @@ public class ConnectorIsolationTests
         {
             credentialCreations++;
             return credential;
-        }, "https://example.crm.dynamics.com", true, (uri, tokenProvider, unique) =>
+        }, SdkTestClient.EnvironmentUrl, true, (_, tokenProvider, unique) =>
         {
             uniqueConnections.Add(unique);
             callbacks.Add(tokenProvider);
@@ -69,7 +69,7 @@ public class ConnectorIsolationTests
         await Assert.That(credentialCreations).IsEqualTo(1);
         foreach (var callback in callbacks)
         {
-            await Assert.That(await callback("https://example.crm.dynamics.com"))
+            await Assert.That(await callback(SdkTestClient.EnvironmentUrl))
                 .IsEqualTo("test-token-not-for-display");
         }
         await Assert.That(credential.Scopes.Count).IsEqualTo(3);

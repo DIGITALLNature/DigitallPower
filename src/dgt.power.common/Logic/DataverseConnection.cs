@@ -44,13 +44,18 @@ public sealed partial class DataverseConnection(
     }
 
     /// <inheritdoc />
-    public async Task<IOrganizationServiceAsync2> GetServiceAsync(Guid callerId)
+    public Task<IOrganizationServiceAsync2> GetServiceAsync(Guid callerId)
     {
         if (callerId == Guid.Empty)
         {
             throw new ArgumentException("A Dataverse systemuser ID is required.", nameof(callerId));
         }
 
+        return GetCallerServiceAsync(callerId);
+    }
+
+    private async Task<IOrganizationServiceAsync2> GetCallerServiceAsync(Guid callerId)
+    {
         await _gate.WaitAsync();
         try
         {

@@ -29,7 +29,12 @@ public class CallerConnectionTests
         var second = SdkTestClient.Create(secondTransport);
         var connector = Mock.Of<IDataverseConnector>();
         var calls = 0;
-        connector.CreateServiceClientAsync().Returns(() => ++calls == 1 ? standard : calls == 2 ? first : second);
+        connector.CreateServiceClientAsync().Returns(() => ++calls switch
+        {
+            1 => standard,
+            2 => first,
+            _ => second
+        });
         SdkTestClient.SetField(connection, "_connector", connector.Object);
         SdkTestClient.SetField(connection, "_selectedUrl", "https://example.crm.dynamics.com");
         SdkTestClient.SetField(connection, "_selectedType", "Interactive");
@@ -55,8 +60,7 @@ public class CallerConnectionTests
         using var connection = CreateConnection(console);
         var standard = SdkTestClient.Create();
         var caller = SdkTestClient.Create();
-        var pending = new TaskCompletionSource<ServiceClient>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var connector = new DeferredDataverseConnector(pending.Task);
+        var connector = new DeferredDataverseConnector();
         Seed(connection, standard, connector);
         var callerId = Guid.NewGuid();
         var first = connection.GetServiceAsync(callerId);
@@ -66,7 +70,7 @@ public class CallerConnectionTests
         await Assert.That(second.IsCompleted).IsFalse();
         await Assert.That(connector.Calls).IsEqualTo(1);
         await Assert.That(caller.CallerId).IsEqualTo(Guid.Empty);
-        pending.SetResult(caller);
+        connector.Complete(caller);
         var acquired = await Task.WhenAll(first, second);
 
         await Assert.That(acquired.All(service => ReferenceEquals(service, caller))).IsTrue();
@@ -81,7 +85,8 @@ public class CallerConnectionTests
         using var console = new TestConsole();
         using var connection = CreateConnection(console);
 
-        await Assert.That(connection.GetServiceAsync(Guid.Empty)).Throws<ArgumentException>();
+        Action acquire = () => { _ = connection.GetServiceAsync(Guid.Empty); };
+        await Assert.That(acquire).Throws<ArgumentException>();
         await Assert.That(console.Output).IsEqualTo(string.Empty);
     }
 
@@ -101,6 +106,7 @@ public class CallerConnectionTests
         var secondId = Guid.NewGuid();
 
         var acquisitions = await Task.WhenAll(
+            // ReSharper disable once AccessToDisposedClosure -- all acquisitions finish before connection disposal
             Enumerable.Range(0, 20).Select(_ => connection.GetServiceAsync(firstId)));
         var other = await connection.GetServiceAsync(secondId);
 
@@ -125,7 +131,7 @@ public class CallerConnectionTests
         using var console = new TestConsole();
         using var connection = CreateConnection(console);
         var standard = SdkTestClient.Create();
-        var unfinished = new ServiceClient(new ConnectionOptions(), deferConnection: true);
+        using var unfinished = new ServiceClient(new ConnectionOptions(), deferConnection: true);
         if (configurationFailure)
         {
             typeof(ServiceClient).GetProperty(nameof(ServiceClient.IsReady))!.SetValue(unfinished, true);
@@ -133,6 +139,7 @@ public class CallerConnectionTests
         var successful = SdkTestClient.Create();
         var connector = Mock.Of<IDataverseConnector>();
         var calls = 0;
+        // ReSharper disable once AccessToDisposedClosure -- the mock is used only before the test scope disposes the client
         connector.CreateServiceClientAsync().Returns(() => ++calls == 1 ? unfinished : successful);
         Seed(connection, standard, connector.Object);
         var callerId = Guid.NewGuid();
@@ -175,7 +182,11 @@ public class CallerConnectionTests
         {
             await connection.GetServiceAsync(callerId);
         }
-        catch (Exception exception)
+        catch (OperationCanceledException exception)
+        {
+            actual = exception;
+        }
+        catch (InteractiveLoginRequiredException exception)
         {
             actual = exception;
         }
@@ -198,6 +209,7 @@ public class CallerConnectionTests
         connector.CreateServiceClientAsync().Returns(() => ++calls == 1 ? first : second);
         Seed(connection, standard, connector.Object);
         var services = new ServiceCollection();
+        // ReSharper disable once AccessToDisposedClosure -- the resolver owns disposal after all acquisitions finish
         services.AddSingleton<IDataverseConnection>(_ => connection);
         var resolver = (TypeResolver)new TypeRegistrar(services).Build();
         var resolved = (IDataverseConnection)resolver.Resolve(typeof(IDataverseConnection))!;

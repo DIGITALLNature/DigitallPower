@@ -24,8 +24,11 @@ internal sealed class ConnectionStringConnector : IDataverseConnector
 
     private string GetUniqueConnectionString()
     {
-        var builder = new DbConnectionStringBuilder { ConnectionString = _connectionString };
-        builder["RequireNewInstance"] = true;
+        var builder = new DbConnectionStringBuilder
+        {
+            ConnectionString = _connectionString,
+            ["RequireNewInstance"] = true
+        };
         return builder.ConnectionString;
     }
 

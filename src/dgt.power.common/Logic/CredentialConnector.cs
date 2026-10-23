@@ -26,10 +26,6 @@ internal sealed class CredentialConnector : IDataverseConnector
     {
     }
 
-    private static Func<TokenCredential> CreateCredentialFactory(CredentialFactory credentialFactory,
-        ResolvedConnection connection, bool nonInteractive, bool allowUnencryptedStorage) =>
-        () => credentialFactory.Create(connection.Name, connection.Definition, nonInteractive, allowUnencryptedStorage);
-
     internal CredentialConnector(Func<TokenCredential> createCredential, string url, bool nonInteractive,
         Func<Uri, Func<string, Task<string>>, bool, ServiceClient> createClient)
     {
@@ -38,6 +34,10 @@ internal sealed class CredentialConnector : IDataverseConnector
         _nonInteractive = nonInteractive;
         _createClient = createClient;
     }
+
+    private static Func<TokenCredential> CreateCredentialFactory(CredentialFactory credentialFactory,
+        ResolvedConnection connection, bool nonInteractive, bool allowUnencryptedStorage) =>
+        () => credentialFactory.Create(connection.Name, connection.Definition, nonInteractive, allowUnencryptedStorage);
 
     public Task<ServiceClient> CreateServiceClientAsync()
     {
