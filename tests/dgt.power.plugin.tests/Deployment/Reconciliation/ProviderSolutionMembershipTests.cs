@@ -16,7 +16,7 @@ namespace dgt.power.plugin.tests.Deployment.Reconciliation;
 
 public class ProviderSolutionMembershipTests
 {
-    private const int ProviderComponentType = 10401;
+    private const int ProviderComponentType = 181;
 
     private static LocalAssembly Desired(bool declared = true) => new()
     {
@@ -30,7 +30,7 @@ public class ProviderSolutionMembershipTests
         }]
     };
 
-    private static (FakeOrganizationServiceAsync Store, SolutionMembershipExecutor Membership) Setup(int definitions = 1)
+    private static (FakeOrganizationServiceAsync Store, SolutionMembershipExecutor Membership) Setup(int definitions = 0)
     {
         var store = new FakeOrganizationServiceAsync();
         store.AddDefaultRequests();
@@ -41,7 +41,7 @@ public class ProviderSolutionMembershipTests
         {
             store.Create(new SolutionComponentDefinition
             {
-                PrimaryEntityName = EntityDataProvider.EntityLogicalName, SolutionComponentType = ProviderComponentType
+                PrimaryEntityName = EntityDataProvider.EntityLogicalName, SolutionComponentType = 10401
             });
         }
         var desired = Desired();
@@ -163,14 +163,21 @@ public class ProviderSolutionMembershipTests
 
     [Test]
     [Arguments(0)]
+    [Arguments(1)]
     [Arguments(2)]
-    public async Task Prepare_MissingOrAmbiguousProviderDefinition_FailsBeforeWrites(int definitions)
+    public async Task Prepare_ProviderDefinitions_UsesFixedComponentTypeWithoutWrites(int definitions)
     {
         var (store, membership) = Setup(definitions);
 
-        await Assert.That(async () => await new PluginDeployment(store).PrepareAsync(Desired(), "target"))
-            .ThrowsExactly<InvalidOperationException>();
+        var changes = await new PluginDeployment(store).PrepareAsync(Desired(), "target");
+
+        await Assert.That(changes.Solution!.Providers!.ComponentType).IsEqualTo(ProviderComponentType);
+        var addition = changes.Solution.Providers.Additions.Single();
+        await Assert.That(addition.DataSourceLogicalName).IsEqualTo("dgt_source");
+        await Assert.That(addition.ExistingProviderId).IsNull();
         await Assert.That(All(store, PluginType.EntityLogicalName)).IsEmpty();
+        await Assert.That(All(store, EntityDataProvider.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(All(store, SolutionComponent.EntityLogicalName)).IsEmpty();
         await Assert.That(membership.Requests).IsEmpty();
     }
 
@@ -216,8 +223,9 @@ public class ProviderSolutionMembershipTests
 
     [Test]
     [Arguments(0)]
+    [Arguments(1)]
     [Arguments(2)]
-    public async Task Prepare_PackageMissingOrAmbiguousProviderDefinition_FailsBeforeUpload(int definitions)
+    public async Task Prepare_PackageProviderDefinitions_UsesFixedComponentTypeWithoutUpload(int definitions)
     {
         var (store, membership) = Setup(definitions);
         store.Delete(PluginAssembly.EntityLogicalName, All(store, PluginAssembly.EntityLogicalName).Single().Id);
@@ -226,8 +234,15 @@ public class ProviderSolutionMembershipTests
             Convert.ToHexString(SHA256.HashData("content"u8))), [Desired()]);
         var service = new PackageUploadService(store, desired);
 
-        await Assert.That(async () => await new PluginDeployment(service).PreparePackageAsync(desired, "dgt", "target"))
-            .ThrowsExactly<InvalidOperationException>();
+        var changes = await new PluginDeployment(service).PreparePackageAsync(desired, "dgt", "target");
+
+        await Assert.That(changes.Solution!.Providers!.ComponentType).IsEqualTo(ProviderComponentType);
+        var addition = changes.Solution.Providers.Additions.Single();
+        await Assert.That(addition.DataSourceLogicalName).IsEqualTo("dgt_source");
+        await Assert.That(addition.ExistingProviderId).IsNull();
+        await Assert.That(All(store, PluginType.EntityLogicalName)).IsEmpty();
+        await Assert.That(All(store, EntityDataProvider.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(All(store, SolutionComponent.EntityLogicalName)).IsEmpty();
         await Assert.That(service.UploadCount).IsEqualTo(0);
         await Assert.That(membership.Requests).IsEmpty();
     }
