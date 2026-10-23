@@ -14,6 +14,88 @@ namespace dgt.power.connection.tests;
 public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusCommand, ConnectionSettings>
 {
     [Test]
+    public async Task SelectedConnection_RemainsRetainedAfterPersistedSelectionAndDefinitionChange()
+    {
+        ConnectionStore.Upsert("Original", new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.Dataverse,
+            TenantId = "original-tenant",
+            ClientId = "original-client"
+        });
+        using var connection = new DataverseConnection(ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole), new ConnectionInvocationContext(), TestConsole);
+        await Assert.That(connection.GetServiceAsync()).Throws<InvalidOperationException>()
+            .WithMessageContaining("'Original'");
+        ConnectionStore.Upsert("Replacement", new ClientSecretConnection
+        {
+            Url = "https://replacement.crm.dynamics.com",
+            TenantId = "replacement-tenant",
+            ClientId = "replacement-client"
+        });
+        ConnectionStore.Upsert("Original", new ClientSecretConnection
+        {
+            Url = "https://changed.crm.dynamics.com",
+            TenantId = "changed-tenant",
+            ClientId = "changed-client"
+        }, makeCurrent: false);
+        TestConsole.Clear(home: false);
+
+        await Assert.That(connection.GetServiceAsync(Guid.NewGuid())).Throws<InvalidOperationException>()
+            .WithMessageContaining("'Original'");
+
+        await Assert.That(ConnectionStore.Current).IsEqualTo("Replacement");
+        await Assert.That(TestConsole.Output).Contains(ConnectionTestUrls.Dataverse);
+        await Assert.That(TestConsole.Output).DoesNotContain("replacement.crm");
+        await Assert.That(TestConsole.Output).DoesNotContain("changed.crm");
+    }
+
+    [Test]
+    public async Task ExplicitName_TakesPrecedenceOverSavedSelection()
+    {
+        ConnectionStore.Upsert("Explicit", new ClientSecretConnection
+        {
+            Url = ConnectionTestUrls.Dataverse, TenantId = "tenant", ClientId = "client"
+        });
+        ConnectionStore.Upsert("Saved", new InteractiveConnection { Url = "https://saved.crm.dynamics.com" });
+        var invocation = new ConnectionInvocationContext();
+        invocation.Capture(new ConnectionSettings { Connection = "Explicit" });
+        using var connection = new DataverseConnection(ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole), invocation, TestConsole);
+
+        await Assert.That(connection.GetServiceAsync(Guid.NewGuid())).Throws<InvalidOperationException>()
+            .WithMessageContaining("'Explicit'");
+        await Assert.That(TestConsole.Output).Contains(ConnectionTestUrls.Dataverse);
+        await Assert.That(TestConsole.Output).DoesNotContain("saved.crm");
+    }
+
+    [Test]
+    public async Task ConnectionString_TakesPrecedenceOverExplicitAndSavedNames()
+    {
+        ConnectionStore.Upsert("Saved", new InteractiveConnection { Url = "https://saved.crm.dynamics.com" });
+        var invocation = new ConnectionInvocationContext();
+        invocation.Capture(new ConnectionSettings
+        {
+            Connection = "Missing",
+            ConnectionString = "AuthType=ClientSecret;ClientSecret=private-connection-secret"
+        });
+        using var connection = new DataverseConnection(ConnectionStore,
+            new CredentialFactory(SecretStore, TestConsole), invocation, TestConsole);
+
+        await Assert.That(connection.GetServiceAsync(Guid.NewGuid())).Throws<NullReferenceException>();
+        await Assert.That(TestConsole.Output).Contains("(Connection String) failed");
+        await Assert.That(TestConsole.Output).DoesNotContain("private-connection-secret");
+        await Assert.That(TestConsole.Output).DoesNotContain("saved.crm");
+    }
+
+    [Test]
+    public async Task AuthenticationDouble_RejectsCallerAcquisitionExplicitly()
+    {
+        var connection = new FakeDataverseConnection();
+        await Assert.That(async () => await connection.GetServiceAsync(Guid.Empty)).Throws<ArgumentException>();
+        await Assert.That(async () => await connection.GetServiceAsync(Guid.NewGuid())).Throws<NotSupportedException>();
+    }
+
+    [Test]
     [Arguments(false)]
     [Arguments(true)]
     public async Task GetServiceAsync_MissingClientSecret_ReportsFailureAndPropagatesOriginalError(bool activeDisplay)
@@ -42,6 +124,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
             console);
 
         var attempt = activeDisplay
+            // ReSharper disable once AccessToDisposedClosure -- StartAsync is awaited before connection disposal
             ? console.Status().StartAsync("Working...", _ => connection.GetServiceAsync())
             : connection.GetServiceAsync();
 
