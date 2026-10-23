@@ -53,6 +53,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [Client Secret service connection](#client-secret-service-connection)
   - [Workload Identity Federation (OIDC) service connection](#workload-identity-federation-oidc-service-connection)
 - [Solution Architecture](#-solution-architecture)
+  - [Caller-specific Dataverse services](#caller-specific-dataverse-services)
 - [Repository Layout](#-repository-layout)
 - [Build & Test](#%EF%B8%8F-build--test)
 - [Spec-Driven Development](#spec-driven-development)
@@ -1409,6 +1410,28 @@ Key design principles:
 - **Stable connection storage.** `connections.json` and `state.json` live under the per-user dgtp home; secrets and the Azure.Identity token cache use OS-protected persistence.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
 
+### Caller-specific Dataverse services
+
+Consumers of `IDataverseConnection` can acquire an isolated service for a Dataverse
+`systemuser` ID (not an Entra object ID):
+
+```csharp
+var standardService = await connection.GetServiceAsync();
+var callerService = await connection.GetServiceAsync(systemUserId);
+await callerService.ExecuteAsync(request, cancellationToken);
+```
+
+The invocation retains its selected environment and authentication configuration and lazily
+caches one independent service per caller. An empty ID is rejected before authentication.
+Services are borrowed: the connection disposes the standard and caller services; consumers
+must not dispose them or mutate their caller state.
+
+Acquisition guarantees a ready, caller-configured service, not that the caller exists, is
+enabled, or has permission for subsequent operations. There is no caller-specific `WhoAmI`
+or privilege probe, and Dataverse faults propagate without an identity fallback. Consumers
+requiring no writes on acquisition failure must acquire all required services before writing;
+later operations can still fail. This API adds no CLI options.
+
 ## 📁 Repository Layout
 
 The working specifications and active change proposals live in `openspec/`; concise records of durable architectural rationale live in `docs/architecture/decisions/`.
@@ -1455,7 +1478,12 @@ pnpm exec openspec validate --specs  # Validate current OpenSpec specifications
 Use [OpenSpec](https://github.com/Fission-AI/OpenSpec) for significant changes to public CLI/API
 behavior, configuration and schemas, architecture, module boundaries, or behavior spanning
 capabilities. Start with `/opsx-propose`; after review, implement with `/opsx-apply`, update the
-main specs, validate them, and archive the completed change. Small fixes, test-only changes, and
+main specs, validate them, and submit the implementation PR. Keep the change active until that PR
+has successfully merged into `beta` or `main`. Archive with `/opsx-archive` only in a separate
+post-merge follow-up, after verifying the PR is `MERGED`, has a merge timestamp, and targets one
+of those exact branch names. Completed tasks, an open or approved PR, green CI, a closed-but-unmerged
+PR, or a merge into another branch do not permit archiving. If merge verification is unavailable,
+leave the change active and report the blocker. Small fixes, test-only changes, and
 behavior-preserving refactors do not require a proposal. The CLI is installed locally with pnpm
 and is run as `pnpm exec openspec`.
 
@@ -1463,7 +1491,8 @@ Current requirements live in [`openspec/specs/`](openspec/specs/). Durable desig
 [`docs/architecture/decisions/`](docs/architecture/decisions/). The README remains the user-facing
 command and configuration reference; implementation details belong beside their code and tests.
 Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
-CLI examples after OpenSpec updates them.
+CLI examples and the post-merge archive gate after OpenSpec updates them. Validate this
+normalization with `node --test scripts/normalize-openspec-commands.test.mjs`.
 
 GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
 [`openspec/config.yaml`](openspec/config.yaml). Its setup workflow installs the locked pnpm

@@ -49,6 +49,12 @@ public sealed class DataverseConnectionVerifier(CredentialFactory credentialFact
     {
         cancellationToken.ThrowIfCancellationRequested();
 
+        EnsureReady(service);
+        await service.ExecuteAsync(new WhoAmIRequest(), cancellationToken);
+    }
+
+    internal static void EnsureReady(ServiceClient service)
+    {
         if (!service.IsReady)
         {
 #pragma warning disable S2302 // "connection" is part of the error message, not a parameter name.
@@ -59,6 +65,5 @@ public sealed class DataverseConnectionVerifier(CredentialFactory credentialFact
                 : new DataverseConnectionException(message);
         }
 
-        await service.ExecuteAsync(new WhoAmIRequest(), cancellationToken);
     }
 }

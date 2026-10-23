@@ -9,6 +9,20 @@ namespace dgt.power.tests;
 
 public class TestConnection(IOrganizationServiceAsync2 service) : IDataverseConnection
 {
+    public IDictionary<Guid, IOrganizationServiceAsync2> CallerServices { get; } =
+        new Dictionary<Guid, IOrganizationServiceAsync2>();
+
+    public Task<IOrganizationServiceAsync2> GetServiceAsync(Guid callerId)
+    {
+        if (callerId == Guid.Empty)
+        {
+            throw new ArgumentException("A Dataverse systemuser ID is required.", nameof(callerId));
+        }
+        return CallerServices.TryGetValue(callerId, out var callerService)
+            ? Task.FromResult(callerService)
+            : throw new NotSupportedException("No service is configured for the requested caller.");
+    }
+
     public Task<IOrganizationServiceAsync2> GetServiceAsync()
     {
         // WhoAmI serves as connection health check
