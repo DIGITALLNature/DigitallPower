@@ -52,6 +52,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [Client Secret service connection](#client-secret-service-connection)
   - [Workload Identity Federation (OIDC) service connection](#workload-identity-federation-oidc-service-connection)
 - [Solution Architecture](#-solution-architecture)
+  - [Caller-specific Dataverse services](#caller-specific-dataverse-services)
 - [Repository Layout](#-repository-layout)
 - [Build & Test](#%EF%B8%8F-build--test)
 - [Spec-Driven Development](#spec-driven-development)
@@ -1397,6 +1398,28 @@ Key design principles:
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
 - **Stable connection storage.** `connections.json` and `state.json` live under the per-user dgtp home; secrets and the Azure.Identity token cache use OS-protected persistence.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
+
+### Caller-specific Dataverse services
+
+Consumers of `IDataverseConnection` can acquire an isolated service for a Dataverse
+`systemuser` ID (not an Entra object ID):
+
+```csharp
+var standardService = await connection.GetServiceAsync();
+var callerService = await connection.GetServiceAsync(systemUserId);
+await callerService.ExecuteAsync(request, cancellationToken);
+```
+
+The invocation retains its selected environment and authentication configuration and lazily
+caches one independent service per caller. An empty ID is rejected before authentication.
+Services are borrowed: the connection disposes the standard and caller services; consumers
+must not dispose them or mutate their caller state.
+
+Acquisition guarantees a ready, caller-configured service, not that the caller exists, is
+enabled, or has permission for subsequent operations. There is no caller-specific `WhoAmI`
+or privilege probe, and Dataverse faults propagate without an identity fallback. Consumers
+requiring no writes on acquisition failure must acquire all required services before writing;
+later operations can still fail. This API adds no CLI options.
 
 ## 📁 Repository Layout
 
