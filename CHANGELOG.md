@@ -1,3 +1,10 @@
+# [3.0.0-beta.16](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.15...v3.0.0-beta.16) (2026-10-23)
+
+
+### Bug Fixes
+
+* **push:** release entitydataprovider fix ([baa89b7](https://github.com/DIGITALLNature/DigitallPower/commit/baa89b7efa05ab0f283083d6462c385483264ffb)), closes [#213](https://github.com/DIGITALLNature/DigitallPower/issues/213)
+
 # [3.0.0-beta.15](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2026-10-22)
 
 
