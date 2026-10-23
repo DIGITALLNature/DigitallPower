@@ -4,7 +4,7 @@
 
 Code generation is a single `codegeneration` (`cg`) command that takes a mandatory config file (`-c`), a target directory, and a `--folder` name. The config is a V2 polymorphic document discriminated by `type` (`dotnet` | `typescript`) with a shared base class (`namespace`, `language`, `entities`, `requests`, `optionSets`). Entity selection resolves names, solutions, and a wildcard mask additively and writes the result back into the config object. TypeScript clears its whole subtree on each run; .NET deletes known generated files. Forms are generated for every selected entity and narrowed by a filter list of identifiers derived from generated filenames.
 
-See proposal.md - Why for motivation. This document is a design checkpoint, not an implementation-ready design. Confirmed decisions are separated from outstanding decisions below; illustrative configuration examples discussed during exploration do not establish property names or schemas.
+See proposal.md - Why for motivation. The user-facing design is agreed and ready to translate into delta specs and implementation tasks. Reviewed recipes below establish property names and selection structure; implementation verification items identify contracts to exercise against real generated output, not a requirement for another design or PoC phase.
 
 ## Goals / Non-Goals
 
@@ -154,7 +154,7 @@ The CLI supplies the destination. The tool owns that output directory and clears
 
 The supplied output directory is the generation root. Do not add `Model`, `DotNet`, or `TypeScript` wrapper directories; remove the separate `--folder` concept. Category folders are described below. Do not add a `--confirm` flag or interactive overwrite prompt.
 
-Before clearing, reject a filesystem root, the current working directory or a lexical ancestor, and any destination containing the input recipe. Use normalized paths and platform-appropriate comparison. These are minimal best-effort safeguards, not a cross-platform guarantee against linked paths, mounts, aliases, or filesystem races. Do not add Git-root detection or a general output-safety framework. Exact deletion/link handling still requires implementation design. Clearly report the resolved output being cleared and document that it must be disposable.
+Before clearing, reject a filesystem root, the current working directory or a lexical ancestor, and any destination containing the input recipe. Reject linked output destinations; never follow directory symbolic links or junctions when clearing the output tree. Use normalized paths and platform-appropriate comparison. These are minimal best-effort safeguards, not a cross-platform guarantee against mounts, aliases, or filesystem races. Do not add Git-root detection or a general output-safety framework. Verify link handling with focused filesystem tests. Clearly report the resolved output being cleared and document that it must be disposable.
 
 After the resolved generation plan is complete, clear the output and render/write directly. Do not introduce staging, backup, or rollback. Rendering errors, I/O failures, or cancellation after clearing may leave incomplete output; report failure explicitly. Recovery is to fix the cause and regenerate. This risk is accepted for reproducible, tool-owned artifacts; Git tracking is not assumed.
 
@@ -228,7 +228,7 @@ Keep record properties and operation input/output properties exactly as required
 ### Form names are readable snapshots with explicit language checks
 Derive form-module names from display names, scoped by table and form type. Do not rely on rarely populated form unique names. Accept display-name and localization changes affecting imports rather than use GUID-only names.
 
-For every member of a colliding normalized form-name group, append a deterministic form-ID suffix; unique names remain unsuffixed. Do not choose a winner by retrieval order. Adding the first collision can rename the previously unsuffixed module. Exact suffix formatting remains open.
+For every member of a colliding normalized form-name group, append `_` followed by the full form GUID without hyphens, for example `Account_0123456789abcdef0123456789abcdef`; unique names remain unsuffixed. Do not choose a winner by retrieval order. Adding the first collision can rename the previously unsuffixed module.
 
 When forms are requested, fail before output changes if the connecting user's UI language differs from the effective generation language (configured override or organization base language). Do not modify user settings. Recipes without forms need no form-language check.
 
@@ -245,6 +245,8 @@ platformForm.getAttribute(dynamicName);
 ```
 
 This is a snapshot-based compile-time contract, comparable to .NET early-bound properties: regular regeneration and compilation catches stale references earlier. It is not runtime validation. Known conditional elements still have nullable accessors, independently of strict name selection. Test removed-name failures as well as ordinary API compatibility.
+
+Preserve ordinary collection behavior such as all-items access, numeric indexing, iteration, and filtering. Section names are scoped to their containing tab. The existing generator demonstrates that form-specific typing is achievable, but does not constrain the new type design or require reuse. No separate PoC is required: compilation tests during implementation must cover strict names, collection access, and explicit widening.
 
 Use local assertions such as `context.getFormContext() as AccountSalesFormContext`, with an imported alias for the generated `FormContext`. Do not generate event-context types, globally augment `getFormContext<T>()`, or add a runtime context factory. Assertions express the expected form; they do not validate its identity.
 
@@ -293,7 +295,14 @@ For entity-bound Custom APIs, accept `entity: { entityType, id }` in the paramet
 
 Do not generate separate TypeScript message constants, request factories, executors, transport/authentication abstractions, or a replacement Xrm type hierarchy. The request already carries the operation name in `getMetadata()`; unlike .NET plugin code, no independent message-name consumer need has been established.
 
-Generated artifacts must work with standard Xrm typings. Reuse those types where suitable. Automatically include supporting operation contract types, such as the complex `PrincipalAccess` parameter type, and reuse shared definitions across selected operations. These supporting types do not select full table models, forms, or other operations. Entity-valued properties require a faithful contract mapping, not automatic table generation. Fail before clearing for unsupported contracts rather than guess types or use `any`. Exact entity, primitive, enumeration, and complex-type mappings remain to be designed.
+Generated artifacts must work with standard Xrm typings. Reuse those types where suitable. Automatically include supporting operation contract types, such as the complex `PrincipalAccess` parameter type, and reuse shared definitions across selected operations. These supporting types do not select full table models, forms, or other operations. Fail before clearing for unsupported contracts rather than guess types or use `any`.
+
+### Entity-valued request contracts reflect the declared schema
+Distinguish a bound record target or entity reference from an Entity payload containing record data. For an Entity parameter constrained to a known table, generate a strongly typed partial Web API record payload with the applicable type annotation and known column types. Include the needed supporting declaration without requiring standalone table selection; reuse a selected table contract where compatible. Do not assume every Entity parameter can be reduced to `{ entityType, id }`.
+
+An unrestricted Entity parameter can represent different concrete tables or genuinely dynamic data, including `Microsoft.Dynamics.CRM.expando`. Represent that openness explicitly with unknown-valued properties and the applicable platform annotations, not `any` or invented business properties. Consumers can supply a narrower business type where the API's metadata does not declare one. EntityCollection follows the corresponding element contract; response types follow the same declared-schema principle.
+
+Reference: [Use open types with custom APIs](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/use-open-types). Metadata cannot recover an undeclared business schema. Validate actual serialization and standard-Xrm execution against representative requests in the first implementation, including open-type annotations and platform limitations. Refine specialized mappings from that evidence rather than requiring every edge case to be resolved on paper; unsupported mappings still fail before output changes.
 
 ### Required choices are automatic dependencies
 Include choices required by requested artifacts without a duplicate selection list, deduplicating shared definitions. An independent choice section selects additional global choices by exact technical name only, including choices-only generation. No solution selector or exclusions are needed. Local column choices are dependencies of their owning artifacts, not independently selected items. Required choice dependencies cannot be excluded.
@@ -314,7 +323,7 @@ Follow current Dataverse terminology for designed names (`Columns`, `Choices`) w
 ### Generation language and choice naming
 Default to the organization's base language, with an explicit config override. Never select labels based on the connecting user's language. If the selected language has no usable choice label, use the base-language label without a warning. If neither provides a usable label, fail before output changes; never omit the numeric value.
 
-Disambiguate choice labels that normalize to the same member name deterministically using their numeric values, for every member of the colliding group. Do not depend on metadata encounter order or require users to rename managed/platform choices. Exact suffix formatting remains open. Label/translation changes, or a newly introduced collision, may rename generated members; this trade-off is accepted.
+Disambiguate choice labels that normalize to the same member name using `_` followed by the numeric value, such as `SomeLabel_1` and `SomeLabel_2`, for every member of the colliding group. No special negative-value suffix convention is introduced. Do not depend on metadata encounter order or require users to rename managed/platform choices. Label/translation changes, or a newly introduced collision, may rename generated members; this trade-off is accepted.
 
 ### Required .NET compatibility target
 Require `target` in the .NET recipe. Use platform-family names rather than plugin/client roles: external clients can also target .NET Framework.
@@ -378,14 +387,19 @@ Derive entity class and column property names from schema names, not localized d
 | `contoso_order_id` | `ContosoOrderId` |
 | `contoso_ordernumber` | `ContosoOrdernumber` |
 
-SDK mapping attributes and constant values retain original technical names. Valid-identifier handling and keyword escaping remain separate design work.
+SDK mapping attributes and constant values retain original technical names.
+
+### Identifier validity and keyword escaping
+Preserve valid platform names and use language-native escaping where available. Escape C# keywords with `@` where necessary. Quote TypeScript wire-property names that cannot be written as bare property names, preserving exact payload keys rather than normalizing them. Generated type/declaration identifiers that cannot be expressed directly require normalization and the collision policy below. Verify emitted identifiers against the selected language baseline before writing.
 
 ### Deterministic normalized-name collision handling
-For both targets, keep readable normalized identifiers when unique. When generated identifiers collide in their actual scope, append a short deterministic hash of each item's exact original technical name to every member of the colliding group. Do not depend on metadata encounter order, use environment-dependent metadata GUIDs for schema-derived names, or require users to rename managed/platform schema.
+For both targets, keep readable normalized identifiers when unique. When generated identifiers collide in their actual scope, append `_` followed by the first eight lowercase hexadecimal characters of SHA-256 over each item's exact original technical name encoded as UTF-8, such as `ContosoOrder_a1b2c3d4`. Suffix every metadata-derived member of the colliding group. Do not depend on metadata encounter order, use environment-dependent metadata GUIDs for schema-derived names, or require users to rename managed/platform schema.
 
 Emit diagnostics showing the source-to-symbol mapping. Compared with sorted underscores, hash suffixes avoid reassignment when the collision group grows; compared with appending the original name, they avoid long repetitive symbols. Opaque suffixes are an accepted rare-case trade-off; consumers can inspect the symbol's metadata/value. Introducing the first collision can rename the previously unsuffixed symbol.
 
-Retain the specific form-ID and choice numeric-value suffix rules above. Final hash algorithm/length, escaping, generated-member conflicts, file/path collision handling, and final uniqueness checks still require specification; a short hash is not itself a uniqueness guarantee.
+Reserve fixed generated and inherited API names in their actual scope. If a metadata-derived identifier conflicts with one, suffix the metadata-derived identifier using the same rule and leave the fixed API intact. Consider language restrictions and enclosing declaration names as part of identifier resolution. Preserve original Dataverse names in mappings and values. Apply this policy across both targets, not as a .NET-only exception; separate TypeScript wire-record and metadata-object scopes do not inherently conflict with each other.
+
+Retain the specific form-ID and choice numeric-value suffix rules above. Check final symbol and file/path uniqueness before clearing output, including case-insensitive path collisions. If any conflict remains, report the conflicting sources and fail rather than overwrite output or choose a winner by encounter order. The eight-character hash is not itself a uniqueness guarantee; do not silently extend or reassign suffixes.
 
 ### Filenames and consumer linting
 Use generated type names for C# type files, `MessageNames.cs` for message constants, and table logical names for XML snapshots. TypeScript table, request, and global-choice files use their original technical names, preserving casing and underscores. Forms retain the agreed normalized display-name filenames and ID collision suffixes. Local TypeScript choice paths are described above.
@@ -406,14 +420,14 @@ Document excluding the owned generated directory from consumer style linting, in
 - [Form snapshots diverge from runtime configuration] -> Preserve useful non-null FormXML accessors but nullable conditional elements; regenerate and compile to catch removed names, without promising runtime validation.
 - [Platform operation contracts introduce complex dependencies] -> Resolve CSDL contract dependencies without implicit artifact selection; fail explicitly for unsupported mappings and validate representative standard-Xrm consumers.
 
-## Outstanding Design Decisions
+## Implementation Verification and Refinement
 
-These are unresolved and can affect specs and tasks. They are blockers for completing the design, not details delegated to implementation:
+No further high-level recipe or consumer-API decisions block delta specs and task creation. Exercise the following in the first implementation and refine from actual generated-code usage; they do not require separate PoCs or reuse of legacy internals:
 
-- TypeScript strict-name type composition, including collection APIs and compatibility with standard Xrm consumers; prove removed-name failures and explicit widening without permissive fallback loopholes.
-- TypeScript supporting form declarations and shared supporting-request-type placement. Barrel files remain deferred.
-- Identifier validity/keyword escaping, exact hash/ID/numeric suffix formats, generated-member conflicts, path collisions, and final uniqueness checks for both targets.
-- Final named-Boolean constants and remaining entity/message member details; compile both compatibility targets and round-trip metadata snapshots.
-- Specialized numeric/binary/file/image and operation binding/overload/entity/collection/complex/enum mappings, nullable inputs, and non-object response bodies are postponed for technical verification. Validate standard execute compatibility rather than infer it from CSDL alone; do not invent fallback contracts.
-- Precise filesystem/link deletion handling behind the agreed minimal path checks, and actionable legacy/invalid-recipe diagnostics.
-- Concrete internal API boundaries implementing the agreed target-specific resolution-first pipeline, including worthwhile unconstrained reuse without a mandatory universal plan.
+- Compile TypeScript form consumers with strict-name access and collection APIs, removed-name failures, preserved standard methods, and explicit widening without permissive fallback loopholes.
+- Compile request consumers against standard Xrm typings and verify serialization/execution for bound/unbound requests, entity references, table-constrained/open Entity payloads, collections, complex/enum dependencies, optional versus nullable inputs, and response bodies.
+- Verify specialized numeric/binary/file/image mappings and platform binding/overload limits. Make unsupported contracts explicit before clearing rather than invent fallback shapes. Supporting declaration layout can follow the simplest suitable implementation; barrels remain deferred.
+- Cover identifier escaping, reserved/inherited-member conflicts, every-member collision suffixes, metadata-order independence, and final symbol/path conflicts in both targets.
+- Compile both .NET compatibility targets and round-trip metadata snapshots. Exercise remaining entity/message details, including whether named Boolean constants add value without changing Boolean property types.
+- Test linked destinations and non-traversal of directory links/junctions, alongside existing output-path checks and actionable legacy/invalid-recipe diagnostics.
+- Choose concrete internal API boundaries for the target-specific resolution-first pipeline, sharing only where useful without a mandatory universal plan.
