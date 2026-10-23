@@ -401,9 +401,9 @@ reconciled; table labels and metadata remain external to this core.
 
 With a requested solution, add only missing declared provider records. Data-source table schema
 and rows are externally provisioned prerequisites and remain outside membership, just as Custom
-API records/parameters/response properties are not pulled into the solution. Resolve the provider
-component type from the environment, failing preparation if absent or ambiguous, without automatic
-dependency inclusion. Whole-provider omission never adds/removes memberships. Apply membership after
+API records/parameters/response properties are not pulled into the solution. Use provider component
+type `181` without relying on `SolutionComponentDefinition` entries or including dependencies
+automatically. Whole-provider omission never adds/removes memberships. Apply membership after
 associations and before cleanup; live solution transport still requires verification.
 
 ### Managed identities

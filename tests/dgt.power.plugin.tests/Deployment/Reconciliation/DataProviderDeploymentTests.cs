@@ -147,14 +147,20 @@ public class DataProviderDeploymentTests
     }
 
     [Test]
-    public async Task Prepare_ProviderWithRequestedSolution_MissingComponentDefinitionFailsBeforeWrites()
+    public async Task Prepare_ProviderWithRequestedSolution_MissingComponentDefinitionPlansMembershipWithoutWrites()
     {
         var service = Service();
         service.Create(new Solution { UniqueName = "target" });
 
-        await Assert.That(async () => await new PluginDeployment(service).PrepareAsync(Desired(DataProviderOperation.Retrieve), "target"))
-            .ThrowsExactly<InvalidOperationException>();
+        var changes = await new PluginDeployment(service).PrepareAsync(Desired(DataProviderOperation.Retrieve), "target");
+
+        await Assert.That(changes.Solution!.Providers!.ComponentType).IsEqualTo(181);
+        var addition = changes.Solution.Providers.Additions.Single();
+        await Assert.That(addition.DataSourceLogicalName).IsEqualTo("dgt_source");
+        await Assert.That(addition.ExistingProviderId).IsNull();
         await Assert.That(All(service, PluginType.EntityLogicalName)).IsEmpty();
+        await Assert.That(All(service, EntityDataProvider.EntityLogicalName)).Count().IsEqualTo(1);
+        await Assert.That(All(service, SolutionComponent.EntityLogicalName)).IsEmpty();
     }
 
     [Test]
