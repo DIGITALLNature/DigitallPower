@@ -30,6 +30,14 @@ The command MUST render resource actions, missing solution memberships, and any 
 - **THEN** creates, updates, solution additions, and eligible obsolete deletions are visible
 - **AND** no Dataverse writes occur
 
+#### Scenario: Deployment output follows plugin push conventions
+
+- **WHEN** a webresource deployment plan is rendered
+- **THEN** changed resources use trailing `+ Create`, `~ Update`, or `- Delete` markers, and unchanged resources have no action marker
+- **AND** missing solution memberships use trailing `+ Add` markers
+- **AND** blank lines separate sections, and obsolete deletions include a destructive-operation count
+- **AND** execution reports completed operations with checkmarks and a final deployment result, while unchanged targets report that they are up to date without an execution section
+
 ### Requirement: Managed resources are protected
 
 An update to a managed webresource MUST fail during planning. An unchanged managed webresource MUST remain a valid no-op.

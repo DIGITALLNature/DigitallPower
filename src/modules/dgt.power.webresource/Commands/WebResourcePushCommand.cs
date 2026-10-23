@@ -50,43 +50,50 @@ public sealed class WebResourcePushCommand(ICommandSpanFactory spans, IDataverse
         var targetDirectory = Directory.Exists(settings.Target)
             ? Path.GetFullPath(settings.Target)
             : Path.GetDirectoryName(Path.GetFullPath(settings.Target))!;
+        var targetName = Path.GetFileName(Path.TrimEndingDirectorySeparator(Path.GetFullPath(settings.Target)));
+        var targetMarkup = Markup.Escape(targetName);
         new WebResourcePlanRenderer(Console).Render(plan, targetDirectory);
+        if (!WebResourcePushConfirmation.HasChanges(plan))
+        {
+            Console.WriteLine();
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {targetMarkup} is up to date");
+            return true;
+        }
+
         if (settings.DryRun)
         {
+            Console.WriteLine();
+            Console.MarkupLine($"[yellow]{Emoji.Known.Information}[/] Dry run for {targetMarkup}: no changes were applied");
             return true;
         }
 
         if (WebResourcePushConfirmation.ShouldPrompt(
                 settings.Confirm,
                 settings.NonInteractive,
-                ExecutionEnvironment.IsCiAgent) &&
-            WebResourcePushConfirmation.HasChanges(plan) &&
-            !WebResourcePushConfirmation.Confirm(Console, Path.GetFileName(Path.GetFullPath(settings.Target))))
+                ExecutionEnvironment.IsCiAgent))
         {
-            Console.MarkupLine("[yellow]Deployment cancelled.[/]");
-            return true;
+            Console.WriteLine();
+            if (!WebResourcePushConfirmation.Confirm(Console, targetName))
+            {
+                Console.WriteLine();
+                Console.MarkupLine($"[yellow]{Emoji.Known.CrossMark}[/] Deployment of {targetMarkup} declined: no changes were applied");
+                return true;
+            }
         }
 
-        Console.MarkupLine("[bold green]Execution[/]");
-        var completedOperationCount = 0;
+        Console.WriteLine();
+        Console.MarkupLine("[bold]Execution:[/]");
         var executionReporter = new WebResourceExecutionReporter(Console);
         var executor = new WebResourcePushExecutor(webResourceRepository, solutionRepository);
-
-        void ReportCompletedOperation(WebResourceDeploymentProgress progress)
-        {
-            completedOperationCount++;
-            executionReporter.ReportCompleted(progress);
-        }
 
         await Console.Status()
             .Spinner(Spinner.Known.Dots)
             .SpinnerStyle(Style.Parse("green bold"))
             .StartAsync(
-                "Applying deployment plan...",
-                _ => executor.ExecuteAsync(plan, ReportCompletedOperation, cancellationToken));
-        Console.MarkupLine(completedOperationCount == 0
-            ? $"[green]{Emoji.Known.CheckMark}[/] No changes applied"
-            : $"[green]{Emoji.Known.CheckMark}[/] Deployment completed");
+                $"Applying changes to {targetMarkup}",
+                _ => executor.ExecuteAsync(plan, executionReporter.ReportCompleted, cancellationToken));
+        Console.WriteLine();
+        Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] {targetMarkup} deployed");
 
         return true;
     }

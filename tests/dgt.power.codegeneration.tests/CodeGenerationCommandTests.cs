@@ -1,4 +1,4 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Runtime.Caching;
@@ -10,8 +10,12 @@ using dgt.power.codegeneration.Services.Contracts;
 using dgt.power.common;
 using dgt.power.tests;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using Microsoft.Xrm.Sdk;
+using Microsoft.Xrm.Sdk.Messages;
+using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console;
 using Spectre.Console.Cli;
+using Spectre.Console.Testing;
 
 namespace dgt.power.codegeneration.tests;
 
@@ -31,7 +35,7 @@ public class CodeGenerationCommandTests
         _connection = new StubConnection();
         _command = new CodeGenerationCommand(new TestSpanFactory(),
             _dotNetGenerator, _typeScriptGenerator,
-            metadataServiceMock.Object, AnsiConsole.Console);
+            metadataServiceMock.Object, _connection, AnsiConsole.Console);
     }
 
     private sealed class StubDotNetGenerator : IDotNetGenerator
@@ -60,19 +64,93 @@ public class CodeGenerationCommandTests
         }
     }
 
-    private sealed class StubConnection : IDataverseConnection
+    private sealed class StubConnection(IAnsiConsole? console = null, IOrganizationServiceAsync2? service = null) : IDataverseConnection
     {
+        private bool _connected;
+
         public int GetServiceCallCount { get; private set; }
 
-        public Task<IOrganizationServiceAsync2> GetServiceAsync()
+        public async Task<IOrganizationServiceAsync2> GetServiceAsync()
         {
             GetServiceCallCount++;
-            return Task.FromResult(Mock.Of<IOrganizationServiceAsync2>().Object);
+            if (!_connected && console is not null)
+            {
+                await console.Status().StartAsync("Authenticating...", _ => Task.CompletedTask);
+            }
+
+            _connected = true;
+            return service ?? Mock.Of<IOrganizationServiceAsync2>().Object;
         }
 
         public Task<bool> CheckAuthAsync() => Task.FromResult(true);
 
         public Task RefreshAuthAsync() => Task.CompletedTask;
+    }
+
+    [Test]
+    [Arguments("dotnet")]
+    [Arguments("typescript")]
+    public async Task ExecuteAsync_ValidConfiguration_ConnectsBeforeGenerationDisplay(string target)
+    {
+        using var output = new TestConsole();
+        // TestConsole disables exclusivity; use a real console over its captured output.
+        var console = AnsiConsole.Create(new AnsiConsoleSettings
+        {
+            Out = output.Profile.Out,
+            Ansi = AnsiSupport.Yes,
+            Interactive = InteractionSupport.Yes
+        });
+        var service = Mock.Of<IOrganizationServiceAsync2>();
+        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>())
+            .Returns(new RetrieveAllEntitiesResponse
+            {
+                Results = { ["EntityMetadata"] = Array.Empty<EntityMetadata>() }
+            });
+        var connection = new StubConnection(console, service.Object);
+        using var cache = new MemoryCache(nameof(ExecuteAsync_ValidConfiguration_ConnectsBeforeGenerationDisplay));
+        var metadataService = new MetadataService(connection, cache, console);
+        var command = new CodeGenerationCommand(new TestSpanFactory(),
+            _dotNetGenerator, _typeScriptGenerator, metadataService, connection, console);
+        var configPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+        try
+        {
+            await File.WriteAllTextAsync(configPath, $$"""{"version":2,"type":"{{target}}"}""");
+
+            var result = await command.ExecuteAsync(
+                new CommandContext([], new EmptyRemainingArguments(), "codegeneration", null),
+                new CodeGenerationVerb { Config = configPath }, CancellationToken.None);
+
+            await Assert.That(result).IsEqualTo(0);
+            await Assert.That(connection.GetServiceCallCount).IsEqualTo(2);
+            await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(target == "dotnet" ? 1 : 0);
+            await Assert.That(_typeScriptGenerator.GenerateCallCount).IsEqualTo(target == "typescript" ? 1 : 0);
+        }
+        finally
+        {
+            File.Delete(configPath);
+        }
+    }
+
+    [Test]
+    public async Task ExecuteAsync_ConnectionFails_DoesNotPopulateMetadataOrGenerate()
+    {
+        using var console = new TestConsole();
+        var connection = Mock.Of<IDataverseConnection>();
+        connection.GetServiceAsync().Throws(new InvalidOperationException("Connection unavailable"));
+        var metadataService = Mock.Of<IMetadataService>();
+        metadataService.PopulateEntitiesAndSolutionsAsync(Any<CodeGenerationConfigBase>(), Any<CancellationToken>())
+            .Throws(new InvalidOperationException("Metadata should not run"));
+        var command = new CodeGenerationCommand(new TestSpanFactory(),
+            _dotNetGenerator, _typeScriptGenerator, metadataService.Object, connection.Object, console);
+
+        await Assert.That(() => command.ExecuteAsync(
+            new CommandContext([], new EmptyRemainingArguments(), "codegeneration", null),
+            new CodeGenerationVerb { Config = "Resources/CodeGenerationCommand/config.json" },
+            CancellationToken.None)).Throws<InvalidOperationException>()
+            .WithMessageContaining("Connection unavailable");
+
+        await Assert.That(_dotNetGenerator.GenerateCallCount).IsEqualTo(0);
+        await Assert.That(_typeScriptGenerator.GenerateCallCount).IsEqualTo(0);
     }
 
     [Test]
@@ -107,6 +185,8 @@ public class CodeGenerationCommandTests
                 new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),
                 new CodeGenerationVerb { Config = "missing.json" },
                 cancellationToken)).Throws<OperationCanceledException>();
+
+        await Assert.That(_connection.GetServiceCallCount).IsEqualTo(0);
     }
 
     [Test]
@@ -147,7 +227,7 @@ public class CodeGenerationCommandTests
         metadataService.PopulateEntitiesAndSolutionsAsync(Any<CodeGenerationConfigBase>(), cancellationToken)
             .Throws(new OperationCanceledException(cancellationToken));
         var command = new CodeGenerationCommand(new TestSpanFactory(),
-            _dotNetGenerator, _typeScriptGenerator, metadataService.Object, AnsiConsole.Console);
+            _dotNetGenerator, _typeScriptGenerator, metadataService.Object, _connection, AnsiConsole.Console);
 
         await Assert.That(() => command.ExecuteAsync(
             new CommandContext([], new EmptyRemainingArguments(), "codegeneration", null),
@@ -174,7 +254,7 @@ public class CodeGenerationCommandTests
             using var cache = new MemoryCache(nameof(InvalidConfiguration_ShouldNotConnectOrModifyExistingOutput));
             var command = new CodeGenerationCommand(new TestSpanFactory(),
                 _dotNetGenerator, _typeScriptGenerator,
-                new MetadataService(_connection, cache, AnsiConsole.Console), AnsiConsole.Console);
+                new MetadataService(_connection, cache, AnsiConsole.Console), _connection, AnsiConsole.Console);
 
             await Assert.That(
                 () => command.ExecuteAsync(
@@ -208,7 +288,7 @@ public class CodeGenerationCommandTests
             var metadataService = Mock.Of<IMetadataService>().Object;
             var command = new CodeGenerationCommand(new TestSpanFactory(),
                 _dotNetGenerator, new TypeScriptGenerator(metadataService, AnsiConsole.Console),
-                metadataService, AnsiConsole.Console);
+                metadataService, _connection, AnsiConsole.Console);
 
             var result = await command.ExecuteAsync(
                 new CommandContext(Enumerable.Empty<string>(), new EmptyRemainingArguments(), "codegeneration", null),

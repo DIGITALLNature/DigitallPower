@@ -1,3 +1,17 @@
+# [3.0.0-beta.15](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2026-10-22)
+
+
+### Bug Fixes
+
+* **webresource:** align push output with plugin deployment ([#209](https://github.com/DIGITALLNature/DigitallPower/issues/209)) ([90a777b](https://github.com/DIGITALLNature/DigitallPower/commit/90a777bb43b6b55eea2203c7a7fa93116b3eba68))
+
+# [3.0.0-beta.14](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.13...v3.0.0-beta.14) (2026-10-22)
+
+
+### Bug Fixes
+
+* **connection:** avoid nested interactive displays during codegeneration ([#208](https://github.com/DIGITALLNature/DigitallPower/issues/208)) ([b1d439b](https://github.com/DIGITALLNature/DigitallPower/commit/b1d439b9697f09df992e8acc42657ce627a9b72e))
+
 # [3.0.0-beta.13](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.12...v3.0.0-beta.13) (2026-10-20)
 
 
