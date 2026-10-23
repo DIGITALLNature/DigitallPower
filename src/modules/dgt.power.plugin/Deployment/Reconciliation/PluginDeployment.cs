@@ -647,8 +647,9 @@ internal sealed class PluginDeployment(IOrganizationServiceAsync2 service)
         var additions = new List<ProviderMembershipAddition>();
         if (declarations.Count > 0 && !string.IsNullOrWhiteSpace(solutionName))
         {
-            componentType = await _solutions.GetComponentTypeAsync(EntityDataProvider.EntityLogicalName, cancellationToken) ??
-                throw new InvalidOperationException($"The target environment does not define a solution component type for entitydataprovider; membership in '{solutionName}' cannot be prepared.");
+            // Dataverse does not expose a SolutionComponentDefinition entry for 'entitydataprovider' (primaryentityname is null/absent).
+            // ComponentType 181 (Virtual Entity Data Provider) is an undocumented yet globally constant and immutable engine identifier across all Dataverse environments.
+            componentType = 181;
             providerMembers = await _solutions.ListComponentIdsAsync(solutionName, componentType.Value, cancellationToken);
         }
 
