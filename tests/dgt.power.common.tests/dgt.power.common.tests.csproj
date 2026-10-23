@@ -11,16 +11,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.401">
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="10.0.402">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.10.0">
+    <PackageReference Update="Microsoft.Extensions.StaticAnalysis" Version="10.11.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Spectre.Console.Testing" Version="0.57.2" />
-    <PackageReference Update="TUnit" Version="1.72.16" />
+    <PackageReference Update="TUnit" Version="1.76.0" />
   </ItemGroup>
 
   <ItemGroup>
