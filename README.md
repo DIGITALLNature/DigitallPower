@@ -1467,7 +1467,12 @@ pnpm exec openspec validate --specs  # Validate current OpenSpec specifications
 Use [OpenSpec](https://github.com/Fission-AI/OpenSpec) for significant changes to public CLI/API
 behavior, configuration and schemas, architecture, module boundaries, or behavior spanning
 capabilities. Start with `/opsx-propose`; after review, implement with `/opsx-apply`, update the
-main specs, validate them, and archive the completed change. Small fixes, test-only changes, and
+main specs, validate them, and submit the implementation PR. Keep the change active until that PR
+has successfully merged into `beta` or `main`. Archive with `/opsx-archive` only in a separate
+post-merge follow-up, after verifying the PR is `MERGED`, has a merge timestamp, and targets one
+of those exact branch names. Completed tasks, an open or approved PR, green CI, a closed-but-unmerged
+PR, or a merge into another branch do not permit archiving. If merge verification is unavailable,
+leave the change active and report the blocker. Small fixes, test-only changes, and
 behavior-preserving refactors do not require a proposal. The CLI is installed locally with pnpm
 and is run as `pnpm exec openspec`.
 
@@ -1475,7 +1480,8 @@ Current requirements live in [`openspec/specs/`](openspec/specs/). Durable desig
 [`docs/architecture/decisions/`](docs/architecture/decisions/). The README remains the user-facing
 command and configuration reference; implementation details belong beside their code and tests.
 Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
-CLI examples after OpenSpec updates them.
+CLI examples and the post-merge archive gate after OpenSpec updates them. Validate this
+normalization with `node --test scripts/normalize-openspec-commands.test.mjs`.
 
 GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
 [`openspec/config.yaml`](openspec/config.yaml). Its setup workflow installs the locked pnpm
