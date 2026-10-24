@@ -15,6 +15,7 @@ using dgt.power.maintenance.Model.Settings;
 using dgt.power.plugin.Commands;
 using dgt.power.plugin.Models;
 using dgt.power.solution.Base;
+using dgt.power.telemetry.Base;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli.Testing;
 using Spectre.Console.Cli;
@@ -736,5 +737,34 @@ public class SettingsParsingTests
         var settings = (PluginStepEnableDisableSettings)result.Settings!;
 
         await Assert.That(settings.DryRun).IsTrue();
+    }
+
+    [Test]
+    public async Task TelemetrySettings_ParsesInheritedOptions()
+    {
+        var result = Parse<TelemetrySettings>(
+            "--no-telemetry",
+            "--non-interactive",
+            "--connection", "myconn");
+
+        var settings = (TelemetrySettings)result.Settings!;
+
+        await Assert.That(settings.NoTelemetry).IsTrue();
+        await Assert.That(settings.NonInteractive).IsTrue();
+        await Assert.That(settings.Connection).IsEqualTo("myconn");
+        await Assert.That(settings.ConnectionString).IsNull();
+    }
+
+    [Test]
+    public async Task TelemetrySettings_Defaults()
+    {
+        var result = Parse<TelemetrySettings>();
+
+        var settings = (TelemetrySettings)result.Settings!;
+
+        await Assert.That(settings.NoTelemetry).IsFalse();
+        await Assert.That(settings.NonInteractive).IsFalse();
+        await Assert.That(settings.Connection).IsNull();
+        await Assert.That(settings.ConnectionString).IsNull();
     }
 }

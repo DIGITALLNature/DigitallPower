@@ -17,6 +17,8 @@ using dgt.power.plugin.Commands;
 using dgt.power.solution;
 using dgt.power.solution.Base;
 using dgt.power.Telemetry;
+using dgt.power.telemetry.Base;
+using dgt.power.telemetry.Commands;
 using dgt.power.webresource.Base;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
@@ -212,6 +214,20 @@ internal static class CommandTree
                 .WithDescription("Pushes webresources from a directory or a single file")
                 .WithExample("webresource", "push", "c:/TargetDir/webresources", "--publisher-prefix", "sample")
                 .WithExample("webresource", "push", "c:/TargetDir/main.js", "--name", "sample_/main.js");
+        });
+
+        config.AddBranch<TelemetrySettings>("telemetry", telemetry =>
+        {
+            telemetry.SetDescription("Manages telemetry settings");
+            telemetry.AddCommand<TelemetryStatusCommand>("status")
+                .WithDescription("Shows the current telemetry state")
+                .WithExample("telemetry", "status");
+            telemetry.AddCommand<TelemetryEnableCommand>("enable")
+                .WithDescription("Enables telemetry")
+                .WithExample("telemetry", "enable");
+            telemetry.AddCommand<TelemetryDisableCommand>("disable")
+                .WithDescription("Disables telemetry")
+                .WithExample("telemetry", "disable");
         });
 
         config.AddBranch<CompleteSettings>("complete", complete =>

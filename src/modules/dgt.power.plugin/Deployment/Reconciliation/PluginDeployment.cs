@@ -6,8 +6,8 @@ using dgt.power.plugin.Exceptions;
 using dgt.power.plugin.Models;
 using dgt.power.plugin.Repositories;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using dgt.power.dataverse;
 using EntityDataProvider = dgt.power.dataverse.EntityDataProvider;
-using PluginPackage = dgt.power.dataverse.PluginPackage;
 
 namespace dgt.power.plugin.Deployment.Reconciliation;
 
