@@ -15,13 +15,13 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
-        var command = new TelemetryStatusCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
         await Assert.That(TestConsole.Output).Contains("Telemetry is enabled.");
-        await Assert.That(TestConsole.Output).Contains("To disable: dgtp telemetry disable");
+        await Assert.That(TestConsole.Output).Contains("Run dgtp telemetry disable to disable telemetry.");
         await Assert.That(TestConsole.Output).Contains("Telemetry Notice");
     }
 
@@ -30,13 +30,13 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(false);
-        var command = new TelemetryStatusCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
         await Assert.That(TestConsole.Output).Contains("Telemetry is disabled.");
-        await Assert.That(TestConsole.Output).Contains("To enable: dgtp telemetry enable");
+        await Assert.That(TestConsole.Output).Contains("Run dgtp telemetry enable to enable telemetry.");
         await Assert.That(TestConsole.Output).Contains("Telemetry Notice");
     }
 
@@ -48,7 +48,7 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
         SetEnvVar(envVar, "1");
-        var command = new TelemetryStatusCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
@@ -63,7 +63,7 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
-        var command = new TelemetryStatusCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
 
         await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 

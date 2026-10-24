@@ -2,7 +2,7 @@
 
 ## Context
 
-The CLI already has telemetry infrastructure in `src/dgt.power/Telemetry/` (TelemetryState, TelemetryConfig, TelemetryInterceptor, etc.) and persists telemetry preferences in `state.json` via `StateStore` in `src/dgt.power.common/Storage/`. Currently, users can only change the persisted preference by manually editing `state.json` or using environment variables. See proposal.md for motivation.
+The CLI already has telemetry infrastructure in `src/dgt.power/Telemetry/` (TelemetryState, TelemetryInterceptor, etc.) and persists telemetry preferences in `state.json` via `StateStore` in `src/dgt.power.common/Storage/`. Currently, users can only change the persisted preference by manually editing `state.json` or using environment variables. See proposal.md for motivation.
 
 The existing module pattern (e.g., `dgt.power.connection`) shows how to create a self-contained feature module: a `.csproj` referencing `dgt.power.common`, command classes deriving from `PowerCommand<TSettings>` or `Command<TSettings>`, and a settings class deriving from `BaseProgramSettings`. Connection commands demonstrate that commands which don't need Dataverse simply don't inject `IDataverseConnection`.
 
@@ -26,7 +26,7 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
 
 - **Commands derive from `PowerCommand<TSettings>`**: All three commands are traced units (they produce telemetry spans). Using `PowerCommand<TSettings>` gives us the telemetry span and end-line behavior for free, consistent with the command-execution spec. The settings class derives from `BaseProgramSettings` to inherit `--no-telemetry` and other shared options.
 
-- **Commands do NOT inject `IDataverseConnection`**: Following the convention that commands which never touch Dataverse don't request it, the telemetry commands only inject `StateStore`, `IAnsiConsole`, and `ICommandSpanFactory`. This means they never authenticate.
+- **Commands do NOT inject `IDataverseConnection`**: Following the convention that commands which never touch Dataverse don't request it, the telemetry commands only inject `TelemetryStateProvider`, `IAnsiConsole`, and `ICommandSpanFactory`. This means they never authenticate.
 
 - **Settings classes**: Two settings types:
   - `TelemetrySettings : BaseProgramSettings` — used for the branch (no additional options)
@@ -41,7 +41,7 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
   └─────────────────────────────────────────────────────┘
 
   [green]●[/] Telemetry is enabled.
-  To disable: dgtp telemetry disable
+  Run [bold]dgtp telemetry disable[/] to disable telemetry.
   ```
 
   ```
@@ -50,7 +50,7 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
   └─────────────────────────────────────────────────────┘
 
   [red]●[/] Telemetry is disabled.
-  To enable: dgtp telemetry enable
+  Run [bold]dgtp telemetry enable[/] to enable telemetry.
   ```
 
   ```
@@ -64,7 +64,7 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
 
 - **Move `TelemetryNotice` to `dgt.power.common`**: The `TelemetryNotice` class currently lives in `src/dgt.power/Telemetry/` as `internal`. It is a cross-cutting UI concern (like `StorageSecurityNotice` which already lives in common). Move it to `dgt.power.common/Telemetry/TelemetryNotice.cs`, make it `public`, and update `Program.cs` to use the new namespace. Both the main app (first-run notice) and the telemetry module (`TelemetryStatusCommand`) can then use it.
 
-- **Extract `TelemetryEnvironment` to `dgt.power.common`**: The environment opt-out check (`DGTP_TELEMETRY_OPTOUT` / `DO_NOT_TRACK`) currently lives in `TelemetryConfig.IsOptedOut` inside `dgt.power`. Since the telemetry module needs the same check, extract it into a new `public static class TelemetryEnvironment` in `dgt.power.common/Telemetry/` with a single `IsOptedOut` property. `TelemetryConfig` in `dgt.power` delegates to it. This keeps the env var names as a single source of truth in common, following the same pattern as `ExecutionEnvironment`.
+- **Create `TelemetryStateProvider` in `dgt.power.common`**: The effective telemetry state is a combination of the persisted preference (`StateStore.TelemetryEnabled`) and environment opt-outs (`DGTP_TELEMETRY_OPTOUT` / `DO_NOT_TRACK`). Previously this logic was fragmented across `TelemetryConfig` (internal to `dgt.power`) and inline checks in the telemetry commands. Consolidate it into a single `public sealed class TelemetryStateProvider` in `dgt.power.common/Telemetry/` with three members: `IsEnabled` (persisted && !env opt-out), `HasOptOutEnvVar` (env var check, inlined from the deleted `TelemetryEnvironment`), and `SetEnabled(bool)` (delegates to `StateStore`). The provider is registered as a DI singleton in `Program.cs`. This makes `TelemetryConfig` and `TelemetryEnvironment` redundant — both are deleted. `TelemetryConfig.IsCi` call sites now use `ExecutionEnvironment.IsCiAgent` directly (the passthrough added no value). Per-invocation suppression (`--no-telemetry`) remains in `TelemetryInterceptor`/`TelemetryState` — it is an invocation-time concern, not a configuration query.
 
 - **Module dependency rule**: Modules only reference `dgt.power.common`, never each other. This is already the case for all 9 existing modules (verified: zero module-to-module `ProjectReference` entries). The new `dgt.power.telemetry` module follows the same rule — its `.csproj` references only `dgt.power.common`.
 
@@ -85,7 +85,7 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
 
 - **Install ID preservation**: `StateStore.SetTelemetryEnabled(false)` already preserves the install ID (verified in `StateStoreTests`). No additional handling needed.
 
-- **Test project `dgt.power.telemetry.tests`**: Mirrors the module structure. Tests use TUnit and follow the `CommandTestsBase` pattern. Since commands don't need Dataverse, tests are simpler than connection tests — they only need a `StateStore` with a temp `DgtpHome` and a `TestConsole`.
+- **Test project `dgt.power.telemetry.tests`**: Mirrors the module structure. Tests use TUnit. Since commands don't need Dataverse, tests are simpler than connection tests — they only need a `TelemetryStateProvider` (wrapping a `StateStore` with a temp `DgtpHome`) and a `TestConsole`. The old `TelemetryConfigTests` in `dgt.power.cli.tests` is replaced by `TelemetryStateProviderTests` covering `IsEnabled`, `HasOptOutEnvVar`, and `SetEnabled`; `IsCi` and `GetOrCreateInstallId` tests are removed as they tested passthroughs already covered by `ExecutionEnvironmentTests` and `StateStoreTests`.
 
 ## Risks / Trade-offs
 

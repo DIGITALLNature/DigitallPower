@@ -1,14 +1,13 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common;
 using dgt.power.common.Storage;
-using dgt.power.Telemetry;
+using dgt.power.common.Telemetry;
 
 namespace dgt.power.cli.tests;
 
-[NotInParallel("CiEnvironmentVariables")]
-public class TelemetryConfigTests
+[NotInParallel("TelemetryEnvironmentVariables")]
+public class TelemetryStateProviderTests
 {
     [Test]
     [Arguments(true, null, true)]
@@ -19,7 +18,6 @@ public class TelemetryConfigTests
     public async Task IsEnabled_RespectsSavedPreferenceAndEnvironment(bool savedEnabled, string? optOutVariable, bool expected)
     {
         var original = SaveOptOutVariables();
-        var directory = CreateTemporaryDirectory();
         ClearOptOutVariables();
         try
         {
@@ -28,29 +26,28 @@ public class TelemetryConfigTests
                 Environment.SetEnvironmentVariable(optOutVariable, "true");
             }
 
-            var home = new DgtpHome(directory);
-            var store = new StateStore(home);
-            store.SetTelemetryEnabled(savedEnabled);
-            await Assert.That(TelemetryConfig.IsEnabled(store)).IsEqualTo(expected);
-            var state = System.Text.Json.Nodes.JsonNode.Parse(await File.ReadAllTextAsync(home.StatePath))!;
-            await Assert.That(state["telemetry"]!["installId"]).IsNull();
+            await WithProvider(async (provider, store) =>
+            {
+                store.SetTelemetryEnabled(savedEnabled);
+                await Assert.That(provider.IsEnabled).IsEqualTo(expected);
+            });
         }
         finally
         {
             RestoreOptOutVariables(original);
-            Directory.Delete(directory, recursive: true);
         }
     }
 
     [Test]
-    public async Task IsOptedOut_ReturnsFalse_WhenEnvVarNotSet()
+    public async Task HasOptOutEnvVar_ReturnsFalse_WhenEnvVarNotSet()
     {
         var original = SaveOptOutVariables();
         ClearOptOutVariables();
 
         try
         {
-            await Assert.That(TelemetryConfig.IsOptedOut).IsFalse();
+            await WithProvider(async provider =>
+                await Assert.That(provider.HasOptOutEnvVar).IsFalse());
         }
         finally
         {
@@ -62,14 +59,15 @@ public class TelemetryConfigTests
     [Arguments("1")]
     [Arguments("true")]
     [Arguments("yes")]
-    public async Task IsOptedOut_ReturnsTrue_WhenEnvVarSet(string value)
+    public async Task HasOptOutEnvVar_ReturnsTrue_WhenEnvVarSet(string value)
     {
         var original = SaveOptOutVariables();
         ClearOptOutVariables();
         Environment.SetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT", value);
         try
         {
-            await Assert.That(TelemetryConfig.IsOptedOut).IsTrue();
+            await WithProvider(async provider =>
+                await Assert.That(provider.HasOptOutEnvVar).IsTrue());
         }
         finally
         {
@@ -82,14 +80,15 @@ public class TelemetryConfigTests
     [Arguments("false")]
     [Arguments("no")]
     [Arguments("")]
-    public async Task IsOptedOut_ReturnsFalse_WhenEnvVarSetToNonOptOutValue(string value)
+    public async Task HasOptOutEnvVar_ReturnsFalse_WhenEnvVarSetToNonOptOutValue(string value)
     {
         var original = SaveOptOutVariables();
         ClearOptOutVariables();
         Environment.SetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT", value);
         try
         {
-            await Assert.That(TelemetryConfig.IsOptedOut).IsFalse();
+            await WithProvider(async provider =>
+                await Assert.That(provider.HasOptOutEnvVar).IsFalse());
         }
         finally
         {
@@ -101,14 +100,15 @@ public class TelemetryConfigTests
     [Arguments("1")]
     [Arguments("true")]
     [Arguments("yes")]
-    public async Task IsOptedOut_ReturnsTrue_WhenDoNotTrackIsSet(string value)
+    public async Task HasOptOutEnvVar_ReturnsTrue_WhenDoNotTrackIsSet(string value)
     {
         var original = SaveOptOutVariables();
         ClearOptOutVariables();
         Environment.SetEnvironmentVariable("DO_NOT_TRACK", value);
         try
         {
-            await Assert.That(TelemetryConfig.IsOptedOut).IsTrue();
+            await WithProvider(async provider =>
+                await Assert.That(provider.HasOptOutEnvVar).IsTrue());
         }
         finally
         {
@@ -117,14 +117,15 @@ public class TelemetryConfigTests
     }
 
     [Test]
-    public async Task IsOptedOut_ReturnsFalse_WhenLegacyVariableIsSet()
+    public async Task HasOptOutEnvVar_ReturnsFalse_WhenLegacyVariableIsSet()
     {
         var original = SaveOptOutVariables();
         ClearOptOutVariables();
         Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", "true");
         try
         {
-            await Assert.That(TelemetryConfig.IsOptedOut).IsFalse();
+            await WithProvider(async provider =>
+                await Assert.That(provider.HasOptOutEnvVar).IsFalse());
         }
         finally
         {
@@ -133,73 +134,25 @@ public class TelemetryConfigTests
     }
 
     [Test]
-    public async Task IsCi_ReturnsFalse_WhenNoCiEnvVarsSet()
+    public async Task SetEnabled_PersistsPreference()
     {
-        // Save and clear all CI env vars
-        var savedVars = ExecutionEnvironment.CiEnvironmentVariables
-            .ToDictionary(environmentVariable => environmentVariable,
-                environmentVariable => Environment.GetEnvironmentVariable(environmentVariable));
-
-        try
+        await WithProvider(async (provider, store) =>
         {
-            foreach (var key in savedVars.Keys)
-            {
-                Environment.SetEnvironmentVariable(key, null);
-            }
+            provider.SetEnabled(false);
+            await Assert.That(store.TelemetryEnabled).IsFalse();
 
-            await Assert.That(TelemetryConfig.IsCi).IsFalse();
-        }
-        finally
-        {
-            foreach (var (key, value) in savedVars)
-            {
-                Environment.SetEnvironmentVariable(key, value);
-            }
-        }
+            provider.SetEnabled(true);
+            await Assert.That(store.TelemetryEnabled).IsTrue();
+        });
     }
 
-    [Test]
-    [Arguments("TF_BUILD", "True")]
-    [Arguments("BUILD_BUILDURI", "vstfs:///Build/Build/123")]
-    [Arguments("GITHUB_ACTIONS", "true")]
-    [Arguments("GITLAB_CI", "true")]
-    [Arguments("JENKINS_URL", "http://jenkins.local")]
-    [Arguments("CI", "true")]
-    public async Task IsCi_ReturnsTrue_WhenCiEnvVarSet(string envVar, string envValue)
-    {
-        // Save all CI env vars and clear them to isolate
-        var ciVars = ExecutionEnvironment.CiEnvironmentVariables.ToArray();
-        var saved = ciVars.ToDictionary(k => k, Environment.GetEnvironmentVariable);
-
-        try
-        {
-            foreach (var key in ciVars)
-            {
-                Environment.SetEnvironmentVariable(key, null);
-            }
-
-            Environment.SetEnvironmentVariable(envVar, envValue);
-
-            await Assert.That(TelemetryConfig.IsCi).IsTrue();
-        }
-        finally
-        {
-            foreach (var (key, value) in saved)
-            {
-                Environment.SetEnvironmentVariable(key, value);
-            }
-        }
-    }
-
-    [Test]
-    public async Task GetOrCreateInstallId_CreatesNewGuid_WhenStateHasNoId()
+    private static async Task WithProvider(Func<TelemetryStateProvider, Task> action)
     {
         var directory = CreateTemporaryDirectory();
         try
         {
-            var id = TelemetryConfig.GetOrCreateInstallId(new StateStore(new DgtpHome(directory)));
-
-            await Assert.That(Guid.TryParse(id, out _)).IsTrue();
+            var provider = new TelemetryStateProvider(new StateStore(new DgtpHome(directory)));
+            await action(provider);
         }
         finally
         {
@@ -207,17 +160,14 @@ public class TelemetryConfigTests
         }
     }
 
-    [Test]
-    public async Task GetOrCreateInstallId_ReturnsSameId_OnSubsequentCalls()
+    private static async Task WithProvider(Func<TelemetryStateProvider, StateStore, Task> action)
     {
         var directory = CreateTemporaryDirectory();
         try
         {
-            var stateStore = new StateStore(new DgtpHome(directory));
-            var id1 = TelemetryConfig.GetOrCreateInstallId(stateStore);
-            var id2 = TelemetryConfig.GetOrCreateInstallId(stateStore);
-
-            await Assert.That(id1).IsEqualTo(id2);
+            var store = new StateStore(new DgtpHome(directory));
+            var provider = new TelemetryStateProvider(store);
+            await action(provider, store);
         }
         finally
         {

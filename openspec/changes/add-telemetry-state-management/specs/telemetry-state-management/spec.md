@@ -15,14 +15,14 @@ Provide CLI commands to view and change the persisted telemetry preference, so u
 - **WHEN** the user runs `dgtp telemetry status` with telemetry enabled and no environment opt-outs
 - **THEN** the telemetry notice panel is displayed
 - **AND** the output shows a green circle followed by "Telemetry is enabled."
-- **AND** a line "To disable: dgtp telemetry disable"
+- **AND** a line "Run dgtp telemetry disable to disable telemetry." (the command `dgtp telemetry disable` is rendered in bold)
 
 #### Scenario: Telemetry is disabled in persisted state
 
 - **WHEN** the user runs `dgtp telemetry status` with `telemetry.enabled` set to `false` in `state.json`
 - **THEN** the telemetry notice panel is displayed
 - **AND** the output shows a red circle followed by "Telemetry is disabled."
-- **AND** a line "To enable: dgtp telemetry enable"
+- **AND** a line "Run dgtp telemetry enable to enable telemetry." (the command `dgtp telemetry enable` is rendered in bold)
 
 #### Scenario: Telemetry is overridden by environment variable
 

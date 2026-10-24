@@ -3,7 +3,6 @@
 
 using System.Globalization;
 using dgt.power.common;
-using dgt.power.common.Storage;
 using dgt.power.common.Telemetry;
 using dgt.power.telemetry.Base;
 using Spectre.Console;
@@ -12,24 +11,24 @@ namespace dgt.power.telemetry.Commands;
 
 public sealed class TelemetryEnableCommand(
     ICommandSpanFactory spans,
-    StateStore stateStore,
+    TelemetryStateProvider telemetryState,
     IAnsiConsole console)
     : PowerCommand<TelemetrySettings>(spans, console)
 {
     protected override Task<bool> RunAsync(TelemetrySettings settings, CancellationToken cancellationToken)
     {
-        stateStore.SetTelemetryEnabled(true);
+        telemetryState.SetEnabled(true);
 
-        if (TelemetryEnvironment.IsOptedOut)
+        if (telemetryState.IsEnabled)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-                $"{Emoji.Known.Warning} Telemetry is now enabled.");
-            Console.MarkupLine("DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set.");
+                $"[green]●[/] Telemetry is now enabled.");
         }
         else
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-                $"[green]●[/] Telemetry is now enabled.");
+                $"{Emoji.Known.Warning} Telemetry is now enabled.");
+            Console.MarkupLine("DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set.");
         }
 
         return Task.FromResult(true);

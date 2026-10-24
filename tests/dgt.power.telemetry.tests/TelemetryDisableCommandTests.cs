@@ -14,7 +14,7 @@ public class TelemetryDisableCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
-        var command = new TelemetryDisableCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryDisableCommand(SpanFactory, TelemetryState, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
@@ -28,7 +28,7 @@ public class TelemetryDisableCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         var installId = StateStore.GetOrCreateTelemetryInstallId();
-        var command = new TelemetryDisableCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryDisableCommand(SpanFactory, TelemetryState, TestConsole);
 
         await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 

@@ -1,11 +1,12 @@
 # Tasks
 
-## 1. Extract Shared Telemetry Code to dgt.power.common
+## 1. Consolidate Telemetry State into TelemetryStateProvider
 
 - [x] 1.1 Move `TelemetryNotice` from `src/dgt.power/Telemetry/TelemetryNotice.cs` to `src/dgt.power.common/Telemetry/TelemetryNotice.cs`, change `internal` to `public`, and update the namespace; verify `dotnet build src/dgt.power.common` and `dotnet build src/dgt.power` succeed
 - [x] 1.2 Update the `using` in `src/dgt.power/Program.cs` to reference the new namespace; verify the first-run notice still works
-- [x] 1.3 Create `src/dgt.power.common/Telemetry/TelemetryEnvironment.cs` as `public static class` with an `IsOptedOut` property that checks `DGTP_TELEMETRY_OPTOUT` and `DO_NOT_TRACK` via `ExecutionEnvironment.IsTruthy`; verify it compiles
-- [x] 1.4 Update `TelemetryConfig.IsOptedOut` in `src/dgt.power/Telemetry/TelemetryConfig.cs` to delegate to `TelemetryEnvironment.IsOptedOut`; verify existing `TelemetryConfigTests` still pass
+- [x] 1.3 Create `src/dgt.power.common/Telemetry/TelemetryStateProvider.cs` as `public sealed class` with `IsEnabled` (persisted && !env opt-out), `HasOptOutEnvVar` (checks `DGTP_TELEMETRY_OPTOUT` and `DO_NOT_TRACK` via `ExecutionEnvironment.IsTruthy`), and `SetEnabled(bool)` (delegates to `StateStore`); verify it compiles
+- [x] 1.4 Delete `TelemetryEnvironment.cs` (inlined into `TelemetryStateProvider`) and `TelemetryConfig.cs` (redundant passthroughs); update `VersionCheckInterceptor` and `ActivityExceptions` to use `ExecutionEnvironment.IsCiAgent` directly; verify `dotnet build` succeeds with 0 errors
+- [x] 1.5 Register `TelemetryStateProvider` as a DI singleton in `Program.cs` and replace `TelemetryConfig.IsEnabled(stateStore)` with `telemetryStateProvider.IsEnabled`; verify the first-run notice still works
 
 ## 2. Create Module Project
 
@@ -15,9 +16,9 @@
 
 ## 3. Implement Telemetry Commands
 
-- [x] 3.1 Implement `TelemetryStatusCommand` in `src/modules/dgt.power.telemetry/Commands/TelemetryStatusCommand.cs` deriving from `PowerCommand<TelemetrySettings>`, injecting `StateStore` and `IAnsiConsole`; display status line with colored circle indicator (green `●` enabled / red `●` disabled), how-to line, optional env opt-out explanation, and the telemetry notice panel; verify `dgtp telemetry status --help` works
-- [x] 3.2 Implement `TelemetryEnableCommand` in `src/modules/dgt.power.telemetry/Commands/TelemetryEnableCommand.cs` deriving from `PowerCommand<TelemetrySettings>`, calling `StateStore.SetTelemetryEnabled(true)` and printing confirmation (with env opt-out warning if applicable); verify `dgtp telemetry enable` persists `telemetry.enabled: true` in `state.json`
-- [x] 3.3 Implement `TelemetryDisableCommand` in `src/modules/dgt.power.telemetry/Commands/TelemetryDisableCommand.cs` deriving from `PowerCommand<TelemetrySettings>`, calling `StateStore.SetTelemetryEnabled(false)` and printing confirmation; verify `dgtp telemetry disable` persists `telemetry.enabled: false` and preserves the install ID
+- [x] 3.1 Implement `TelemetryStatusCommand` in `src/modules/dgt.power.telemetry/Commands/TelemetryStatusCommand.cs` deriving from `PowerCommand<TelemetrySettings>`, injecting `TelemetryStateProvider` and `IAnsiConsole`; display status line with colored circle indicator (green `●` enabled / red `●` disabled), how-to line, optional env opt-out explanation, and the telemetry notice panel; verify `dgtp telemetry status --help` works
+- [x] 3.2 Implement `TelemetryEnableCommand` in `src/modules/dgt.power.telemetry/Commands/TelemetryEnableCommand.cs` deriving from `PowerCommand<TelemetrySettings>`, calling `TelemetryStateProvider.SetEnabled(true)` and printing confirmation (with env opt-out warning if applicable); verify `dgtp telemetry enable` persists `telemetry.enabled: true` in `state.json`
+- [x] 3.3 Implement `TelemetryDisableCommand` in `src/modules/dgt.power.telemetry/Commands/TelemetryDisableCommand.cs` deriving from `PowerCommand<TelemetrySettings>`, calling `TelemetryStateProvider.SetEnabled(false)` and printing confirmation; verify `dgtp telemetry disable` persists `telemetry.enabled: false` and preserves the install ID
 
 ## 4. Register Commands in Command Tree
 
@@ -31,7 +32,7 @@
 
 ## 6. Write Command Tests
 
-- [x] 6.1 Write `TelemetryStatusCommandTests.cs` covering: enabled state shows green circle and "To disable" hint, disabled state shows red circle and "To enable" hint, env opt-out shows red circle with "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set." line, telemetry notice panel is displayed in all cases; verify all tests pass with `dotnet test --project tests/dgt.power.telemetry.tests`
+- [x] 6.1 Write `TelemetryStatusCommandTests.cs` covering: enabled state shows green circle and "To disable" hint, disabled state shows red circle and "To enable" hint, env opt-out shows red circle with "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set." line, telemetry notice panel is displayed in all cases and before the status line; verify all tests pass with `dotnet test --project tests/dgt.power.telemetry.tests`
 - [x] 6.2 Write `TelemetryEnableCommandTests.cs` covering: persists enabled=true, confirmation message, environment opt-out warning, exit code 0; verify all tests pass
 - [x] 6.3 Write `TelemetryDisableCommandTests.cs` covering: persists enabled=false, confirmation message, install ID preservation, exit code 0; verify all tests pass
 
@@ -39,6 +40,7 @@
 
 - [x] 7.1 Add `telemetry` to the `TopLevelPath_HelpInvocation_Succeeds` arguments in `tests/dgt.power.cli.tests/CommandTreeTests.cs`, and verify the test passes
 - [x] 7.2 Add a `TelemetrySettings_ParsesOptions` test in `tests/dgt.power.cli.tests/SettingsParsingTests.cs` verifying `--no-telemetry` and other inherited options parse correctly, and verify the test passes
+- [x] 7.3 Replace `TelemetryConfigTests.cs` with `TelemetryStateProviderTests.cs` in `tests/dgt.power.cli.tests/`, covering `IsEnabled` (persisted + env), `HasOptOutEnvVar` (env var scenarios), and `SetEnabled` (persists preference); remove `IsCi` and `GetOrCreateInstallId` tests (covered by `ExecutionEnvironmentTests` and `StateStoreTests`); verify all tests pass
 
 ## 8. Update Documentation
 

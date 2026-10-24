@@ -50,6 +50,7 @@ var appConsole = AnsiConsole.Console;
 var registrations = new ServiceCollection();
 var dgtpHome = new DgtpHome();
 var stateStore = new StateStore(dgtpHome);
+var telemetryStateProvider = new TelemetryStateProvider(stateStore);
 registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
     .GetCoreV3("https://api.nuget.org/v3/index.json")
     .GetResource<PackageMetadataResource>()! // nuget.org's v3 feed always supports this resource
@@ -76,7 +77,7 @@ void FlushAndDisposeTelemetryProvider()
 
 void InitializeTelemetry()
 {
-    if (!TelemetryConfig.IsEnabled(stateStore))
+    if (!telemetryStateProvider.IsEnabled)
     {
         return;
     }
@@ -125,6 +126,7 @@ TaskScheduler.UnobservedTaskException += unobservedTaskExceptionHandler;
 registrations.AddSingleton<IDataverseConnection, DataverseConnection>();
 registrations.AddSingleton(dgtpHome);
 registrations.AddSingleton(stateStore);
+registrations.AddSingleton(telemetryStateProvider);
 registrations.AddSingleton(TimeProvider.System);
 registrations.AddSingleton(connectionInvocationContext);
 registrations.AddSingleton<StorageSecurityNotice>(_ => new StorageSecurityNotice(appConsole));

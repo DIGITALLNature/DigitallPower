@@ -15,7 +15,7 @@ public class TelemetryEnableCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(false);
-        var command = new TelemetryEnableCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryEnableCommand(SpanFactory, TelemetryState, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
@@ -32,7 +32,7 @@ public class TelemetryEnableCommandTests : TelemetryTestBase
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(false);
         SetEnvVar(envVar, "1");
-        var command = new TelemetryEnableCommand(SpanFactory, StateStore, TestConsole);
+        var command = new TelemetryEnableCommand(SpanFactory, TelemetryState, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 

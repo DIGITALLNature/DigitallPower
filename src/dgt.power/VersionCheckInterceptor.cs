@@ -3,7 +3,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using dgt.power.Telemetry;
+using dgt.power.common;
 using dgt.power.common.Storage;
 using NuGet.Common;
 using NuGet.Protocol.Core.Types;
@@ -22,7 +22,7 @@ public class VersionCheckInterceptor(
 
     public void Intercept(CommandContext context, CommandSettings settings)
     {
-        if (TelemetryConfig.IsCi)
+        if (ExecutionEnvironment.IsCiAgent)
         {
             console.MarkupLine("[grey]Build agent detected - abort check for new version.[/]");
             return;

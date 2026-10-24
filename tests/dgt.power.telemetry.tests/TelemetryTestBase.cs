@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using dgt.power.common.Storage;
+using dgt.power.common.Telemetry;
 using dgt.power.tests;
 using Spectre.Console.Testing;
 
@@ -17,6 +18,7 @@ public abstract class TelemetryTestBase : IDisposable
         _directory = Path.Combine(Path.GetTempPath(), $"dgtp-telemetry-tests-{Guid.NewGuid():N}");
         Home = new DgtpHome(_directory);
         StateStore = new StateStore(Home);
+        TelemetryState = new TelemetryStateProvider(StateStore);
         TestConsole = new TestConsole();
         SpanFactory = new TestSpanFactory();
     }
@@ -24,6 +26,8 @@ public abstract class TelemetryTestBase : IDisposable
     protected DgtpHome Home { get; }
 
     protected StateStore StateStore { get; }
+
+    protected TelemetryStateProvider TelemetryState { get; }
 
     protected TestConsole TestConsole { get; }
 

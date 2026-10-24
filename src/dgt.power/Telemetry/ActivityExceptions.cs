@@ -2,6 +2,7 @@
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
 using System.Diagnostics;
+using dgt.power.common;
 using dgt.power.common.Extensions;
 
 namespace dgt.power.Telemetry;
@@ -55,7 +56,7 @@ internal static class ActivityExceptions
 
     internal static void SetCommonTags(Activity activity, string? installId)
     {
-        activity.SetTag("dgtp.is_ci", TelemetryConfig.IsCi);
+        activity.SetTag("dgtp.is_ci", ExecutionEnvironment.IsCiAgent);
         activity.SetTag("dgtp.os", Environment.OSVersion.Platform.ToString());
         activity.SetTag("dgtp.version", DgtpActivitySource.Instance.Version);
         if (installId != null)
