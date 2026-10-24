@@ -33,29 +33,30 @@ Provide CLI commands to view and change the persisted telemetry preference, so u
 
 ### Requirement: Telemetry enable persists the preference
 
-`dgtp telemetry enable` MUST set `telemetry.enabled` to `true` in `state.json` and print a confirmation. It MUST NOT require a Dataverse connection. If an environment opt-out is active, the command MUST still persist the preference but inform the user that the environment variable takes precedence.
+`dgtp telemetry enable` MUST set `telemetry.enabled` to `true` in `state.json` and print a confirmation line prefixed with a green circle indicator. It MUST NOT require a Dataverse connection. If an environment opt-out is active, the command MUST still persist the preference but print a second line stating that the environment variable is set and telemetry remains effectively disabled.
 
 #### Scenario: Enabling telemetry
 
 - **WHEN** the user runs `dgtp telemetry enable`
 - **THEN** `state.json` is updated with `telemetry.enabled: true`
-- **AND** a confirmation message is printed
+- **AND** the output shows a green circle followed by "Telemetry is now enabled."
 
 #### Scenario: Enabling telemetry while environment opt-out is active
 
-- **WHEN** the user runs `dgtp telemetry enable` with `DGTP_TELEMETRY_OPTOUT` set
+- **WHEN** the user runs `dgtp telemetry enable` with `DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK` set
 - **THEN** `state.json` is updated with `telemetry.enabled: true`
-- **AND** the output warns that the environment opt-out takes precedence and telemetry remains effectively disabled
+- **AND** the output shows a green circle followed by "Telemetry is now enabled."
+- **AND** a second line "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set. Telemetry remains effectively disabled."
 
 ### Requirement: Telemetry disable persists the preference
 
-`dgtp telemetry disable` MUST set `telemetry.enabled` to `false` in `state.json` and print a confirmation. It MUST NOT require a Dataverse connection. The anonymous install ID MUST be preserved when telemetry is disabled.
+`dgtp telemetry disable` MUST set `telemetry.enabled` to `false` in `state.json` and print a confirmation line prefixed with a red circle indicator. It MUST NOT require a Dataverse connection. The anonymous install ID MUST be preserved when telemetry is disabled.
 
 #### Scenario: Disabling telemetry
 
 - **WHEN** the user runs `dgtp telemetry disable`
 - **THEN** `state.json` is updated with `telemetry.enabled: false`
-- **AND** a confirmation message is printed
+- **AND** the output shows a red circle followed by "Telemetry is now disabled."
 - **AND** the existing install ID is preserved in `state.json`
 
 ### Requirement: Environment opt-outs take precedence over persisted preference

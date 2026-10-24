@@ -40,7 +40,7 @@
 
 ## 8. Update Documentation
 
-- [ ] 8.1 Update the README telemetry section to document `dgtp telemetry status`, `dgtp telemetry enable`, and `dgtp telemetry disable` with examples, and verify the commands work as documented
+- [ ] 8.1 Update the README telemetry section: replace the manual `state.json` editing instructions with documentation for `dgtp telemetry status`, `dgtp telemetry enable`, and `dgtp telemetry disable` with examples; keep a brief note that `state.json` can still be edited directly for advanced use; verify the commands work as documented
 - [ ] 8.2 Add the `telemetry` branch to the command overview table in README if one exists, and verify the table is accurate
 
 ## 9. Final Verification

@@ -64,7 +64,20 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
 
 - **Move `TelemetryNotice` to `dgt.power.common`**: The `TelemetryNotice` class currently lives in `src/dgt.power/Telemetry/` as `internal`. Since the new `dgt.power.telemetry` module is a separate project that `dgt.power` references (not vice versa), the notice class MUST be moved to `dgt.power.common` and made `public` so both the main app (first-run notice in `Program.cs`) and the telemetry module (`TelemetryStatusCommand`) can use it.
 
-- **`enable`/`disable` confirmation**: Simple text confirmation printed to console. No interactive prompt needed — the command is explicit.
+- **`enable`/`disable` confirmation**: A single confirmation line with the same colored circle indicator used in `status` — green `●` for enable, red `●` for disable. When `enable` runs while an environment opt-out is active, a second line states "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set. Telemetry remains effectively disabled."
+
+  ```
+  [green]●[/] Telemetry is now enabled.
+  ```
+
+  ```
+  [red]●[/] Telemetry is now disabled.
+  ```
+
+  ```
+  [green]●[/] Telemetry is now enabled.
+  DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set. Telemetry remains effectively disabled.
+  ```
 
 - **Install ID preservation**: `StateStore.SetTelemetryEnabled(false)` already preserves the install ID (verified in `StateStoreTests`). No additional handling needed.
 
