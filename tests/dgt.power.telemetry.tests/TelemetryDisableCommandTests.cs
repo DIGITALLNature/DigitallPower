@@ -8,6 +8,7 @@ using Spectre.Console.Cli;
 
 namespace dgt.power.telemetry.tests;
 
+[NotInParallel("TelemetryEnvironmentVariables")]
 public class TelemetryDisableCommandTests : TelemetryTestBase
 {
     [Test]

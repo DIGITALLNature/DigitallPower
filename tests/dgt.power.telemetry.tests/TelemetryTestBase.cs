@@ -21,6 +21,7 @@ public abstract class TelemetryTestBase : IDisposable
         TelemetryState = new TelemetryStateProvider(StateStore);
         TestConsole = new TestConsole();
         SpanFactory = new TestSpanFactory();
+        TelemetryNotice.Reset();
     }
 
     protected DgtpHome Home { get; }

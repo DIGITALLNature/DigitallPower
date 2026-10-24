@@ -141,6 +141,20 @@ public class TelemetryStateProviderTests
         });
     }
 
+    private static async Task WithProvider(Func<TelemetryStateProvider, Task> action)
+    {
+        var directory = CreateTemporaryDirectory();
+        try
+        {
+            var provider = new TelemetryStateProvider(new StateStore(new DgtpHome(directory)));
+            await action(provider);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
     private static async Task WithProvider(Func<TelemetryStateProvider, StateStore, Task> action)
     {
         var directory = CreateTemporaryDirectory();

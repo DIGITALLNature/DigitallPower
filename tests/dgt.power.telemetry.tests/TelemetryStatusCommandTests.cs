@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Telemetry;
 using dgt.power.telemetry.Base;
 using dgt.power.telemetry.Commands;
 using Spectre.Console.Cli;
@@ -71,6 +72,24 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
         var statusIndex = TestConsole.Output.IndexOf("Telemetry is enabled.", StringComparison.Ordinal);
         await Assert.That(noticeIndex).IsGreaterThanOrEqualTo(0);
         await Assert.That(statusIndex).IsGreaterThan(noticeIndex);
+    }
+
+    [Test]
+    public async Task Status_NoticeAlreadyShownByStartup_DoesNotShowNoticeAgain()
+    {
+        ClearTelemetryEnvVars();
+        StateStore.SetTelemetryEnabled(true);
+
+        // Simulate the first-run startup path showing the notice before the command runs
+        TelemetryNotice.Show(TestConsole);
+
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
+        var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
+
+        await Assert.That(result).IsEqualTo(0);
+        var noticeCount = TestConsole.Output.Split("Telemetry Notice").Length - 1;
+        await Assert.That(noticeCount).IsEqualTo(1);
+        await Assert.That(TestConsole.Output).Contains("Telemetry is enabled.");
     }
 
     private static CommandContext CreateContext() =>
