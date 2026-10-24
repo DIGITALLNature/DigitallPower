@@ -19,6 +19,7 @@ public sealed class TelemetryStatusCommand(
     {
         TelemetryNotice.Show(Console);
 
+        // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
         if (telemetryState.IsEnabled)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[green]●[/] Telemetry is enabled.");
@@ -27,7 +28,7 @@ public sealed class TelemetryStatusCommand(
         else
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[red]●[/] Telemetry is disabled.");
-            if (telemetryState.HasOptOutEnvVar)
+            if (TelemetryStateProvider.HasOptOutEnvVar)
             {
                 Console.MarkupLine("DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set.");
             }

@@ -18,7 +18,7 @@ public sealed class TelemetryStateProvider(StateStore stateStore)
     /// True when an opt-out environment variable (<c>DGTP_TELEMETRY_OPTOUT</c> or
     /// <c>DO_NOT_TRACK</c>) is set to a truthy value.
     /// </summary>
-    public bool HasOptOutEnvVar =>
+    public static bool HasOptOutEnvVar =>
         ExecutionEnvironment.IsTruthy(Environment.GetEnvironmentVariable(OptOutEnvVar))
         || ExecutionEnvironment.IsTruthy(Environment.GetEnvironmentVariable(DoNotTrackEnvVar));
 

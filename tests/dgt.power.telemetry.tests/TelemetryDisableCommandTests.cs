@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Storage;
 using dgt.power.telemetry.Base;
 using dgt.power.telemetry.Commands;
 using Spectre.Console.Cli;
@@ -32,7 +33,7 @@ public class TelemetryDisableCommandTests : TelemetryTestBase
 
         await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
-        var reloaded = new dgt.power.common.Storage.StateStore(Home);
+        var reloaded = new StateStore(Home);
         await Assert.That(reloaded.GetOrCreateTelemetryInstallId(out var created)).IsEqualTo(installId);
         await Assert.That(created).IsFalse();
     }

@@ -19,7 +19,7 @@ public sealed class TelemetryEnableCommand(
     {
         telemetryState.SetEnabled(true);
 
-        if (telemetryState.HasOptOutEnvVar)
+        if (TelemetryStateProvider.HasOptOutEnvVar)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
                 $"{Emoji.Known.Warning} Telemetry is now enabled.");

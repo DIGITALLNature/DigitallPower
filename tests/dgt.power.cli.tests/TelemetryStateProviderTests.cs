@@ -46,8 +46,7 @@ public class TelemetryStateProviderTests
 
         try
         {
-            await WithProvider(async provider =>
-                await Assert.That(provider.HasOptOutEnvVar).IsFalse());
+            await Assert.That(TelemetryStateProvider.HasOptOutEnvVar).IsFalse();
         }
         finally
         {
@@ -66,8 +65,7 @@ public class TelemetryStateProviderTests
         Environment.SetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT", value);
         try
         {
-            await WithProvider(async provider =>
-                await Assert.That(provider.HasOptOutEnvVar).IsTrue());
+            await Assert.That(TelemetryStateProvider.HasOptOutEnvVar).IsTrue();
         }
         finally
         {
@@ -87,8 +85,7 @@ public class TelemetryStateProviderTests
         Environment.SetEnvironmentVariable("DGTP_TELEMETRY_OPTOUT", value);
         try
         {
-            await WithProvider(async provider =>
-                await Assert.That(provider.HasOptOutEnvVar).IsFalse());
+            await Assert.That(TelemetryStateProvider.HasOptOutEnvVar).IsFalse();
         }
         finally
         {
@@ -107,8 +104,7 @@ public class TelemetryStateProviderTests
         Environment.SetEnvironmentVariable("DO_NOT_TRACK", value);
         try
         {
-            await WithProvider(async provider =>
-                await Assert.That(provider.HasOptOutEnvVar).IsTrue());
+            await Assert.That(TelemetryStateProvider.HasOptOutEnvVar).IsTrue();
         }
         finally
         {
@@ -124,8 +120,7 @@ public class TelemetryStateProviderTests
         Environment.SetEnvironmentVariable("DGT_TELEMETRY_OPTOUT", "true");
         try
         {
-            await WithProvider(async provider =>
-                await Assert.That(provider.HasOptOutEnvVar).IsFalse());
+            await Assert.That(TelemetryStateProvider.HasOptOutEnvVar).IsFalse();
         }
         finally
         {
@@ -144,20 +139,6 @@ public class TelemetryStateProviderTests
             provider.SetEnabled(true);
             await Assert.That(store.TelemetryEnabled).IsTrue();
         });
-    }
-
-    private static async Task WithProvider(Func<TelemetryStateProvider, Task> action)
-    {
-        var directory = CreateTemporaryDirectory();
-        try
-        {
-            var provider = new TelemetryStateProvider(new StateStore(new DgtpHome(directory)));
-            await action(provider);
-        }
-        finally
-        {
-            Directory.Delete(directory, recursive: true);
-        }
     }
 
     private static async Task WithProvider(Func<TelemetryStateProvider, StateStore, Task> action)
