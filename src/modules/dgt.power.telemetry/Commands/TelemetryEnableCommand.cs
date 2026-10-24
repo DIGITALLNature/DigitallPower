@@ -19,16 +19,16 @@ public sealed class TelemetryEnableCommand(
     {
         telemetryState.SetEnabled(true);
 
-        if (telemetryState.IsEnabled)
-        {
-            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
-                $"[green]●[/] Telemetry is now enabled.");
-        }
-        else
+        if (telemetryState.HasOptOutEnvVar)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
                 $"{Emoji.Known.Warning} Telemetry is now enabled.");
             Console.MarkupLine("DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set.");
+        }
+        else
+        {
+            Console.MarkupLineInterpolated(CultureInfo.InvariantCulture,
+                $"[green]●[/] Telemetry is now enabled.");
         }
 
         return Task.FromResult(true);
