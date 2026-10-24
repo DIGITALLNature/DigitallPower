@@ -33,7 +33,7 @@ Provide CLI commands to view and change the persisted telemetry preference, so u
 
 ### Requirement: Telemetry enable persists the preference
 
-`dgtp telemetry enable` MUST set `telemetry.enabled` to `true` in `state.json` and print a confirmation line prefixed with a green circle indicator. It MUST NOT require a Dataverse connection. If an environment opt-out is active, the command MUST still persist the preference but print a second line stating that the environment variable is set and telemetry remains effectively disabled.
+`dgtp telemetry enable` MUST set `telemetry.enabled` to `true` in `state.json` and print a confirmation line prefixed with a green circle indicator. It MUST NOT require a Dataverse connection. If an environment opt-out is active, the command MUST still persist the preference but print the confirmation with a warning emoji instead of a green circle, followed by a second line stating which environment variables are set.
 
 #### Scenario: Enabling telemetry
 
@@ -45,8 +45,8 @@ Provide CLI commands to view and change the persisted telemetry preference, so u
 
 - **WHEN** the user runs `dgtp telemetry enable` with `DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK` set
 - **THEN** `state.json` is updated with `telemetry.enabled: true`
-- **AND** the output shows a green circle followed by "Telemetry is now enabled."
-- **AND** a second line "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set. Telemetry remains effectively disabled."
+- **AND** the output shows a warning emoji followed by "Telemetry is now enabled."
+- **AND** a second line "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set."
 
 ### Requirement: Telemetry disable persists the preference
 
