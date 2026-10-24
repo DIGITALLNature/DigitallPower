@@ -3,18 +3,20 @@
 
 using Spectre.Console;
 
-namespace dgt.power.Telemetry;
+namespace dgt.power.common.Telemetry;
 
 /// <summary>
-/// Renders the telemetry notice when an installation ID is first created.
+/// Renders the telemetry notice explaining what data is collected and how to opt out.
 /// </summary>
-internal static class TelemetryNotice
+public static class TelemetryNotice
 {
     /// <summary>
     /// Displays the telemetry notice.
     /// </summary>
     public static void Show(IAnsiConsole console)
     {
+        ArgumentNullException.ThrowIfNull(console);
+
         var panel = new Panel(
             "[grey]DIGITALL Power CLI collects anonymous usage data to improve the tool.\n" +
             "No personal data is collected. Only command name, duration, success/failure,\n" +

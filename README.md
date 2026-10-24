@@ -47,6 +47,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
   - [webresource](#webresource--deploy-webresources)
+  - [telemetry](#telemetry--manage-telemetry-settings)
 - [CI/CD Integration](#-cicd-integration)
   - [Client Secret service connection](#client-secret-service-connection)
   - [Workload Identity Federation (OIDC) service connection](#workload-identity-federation-oidc-service-connection)
@@ -56,6 +57,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Spec-Driven Development](#spec-driven-development)
 - [Requirements](#-requirements)
 - [Telemetry](#-telemetry)
+  - [Managing telemetry](#managing-telemetry)
   - [Persistent application state](#persistent-application-state)
 - [Community & Contributions](#%EF%B8%8F-community-and-contributions)
 - [License](#-license)
@@ -174,10 +176,11 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `plugin` `webresource` `complete` |
+| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
+| `dgtp telemetry <TAB>` | `status` `enable` `disable` |
 | `dgtp plugin <TAB>` | `push` |
 | `dgtp plugin step <TAB>` | `enable` `disable` `config` `state` |
 | `dgtp plugin step config <TAB>` | `set` |
@@ -1107,6 +1110,40 @@ and any obsolete resources to delete are rendered without applying changes. Obso
 requires a directory target and `--solution`. An empty directory is a no-op, including when
 `--delete-obsolete` is specified; it cannot be used to delete every webresource from a solution.
 
+### `telemetry` — Manage telemetry settings
+
+Commands for viewing and changing the persisted telemetry preference. These commands do not
+require a Dataverse connection.
+
+#### `status` — Show current telemetry state
+
+Displays the telemetry notice followed by the effective telemetry state with a colored circle
+indicator (green for enabled, red for disabled) and a hint showing the command to change the state.
+If an environment opt-out (`DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK`) is active, a second line
+explains the override.
+
+```bash
+dgtp telemetry status
+```
+
+#### `enable` — Enable telemetry
+
+Persists `telemetry.enabled: true` in `state.json`. If an environment opt-out is active, a
+warning emoji is shown instead of the green circle to indicate the preference was saved but
+will not take effect.
+
+```bash
+dgtp telemetry enable
+```
+
+#### `disable` — Disable telemetry
+
+Persists `telemetry.enabled: false` in `state.json`. The anonymous install ID is preserved.
+
+```bash
+dgtp telemetry disable
+```
+
 ## 🔄 CI/CD Integration
 
 > **Scope:** this section is specific to **Azure Pipelines**, since the auth mechanisms described
@@ -1422,7 +1459,27 @@ This anonymization is implemented in `TelemetryAnonymizer` and covered by unit t
 
 CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and currently recognizes `TF_BUILD`, `BUILD_BUILDURI`, `GITHUB_ACTIONS`, `GITLAB_CI`, `JENKINS_URL`, and `CI`.
 
-### How to disable telemetry
+### Managing telemetry
+
+**Check the current state:**
+
+```bash
+dgtp telemetry status
+```
+
+Shows whether telemetry is enabled or disabled, displays the telemetry notice, and prints the command to change the state.
+
+**Enable telemetry:**
+
+```bash
+dgtp telemetry enable
+```
+
+**Disable telemetry:**
+
+```bash
+dgtp telemetry disable
+```
 
 **Per invocation:**
 
@@ -1430,7 +1487,7 @@ CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and curre
 dgtp export --no-telemetry
 ```
 
-**Permanently (environment variable):**
+**Environment variable (takes precedence over the saved preference):**
 
 ```bash
 export DGTP_TELEMETRY_OPTOUT=1
@@ -1513,8 +1570,9 @@ Set `DGTP_HOME` to override this location. The directory is shared across tool v
 On Windows, the default is `%LOCALAPPDATA%\dgtp`; on Linux, it is `$XDG_DATA_HOME/dgtp`
 or `~/.local/share/dgtp`. Other platforms use the local application data directory's `dgtp` folder.
 
-To change the saved telemetry preference, set `telemetry.enabled` to `false` or `true` in
-`state.json` while dgtp is not running, leaving the other fields unchanged. It defaults to `true`.
+To change the saved telemetry preference, use `dgtp telemetry enable` or `dgtp telemetry disable`.
+For advanced use, `state.json` can still be edited directly while dgtp is not running — set
+`telemetry.enabled` to `false` or `true`, leaving the other fields unchanged. It defaults to `true`.
 Environment opt-outs and `--no-telemetry` always take precedence over this preference.
 
 ## ❤️ Community and Contributions

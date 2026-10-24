@@ -615,7 +615,7 @@
         "type": "Project",
         "dependencies": {
           "CsvHelper": "[33.1.0, )",
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.codegeneration": {
@@ -626,7 +626,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client.Dynamics": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.57.2, )",
           "System.Security.Cryptography.Xml": "[10.0.13, )",
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.common": {
@@ -643,26 +643,26 @@
       "dgt.power.connection": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.import": {
         "type": "Project",
         "dependencies": {
           "DocumentFormat.OpenXml": "[3.5.1, )",
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.maintenance": {
         "type": "Project",
         "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.plugin": {
@@ -671,14 +671,20 @@
           "Microsoft.Extensions.FileSystemGlobbing": "[10.0.13, )",
           "NuGet.Packaging": "[7.9.0, )",
           "System.Reflection.MetadataLoadContext": "[10.0.13, )",
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.solution": {
         "type": "Project",
         "dependencies": {
           "Sarif.Sdk": "[5.8.0, )",
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
+        }
+      },
+      "dgt.power.telemetry": {
+        "type": "Project",
+        "dependencies": {
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
       "dgt.power.webresource": {
@@ -687,7 +693,7 @@
           "Microsoft.PowerPlatform.Dataverse.Client": "[1.2.27, )",
           "Spectre.Console.Cli": "[0.57.2, )",
           "System.Security.Cryptography.Xml": "[10.0.13, )",
-          "dgt.power.common": "[3.0.0-beta.15, )"
+          "dgt.power.common": "[3.0.0-beta.16, )"
         }
       }
     }

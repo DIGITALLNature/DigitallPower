@@ -49,6 +49,7 @@ public class CommandTreeTests
     [Arguments("codegeneration")]
     [Arguments("cg")] // alias for codegeneration
     [Arguments("plugin")]
+    [Arguments("telemetry")]
     [Arguments("webresource")]
     [Arguments("complete")]
     public async Task TopLevelPath_HelpInvocation_Succeeds(string path)

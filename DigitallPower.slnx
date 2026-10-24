@@ -8,6 +8,7 @@
     <Project Path="src/modules/dgt.power.maintenance/dgt.power.maintenance.csproj" />
     <Project Path="src/modules/dgt.power.plugin/dgt.power.plugin.csproj" />
     <Project Path="src/modules/dgt.power.solution/dgt.power.solution.csproj" />
+    <Project Path="src/modules/dgt.power.telemetry/dgt.power.telemetry.csproj" />
     <Project Path="src/modules/dgt.power.webresource/dgt.power.webresource.csproj" />
   </Folder>
   <Folder Name="/Tests/">
@@ -20,6 +21,7 @@
     <Project Path="tests/dgt.power.maintenance.tests/dgt.power.maintenance.tests.csproj" />
     <Project Path="tests/dgt.power.plugin.tests/dgt.power.plugin.tests.csproj" />
     <Project Path="tests/dgt.power.solution.tests/dgt.power.solution.tests.csproj" />
+    <Project Path="tests/dgt.power.telemetry.tests/dgt.power.telemetry.tests.csproj" />
     <Project Path="tests/dgt.power.webresource.tests/dgt.power.webresource.tests.csproj" />
     <Project Path="tests/dgt.power.cli.tests/dgt.power.cli.tests.csproj" />
     <Project Path="tests/dgt.power.tests/dgt.power.tests.csproj" />

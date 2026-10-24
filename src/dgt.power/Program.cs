@@ -22,6 +22,7 @@ using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.common.Storage;
+using dgt.power.common.Telemetry;
 using dgt.power.Completion;
 using dgt.power.Telemetry;
 using Microsoft.Extensions.DependencyInjection;

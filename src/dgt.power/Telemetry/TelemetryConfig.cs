@@ -3,6 +3,7 @@
 
 using dgt.power.common;
 using dgt.power.common.Storage;
+using dgt.power.common.Telemetry;
 
 namespace dgt.power.Telemetry;
 
@@ -12,15 +13,10 @@ namespace dgt.power.Telemetry;
 /// </summary>
 internal static class TelemetryConfig
 {
-    private const string OptOutEnvVar = "DGTP_TELEMETRY_OPTOUT";
-    private const string DoNotTrackEnvVar = "DO_NOT_TRACK";
-
     /// <summary>
     /// True when the user has opted out of telemetry via environment variable.
     /// </summary>
-    public static bool IsOptedOut =>
-        ExecutionEnvironment.IsTruthy(Environment.GetEnvironmentVariable(OptOutEnvVar))
-        || ExecutionEnvironment.IsTruthy(Environment.GetEnvironmentVariable(DoNotTrackEnvVar));
+    public static bool IsOptedOut => TelemetryEnvironment.IsOptedOut;
 
     public static bool IsEnabled(StateStore stateStore) => !IsOptedOut && stateStore.TelemetryEnabled;
 
