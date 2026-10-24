@@ -62,7 +62,11 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
   └─────────────────────────────────────────────────────┘
   ```
 
-- **Move `TelemetryNotice` to `dgt.power.common`**: The `TelemetryNotice` class currently lives in `src/dgt.power/Telemetry/` as `internal`. Since the new `dgt.power.telemetry` module is a separate project that `dgt.power` references (not vice versa), the notice class MUST be moved to `dgt.power.common` and made `public` so both the main app (first-run notice in `Program.cs`) and the telemetry module (`TelemetryStatusCommand`) can use it.
+- **Move `TelemetryNotice` to `dgt.power.common`**: The `TelemetryNotice` class currently lives in `src/dgt.power/Telemetry/` as `internal`. It is a cross-cutting UI concern (like `StorageSecurityNotice` which already lives in common). Move it to `dgt.power.common/Telemetry/TelemetryNotice.cs`, make it `public`, and update `Program.cs` to use the new namespace. Both the main app (first-run notice) and the telemetry module (`TelemetryStatusCommand`) can then use it.
+
+- **Extract `TelemetryEnvironment` to `dgt.power.common`**: The environment opt-out check (`DGTP_TELEMETRY_OPTOUT` / `DO_NOT_TRACK`) currently lives in `TelemetryConfig.IsOptedOut` inside `dgt.power`. Since the telemetry module needs the same check, extract it into a new `public static class TelemetryEnvironment` in `dgt.power.common/Telemetry/` with a single `IsOptedOut` property. `TelemetryConfig` in `dgt.power` delegates to it. This keeps the env var names as a single source of truth in common, following the same pattern as `ExecutionEnvironment`.
+
+- **Module dependency rule**: Modules only reference `dgt.power.common`, never each other. This is already the case for all 9 existing modules (verified: zero module-to-module `ProjectReference` entries). The new `dgt.power.telemetry` module follows the same rule — its `.csproj` references only `dgt.power.common`.
 
 - **`enable`/`disable` confirmation**: A single confirmation line with the same colored circle indicator used in `status` — green `●` for enable, red `●` for disable. When `enable` runs while an environment opt-out is active, the green circle is replaced with a warning emoji (`Emoji.Known.Warning`) to signal that the preference was saved but will not take effect, followed by a second line "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set."
 

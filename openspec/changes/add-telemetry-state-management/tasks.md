@@ -1,9 +1,11 @@
 # Tasks
 
-## 1. Move TelemetryNotice to dgt.power.common
+## 1. Extract Shared Telemetry Code to dgt.power.common
 
 - [ ] 1.1 Move `TelemetryNotice` from `src/dgt.power/Telemetry/TelemetryNotice.cs` to `src/dgt.power.common/Telemetry/TelemetryNotice.cs`, change `internal` to `public`, and update the namespace; verify `dotnet build src/dgt.power.common` and `dotnet build src/dgt.power` succeed
 - [ ] 1.2 Update the `using` in `src/dgt.power/Program.cs` to reference the new namespace; verify the first-run notice still works
+- [ ] 1.3 Create `src/dgt.power.common/Telemetry/TelemetryEnvironment.cs` as `public static class` with an `IsOptedOut` property that checks `DGTP_TELEMETRY_OPTOUT` and `DO_NOT_TRACK` via `ExecutionEnvironment.IsTruthy`; verify it compiles
+- [ ] 1.4 Update `TelemetryConfig.IsOptedOut` in `src/dgt.power/Telemetry/TelemetryConfig.cs` to delegate to `TelemetryEnvironment.IsOptedOut`; verify existing `TelemetryConfigTests` still pass
 
 ## 2. Create Module Project
 
