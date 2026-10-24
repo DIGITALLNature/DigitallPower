@@ -8,28 +8,28 @@ Provide CLI commands to view and change the persisted telemetry preference, so u
 
 ### Requirement: Telemetry status reports effective state with visual indicator
 
-`dgtp telemetry status` MUST display the effective telemetry state on a single line prefixed with a colored circle indicator: green for enabled, red for disabled. The output MUST include a hint showing the command to change the state and MUST display the telemetry notice panel. When an environment opt-out (`DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK`) overrides the persisted preference, a second line MUST state that the environment variable is set. It MUST NOT require a Dataverse connection.
+`dgtp telemetry status` MUST display the telemetry notice panel first, followed by the effective telemetry state on a single line prefixed with a colored circle indicator: green for enabled, red for disabled. The output MUST include a hint showing the command to change the state. When an environment opt-out (`DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK`) overrides the persisted preference, a second line MUST state that the environment variable is set. It MUST NOT require a Dataverse connection.
 
 #### Scenario: Telemetry is enabled
 
 - **WHEN** the user runs `dgtp telemetry status` with telemetry enabled and no environment opt-outs
-- **THEN** the output shows a green circle followed by "Telemetry is enabled."
+- **THEN** the telemetry notice panel is displayed
+- **AND** the output shows a green circle followed by "Telemetry is enabled."
 - **AND** a line "To disable: dgtp telemetry disable"
-- **AND** the telemetry notice panel
 
 #### Scenario: Telemetry is disabled in persisted state
 
 - **WHEN** the user runs `dgtp telemetry status` with `telemetry.enabled` set to `false` in `state.json`
-- **THEN** the output shows a red circle followed by "Telemetry is disabled."
+- **THEN** the telemetry notice panel is displayed
+- **AND** the output shows a red circle followed by "Telemetry is disabled."
 - **AND** a line "To enable: dgtp telemetry enable"
-- **AND** the telemetry notice panel
 
 #### Scenario: Telemetry is overridden by environment variable
 
 - **WHEN** the user runs `dgtp telemetry status` with `telemetry.enabled` set to `true` but `DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK` is set
-- **THEN** the output shows a red circle followed by "Telemetry is disabled."
+- **THEN** the telemetry notice panel is displayed
+- **AND** the output shows a red circle followed by "Telemetry is disabled."
 - **AND** a second line "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set."
-- **AND** the telemetry notice panel
 
 ### Requirement: Telemetry enable persists the preference
 

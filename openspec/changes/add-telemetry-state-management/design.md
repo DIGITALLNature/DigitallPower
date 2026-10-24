@@ -32,34 +32,34 @@ The existing module pattern (e.g., `dgt.power.connection`) shows how to create a
   - `TelemetrySettings : BaseProgramSettings` — used for the branch (no additional options)
   - Individual commands use `TelemetrySettings` directly since `status`, `enable`, and `disable` have no command-specific options beyond the inherited ones.
 
-- **`status` output format**: A single status line with a colored circle indicator (green `●` for enabled, red `●` for disabled, matching the plugin step management pattern), followed by a how-to line. When an environment opt-out overrides the persisted preference, a second line states "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set.". The telemetry notice panel is displayed after the status lines.
+- **`status` output format**: The telemetry notice panel is displayed first (fixed context), followed by the status line with a colored circle indicator (green `●` for enabled, red `●` for disabled, matching the plugin step management pattern) and a how-to line. When an environment opt-out overrides the persisted preference, a second line states "DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set.". Placing the variable status output after the fixed notice panel makes the status line the last (and most prominent) content, and simplifies scripting (`dgtp telemetry status | tail -2`).
 
   Example outputs:
   ```
+  ┌─ Telemetry Notice ──────────────────────────────────┐
+  │ ...                                                 │
+  └─────────────────────────────────────────────────────┘
+
   [green]●[/] Telemetry is enabled.
   To disable: dgtp telemetry disable
+  ```
 
+  ```
   ┌─ Telemetry Notice ──────────────────────────────────┐
   │ ...                                                 │
   └─────────────────────────────────────────────────────┘
-  ```
 
-  ```
   [red]●[/] Telemetry is disabled.
   To enable: dgtp telemetry enable
+  ```
 
+  ```
   ┌─ Telemetry Notice ──────────────────────────────────┐
   │ ...                                                 │
   └─────────────────────────────────────────────────────┘
-  ```
 
-  ```
   [red]●[/] Telemetry is disabled.
   DGTP_TELEMETRY_OPTOUT / DO_NOT_TRACK is set.
-
-  ┌─ Telemetry Notice ──────────────────────────────────┐
-  │ ...                                                 │
-  └─────────────────────────────────────────────────────┘
   ```
 
 - **Move `TelemetryNotice` to `dgt.power.common`**: The `TelemetryNotice` class currently lives in `src/dgt.power/Telemetry/` as `internal`. It is a cross-cutting UI concern (like `StorageSecurityNotice` which already lives in common). Move it to `dgt.power.common/Telemetry/TelemetryNotice.cs`, make it `public`, and update `Program.cs` to use the new namespace. Both the main app (first-run notice) and the telemetry module (`TelemetryStatusCommand`) can then use it.
