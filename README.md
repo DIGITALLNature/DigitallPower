@@ -1112,37 +1112,11 @@ requires a directory target and `--solution`. An empty directory is a no-op, inc
 
 ### `telemetry` — Manage telemetry settings
 
-Commands for viewing and changing the persisted telemetry preference. These commands do not
-require a Dataverse connection.
-
-#### `status` — Show current telemetry state
-
-Displays the telemetry notice followed by the effective telemetry state with a colored circle
-indicator (green for enabled, red for disabled) and a hint showing the command to change the state.
-If an environment opt-out (`DGTP_TELEMETRY_OPTOUT` or `DO_NOT_TRACK`) is active, a second line
-explains the override.
-
-```bash
-dgtp telemetry status
-```
-
-#### `enable` — Enable telemetry
-
-Persists `telemetry.enabled: true` in `state.json`. If an environment opt-out is active, a
-warning emoji is shown instead of the green circle to indicate the preference was saved but
-will not take effect.
-
-```bash
-dgtp telemetry enable
-```
-
-#### `disable` — Disable telemetry
-
-Persists `telemetry.enabled: false` in `state.json`. The anonymous install ID is preserved.
-
-```bash
-dgtp telemetry disable
-```
+| Command | Description |
+|---------|-------------|
+| `telemetry status` | Show current telemetry state and the telemetry notice |
+| `telemetry enable` | Persistently enable telemetry |
+| `telemetry disable` | Persistently disable telemetry |
 
 ## 🔄 CI/CD Integration
 
@@ -1461,24 +1435,10 @@ CI detection is centralized in `dgt.power.common.ExecutionEnvironment` and curre
 
 ### Managing telemetry
 
-**Check the current state:**
-
 ```bash
-dgtp telemetry status
-```
-
-Shows whether telemetry is enabled or disabled, displays the telemetry notice, and prints the command to change the state.
-
-**Enable telemetry:**
-
-```bash
-dgtp telemetry enable
-```
-
-**Disable telemetry:**
-
-```bash
-dgtp telemetry disable
+dgtp telemetry status    # Show current state and the telemetry notice
+dgtp telemetry enable    # Persistently enable telemetry
+dgtp telemetry disable   # Persistently disable telemetry
 ```
 
 **Per invocation:**
