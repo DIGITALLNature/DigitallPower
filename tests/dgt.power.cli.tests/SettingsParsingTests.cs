@@ -14,6 +14,7 @@ using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
 using dgt.power.plugin.Commands;
 using dgt.power.plugin.Models;
+using dgt.power.process.Commands;
 using dgt.power.solution.Base;
 using dgt.power.telemetry.Base;
 using dgt.power.webresource.Commands;
@@ -256,6 +257,92 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task ProcessInitSettings_ParsesPathRepeatedSolutionsAndOptions()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, Path.Combine(directory.FullName, "processes.json"));
+            var mapping = Path.Combine(directory.FullName, "owners.source.json");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            var result = Parse<ProcessInitSettings>(
+                file, "--solution", "ContosoCore", "--solution", "ContosoFlows",
+                "--capture", "both", "--owner-mapping", mapping, "--overwrite");
+            var defaults = Parse<ProcessInitSettings>(file, "--solution", "ContosoCore");
+
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (ProcessInitSettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.Solutions).IsEquivalentTo(new[] { "ContosoCore", "ContosoFlows" });
+            await Assert.That(settings.Capture).IsEqualTo("both");
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.Overwrite).IsTrue();
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (ProcessInitSettings)defaults.Settings!;
+            await Assert.That(defaultSettings.Capture).IsEqualTo("state");
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.Overwrite).IsFalse();
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    public async Task ProcessApplySettings_ParsesPathImpersonationAndDefaults()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var absoluteFile = Path.Combine(directory.FullName, "processes.json");
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, absoluteFile);
+            var mapping = Path.Combine(directory.FullName, "owners.target.json");
+            await File.WriteAllTextAsync(absoluteFile, """{"schemaVersion":1,"processes":[]}""");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            var result = Parse<ProcessApplySettings>(
+                file, "--owner-mapping", mapping, "--activate-as", "integrationUser", "--dry-run");
+            var asOwner = Parse<ProcessApplySettings>(file, "--owner-mapping", mapping, "--activate-as-owner");
+            var defaults = Parse<ProcessApplySettings>(file);
+
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (ProcessApplySettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.ActivateAs).IsEqualTo("integrationUser");
+            await Assert.That(settings.ActivateAsOwner).IsFalse();
+            await Assert.That(settings.DryRun).IsTrue();
+            await Assert.That(asOwner.ExitCode).IsEqualTo(0).Because(asOwner.Output);
+            await Assert.That(((ProcessApplySettings)asOwner.Settings!).ActivateAsOwner).IsTrue();
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (ProcessApplySettings)defaults.Settings!;
+            await Assert.That(defaultSettings.ActivateAs).IsNull();
+            await Assert.That(defaultSettings.ActivateAsOwner).IsFalse();
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.DryRun).IsFalse();
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    [Arguments("init", "--publishers")]
+    [Arguments("init", "--solutions")]
+    [Arguments("init", "--detailed")]
+    [Arguments("apply", "--tablereport")]
+    public async Task ProcessSettings_RejectLegacyOptions(string command, string option)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("process", command, "./processes.json", option, "legacy");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
     public async Task CarrierInfoSettings_ParsesOptionsAndDefaults()
     {
         var result = Parse<CarrierInfoSettings>("--filedir", "./carriers", "--filename", "carrier.json");
@@ -295,37 +382,6 @@ public class SettingsParsingTests
         await Assert.That(settings.TargetSolution).IsEqualTo("tmpsolution");
         await Assert.That(settings.DryRun).IsTrue();
         await Assert.That(settings.Entities).IsFalse();
-    }
-
-    [Test]
-    public async Task CreateWorkflowStateConfigSettings_ParsesOptionsAndCommaSeparatedLists()
-    {
-        var result = Parse<CreateWorkflowStateConfigSettings>(
-            "-o", "out.json",
-            "--overwrite",
-            "-s", "solution1,solution2",
-            "-p", "publisher1,publisher2",
-            "--detailed");
-
-        var settings = (CreateWorkflowStateConfigSettings)result.Settings!;
-
-        await Assert.That(settings.Config).IsEqualTo("out.json");
-        await Assert.That(settings.Overwrite).IsTrue();
-        await Assert.That(settings.Solutions).IsEqualTo("solution1,solution2");
-        await Assert.That(settings.Publishers).IsEqualTo("publisher1,publisher2");
-        await Assert.That(settings.TableReport).IsTrue(); // DefaultValue(true)
-        await Assert.That(settings.Detailed).IsTrue();
-    }
-
-    [Test]
-    public async Task UpdateWorkflowStateSettings_ParsesConfigAndDefaults()
-    {
-        var result = Parse<UpdateWorkflowStateSettings>("-c", "cfg.json");
-
-        var settings = (UpdateWorkflowStateSettings)result.Settings!;
-
-        await Assert.That(settings.Config).IsEqualTo("cfg.json");
-        await Assert.That(settings.TableReport).IsTrue(); // DefaultValue(true)
     }
 
     [Test]

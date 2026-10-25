@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/process/v1/schema.json",
+  "schemaVersion": 1,
+  "processes": [
+    {
+      "processId": "265a263f-958b-4d32-b89d-6b3fdeac0458",
+      "name": "Create additional Document Location",
+      "active": true,
+      "owner": "integrationUser"
+    }
+  ]
+}

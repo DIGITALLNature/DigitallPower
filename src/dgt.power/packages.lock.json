@@ -674,6 +674,12 @@
           "dgt.power.common": "[3.0.0-beta.16, )"
         }
       },
+      "dgt.power.process": {
+        "type": "Project",
+        "dependencies": {
+          "dgt.power.common": "[3.0.0-beta.16, )"
+        }
+      },
       "dgt.power.solution": {
         "type": "Project",
         "dependencies": {

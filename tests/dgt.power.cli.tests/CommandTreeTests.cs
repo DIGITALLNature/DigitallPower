@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.Completion;
 using Spectre.Console.Cli;
 using Spectre.Console.Cli.Testing;
 
@@ -49,6 +50,7 @@ public class CommandTreeTests
     [Arguments("codegeneration")]
     [Arguments("cg")] // alias for codegeneration
     [Arguments("plugin")]
+    [Arguments("process")]
     [Arguments("telemetry")]
     [Arguments("webresource")]
     [Arguments("complete")]
@@ -107,6 +109,87 @@ public class CommandTreeTests
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
         await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    [Arguments("init")]
+    [Arguments("apply")]
+    public async Task ProcessSubCommand_HelpInvocation_Succeeds(string subCommand)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("process", subCommand, "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    [Arguments("createworkflowstate")]
+    [Arguments("workflowstate")]
+    public async Task LegacyWorkflowCommand_IsRejected(string command)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("maintenance", command);
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    public async Task MaintenanceHelp_DoesNotListLegacyWorkflowCommands_AndKeepsOtherCommands()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("maintenance", "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.Output).DoesNotContain("createworkflowstate");
+        await Assert.That(result.Output).DoesNotContain("workflowstate");
+        await Assert.That(result.Output).Contains("bulkdelete");
+    }
+
+    [Test]
+    public async Task ProcessCompletion_UsesResourceCommandsAndOptions_WithoutLegacyPaths()
+    {
+        var capture = new ModelCaptureHelpProvider();
+        var tester = new CommandAppTester();
+        tester.Configure(config =>
+        {
+            CommandTree.Register(config);
+            config.SetHelpProvider(capture);
+        });
+        var result = tester.Run("--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(capture.Model).IsNotNull();
+        const string rootLine = "dgtp ";
+        const string branchLine = "dgtp process ";
+        const string initLine = "dgtp process init --";
+        const string applyLine = "dgtp process apply --";
+        const string maintenanceLine = "dgtp maintenance ";
+        var root = CompletionEngine.GetCompletions(capture.Model!, rootLine, rootLine.Length);
+        var branch = CompletionEngine.GetCompletions(capture.Model!, branchLine, branchLine.Length);
+        var init = CompletionEngine.GetCompletions(capture.Model!, initLine, initLine.Length);
+        var apply = CompletionEngine.GetCompletions(capture.Model!, applyLine, applyLine.Length);
+        var maintenance = CompletionEngine.GetCompletions(capture.Model!, maintenanceLine, maintenanceLine.Length);
+
+        await Assert.That(root).Contains("process");
+        await Assert.That(branch).Contains("init");
+        await Assert.That(branch).Contains("apply");
+        await Assert.That(init).Contains("--solution");
+        await Assert.That(init).Contains("--capture");
+        await Assert.That(init).Contains("--owner-mapping");
+        await Assert.That(init).Contains("--overwrite");
+        await Assert.That(apply).Contains("--owner-mapping");
+        await Assert.That(apply).Contains("--activate-as");
+        await Assert.That(apply).Contains("--activate-as-owner");
+        await Assert.That(apply).Contains("--dry-run");
+        await Assert.That(maintenance).DoesNotContain("createworkflowstate");
+        await Assert.That(maintenance).DoesNotContain("workflowstate");
     }
 
     [Test]
