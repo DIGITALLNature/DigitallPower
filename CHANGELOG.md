@@ -1,3 +1,10 @@
+# [3.0.0-beta.17](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2026-10-25)
+
+
+### Features
+
+* **telemetry:** add dgtp telemetry status/enable/disable commands ([#214](https://github.com/DIGITALLNature/DigitallPower/issues/214)) ([bf96ef4](https://github.com/DIGITALLNature/DigitallPower/commit/bf96ef4aaa6111dab8f032dd3bd84d4eaf1d54e1))
+
 # [3.0.0-beta.16](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.15...v3.0.0-beta.16) (2026-10-23)
 
 
