@@ -84,7 +84,7 @@ Qodana runs on every PR. New findings (not in `baseline.sarif.json`) block the m
 | `BadControlBracesIndent` | Fix indentation of the flagged line to align with the surrounding block |
 | `CA1056` / `S3996` | Change property type to `Uri`, or suppress with `#pragma warning disable CA1056, S3996` + comment if the property is a CLI argument (must stay `string`) |
 | `S2302` | Replace string literal `"param"` with `nameof(param)` in `ArgumentException`/`ThrowIfNullOrWhiteSpace` calls |
-| `S1135` | Resolve or remove the `TODO` comment; if deferring is intentional, move it to `todo.md` and delete the comment from code |
+| `S1135` | Resolve or remove the `TODO` comment; if deferring is intentional, create a GitHub issue and delete the comment from code |
 
 ### Suppression Policy
 
