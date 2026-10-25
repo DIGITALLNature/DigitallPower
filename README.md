@@ -1,29 +1,13 @@
-<h1 align="center"> DigitallPower CLI </h1> <br>
+# DigitallPower CLI
 
-<br/>
-<p align="center">
-    <a href="LICENSE.md" target="_blank">
-        <img src="https://img.shields.io/github/license/DIGITALLNature/DigitallPower.svg" alt="GitHub license">
-    </a>
-    <a href="https://github.com/DIGITALLNature/DigitallPower/releases" target="_blank">
-        <img src="https://img.shields.io/github/tag/DIGITALLNature/DigitallPower.svg" alt="GitHub tag (latest SemVer)">
-    </a>
-    <a href="https://www.nuget.org/packages/dgt.power" target="_blank">
-        <img src="https://img.shields.io/nuget/v/dgt.power" alt="Nuget">
-    </a>
-    <a href="https://github.com/DIGITALLNature/DigitallPower/graphs/contributors" target="_blank">
-        <img src="https://img.shields.io/github/contributors-anon/DIGITALLNature/DigitallPower.svg" alt="GitHub contributors">
-    </a>
-    <a href="https://sonarcloud.io/project/overview?id=DIGITALLNature_DigitallPower" target="_blank">
-        <img src="https://sonarcloud.io/api/project_badges/measure?project=DIGITALLNature_DigitallPower&metric=alert_status" alt="Quality Gate Status">
-    </a>
-</p>
-<br/>
+[![License](https://img.shields.io/github/license/DIGITALLNature/DigitallPower.svg)](LICENSE.md)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/DIGITALLNature/DigitallPower.svg)](https://github.com/DIGITALLNature/DigitallPower/releases)
+[![NuGet](https://img.shields.io/nuget/v/dgt.power)](https://www.nuget.org/packages/dgt.power)
 
 > **Upgrading between major versions?** Review the
 > [migration guides](docs/guides/migrations/) for user-affecting breaking changes before upgrading.
 
-# Introduction
+## Introduction
 
 **DIGITALLPOWER** — the .NET tool for the Microsoft Power Platform from DIGITALL. A swiss army knife for all ALM tasks where the Power Platform CLI (`pac`) still has weaknesses.
 
