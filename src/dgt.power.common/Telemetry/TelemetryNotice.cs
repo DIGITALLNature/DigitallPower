@@ -11,7 +11,7 @@ namespace dgt.power.common.Telemetry;
 /// </summary>
 public static class TelemetryNotice
 {
-    private static bool _shown;
+    private static bool s_shown;
 
     /// <summary>
     /// Displays the telemetry notice. No-op if already shown in this invocation.
@@ -20,12 +20,12 @@ public static class TelemetryNotice
     {
         ArgumentNullException.ThrowIfNull(console);
 
-        if (_shown)
+        if (s_shown)
         {
             return;
         }
 
-        _shown = true;
+        s_shown = true;
 
         var panel = new Panel(
             "[grey]DIGITALL Power CLI collects anonymous usage data to improve the tool.\n" +
@@ -47,5 +47,5 @@ public static class TelemetryNotice
     /// <summary>
     /// Resets the shown flag. Intended for test isolation only.
     /// </summary>
-    public static void Reset() => _shown = false;
+    public static void Reset() => s_shown = false;
 }
