@@ -60,6 +60,7 @@
     <ProjectReference Include="..\modules\dgt.power.process\dgt.power.process.csproj" />
     <ProjectReference Include="..\modules\dgt.power.solution\dgt.power.solution.csproj" />
     <ProjectReference Include="..\modules\dgt.power.telemetry\dgt.power.telemetry.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.teamtemplates\dgt.power.teamtemplates.csproj" />
     <ProjectReference Include="..\modules\dgt.power.webresource\dgt.power.webresource.csproj" />
   </ItemGroup>
 

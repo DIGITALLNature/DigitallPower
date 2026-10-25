@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/teamtemplates/v1/schema.json",
+  "title": "Teamtemplate resource version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "templates"],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri" },
+    "schemaVersion": { "const": 1 },
+    "templates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/template" }
+    }
+  },
+  "$defs": {
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["teamtemplateid", "entity", "teamtemplatename", "defaultaccessrightsmask"],
+      "properties": {
+        "teamtemplateid": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+          "not": { "const": "00000000-0000-0000-0000-000000000000" }
+        },
+        "entity": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "teamtemplatename": { "type": "string", "minLength": 1, "maxLength": 100, "pattern": "\\S" },
+        "description": { "type": ["string", "null"], "maxLength": 1500 },
+        "defaultaccessrightsmask": {
+          "type": "integer",
+          "description": "Nonzero combination of Read (1), Write (2), Append (4), AppendTo (16), Delete (65536), Share (262144), Assign (524288). Create is not supported.",
+          "anyOf": [
+            { "minimum": 1, "maximum": 7 },
+            { "minimum": 16, "maximum": 23 },
+            { "minimum": 65536, "maximum": 65543 },
+            { "minimum": 65552, "maximum": 65559 },
+            { "minimum": 262144, "maximum": 262151 },
+            { "minimum": 262160, "maximum": 262167 },
+            { "minimum": 327680, "maximum": 327687 },
+            { "minimum": 327696, "maximum": 327703 },
+            { "minimum": 524288, "maximum": 524295 },
+            { "minimum": 524304, "maximum": 524311 },
+            { "minimum": 589824, "maximum": 589831 },
+            { "minimum": 589840, "maximum": 589847 },
+            { "minimum": 786432, "maximum": 786439 },
+            { "minimum": 786448, "maximum": 786455 },
+            { "minimum": 851968, "maximum": 851975 },
+            { "minimum": 851984, "maximum": 851991 }
+          ]
+        }
+      }
+    }
+  }
+}
