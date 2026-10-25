@@ -38,6 +38,6 @@ This directory contains all documentation for the DigitallPower CLI (`dgtp`).
 | [Build & Test](development/build-and-test.md) | Build commands, test commands, local packaging |
 | [Repository Layout](development/repository-layout.md) | Project structure and module organization |
 | [Spec-Driven Development](development/spec-driven-development.md) | OpenSpec workflow, Graphify pilot |
-| [Contributing](../../CONTRIBUTING.md) | How to contribute (root-level) |
+| [Contributing](../CONTRIBUTING.md) | How to contribute (root-level) |
 | [Architecture Decisions](architecture/decisions/) | ADRs — durable design rationale |
 | [Design Proposals](design/) | Design documents and proposals |

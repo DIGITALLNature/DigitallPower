@@ -22,7 +22,7 @@ After installation the command `dgtp` is available globally.
 
 ## Requirements
 
-- **.NET SDK 10.0** runtime (the SDK version is pinned via [`global.json`](../../../global.json))
+- **.NET SDK 10.0** runtime (the SDK version is pinned via [`global.json`](../../global.json))
 - Network access to your Dataverse environment (`*.dynamics.com`) and to `api.nuget.org` (for the version check)
 - An account with sufficient privileges on the target Dataverse environment
 

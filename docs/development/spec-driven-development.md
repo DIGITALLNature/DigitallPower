@@ -7,21 +7,21 @@ main specs, validate them, and archive the completed change. Small fixes, test-o
 behavior-preserving refactors do not require a proposal. The CLI is installed locally with pnpm
 and is run as `pnpm exec openspec`.
 
-Current requirements live in [`openspec/specs/`](../../../openspec/specs/). Durable design rationale lives in
-[`docs/architecture/decisions/`](../../architecture/decisions/). User-facing documentation lives in
-[`docs/`](../../README.md); implementation details belong beside their code and tests.
+Current requirements live in [`openspec/specs/`](../../openspec/specs/). Durable design rationale lives in
+[`docs/architecture/decisions/](../architecture/decisions/). User-facing documentation lives in
+[`docs/](../README.md); implementation details belong beside their code and tests.
 Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
 CLI examples after OpenSpec updates them.
 
 GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
-[`openspec/config.yaml`](../../../openspec/config.yaml). Its setup workflow installs the locked pnpm
+[`openspec/config.yaml`](../../openspec/config.yaml). Its setup workflow installs the locked pnpm
 dependencies and .NET SDK before an agent session; OpenSpec commands continue to use
 `pnpm exec openspec`. The setup workflow must be present on the default branch, and cloud-agent
 access must be enabled by the repository or organization administrator.
 
 ## Graphify Code-Only Pilot
 
-The pilot pins Graphify in [`graphify-version.txt`](../../../graphify-version.txt) and builds a fresh C# code
+The pilot pins Graphify in [`graphify-version.txt`](../../graphify-version.txt) and builds a fresh C# code
 graph locally, in GitHub Copilot cloud-agent setup, and in a GitHub Actions smoke check. The graph,
 manifest, and cache stay under ignored `graphify-out/`; they are regenerated from the current
 checkout and are not committed. Code extraction uses local AST parsing only. Documentation, images,
@@ -43,7 +43,7 @@ Cloud-agent setup builds the graph for each current checkout, and the GitHub Act
 checks that code-only extraction and a representative plugin path succeed without committing output.
 
 Use Graphify for cross-module navigation and verify conclusions against source and tests. The measured
-results and retention criteria are in [the evaluation note](../../architecture/graphify-pilot-evaluation.md).
+results and retention criteria are in [the evaluation note](../architecture/graphify-pilot-evaluation.md).
 
 The separate DigitallPower pilot override in `.github/copilot-instructions.md` preserves code-only
 mode when the Graphify-owned section is refreshed. `graphify copilot install` targets Copilot CLI

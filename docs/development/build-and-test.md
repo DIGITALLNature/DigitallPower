@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- **.NET SDK 10.0** (the SDK version is pinned via [`global.json`](../../../global.json))
+- **.NET SDK 10.0** (the SDK version is pinned via [`global.json`](../../global.json))
 - **Node.js 22 + pnpm** (needed for the TypeScript compile gate in `dgt.power.codegeneration.tests`)
 - Network access to `api.nuget.org` (for restore)
 
