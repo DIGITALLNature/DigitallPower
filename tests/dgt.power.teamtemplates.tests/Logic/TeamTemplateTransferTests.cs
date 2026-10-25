@@ -149,7 +149,7 @@ public class TeamTemplateTransferTests
     {
         var calls = new List<string>();
         var service = Mock.Of<IOrganizationServiceAsync2>();
-        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((OrganizationRequest request, CancellationToken _) =>
+        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((request, _) =>
         {
             calls.Add(request.RequestName);
             if (request is DeleteRequest || !failDelete && calls.Count == 2)
@@ -189,22 +189,29 @@ public class TeamTemplateTransferTests
     [Test]
     public async Task Apply_CancellationAfterFirstWrite_NoFurtherWrites()
     {
-        using var cancellation = new CancellationTokenSource();
-        var calls = 0;
-        var service = Mock.Of<IOrganizationServiceAsync2>();
-        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns(() =>
+        var cancellation = new CancellationTokenSource();
+        try
         {
-            calls++;
-            cancellation.Cancel();
-            return new OrganizationResponse();
-        });
-        using var console = new TestConsole();
-        var plan = new TeamTemplatePlan([new Entity("teamtemplate", Guid.NewGuid()), new Entity("teamtemplate", Guid.NewGuid())],
-            [], [], [Guid.NewGuid()]);
-        await Assert.That(async () => await new TeamTemplateTransfer(service.Object, console).ApplyAsync(plan, false, cancellation.Token))
-            .Throws<OperationCanceledException>();
-        await Assert.That(calls).IsEqualTo(1);
-        await Assert.That(console.Output).Contains("1 completed mutations retained");
+            var calls = 0;
+            var service = Mock.Of<IOrganizationServiceAsync2>();
+            service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns(() =>
+            {
+                calls++;
+                cancellation.Cancel();
+                return new OrganizationResponse();
+            });
+            using var console = new TestConsole();
+            var plan = new TeamTemplatePlan([new Entity("teamtemplate", Guid.NewGuid()), new Entity("teamtemplate", Guid.NewGuid())],
+                [], [], [Guid.NewGuid()]);
+            var attempt = new TeamTemplateTransfer(service.Object, console).ApplyAsync(plan, false, cancellation.Token);
+            await Assert.That(attempt).Throws<OperationCanceledException>();
+            await Assert.That(calls).IsEqualTo(1);
+            await Assert.That(console.Output).Contains("1 completed mutations retained");
+        }
+        finally
+        {
+            cancellation.Dispose();
+        }
     }
 
     [Test]
@@ -212,7 +219,7 @@ public class TeamTemplateTransferTests
     {
         var requests = new List<string>();
         var service = Mock.Of<IOrganizationServiceAsync2>();
-        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((OrganizationRequest request, CancellationToken _) =>
+        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((request, _) =>
         {
             requests.Add(request.RequestName);
             if (request is UpdateRequest)
@@ -234,7 +241,7 @@ public class TeamTemplateTransferTests
     {
         var requests = new List<string>();
         var service = Mock.Of<IOrganizationServiceAsync2>();
-        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((OrganizationRequest request, CancellationToken _) =>
+        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((request, _) =>
         {
             requests.Add(request.RequestName);
             return new OrganizationResponse();

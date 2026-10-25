@@ -10,6 +10,7 @@ using Spectre.Console;
 
 namespace dgt.power.teamtemplates.Commands;
 
+// ReSharper disable once ClassNeverInstantiated.Global — instantiated by Spectre.Console.Cli through the DI container.
 public sealed class TeamTemplateImportCommand(
     ICommandSpanFactory spans, IDataverseConnection connection, IAnsiConsole console)
     : PowerCommand<TeamTemplateImportSettings>(spans, console)

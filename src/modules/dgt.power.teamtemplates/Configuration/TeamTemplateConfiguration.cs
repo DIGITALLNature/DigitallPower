@@ -9,7 +9,7 @@ namespace dgt.power.teamtemplates.Configuration;
 
 public sealed partial record TeamTemplateConfiguration
 {
-    private static readonly JsonSerializerOptions Options = new()
+    private static readonly JsonSerializerOptions s_options = new()
     {
         UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow,
         WriteIndented = true
@@ -41,7 +41,7 @@ public sealed partial record TeamTemplateConfiguration
         {
             throw new TeamTemplateConfigurationException("$schema must be an absolute URI string.");
         }
-        var configuration = JsonSerializer.Deserialize<TeamTemplateConfiguration>(json, Options)
+        var configuration = JsonSerializer.Deserialize<TeamTemplateConfiguration>(json, s_options)
             ?? throw new TeamTemplateConfigurationException("A versioned teamtemplate object is required.");
         configuration.Validate();
         return configuration;
@@ -50,7 +50,7 @@ public sealed partial record TeamTemplateConfiguration
     public string Serialize()
     {
         Validate();
-        return JsonSerializer.Serialize(this, Options);
+        return JsonSerializer.Serialize(this, s_options);
     }
 
     public void Validate()
