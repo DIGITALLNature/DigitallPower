@@ -42,6 +42,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
     - [Authentication types](#authentication-types)
   - [export](#export--export-dataverse-artifacts)
   - [import](#import--import-dataverse-artifacts)
+  - [teamtemplates](#teamtemplates--team-template-transfer)
   - [analyze](#analyze--solution-analysis)
   - [solution](#solution--solution-scoped-operations)
   - [maintenance](#maintenance--operational-tasks)
@@ -70,8 +71,9 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | Area | What it does |
 |------|--------------|
 | **Connections** | Manage typed Dataverse connections (interactive, device-code, client-secret, certificate, Azure DevOps federation) and check authentication status |
-| **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
+| **Export** | Extract configuration data (queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
+| **Team templates** | Transfer team templates with a versioned file, GUID identity, preflight validation, and explicit table-scoped cleanup |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, filter PowerFx plugin steps, and more |
@@ -180,9 +182,12 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `process` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
-| `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
+| `dgtp <TAB>` | `export` `import` `teamtemplates` `maintenance` `process` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp export <TAB>` | `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
+| `dgtp teamtemplates <TAB>` | `import` `export` |
+| `dgtp teamtemplates import --<TAB>` | `--dry-run` `--cleanup` `--cleanup-table` |
+| `dgtp teamtemplates export --<TAB>` | `--dry-run` `--overwrite` `--table` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
 | `dgtp telemetry <TAB>` | `status` `enable` `disable` |
 | `dgtp plugin <TAB>` | `push` |
@@ -496,7 +501,6 @@ Exports configuration data from the currently selected environment into JSON fil
 
 | Command | Description |
 |---------|-------------|
-| `export teamtemplates` | Team templates |
 | `export bulkdeletes` | Bulk delete jobs |
 | `export queues` | Queues |
 | `export documenttemplates` | Document templates |
@@ -626,7 +630,6 @@ Counterpart to `export`. Reads the previously exported JSON files and applies th
 | `import outlooktemplates` | Outlook templates |
 | `import userroles` | User → security role assignments |
 | `import queues` | Queues |
-| `import teamtemplates` | Team templates |
 | `import bulkdeletes` | Bulk delete jobs |
 | `import documenttemplates` | Document templates |
 | `import calendar` | Calendars |
@@ -636,6 +639,74 @@ Counterpart to `export`. Reads the previously exported JSON files and applies th
 ```bash
 dgtp import outlooktemplates --filedir ./out/outlooktemplates
 ```
+
+### `teamtemplates` — Team template transfer
+
+Use resource-oriented commands to export or import Dataverse team templates. Both commands require
+an explicit file path. Export includes all non-system templates by default; repeat `--table
+<LogicalName>` to filter by table. Import reads the complete file and matches templates by GUID
+only; names never substitute for identity. Existing export files are preserved unless
+`--overwrite` is supplied.
+
+```bash
+# Export all non-system templates to a versioned resource file
+dgtp teamtemplates export ./teamtemplates.json
+
+# Export only templates associated with the selected logical tables
+dgtp teamtemplates export ./teamtemplates.json --table account --table contact
+
+# Preview an import without making Dataverse writes
+dgtp teamtemplates import ./teamtemplates.json --dry-run
+
+# Explicitly remove unlisted templates only within named tables
+dgtp teamtemplates import ./teamtemplates.json \
+  --cleanup --cleanup-table account --cleanup-table contact --dry-run
+```
+
+Table options are repeatable: pass one `--table` or `--cleanup-table` per logical table name;
+comma-separated lists are not used. Cleanup requires both `--cleanup` and at least one explicit
+`--cleanup-table`. There is no `--all` or other global cleanup option: scope is never inferred
+from the file or export filters, and system templates are never updated or deleted. Access-team
+enablement and valid Dataverse rights are checked during preflight.
+
+Transfer files use `schemaVersion: 1` and a `templates` array. The schema is published at
+[`schemas/teamtemplates/v1/schema.json`](schemas/teamtemplates/v1/schema.json).
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/teamtemplates/v1/schema.json",
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "teamtemplateid": "4e17461c-efec-43a0-835b-08fa78af1f83",
+      "entity": "account",
+      "teamtemplatename": "Account readers",
+      "description": null,
+      "defaultaccessrightsmask": 1
+    }
+  ]
+}
+```
+
+The `defaultaccessrightsmask` must contain a supported, non-zero combination of access-team
+rights: Read (`1`), Write (`2`), Append (`4`), Append To (`16`), Delete (`65536`), Share
+(`262144`), and Assign (`524288`). Create (`32`) is not supported for access-team templates.
+Names are limited to 100 characters and descriptions to 1,500 characters. Table names use
+lowercase Dataverse logical names matching `^[a-z][a-z0-9_]*$`. Name duplicates and target
+collisions are compared case-insensitively.
+
+Import validates the entire file and target plan before its first write. A missing or invalid file,
+unsupported version, invalid rights, a GUID assigned to another table, a table/name collision
+under another GUID, a system-template target, or invalid table metadata fails preflight with no
+writes. Omitted or null `description` clears the existing description. Unlisted templates are
+preserved by default. A valid empty `templates` array is a no-op only without cleanup; empty input
+with cleanup is rejected rather than interpreted as a request to clear the selected tables.
+
+Dry-run performs the same validation and reports planned creates, updates, unchanged templates,
+and scoped deletes without writing to Dataverse or creating/replacing an export file. Apply is not
+transactional: if a mutation fails, completed changes are not rolled back. Execution stops at the
+first failure, reports partial results, and cleanup starts only after all creates and updates
+succeed.
 
 ### `analyze` — Solution analysis
 
@@ -1510,8 +1581,8 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `process`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The process module uses shared ownership and caller-service contracts without depending on maintenance internals.
-- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers, shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `process`, `teamtemplates`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The process module uses shared ownership and caller-service contracts without depending on maintenance internals.
+- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers (including the public `FileAccess/AtomicFileWriter` helper for shared atomic file writes), shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules. The process module now delegates its atomic writes to this shared helper without changing process command behavior.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
 - **Stable connection storage.** `connections.json` and `state.json` live under the per-user dgtp home; secrets and the Azure.Identity token cache use OS-protected persistence.
