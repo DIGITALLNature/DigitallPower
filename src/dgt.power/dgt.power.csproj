@@ -57,6 +57,7 @@
     <ProjectReference Include="..\modules\dgt.power.import\dgt.power.import.csproj" />
     <ProjectReference Include="..\modules\dgt.power.maintenance\dgt.power.maintenance.csproj" />
     <ProjectReference Include="..\modules\dgt.power.plugin\dgt.power.plugin.csproj" />
+    <ProjectReference Include="..\modules\dgt.power.process\dgt.power.process.csproj" />
     <ProjectReference Include="..\modules\dgt.power.solution\dgt.power.solution.csproj" />
     <ProjectReference Include="..\modules\dgt.power.telemetry\dgt.power.telemetry.csproj" />
     <ProjectReference Include="..\modules\dgt.power.webresource\dgt.power.webresource.csproj" />
