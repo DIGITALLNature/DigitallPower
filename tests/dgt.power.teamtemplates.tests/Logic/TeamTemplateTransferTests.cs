@@ -197,6 +197,7 @@ public class TeamTemplateTransferTests
             service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns(() =>
             {
                 calls++;
+                // ReSharper disable once AccessToDisposedClosure — callback completes within awaited ApplyAsync, before finally disposes the source.
                 cancellation.Cancel();
                 return new OrganizationResponse();
             });
