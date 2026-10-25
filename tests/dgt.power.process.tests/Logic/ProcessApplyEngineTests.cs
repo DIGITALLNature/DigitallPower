@@ -80,6 +80,32 @@ public class ProcessApplyEngineTests
     }
 
     [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task ApplyAsync_BracketedOwnerKeyIsReportedLiterally(bool dryRun)
+    {
+        var service = CreateService();
+        var oldOwnerId = AddUser(service, "old@example.org");
+        var newOwnerId = AddUser(service, "new@example.org");
+        var processId = Guid.NewGuid();
+        AddProcess(service, processId, oldOwnerId, active: false);
+        var mapping = OwnerMappingLoader.Parse(
+            """{"schemaVersion":1,"owners":{"ops[prod]":{"kind":"user","domainName":"new@example.org"}}}""");
+        var configuration = ProcessConfiguration.Parse(
+            $$"""{"schemaVersion":1,"processes":[{"processId":"{{processId:D}}","owner":"ops[prod]"}]}""");
+        using var console = new TestConsole();
+
+        var result = await new ProcessApplyEngine(new TestDataverseConnection(service), new OwnerResolver(), console)
+            .ApplyAsync(configuration, mapping, null, false, dryRun, CancellationToken.None);
+        var process = service.Retrieve(Workflow.EntityLogicalName, processId, new Microsoft.Xrm.Sdk.Query.ColumnSet(true));
+
+        await Assert.That(result).IsTrue();
+        await Assert.That(console.Output).Contains("assign owner 'ops[prod]'");
+        await Assert.That(process.GetAttributeValue<EntityReference>("ownerid").Id)
+            .IsEqualTo(dryRun ? oldOwnerId : newOwnerId);
+    }
+
+    [Test]
     public async Task ApplyAsync_DryRunDoesNotAttemptActivationOrRetries()
     {
         var service = new FakeOrganizationServiceAsync();

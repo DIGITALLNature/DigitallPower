@@ -82,7 +82,7 @@ public sealed class ProcessApplyEngine(
 
         foreach (var plan in plans)
         {
-            console.MarkupLine($"[{(plan.NeedsDeactivation || plan.NeedsAssignment || plan.NeedsActivation ? "yellow" : "grey")}]{plan.Intent.ProcessId:D}: {Describe(plan)}[/]");
+            console.MarkupLine($"[{(plan.NeedsDeactivation || plan.NeedsAssignment || plan.NeedsActivation ? "yellow" : "grey")}]{plan.Intent.ProcessId:D}: {Describe(plan).EscapeMarkup()}[/]");
         }
 
         if (dryRun)

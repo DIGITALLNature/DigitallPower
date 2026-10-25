@@ -34,6 +34,7 @@ public class ProcessSolutionSelectorPagingTests
         await Assert.That(executor.Pages.Where(page => page.EntityName == "workflow").Select(page => page.Page))
             .IsEquivalentTo([1, 2, 1, 2]);
         await Assert.That(metadata.RequestCount).IsEqualTo(1);
+        await Assert.That(metadata.RetrieveAsIfPublished).IsTrue();
     }
 
     private sealed class PagedSelectionExecutor(Guid tableId, Guid directId, Guid indirectRuleId) : IOrganizationRequestFake
@@ -120,10 +121,12 @@ public class ProcessSolutionSelectorPagingTests
     {
         public Type ForType => typeof(RetrieveAllEntitiesRequest);
         public int RequestCount { get; private set; }
+        public bool RetrieveAsIfPublished { get; private set; }
 
         public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
         {
             RequestCount++;
+            RetrieveAsIfPublished = ((RetrieveAllEntitiesRequest)organizationRequest).RetrieveAsIfPublished;
             return new RetrieveAllEntitiesResponse
             {
                 Results = { ["EntityMetadata"] = new EntityMetadata[] { new() { MetadataId = tableId, LogicalName = "account" } } }

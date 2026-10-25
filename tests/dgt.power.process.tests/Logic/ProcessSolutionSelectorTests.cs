@@ -26,6 +26,7 @@ public class ProcessSolutionSelectorTests
         var classic = AddProcess(service, 0, "classic");
         var unsupportedDialog = AddProcess(service, 1, "dialog");
         var includedRule = AddProcess(service, 2, "account", secondSolution);
+        var indirectOnlyRule = AddProcess(service, 2, "account");
         var deltaOnlyRule = AddProcess(service, 2, "contact");
         var unsupportedDesktop = AddProcess(service, 6, "desktop");
         service.Create(Component(firstSolution, classic, SolutionComponent.Options.ComponentType.Workflow));
@@ -42,6 +43,7 @@ public class ProcessSolutionSelectorTests
 
         await Assert.That(ids).Contains(classic);
         await Assert.That(ids).Contains(includedRule);
+        await Assert.That(ids).Contains(indirectOnlyRule);
         await Assert.That(ids).DoesNotContain(unsupportedDialog);
         await Assert.That(ids).DoesNotContain(unsupportedDesktop);
         await Assert.That(ids).DoesNotContain(deltaOnlyRule);

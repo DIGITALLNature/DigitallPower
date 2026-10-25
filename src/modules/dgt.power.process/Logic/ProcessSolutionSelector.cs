@@ -82,7 +82,7 @@ public sealed class ProcessSolutionSelector(IOrganizationServiceAsync2 service)
                 new RetrieveAllEntitiesRequest
                 {
                     EntityFilters = EntityFilters.Entity,
-                    RetrieveAsIfPublished = false
+                    RetrieveAsIfPublished = true
                 },
                 cancellationToken);
             var logicalNames = metadataResponse.EntityMetadata
