@@ -20,6 +20,7 @@ using dgt.power.solution.Base;
 using dgt.power.Telemetry;
 using dgt.power.telemetry.Base;
 using dgt.power.telemetry.Commands;
+using dgt.power.teamtemplates.Commands;
 using dgt.power.webresource.Base;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
@@ -51,8 +52,6 @@ internal static class CommandTree
         {
             export.SetDescription("Exports artifacts from the current Dataverse Environment");
             export.AddExample("export", "bulkdeletes", "--filedir", "c:/TargetDir");
-            export.AddCommand<TeamTemplateExport>("teamtemplates")
-                .WithDescription("Exports the existing teamtemplates from the current environment");
             export.AddCommand<BulkDeleteExport>("bulkdeletes")
                 .WithDescription("Exports the bulk delete jobs from the current environment");
             export.AddCommand<QueueExport>("queues")
@@ -69,6 +68,17 @@ internal static class CommandTree
                 .WithDescription("Exports the user assigned security roles from the current environment");
             export.AddCommand<OutlookTemplateExport>("outlooktemplates")
                 .WithDescription("Exports the existing outlook templates from the current environment");
+        });
+
+        config.AddBranch("teamtemplates", teamtemplates =>
+        {
+            teamtemplates.SetDescription("Imports and exports Dataverse team templates");
+            teamtemplates.AddCommand<TeamTemplateImportCommand>("import")
+                .WithDescription("Imports team templates from a versioned file")
+                .WithExample("teamtemplates", "import", "./teamtemplates.json", "--dry-run");
+            teamtemplates.AddCommand<TeamTemplateExportCommand>("export")
+                .WithDescription("Exports team templates to a versioned file")
+                .WithExample("teamtemplates", "export", "./teamtemplates.json", "--overwrite");
         });
 
         config.AddBranch("maintenance",
@@ -141,7 +151,6 @@ internal static class CommandTree
             import.AddCommand<OutlookTemplateImport>("outlooktemplates");
             import.AddCommand<UserRoleImport>("userroles");
             import.AddCommand<QueueImport>("queues");
-            import.AddCommand<TeamTemplateImport>("teamtemplates");
             import.AddCommand<BulkDeleteImport>("bulkdeletes");
             import.AddCommand<DocumentTemplateImport>("documenttemplates");
             import.AddCommand<CalendarImport>("calendar");

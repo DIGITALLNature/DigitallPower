@@ -17,7 +17,7 @@ public class CompletionEngineTests
     [Test]
     [Arguments("dgtp export", new[] { "dgtp", "export" })]
     [Arguments("dgtp export --filedir", new[] { "dgtp", "export", "--filedir" })]
-    [Arguments("dgtp export  teamtemplates", new[] { "dgtp", "export", "teamtemplates" })]
+    [Arguments("dgtp teamtemplates  export", new[] { "dgtp", "teamtemplates", "export" })]
     [Arguments("dgtp plugin push \"c:/my path/plugin.dll\"", new[] { "dgtp", "plugin", "push", "c:/my path/plugin.dll" })]
     [Arguments("", new string[0])]
     public async Task Tokenize_SplitsCorrectly(string input, string[] expected)
@@ -35,12 +35,14 @@ public class CompletionEngineTests
         var model = BuildModel(
             Command("export"),
             Command("import"),
+            Command("teamtemplates"),
             Command("maintenance"));
 
         var result = CompletionEngine.GetCompletions(model, "dgtp ", 5);
 
         await Assert.That(result).Contains("export");
         await Assert.That(result).Contains("import");
+        await Assert.That(result).Contains("teamtemplates");
         await Assert.That(result).Contains("maintenance");
     }
 
@@ -79,29 +81,43 @@ public class CompletionEngineTests
     {
         var model = BuildModel(
             Branch("export",
-                Command("teamtemplates"),
                 Command("bulkdeletes"),
                 Command("queues")));
 
         var result = CompletionEngine.GetCompletions(model, "dgtp export ", 12);
 
-        await Assert.That(result).Contains("teamtemplates");
         await Assert.That(result).Contains("bulkdeletes");
         await Assert.That(result).Contains("queues");
+        await Assert.That(result).DoesNotContain("teamtemplates");
+    }
+
+    [Test]
+    public async Task GetCompletions_TeamTemplatesBranch_ReturnsOperations()
+    {
+        var model = BuildModel(
+            Branch("teamtemplates",
+                Command("import"),
+                Command("export")));
+
+        var result = CompletionEngine.GetCompletions(model, "dgtp teamtemplates ", 19);
+
+        await Assert.That(result).Contains("import");
+        await Assert.That(result).Contains("export");
     }
 
     [Test]
     public async Task GetCompletions_PartialSubcommand_FiltersCorrectly()
     {
         var model = BuildModel(
-            Branch("export",
-                Command("teamtemplates"),
-                Command("bulkdeletes")));
+            Branch("teamtemplates",
+                Command("import"),
+                Command("export")));
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp export bulk", 16);
+        const string line = "dgtp teamtemplates exp";
+        var result = CompletionEngine.GetCompletions(model, line, line.Length);
 
-        await Assert.That(result).Contains("bulkdeletes");
-        await Assert.That(result).DoesNotContain("teamtemplates");
+        await Assert.That(result).Contains("export");
+        await Assert.That(result).DoesNotContain("import");
     }
 
     [Test]
@@ -120,34 +136,34 @@ public class CompletionEngineTests
     public async Task GetCompletions_DashDash_ReturnsAllOptions()
     {
         var model = BuildModel(
-            Branch("export",
-                CommandWithOptions("teamtemplates",
-                    Option("filedir"),
-                    Option("filename"),
-                    Option("no-telemetry"))));
+            Branch("teamtemplates",
+                CommandWithOptions("export",
+                    Option("table"),
+                    Option("overwrite"),
+                    Option("dry-run"))));
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp export teamtemplates --", 28);
+        var result = CompletionEngine.GetCompletions(model, "dgtp teamtemplates export --", 28);
 
-        await Assert.That(result).Contains("--filedir");
-        await Assert.That(result).Contains("--filename");
-        await Assert.That(result).Contains("--no-telemetry");
+        await Assert.That(result).Contains("--table");
+        await Assert.That(result).Contains("--overwrite");
+        await Assert.That(result).Contains("--dry-run");
     }
 
     [Test]
     public async Task GetCompletions_OptionPrefix_FiltersOptions()
     {
         var model = BuildModel(
-            Branch("export",
-                CommandWithOptions("teamtemplates",
-                    Option("filedir"),
-                    Option("filename"),
-                    Option("inline"))));
+            Branch("teamtemplates",
+                CommandWithOptions("import",
+                    Option("cleanup-table"),
+                    Option("cleanup"),
+                    Option("dry-run"))));
 
-        var result = CompletionEngine.GetCompletions(model, "dgtp export teamtemplates --file", 32);
+        var result = CompletionEngine.GetCompletions(model, "dgtp teamtemplates import --cleanup", 35);
 
-        await Assert.That(result).Contains("--filedir");
-        await Assert.That(result).Contains("--filename");
-        await Assert.That(result).DoesNotContain("--inline");
+        await Assert.That(result).Contains("--cleanup");
+        await Assert.That(result).Contains("--cleanup-table");
+        await Assert.That(result).DoesNotContain("--dry-run");
     }
 
     [Test]

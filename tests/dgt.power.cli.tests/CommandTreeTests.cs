@@ -51,6 +51,7 @@ public class CommandTreeTests
     [Arguments("cg")] // alias for codegeneration
     [Arguments("plugin")]
     [Arguments("process")]
+    [Arguments("teamtemplates")]
     [Arguments("telemetry")]
     [Arguments("webresource")]
     [Arguments("complete")]
@@ -106,6 +107,33 @@ public class CommandTreeTests
         tester.Configure(CommandTree.Register);
 
         var result = tester.Run("import", "secureconfigs");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    [Arguments("import")]
+    [Arguments("export")]
+    public async Task TeamTemplatesSubCommand_HelpInvocation_Succeeds(string subCommand)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("teamtemplates", subCommand, "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    [Arguments("import")]
+    [Arguments("export")]
+    public async Task LegacyTeamTemplatesCommand_IsRejected(string verb)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run(verb, "teamtemplates");
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
         await Assert.That(result.Output).Contains("Unknown command");
@@ -190,6 +218,40 @@ public class CommandTreeTests
         await Assert.That(apply).Contains("--dry-run");
         await Assert.That(maintenance).DoesNotContain("createworkflowstate");
         await Assert.That(maintenance).DoesNotContain("workflowstate");
+    }
+
+    [Test]
+    public async Task TeamTemplateCompletion_UsesResourceCommandsAndRepeatableOptions()
+    {
+        var capture = new ModelCaptureHelpProvider();
+        var tester = new CommandAppTester();
+        tester.Configure(config =>
+        {
+            CommandTree.Register(config);
+            config.SetHelpProvider(capture);
+        });
+        var result = tester.Run("--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(capture.Model).IsNotNull();
+
+        const string rootLine = "dgtp ";
+        const string branchLine = "dgtp teamtemplates ";
+        const string importLine = "dgtp teamtemplates import --";
+        const string exportLine = "dgtp teamtemplates export --";
+        var root = CompletionEngine.GetCompletions(capture.Model!, rootLine, rootLine.Length);
+        var branch = CompletionEngine.GetCompletions(capture.Model!, branchLine, branchLine.Length);
+        var import = CompletionEngine.GetCompletions(capture.Model!, importLine, importLine.Length);
+        var export = CompletionEngine.GetCompletions(capture.Model!, exportLine, exportLine.Length);
+
+        await Assert.That(root).Contains("teamtemplates");
+        await Assert.That(branch).Contains("import");
+        await Assert.That(branch).Contains("export");
+        await Assert.That(import).Contains("--dry-run");
+        await Assert.That(import).Contains("--cleanup-table");
+        await Assert.That(export).Contains("--dry-run");
+        await Assert.That(export).Contains("--table");
+        await Assert.That(export).Contains("--overwrite");
     }
 
     [Test]

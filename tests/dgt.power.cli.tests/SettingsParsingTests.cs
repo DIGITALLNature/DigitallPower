@@ -17,6 +17,7 @@ using dgt.power.plugin.Models;
 using dgt.power.process.Commands;
 using dgt.power.solution.Base;
 using dgt.power.telemetry.Base;
+using dgt.power.teamtemplates.Commands;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli.Testing;
 using Spectre.Console.Cli;
@@ -325,6 +326,84 @@ public class SettingsParsingTests
         {
             directory.Delete(true);
         }
+    }
+
+    [Test]
+    public async Task TeamTemplateImportSettings_ParsesRepeatedCleanupTablesAndDryRun()
+    {
+        const string file = "./teamtemplates.json";
+        var result = Parse<TeamTemplateImportSettings>(
+            file,
+            "--dry-run",
+            "--cleanup",
+            "--cleanup-table", "account",
+            "--cleanup-table", "contact");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+        var settings = (TeamTemplateImportSettings)result.Settings!;
+        await Assert.That(settings.File).IsEqualTo(file);
+        await Assert.That(settings.DryRun).IsTrue();
+        await Assert.That(settings.Cleanup).IsTrue();
+        await Assert.That(settings.CleanupTables).IsEquivalentTo(["account", "contact"]);
+    }
+
+    [Test]
+    public async Task TeamTemplateExportSettings_ParsesRepeatedTablesOverwriteAndDryRun()
+    {
+        const string file = "./teamtemplates.json";
+        var result = Parse<TeamTemplateExportSettings>(
+            file,
+            "--dry-run",
+            "--overwrite",
+            "--table", "account",
+            "--table", "contact");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+        var settings = (TeamTemplateExportSettings)result.Settings!;
+        await Assert.That(settings.File).IsEqualTo(file);
+        await Assert.That(settings.DryRun).IsTrue();
+        await Assert.That(settings.Overwrite).IsTrue();
+        await Assert.That(settings.Tables).IsEquivalentTo(["account", "contact"]);
+    }
+
+    [Test]
+    public async Task TeamTemplateSettings_DefaultOptionsAndRequiredFile()
+    {
+        var importDefaults = Parse<TeamTemplateImportSettings>("./teamtemplates.json");
+        var exportDefaults = Parse<TeamTemplateExportSettings>("./teamtemplates.json");
+        var importMissingFile = Parse<TeamTemplateImportSettings>();
+        var exportMissingFile = Parse<TeamTemplateExportSettings>();
+
+        await Assert.That(importDefaults.ExitCode).IsEqualTo(0).Because(importDefaults.Output);
+        var import = (TeamTemplateImportSettings)importDefaults.Settings!;
+        await Assert.That(import.File).IsEqualTo("./teamtemplates.json");
+        await Assert.That(import.DryRun).IsFalse();
+        await Assert.That(import.Cleanup).IsFalse();
+        await Assert.That(import.CleanupTables).IsNull();
+
+        await Assert.That(exportDefaults.ExitCode).IsEqualTo(0).Because(exportDefaults.Output);
+        var export = (TeamTemplateExportSettings)exportDefaults.Settings!;
+        await Assert.That(export.File).IsEqualTo("./teamtemplates.json");
+        await Assert.That(export.DryRun).IsFalse();
+        await Assert.That(export.Overwrite).IsFalse();
+        await Assert.That(export.Tables).IsNull();
+
+        await Assert.That(importMissingFile.ExitCode).IsNotEqualTo(0);
+        await Assert.That(exportMissingFile.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
+    public async Task TeamTemplateImportSettings_RejectsInvalidCleanupScope()
+    {
+        var missingTables = Parse<TeamTemplateImportSettings>("./teamtemplates.json", "--cleanup");
+        var cleanupNotRequested = Parse<TeamTemplateImportSettings>(
+            "./teamtemplates.json", "--cleanup-table", "account");
+        var commaSeparated = Parse<TeamTemplateImportSettings>(
+            "./teamtemplates.json", "--cleanup", "--cleanup-table", "account,contact");
+
+        await Assert.That(missingTables.ExitCode).IsNotEqualTo(0);
+        await Assert.That(cleanupNotRequested.ExitCode).IsNotEqualTo(0);
+        await Assert.That(commaSeparated.ExitCode).IsNotEqualTo(0);
     }
 
     [Test]

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <AnalysisLevel>latest-minimum</AnalysisLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Update="TUnit" Version="1.76.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\modules\dgt.power.teamtemplates\dgt.power.teamtemplates.csproj" />
+    <ProjectReference Include="..\dgt.power.tests\dgt.power.tests.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\schemas\teamtemplates\v1\schema.json" Link="schemas\teamtemplates\v1\schema.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
