@@ -32,10 +32,10 @@ Both commands SHALL accept a positional file path. Init SHALL expose `--capture 
 
 ### Requirement: Configuration expresses strict V1 intent
 
-Configuration SHALL require `schemaVersion: 1` and `rules`, with optional root `$schema` URI. Each entry SHALL require a nonempty GUID `ruleId` and at least one of boolean `published` or logical-key `owner`. Null values, duplicate IDs/properties, unknown fields, unsupported versions, and blank or whitespace-padded owner keys SHALL fail local validation. Omitted effect properties SHALL mean unchanged.
+Configuration SHALL require `schemaVersion: 1` and `rules`, with optional root `$schema` URI. Each entry SHALL require a nonempty GUID `ruleId` and at least one of boolean `published` or logical-key `owner`. An optional string `name` SHALL be informational only and SHALL NOT be used for matching or as a requested effect. Null values, duplicate IDs/properties, unknown fields, unsupported versions, and blank or whitespace-padded owner keys SHALL fail local validation. Omitted effect properties SHALL mean unchanged.
 
 #### Scenario: No requested effect
-- **WHEN** an entry contains only its rule ID
+- **WHEN** an entry contains only its rule ID, optionally with an informational name
 - **THEN** local validation fails
 
 #### Scenario: Strict input
@@ -49,6 +49,10 @@ Application SHALL identify existing rules by their configured GUID, relying on I
 #### Scenario: Same name but different ID
 - **WHEN** the configured GUID is absent but a rule with the same name exists
 - **THEN** preflight fails without changing that rule
+
+#### Scenario: Informational name differs from target
+- **WHEN** the configured informational name differs from the target rule's current name
+- **THEN** application matches by GUID and does not rename the rule
 
 ### Requirement: Rule changes express explicit intent
 
@@ -84,7 +88,7 @@ Init SHALL capture all rules unless restricted by an exact base-table logical na
 
 ### Requirement: Capture emits only requested properties
 
-Init SHALL emit GUID-ordered entries containing exactly the requested state, owner, or both. Owner capture SHALL follow the shared full-source-mapping and unique reverse-key contract. State-only capture SHALL NOT require mapping, but an explicitly supplied mapping SHALL be locally validated. Capture SHALL NOT invent owner keys or output raw principal IDs as substitutes.
+Init SHALL emit GUID-ordered entries containing the informational rule name and exactly the requested state, owner, or both. Owner capture SHALL follow the shared full-source-mapping and unique reverse-key contract. State-only capture SHALL NOT require mapping, but an explicitly supplied mapping SHALL be locally validated. Capture SHALL NOT invent owner keys or output raw principal IDs as substitutes.
 
 #### Scenario: Default capture
 - **WHEN** init runs without a capture option

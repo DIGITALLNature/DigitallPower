@@ -29,6 +29,7 @@ The current host has no duplicate-rule commands. `src/dgt.power.common/DTO/Dupli
   "rules": [
     {
       "ruleId": "11111111-1111-1111-1111-111111111111",
+      "name": "Contacts with the same e-mail address",
       "published": true,
       "owner": "salesOwner"
     }
@@ -36,7 +37,7 @@ The current host has no duplicate-rule commands. `src/dgt.power.common/DTO/Dupli
 }
 ```
 
-Require `schemaVersion: 1` and a `rules` array. Each entry requires a nonempty `ruleId` and at least one of boolean `published` or logical-key string `owner`. Missing properties preserve their respective target values; explicit null is invalid. Reject duplicate IDs, duplicate JSON properties, unknown fields, unsupported versions, and blank/whitespace-padded owner keys. Keys follow the shared ordinal case-sensitive contract. Permit optional root `$schema` URI for editor tooling. Do not accept definitions, conditions, names as matching inputs, or implicit default owners.
+Require `schemaVersion: 1` and a `rules` array. Each entry requires a nonempty `ruleId` and at least one of boolean `published` or logical-key string `owner`. An optional string `name`, written by capture like process configuration, is informational for reviews and diagnostics; apply never matches by it, compares it, or writes it. Missing properties preserve their respective target values; explicit null is invalid. Reject duplicate IDs, duplicate JSON properties, unknown fields, unsupported versions, and blank/whitespace-padded owner keys. Keys follow the shared ordinal case-sensitive contract. Permit optional root `$schema` URI for editor tooling. Do not accept definitions, conditions, names as matching inputs, or implicit default owners.
 
 Publish schema at `schemas/duplicaterules/v1/schema.json`; keep runtime duplicate-property checks as well as schema/model validation. A valid empty array is capturable and applies as a successful no-op: report zero rules and no changes, without authentication or target lookups. An explicitly supplied owner mapping is still loaded and structurally validated locally.
 
