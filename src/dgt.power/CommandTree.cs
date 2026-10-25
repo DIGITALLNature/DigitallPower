@@ -14,6 +14,7 @@ using dgt.power.import.Logic;
 using dgt.power.maintenance.Logic;
 using dgt.power.plugin.Base;
 using dgt.power.plugin.Commands;
+using dgt.power.process.Commands;
 using dgt.power.solution;
 using dgt.power.solution.Base;
 using dgt.power.Telemetry;
@@ -90,13 +91,6 @@ internal static class CommandTree
                         "Exports all active carriers from an environment to a json file. To see what an carrier is check " +
                         "[link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
                     .WithExample("maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json");
-                maintenance.AddCommand<CreateWorkflowStateConfig>("createworkflowstate")
-                    .WithDescription("Creates a workflowstate configuration file")
-                    .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--solutions", "solution1,solution2")
-                    .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--publishers", "publisher1,publisher2");
-                maintenance.AddCommand<UpdateWorkflowState>("workflowstate")
-                    .WithDescription("Updates workflows with given configuration")
-                    .WithExample("maintenance", "workflowstate", "--config", "./config.json");
                 maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
                     .WithDescription("Removes solution components that are already existing")
                     .WithExample("maintenance", "removeredundantcomponents", "deploysolution", "tmpsolution", "--dryrun");
@@ -104,6 +98,21 @@ internal static class CommandTree
                     .WithDescription("Add Messagefiltering for PowerFx Plugins")
                     .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
             });
+
+        config.AddBranch("process", process =>
+        {
+            process.SetDescription("Captures and applies explicit process state and ownership");
+            process.AddCommand<ProcessInitCommand>("init")
+                .WithDescription("Captures process state or ownership from selected solutions")
+                .WithExample("process", "init", "./processes.json", "--solution", "ContosoCore")
+                .WithExample("process", "init", "./processes.json", "--solution", "ContosoCore",
+                    "--capture", "both", "--owner-mapping", "./owners.source.json");
+            process.AddCommand<ProcessApplyCommand>("apply")
+                .WithDescription("Applies configured process state and ownership by workflow ID")
+                .WithExample("process", "apply", "./processes.json", "--dry-run")
+                .WithExample("process", "apply", "./processes.json", "--owner-mapping", "./owners.target.json",
+                    "--activate-as", "integrationUser");
+        });
 
         config.AddBranch<AnalyzeVerb>("analyze", analyze =>
         {

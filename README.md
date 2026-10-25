@@ -45,6 +45,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [analyze](#analyze--solution-analysis)
   - [solution](#solution--solution-scoped-operations)
   - [maintenance](#maintenance--operational-tasks)
+  - [process](#process--process-state-and-ownership)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
   - [webresource](#webresource--deploy-webresources)
@@ -73,7 +74,8 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
-| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, and more |
+| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, filter PowerFx plugin steps, and more |
+| **Process** | Capture and apply explicit process state and portable ownership by workflow ID, with preflight, dry-run and optional run-level impersonation |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage plugin steps (configuration, enable/disable, bulk state) |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
@@ -178,7 +180,7 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp <TAB>` | `export` `import` `maintenance` `process` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
@@ -187,6 +189,7 @@ The shim is written with idempotency markers — running the command again does 
 | `dgtp plugin step <TAB>` | `enable` `disable` `config` `state` |
 | `dgtp plugin step config <TAB>` | `set` |
 | `dgtp plugin step state <TAB>` | `set` |
+| `dgtp process <TAB>` | `init` `apply` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -253,9 +256,10 @@ the selected environment.
 }
 ```
 
-The V1 schema is [`schemas/ownership/v1/schema.json`](schemas/ownership/v1/schema.json). The
-`--owner-mapping <File>` convention is reserved for ownership-aware consumers as they adopt this
-shared contract; no existing command is migrated or registered by the shared resolver change.
+The V1 schema is [`schemas/ownership/v1/schema.json`](schemas/ownership/v1/schema.json).
+Ownership-aware consumers use `--owner-mapping <File>`; the
+[`process` commands](#process--process-state-and-ownership) support this shared contract for
+regular and application users.
 Relative mapping paths are resolved from the working directory. There is no implicit file search,
 default owner, connection-identity fallback, or selector fallback. Explicitly supplied files are
 validated even when a consumer invocation has no owner intent; state-only operations do not need a
@@ -290,15 +294,15 @@ another selector. The [portable mapping example](tests/dgt.power.common.tests/Ow
 is shared with loader tests.
 
 Resource configuration refers to the logical key rather than embedding a tenant identity, for
-example `{ "owner": "salesOwner" }`. Future process and duplicate-rule integrations can adopt that
-contract in their own changes; this shared library change does not add or register those command
-options. Use the source environment's mapping file during capture and the destination environment's
+example `{ "owner": "salesOwner" }`. Process commands use this contract; additional resources
+may adopt it with their own eligibility policies. Use the source environment's mapping file during
+capture and the destination environment's
 mapping file during apply. The same logical key can intentionally resolve to different principals
 in those files. Apply permits aliases, while capture rejects aliases only when multiple keys resolve
 to an owner being captured; aliases for uncaptured principals are harmless.
 
-For example, the source mapping can pin the source team's Entra group identity while the target
-mapping uses a target-specific name and business unit:
+For resources that allow team owners (not process commands), the source mapping can pin the source
+team's Entra group identity while the target mapping uses a target-specific name and business unit:
 
 ```json
 {
@@ -660,8 +664,6 @@ Day-to-day administrative actions against a live environment.
 | `maintenance autonumber` | Set auto-number formats for columns from a JSON config |
 | `maintenance protectfields` | Prevent all calculated fields from receiving an active layer |
 | `maintenance carrierinfo` | Export carrier solutions metadata to JSON |
-| `maintenance createworkflowstate` | Generate a workflow-state configuration file |
-| `maintenance workflowstate` | Apply a workflow-state configuration |
 | `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
 | `maintenance filterfxplugins` | Add message filtering for PowerFx plugin steps |
 
@@ -671,6 +673,111 @@ between asynchronous job status checks. The option is specific to this command.
 ```bash
 dgtp maintenance bulkdelete --inline "<fetchxml>...</fetchxml>" --poll-interval 10
 ```
+
+### `process` — Process state and ownership
+
+Capture and apply state and ownership for classic workflows (category 0), business rules (2),
+actions (3), business process flows (4), and cloud flows (5). Only process definitions are
+supported; dialogs, AI flows and desktop flows are excluded. These commands do not deploy
+definitions or manage connection references.
+
+| Command | Description |
+|---------|-------------|
+| `process init <File> --solution <UniqueName>` | Capture process state from one or more solutions |
+| `process apply <File>` | Apply only the state and owner intent recorded in the file |
+
+Both commands require an explicit file path; relative paths use the working directory.
+
+```bash
+# Capture state only (the default); repeat --solution to form a union
+dgtp process init ./processes.json --solution ContosoCore --solution ContosoFlows
+
+# Capture ownership as logical keys using a source-environment mapping
+dgtp process init ./processes.json --solution ContosoCore \
+  --capture both --owner-mapping ./owners.source.json --overwrite
+
+# Review the same target resolution and transitions without writes
+dgtp process apply ./processes.json --owner-mapping ./owners.target.json --dry-run
+
+# Run all state transitions as one mapped principal; assignments use the connection identity
+dgtp process apply ./processes.json --owner-mapping ./owners.target.json \
+  --activate-as integrationUser
+```
+
+#### V1 configuration
+
+The schema is available at [`schemas/process/v1/schema.json`](schemas/process/v1/schema.json).
+`processId` is the Dataverse `workflowid`, preserved by solution import. `name` is informational:
+apply never matches a process by display name, unique name or table.
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/process/v1/schema.json",
+  "schemaVersion": 1,
+  "processes": [
+    {
+      "processId": "265a263f-958b-4d32-b89d-6b3fdeac0458",
+      "name": "Create additional Document Location",
+      "active": true,
+      "owner": "integrationUser"
+    }
+  ]
+}
+```
+
+Each entry requires a nonempty GUID and at least one of `active` or `owner`. Omitted properties
+preserve target values, and unlisted processes are untouched. Explicit nulls, unknown or duplicate
+JSON properties, duplicate IDs, unsupported versions and root-level defaults are rejected.
+Owner keys must be nonblank without surrounding whitespace. Use environment-specific
+[portable owner mappings](#portable-owner-mappings); regular and application users are supported,
+but team owners are not.
+
+#### Capture and output
+
+| Option | Behavior |
+|--------|----------|
+| `--solution <UniqueName>` | Required, repeatable exact solution unique name; case-insensitive, no wildcards |
+| `--capture state\|owner\|both` | Defaults to `state`; `owner` and `both` require `--owner-mapping` |
+| `--owner-mapping <File>` | Source owner mapping; if supplied, always validated locally |
+| `--overwrite` | Explicitly allow replacement of existing output |
+
+Capture retrieves all pages of supported process definitions in the selected solution union,
+including indirect business rules of tables included with all subcomponents. Tables included
+without subcomponents do not contribute indirect rules. Unknown solutions fail capture.
+Entries are ordered by ID and include informational names. Ownership capture requires exactly one
+logical key per captured owner; missing or ambiguous reverse mappings fail before output is
+created or replaced. Selection and mapping failures leave existing output unchanged, even with
+`--overwrite`. No matches produces a valid empty `processes` array.
+
+#### Apply, impersonation and failures
+
+| Option | Behavior |
+|--------|----------|
+| `--owner-mapping <File>` | Target owner mapping, required for requested owner keys and `--activate-as`; supplied mappings are always validated |
+| `--activate-as <OwnerKey>` | Use this mapped user for every activation and deactivation |
+| `--activate-as-owner` | Use each process's configured owner for its state transitions; entries requesting `active` must also specify `owner` |
+| `--dry-run` | Resolve the same complete plan, visibly report transitions or unchanged entries, and perform no writes or retry rounds |
+
+The two impersonation options are mutually exclusive. Assignments always use the connection
+identity; requested impersonation never falls back to it. All process IDs, categories, owners and
+required caller services are resolved before the first write. Disabled users are rejected for an
+actual owner change or impersonation, but an already satisfied disabled owner does not prevent an
+otherwise valid state-only operation. A missing ID never falls back to a similarly named process.
+An empty array is a successful no-op without authentication; invalid supplied mappings still fail
+local validation.
+
+Already satisfied effects perform no writes. Changing the owner of an active process first
+deactivates it, assigns the owner, then restores activation unless `active: false` was requested.
+If assignment fails after deactivation, exactly one reactivation attempts to restore the original
+state; the report identifies whether that restoration succeeded. Failed requested activations are
+retried in rounds only while the failed set shrinks, allowing child flows to activate before
+parents. Deactivation, assignment and restoration failures are not retried.
+
+Every run reports per-process outcomes. Independent processes continue after a runtime failure;
+any failed requested operation yields an unsuccessful exit. Cancellation stops further work and
+reports completed transitions. There is no transaction or general rollback, and failed restoration
+can leave a process inactive. Dry-run does not prove operation permissions or activation
+dependencies; missing impersonation privileges surface when Dataverse executes a request.
 
 ### `codegeneration` (`cg`) — Early-bound code generation
 
@@ -1382,7 +1489,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
        └──────┬─────┴────────────┴────────────┴────────────────┘
               │
        ┌──────────┴───────────────┬──────────────────────────────┐
-       │  codegeneration          │ plugin       │ webresource   │
+       │ codegeneration / process │ plugin       │ webresource   │
        └──────────────────────────┴──────────────┴───────────────┘
                                │
                                ▼
@@ -1403,7 +1510,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `process`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The process module uses shared ownership and caller-service contracts without depending on maintenance internals.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers, shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
@@ -1430,7 +1537,8 @@ Acquisition guarantees a ready, caller-configured service, not that the caller e
 enabled, or has permission for subsequent operations. There is no caller-specific `WhoAmI`
 or privilege probe, and Dataverse faults propagate without an identity fallback. Consumers
 requiring no writes on acquisition failure must acquire all required services before writing;
-later operations can still fail. This API adds no CLI options.
+later operations can still fail. The API itself adds no global CLI options; `process apply`
+exposes resource-specific impersonation options described above.
 
 ## 📁 Repository Layout
 
@@ -1450,6 +1558,7 @@ DigitallPower/
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.plugin/          # `plugin` commands
+│       ├── dgt.power.process/         # `process init/apply` commands
 │       ├── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
 │       └── dgt.power.webresource/     # `webresource push` command
 ├── tests/                        # Unit and integration tests
