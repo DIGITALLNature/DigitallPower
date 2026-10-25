@@ -1,12 +1,15 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
+using dgt.power.common.Telemetry;
+
 namespace dgt.power.Telemetry;
 
 /// <summary>
 /// Single source of truth for whether telemetry is collected in this process.
 /// </summary>
 internal sealed class TelemetryState(bool enabled = false, string? installId = null)
+    : ITelemetryNoticeTracker
 {
     /// <summary>
     /// Set to true by the TelemetryInterceptor when --no-telemetry is passed.
@@ -16,6 +19,8 @@ internal sealed class TelemetryState(bool enabled = false, string? installId = n
     internal string? InstallId { get; private set; } = installId;
 
     internal bool IsActive => _enabled && !SuppressForInvocation;
+
+    public bool IsNoticeShown { get; set; }
 
     private bool _enabled = enabled;
 

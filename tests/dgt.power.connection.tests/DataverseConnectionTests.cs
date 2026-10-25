@@ -42,6 +42,7 @@ public class DataverseConnectionTests : ConnectionTestsBase<ConnectionStatusComm
             console);
 
         var attempt = activeDisplay
+            // ReSharper disable once AccessToDisposedClosure
             ? console.Status().StartAsync("Working...", _ => connection.GetServiceAsync())
             : connection.GetServiceAsync();
 

@@ -22,6 +22,7 @@ using dgt.power.common.Extensions;
 using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.common.Storage;
+using dgt.power.common.Telemetry;
 using dgt.power.Completion;
 using dgt.power.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +50,7 @@ var appConsole = AnsiConsole.Console;
 var registrations = new ServiceCollection();
 var dgtpHome = new DgtpHome();
 var stateStore = new StateStore(dgtpHome);
+var telemetryStateProvider = new TelemetryStateProvider(stateStore);
 registrations.AddSingleton<PackageMetadataResource>(_ => Repository.Factory
     .GetCoreV3("https://api.nuget.org/v3/index.json")
     .GetResource<PackageMetadataResource>()! // nuget.org's v3 feed always supports this resource
@@ -75,7 +77,7 @@ void FlushAndDisposeTelemetryProvider()
 
 void InitializeTelemetry()
 {
-    if (!TelemetryConfig.IsEnabled(stateStore))
+    if (!telemetryStateProvider.IsEnabled)
     {
         return;
     }
@@ -84,6 +86,7 @@ void InitializeTelemetry()
     if (created)
     {
         TelemetryNotice.Show(appConsole);
+        telemetryState.IsNoticeShown = true;
     }
 
     var connectionString = Environment.GetEnvironmentVariable("DGTP_TELEMETRY_CONNECTION_STRING")
@@ -102,6 +105,7 @@ void InitializeTelemetry()
 }
 
 registrations.AddSingleton(telemetryState);
+registrations.AddSingleton<ITelemetryNoticeTracker>(telemetryState);
 registrations.AddSingleton<ICommandSpanFactory, CommandSpanFactory>();
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>
@@ -124,6 +128,7 @@ TaskScheduler.UnobservedTaskException += unobservedTaskExceptionHandler;
 registrations.AddSingleton<IDataverseConnection, DataverseConnection>();
 registrations.AddSingleton(dgtpHome);
 registrations.AddSingleton(stateStore);
+registrations.AddSingleton(telemetryStateProvider);
 registrations.AddSingleton(TimeProvider.System);
 registrations.AddSingleton(connectionInvocationContext);
 registrations.AddSingleton<StorageSecurityNotice>(_ => new StorageSecurityNotice(appConsole));
