@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.common.Telemetry;
 using dgt.power.telemetry.Base;
 using dgt.power.telemetry.Commands;
 using Spectre.Console.Cli;
@@ -16,7 +15,7 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
-        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, NoticeTracker, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
@@ -31,7 +30,7 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(false);
-        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, NoticeTracker, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
@@ -49,7 +48,7 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
         SetEnvVar(envVar, "1");
-        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, NoticeTracker, TestConsole);
 
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
@@ -64,7 +63,7 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
-        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, NoticeTracker, TestConsole);
 
         await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
@@ -75,20 +74,19 @@ public class TelemetryStatusCommandTests : TelemetryTestBase
     }
 
     [Test]
-    public async Task Status_NoticeAlreadyShownByStartup_DoesNotShowNoticeAgain()
+    public async Task Status_NoticeAlreadyShownByStartup_SkipsNotice()
     {
         ClearTelemetryEnvVars();
         StateStore.SetTelemetryEnabled(true);
 
         // Simulate the first-run startup path showing the notice before the command runs
-        TelemetryNotice.Show(TestConsole);
+        NoticeTracker.IsNoticeShown = true;
 
-        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, TestConsole);
+        var command = new TelemetryStatusCommand(SpanFactory, TelemetryState, NoticeTracker, TestConsole);
         var result = await command.ExecuteAsync(CreateContext(), new TelemetrySettings(), CancellationToken.None);
 
         await Assert.That(result).IsEqualTo(0);
-        var noticeCount = TestConsole.Output.Split("Telemetry Notice").Length - 1;
-        await Assert.That(noticeCount).IsEqualTo(1);
+        await Assert.That(TestConsole.Output).DoesNotContain("Telemetry Notice");
         await Assert.That(TestConsole.Output).Contains("Telemetry is enabled.");
     }
 

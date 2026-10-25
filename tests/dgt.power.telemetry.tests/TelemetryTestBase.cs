@@ -19,9 +19,9 @@ public abstract class TelemetryTestBase : IDisposable
         Home = new DgtpHome(_directory);
         StateStore = new StateStore(Home);
         TelemetryState = new TelemetryStateProvider(StateStore);
+        NoticeTracker = new TestNoticeTracker();
         TestConsole = new TestConsole();
         SpanFactory = new TestSpanFactory();
-        TelemetryNotice.Reset();
     }
 
     protected DgtpHome Home { get; }
@@ -30,9 +30,16 @@ public abstract class TelemetryTestBase : IDisposable
 
     protected TelemetryStateProvider TelemetryState { get; }
 
+    protected TestNoticeTracker NoticeTracker { get; }
+
     protected TestConsole TestConsole { get; }
 
     protected TestSpanFactory SpanFactory { get; }
+
+    protected sealed class TestNoticeTracker : ITelemetryNoticeTracker
+    {
+        public bool IsNoticeShown { get; set; }
+    }
 
     protected void SetEnvVar(string name, string? value)
     {

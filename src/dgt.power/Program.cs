@@ -86,6 +86,7 @@ void InitializeTelemetry()
     if (created)
     {
         TelemetryNotice.Show(appConsole);
+        telemetryState.IsNoticeShown = true;
     }
 
     var connectionString = Environment.GetEnvironmentVariable("DGTP_TELEMETRY_CONNECTION_STRING")
@@ -104,6 +105,7 @@ void InitializeTelemetry()
 }
 
 registrations.AddSingleton(telemetryState);
+registrations.AddSingleton<ITelemetryNoticeTracker>(telemetryState);
 registrations.AddSingleton<ICommandSpanFactory, CommandSpanFactory>();
 
 UnhandledExceptionEventHandler unhandledExceptionHandler = (_, e) =>

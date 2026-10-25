@@ -12,14 +12,18 @@ namespace dgt.power.telemetry.Commands;
 public sealed class TelemetryStatusCommand(
     ICommandSpanFactory spans,
     TelemetryStateProvider telemetryState,
+    ITelemetryNoticeTracker noticeTracker,
     IAnsiConsole console)
     : PowerCommand<TelemetrySettings>(spans, console)
 {
     protected override Task<bool> RunAsync(TelemetrySettings settings, CancellationToken cancellationToken)
     {
-        TelemetryNotice.Show(Console);
-
         // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
+        if (!noticeTracker.IsNoticeShown)
+        {
+            TelemetryNotice.Show(Console);
+        }
+
         if (telemetryState.IsEnabled)
         {
             Console.MarkupLineInterpolated(CultureInfo.InvariantCulture, $"[green]●[/] Telemetry is enabled.");

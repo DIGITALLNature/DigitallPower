@@ -7,25 +7,15 @@ namespace dgt.power.common.Telemetry;
 
 /// <summary>
 /// Renders the telemetry notice explaining what data is collected and how to opt out.
-/// The notice is shown at most once per process invocation.
 /// </summary>
 public static class TelemetryNotice
 {
-    private static bool s_shown;
-
     /// <summary>
-    /// Displays the telemetry notice. No-op if already shown in this invocation.
+    /// Displays the telemetry notice.
     /// </summary>
     public static void Show(IAnsiConsole console)
     {
         ArgumentNullException.ThrowIfNull(console);
-
-        if (s_shown)
-        {
-            return;
-        }
-
-        s_shown = true;
 
         var panel = new Panel(
             "[grey]DIGITALL Power CLI collects anonymous usage data to improve the tool.\n" +
@@ -43,9 +33,4 @@ public static class TelemetryNotice
         console.Write(panel);
         console.WriteLine();
     }
-
-    /// <summary>
-    /// Resets the shown flag. Intended for test isolation only.
-    /// </summary>
-    public static void Reset() => s_shown = false;
 }
