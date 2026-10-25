@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "teamtemplateid": "4e17461c-efec-43a0-835b-08fa78af1f83",
+      "entity": "account",
+      "teamtemplatename": "Account readers",
+      "description": null,
+      "defaultaccessrightsmask": 1
+    }
+  ]
+}

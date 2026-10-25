@@ -2,6 +2,7 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using dgt.power.common.FileAccess;
 using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.process.Logic;
@@ -52,37 +53,6 @@ public static class ProcessConfigurationWriter
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
         ArgumentNullException.ThrowIfNull(contents);
-        var path = Path.GetFullPath(outputPath, Environment.CurrentDirectory);
-        return WriteAtomicallyCoreAsync(path, contents, overwrite, cancellationToken);
-    }
-
-    private static async Task WriteAtomicallyCoreAsync(string path, string contents, bool overwrite, CancellationToken cancellationToken)
-    {
-        if (!overwrite && File.Exists(path))
-        {
-            throw new IOException($"Output file '{path}' already exists. Use --overwrite to replace it.");
-        }
-
-        var directory = Path.GetDirectoryName(path) ?? Environment.CurrentDirectory;
-        Directory.CreateDirectory(directory);
-        var temporaryPath = Path.Combine(directory, $".{Path.GetFileName(path)}.{Guid.NewGuid():N}.tmp");
-        try
-        {
-            await using (var stream = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-            await using (var writer = new StreamWriter(stream))
-            {
-                await writer.WriteAsync(contents.AsMemory(), cancellationToken);
-                await writer.FlushAsync(cancellationToken);
-            }
-
-            File.Move(temporaryPath, path, overwrite);
-        }
-        finally
-        {
-            if (File.Exists(temporaryPath))
-            {
-                File.Delete(temporaryPath);
-            }
-        }
+        return AtomicFileWriter.WriteAsync(outputPath, contents, overwrite, cancellationToken);
     }
 }
