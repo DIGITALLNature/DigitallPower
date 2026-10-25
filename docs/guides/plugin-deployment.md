@@ -5,7 +5,7 @@ End-to-end workflow for developing, deploying, and managing Dataverse plugins wi
 ## Prerequisites
 
 - A Dataverse environment and a [connection](../reference/commands/connection.md) to it
-- A .NET plugin project referencing `Digitall.Plugins.Registration` 3.0.0 or later
+- A .NET plugin project referencing `Digitall.Plugins.Registration` 3.0.0-beta.3 or later
 - The `dgtp` CLI [installed](../getting-started/installation.md)
 
 ## 1. Write the plugin
@@ -15,9 +15,7 @@ Decorate your plugin classes with registration attributes from `Digitall.Plugins
 ```csharp
 using Digitall.Plugins.Registration;
 
-// mode: 0 = Synchronous, 1 = Asynchronous
-// stage: 10 = PreValidation, 20 = PreOperation, 40 = PostOperation
-[PluginRegistration("Create", 0, 20, PrimaryEntityName = "account")]
+[PluginRegistration(PluginExecutionMode.Synchronous, "Create", PluginExecutionStage.PreOperation, PrimaryEntityName = "account")]
 public class AccountCreatePlugin : IPlugin
 {
     public void Execute(IServiceProvider serviceProvider) { /* ... */ }
