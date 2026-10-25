@@ -13,7 +13,7 @@ namespace dgt.power.codegeneration.Base;
 /// </summary>
 public static class CodeGenerationConfigLoader
 {
-    private const string MigrationGuide = "docs/migrations/2.x-to-3.x.md";
+    private const string MigrationGuide = "docs/guides/migrations/2.x-to-3.x.md";
     private static readonly string[] s_removedSettings =
     [
         "TypescriptGeneratorVersion",

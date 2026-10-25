@@ -10,9 +10,9 @@ When making changes to this codebase, **you MUST keep the documentation up to da
 
 ### Rules
 
-1. **README.md must reflect the current state of the project.** After any change that affects the public API, architecture, configuration, project structure, or usage patterns, update the corresponding section(s) in `README.md`.
+1. **README.md is the landing page.** It stays focused on introduction, features, installation, quick start, and links to detailed docs. Detailed user-facing documentation lives in `docs/` — update the appropriate file there, not the README.
 
-2. **What requires a README update:**
+2. **What requires a docs update:**
    - Adding, removing, or renaming public classes, interfaces, or methods
    - Adding or removing NuGet dependencies
    - Adding new Organization Request fakes
@@ -22,13 +22,20 @@ When making changes to this codebase, **you MUST keep the documentation up to da
    - Changing build/test commands or CI/CD workflows
    - Adding new features or capabilities
 
-3. **Major-version migration guides:** Every user-affecting breaking change in a major release
-   must be documented in the corresponding `docs/migrations/<from>-to-<to>.md` guide (for example,
-   `2.x-to-3.x.md`). Keep the README focused on current behavior and add a prominent link near the
-   beginning to the migration guides directory. Internal-only breaking changes do not require
-   migration guidance.
+   **Where to put it:**
+   - Command changes → `docs/reference/commands/<branch>.md`
+   - Configuration/environment variable changes → `docs/reference/configuration.md`
+   - New features or capabilities → `docs/guides/` or `docs/reference/commands/`
+   - Architecture/structure changes → `docs/concepts/` or `docs/development/`
+   - Restructuring the project → `docs/development/repository-layout.md`
+   - Build/test or CI/CD changes → `docs/development/build-and-test.md` or `docs/guides/ci-cd.md`
 
-4. **What does NOT require a README update:**
+3. **Major-version migration guides:** Every user-affecting breaking change in a major release
+   must be documented in the corresponding `docs/guides/migrations/<from>-to-<to>.md` guide (for example,
+   `2.x-to-3.x.md`). The README links to the migration guides directory near the beginning.
+   Internal-only breaking changes do not require migration guidance.
+
+4. **What does NOT require a docs update:**
    - Internal refactoring that doesn't change the public API
    - Bug fixes that don't change behavior or usage
    - Test-only changes
@@ -300,7 +307,7 @@ Do not create a proposal for a localized bug fix, test-only or documentation-onl
 
 ### Workflow
 
-1. Read the relevant main specs with `pnpm exec openspec list --specs` and inspect the implementation, tests, schemas, and README that define current behavior.
+1. Read the relevant main specs with `pnpm exec openspec list --specs` and inspect the implementation, tests, schemas, and docs that define current behavior.
 2. For unclear or broad work, explore first. Otherwise create a proposal with `/opsx-propose`; include scope, affected capabilities, design constraints, and test/validation tasks.
 3. Review the proposal before implementation. Implement only after the user authorizes the work, using `/opsx-apply` where available.
 4. Update the main specs to match the implemented behavior, run focused tests and `pnpm exec openspec validate --all`, and submit the implementation PR. Keep the change active while the PR is open, even when all tasks and checks are complete.
@@ -313,10 +320,10 @@ Do not create a proposal for a localized bug fix, test-only or documentation-onl
 
 ### Where knowledge belongs
 
-- `openspec/specs/` describes current requirements and externally observable behavior. Keep specs concise, organized by capability, and grounded in code, tests, schemas, and README.
+- `openspec/specs/` describes current requirements and externally observable behavior. Keep specs concise, organized by capability, and grounded in code, tests, schemas, and docs.
 - `openspec/changes/` contains active proposals. Archived changes are history, not a substitute for current specs.
 - `docs/architecture/decisions/` records only durable rationale that is not apparent from current behavior. Update its index when adding an ADR.
 - Put implementation details and narrow caveats beside the relevant code or tests. Do not create session logs, duplicate API reference material, or migrate old notes solely to preserve them.
-- The README remains the user-facing guide. Update it when public behavior, configuration, project structure, or build/test workflows change.
+- The README is the landing page. Detailed user-facing documentation lives in `docs/`. Update the README only when the project overview, installation, or quick start change; put everything else in `docs/`.
 
 Do not add a knowledge file after every non-trivial edit. Persist information only when one of these canonical sources would otherwise be missing a durable requirement, decision, or actionable constraint.

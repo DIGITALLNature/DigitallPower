@@ -29,7 +29,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)Licence.md" Pack="true" PackagePath=""/>
+    <None Include="$(MSBuildThisFileDirectory)LICENSE.md" Pack="true" PackagePath=""/>
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath=""/>
     <None Include="$(MSBuildThisFileDirectory)CHANGELOG.md" Pack="true" PackagePath=""/>
   </ItemGroup>
