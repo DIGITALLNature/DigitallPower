@@ -14,7 +14,7 @@ DigitallPower collects anonymous usage telemetry to help improve the tool. Telem
 | Anonymous install ID | `a1b2c3d4-...` | Count unique installations |
 | Crash data | `ExceptionType`, `anonymized stacktrace` | Improve reliability by identifying common crashes |
 
-**No personally identifiable information is collected.** Error messages and stack traces are automatically anonymized before being sent — the following data is stripped or replaced with fixed placeholders:
+**Personally identifiable information is not intentionally collected.** Error messages and stack traces are automatically anonymized before being sent — the following data is stripped or replaced with fixed placeholders:
 
 | Found in error data | Replaced with |
 |---|---|

@@ -15,7 +15,9 @@ Decorate your plugin classes with registration attributes from `Digitall.Plugins
 ```csharp
 using Digitall.Plugins.Registration;
 
-[PluginRegistration("Create", "account", Stage.PreOperation, ExecutionMode.Synchronous)]
+// mode: 0 = Synchronous, 1 = Asynchronous
+// stage: 10 = PreValidation, 20 = PreOperation, 40 = PostOperation
+[PluginRegistration("Create", 0, 20, PrimaryEntityName = "account")]
 public class AccountCreatePlugin : IPlugin
 {
     public void Execute(IServiceProvider serviceProvider) { /* ... */ }

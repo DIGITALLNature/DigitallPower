@@ -13,7 +13,7 @@ pnpm install                 # Install JS tooling, TypeScript compiler, and loca
 dotnet restore                # Restore dependencies (uses lock files)
 dotnet build                  # Build the solution
 dotnet test                   # Run all tests
-dotnet test --filter "Name~Foo"   # Run a subset of tests
+dotnet test --treenode-filter "/*/*/Foo"   # Run a subset of tests
 pnpm exec openspec validate --specs  # Validate current OpenSpec specifications
 ```
 

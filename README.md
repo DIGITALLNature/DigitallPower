@@ -51,7 +51,7 @@ dgtp connection list
 dgtp export queues --filedir ./out/queues
 
 # 4. Generate early-bound C# classes
-dgtp solution codegeneration ./generated -c ./genconfig.json
+dgtp codegeneration ./generated -c ./genconfig.json
 ```
 
 Run `dgtp --help` or `dgtp <command> --help` to discover all options. See [Quick Start](docs/getting-started/quick-start.md) for next steps.
@@ -60,20 +60,19 @@ Run `dgtp --help` or `dgtp <command> --help` to discover all options. See [Quick
 
 | Section | Description |
 |---------|-------------|
-| [Getting Started](docs/getting-started/installation.md) | Install dgtp and verify your setup |
-| [Quick Start](docs/getting-started/quick-start.md) | Five commands to get running |
-| [Guides](docs/guides/ci-cd.md) | CI/CD integration, tab completion, plugin deployment, migration guides |
-| [Command Reference](docs/reference/commands/connection.md) | All commands organized by branch (connection, export, import, maintenance, analyze, solution, plugin, webresource, telemetry, complete) |
+| [Getting Started](docs/getting-started/) | Install dgtp and verify your setup |
+| [Guides](docs/guides/) | CI/CD integration, tab completion, plugin deployment, migration guides |
+| [Command Reference](docs/reference/commands/) | All commands organized by branch |
 | [Configuration](docs/reference/configuration.md) | Environment variables, connection settings, JSON schemas |
-| [Concepts](docs/concepts/architecture.md) | Architecture, telemetry & privacy, connection model |
-| [Contributor Docs](docs/development/build-and-test.md) | Build & test, repository layout, spec-driven development |
+| [Concepts](docs/concepts/) | Architecture, telemetry & privacy, connection model |
+| [Contributor Docs](docs/development/) | Build & test, repository layout, spec-driven development |
 | [Full docs index](docs/README.md) | Complete documentation navigation |
 
 > **DIGITALL guidelines:** The [DIGITALL BizApps Guidelines](https://digitallnature.github.io/) site provides project-level guidance for working with dgtp in DIGITALL projects, including ALM workflows and coding standards.
 
 ## 📡 Telemetry
 
-DigitallPower collects anonymous usage telemetry to help improve the tool. Telemetry is **opt-out** — it is enabled by default but can be easily disabled. No personally identifiable information is collected.
+DigitallPower collects anonymous usage telemetry to help improve the tool. Telemetry is **opt-out** — it is enabled by default but can be easily disabled. Personally identifiable information is not intentionally collected; error data is anonymized on a best-effort basis (see limitations below).
 
 ```bash
 dgtp telemetry disable   # Opt out permanently

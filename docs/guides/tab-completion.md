@@ -63,7 +63,7 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp <TAB>` | `connection` `export` `import` `maintenance` `analyze` `solution` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
 | `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |

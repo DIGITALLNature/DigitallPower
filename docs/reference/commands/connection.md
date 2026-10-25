@@ -108,7 +108,7 @@ certificate cannot authenticate.
 dgtp connection create prod-store --url https://contoso.crm4.dynamics.com --tenant <tenant-id> --client-id <application-id> --certificate-thumbprint <thumbprint>
 
 # Certificate and private key contained in a PFX file
-dgtp connection create prod-file --url https://contoso.crm4.dynamics.com --tenant <tenant-id> --client-id <application-id> --certificate-path "C:\\certificates\\dataverse.pfx" --certificate-password <password>
+dgtp connection create prod-file --url https://contoso.crm4.dynamics.com --tenant <tenant-id> --client-id <application-id> --certificate-path "C:\certificates\dataverse.pfx" --certificate-password <password>
 ```
 
 | | Thumbprint | PFX file |
