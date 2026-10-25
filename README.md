@@ -47,6 +47,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [solution](#solution--solution-scoped-operations)
   - [maintenance](#maintenance--operational-tasks)
   - [process](#process--process-state-and-ownership)
+  - [duplicaterules](#duplicaterules--duplicate-rule-publication-and-ownership)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
   - [webresource](#webresource--deploy-webresources)
@@ -78,6 +79,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, filter PowerFx plugin steps, and more |
 | **Process** | Capture and apply explicit process state and portable ownership by workflow ID, with preflight, dry-run and optional run-level impersonation |
+| **Duplicate Rules** | Capture and apply publication state and portable ownership of existing duplicate-detection rules by rule ID, with capacity preflight, dry-run and bounded publish observation |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage plugin steps (configuration, enable/disable, bulk state) |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
@@ -182,7 +184,7 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `teamtemplates` `maintenance` `process` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp <TAB>` | `export` `import` `teamtemplates` `maintenance` `process` `duplicaterules` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
 | `dgtp export <TAB>` | `bulkdeletes` `queues` … |
 | `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
 | `dgtp teamtemplates <TAB>` | `import` `export` |
@@ -195,6 +197,7 @@ The shim is written with idempotency markers — running the command again does 
 | `dgtp plugin step config <TAB>` | `set` |
 | `dgtp plugin step state <TAB>` | `set` |
 | `dgtp process <TAB>` | `init` `apply` |
+| `dgtp duplicaterules <TAB>` | `init` `apply` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
@@ -264,7 +267,9 @@ the selected environment.
 The V1 schema is [`schemas/ownership/v1/schema.json`](schemas/ownership/v1/schema.json).
 Ownership-aware consumers use `--owner-mapping <File>`; the
 [`process` commands](#process--process-state-and-ownership) support this shared contract for
-regular and application users.
+regular and application users; the
+[`duplicaterules` commands](#duplicaterules--duplicate-rule-publication-and-ownership) also
+support owning teams.
 Relative mapping paths are resolved from the working directory. There is no implicit file search,
 default owner, connection-identity fallback, or selector fallback. Explicitly supplied files are
 validated even when a consumer invocation has no owner intent; state-only operations do not need a
@@ -299,14 +304,14 @@ another selector. The [portable mapping example](tests/dgt.power.common.tests/Ow
 is shared with loader tests.
 
 Resource configuration refers to the logical key rather than embedding a tenant identity, for
-example `{ "owner": "salesOwner" }`. Process commands use this contract; additional resources
+example `{ "owner": "salesOwner" }`. Process and duplicate-rule commands use this contract; additional resources
 may adopt it with their own eligibility policies. Use the source environment's mapping file during
 capture and the destination environment's
 mapping file during apply. The same logical key can intentionally resolve to different principals
 in those files. Apply permits aliases, while capture rejects aliases only when multiple keys resolve
 to an owner being captured; aliases for uncaptured principals are harmless.
 
-For resources that allow team owners (not process commands), the source mapping can pin the source
+For resources that allow team owners (such as duplicate rules, but not process commands), the source mapping can pin the source
 team's Entra group identity while the target mapping uses a target-specific name and business unit:
 
 ```json
@@ -849,6 +854,130 @@ any failed requested operation yields an unsuccessful exit. Cancellation stops f
 reports completed transitions. There is no transaction or general rollback, and failed restoration
 can leave a process inactive. Dry-run does not prove operation permissions or activation
 dependencies; missing impersonation privileges surface when Dataverse executes a request.
+
+### `duplicaterules` — Duplicate-rule publication and ownership
+
+Capture and apply the publication state and owner of existing duplicate-detection rules. Rule
+definitions and conditions travel through solutions; these commands never create, delete, or
+change definitions, match rules by name, or clean up unlisted rules.
+
+| Command | Description |
+|---------|-------------|
+| `duplicaterules init <File>` | Capture state and/or ownership of existing rules |
+| `duplicaterules apply <File>` | Apply only the publication and owner intent recorded in the file |
+
+Both commands require an explicit file path; relative paths use the working directory.
+
+```bash
+# Capture the publication state of all rules (the default)
+dgtp duplicaterules init ./duplicaterules.json
+
+# Capture state and ownership of contact rules using a source-environment mapping
+dgtp duplicaterules init ./duplicaterules.json --entity contact \
+  --capture both --owner-mapping ./owners.source.json --overwrite
+
+# Capture selected rules only; repeat --rule-id for several rules
+dgtp duplicaterules init ./duplicaterules.json \
+  --rule-id 6f1c2b4e-8d3a-4f5b-9c7d-1e2f3a4b5c6d --rule-id 0a9b8c7d-6e5f-4a3b-2c1d-0e9f8a7b6c5d
+
+# Review the resolved plan, owners and capacity without writes
+dgtp duplicaterules apply ./duplicaterules.json --owner-mapping ./owners.target.json --dry-run
+
+# Apply and wait up to 10 minutes for all publish jobs together
+dgtp duplicaterules apply ./duplicaterules.json --owner-mapping ./owners.target.json --timeout 600
+```
+
+#### V1 configuration
+
+The schema is available at
+[`schemas/duplicaterules/v1/schema.json`](schemas/duplicaterules/v1/schema.json). `ruleId` is the
+Dataverse `duplicateruleid`, preserved by solution import. `name` is informational: apply never
+matches a rule by name, table, or definition, and a missing GUID fails preflight even if a rule
+with the same name exists.
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/duplicaterules/v1/schema.json",
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "ruleId": "6f1c2b4e-8d3a-4f5b-9c7d-1e2f3a4b5c6d",
+      "name": "Contacts with the same e-mail address",
+      "published": true,
+      "owner": "integrationUser"
+    },
+    {
+      "ruleId": "0a9b8c7d-6e5f-4a3b-2c1d-0e9f8a7b6c5d",
+      "name": "Accounts with the same name",
+      "published": false
+    }
+  ]
+}
+```
+
+Each entry requires a nonempty GUID and at least one of `published` or `owner`. Omitted properties
+preserve target values, and unlisted rules are untouched. Explicit nulls, unknown or duplicate JSON
+properties, duplicate IDs, and unsupported versions are rejected. Owner keys must be nonblank
+without surrounding whitespace and use
+[portable owner mappings](#portable-owner-mappings); regular users, application users, and owning
+teams are supported.
+
+#### Capture and output
+
+| Option | Behavior |
+|--------|----------|
+| `--entity <BaseTable>` | Restrict capture to rules of one exact base-table logical name |
+| `--rule-id <Guid>` | Repeatable; restrict capture to these rule IDs |
+| `--capture state\|owner\|both` | Defaults to `state`; `owner` and `both` require `--owner-mapping` |
+| `--owner-mapping <File>` | Source owner mapping; if supplied, always validated locally |
+| `--overwrite` | Explicitly allow replacement of existing output |
+
+Without filters, capture includes all rules across all pages. `--entity` and `--rule-id` combine
+with AND: a missing selected ID or an ID belonging to another table fails capture. Selected rules
+that are currently publishing or in an unknown state fail capture, so capture only stable states.
+Entries are ordered by ID and include informational names. Ownership capture requires exactly one
+logical key per captured owner. All validation finishes before output is created or replaced; an
+existing file is never replaced without `--overwrite`, and failures leave it unchanged. No matches
+produces a valid empty `rules` array.
+
+#### Apply, capacity and completion
+
+| Option | Behavior |
+|--------|----------|
+| `--owner-mapping <File>` | Target owner mapping, required for requested owner keys; supplied mappings are always validated |
+| `--dry-run` | Resolve the same complete plan and report operations, owners and capacity without writes (also with `--no-wait`) |
+| `--no-wait` | Report accepted publish submissions with job IDs instead of waiting for Published |
+| `--timeout <Seconds>` | Shared publish observation budget; positive integer, default `300` |
+
+Preflight resolves all rule IDs and owner keys before the first write; any invalid entry prevents
+all writes. Listed rules that are currently publishing are rejected. New owners must not be
+disabled users and must hold the duplicate-rule read privilege (`prvReadDuplicateRule`), checked through the user's
+or owning team's privileges; already satisfied owners are accepted unchanged. This
+is not a complete permission check. Dataverse allows at most five Published or Publishing rules
+per base table. For tables receiving new publishes, preflight counts all such rules, including
+unlisted ones, applies the requested unpublishes, and fails before writes if the end state would
+exceed the limit. Rules are never unpublished implicitly to free slots. An empty `rules` array is a
+successful no-op without authentication; invalid supplied mappings still fail locally.
+
+Execution runs in ordered phases:
+
+1. Requested unpublishes run sequentially; each is confirmed by read-back before other writes.
+2. Owner changes are assigned directly, preserving the current publication state.
+3. Requested publishes are submitted in file order without waiting for each job.
+4. All accepted publishes are then observed together every two seconds within one shared
+   `--timeout` budget.
+
+Already satisfied effects perform no writes. A failed unpublish or assignment skips the dependent
+publish of that rule. Publish faults are reported per rule, for example a rule without criteria or
+a table with no free slot (capacity changed concurrently); publishes are never queued or retried.
+Failed or canceled publish jobs are terminal failures. On timeout, unresolved rules fail with their
+last observed state and job ID. With `--no-wait`, unpublish confirmation and owner changes still
+complete, accepted publishes count as successful submissions, and the report states that the
+later server-side outcome is unverified.
+
+Every run reports per-rule outcomes. Independent rules continue after a runtime failure; any failed
+requested operation yields an unsuccessful exit. Cancellation stops further client work. Timeout or
+cancellation does not cancel submitted server jobs or roll back completed changes.
 
 ### `codegeneration` (`cg`) — Early-bound code generation
 
@@ -1630,6 +1759,7 @@ DigitallPower/
 │       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.plugin/          # `plugin` commands
 │       ├── dgt.power.process/         # `process init/apply` commands
+│       ├── dgt.power.duplicaterules/  # `duplicaterules init/apply` commands
 │       ├── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
 │       └── dgt.power.webresource/     # `webresource push` command
 ├── tests/                        # Unit and integration tests
