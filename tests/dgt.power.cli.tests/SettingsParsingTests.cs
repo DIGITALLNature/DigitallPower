@@ -273,7 +273,7 @@ public class SettingsParsingTests
             await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
             var settings = (ProcessInitSettings)result.Settings!;
             await Assert.That(settings.File).IsEqualTo(file);
-            await Assert.That(settings.Solutions).IsEquivalentTo(new[] { "ContosoCore", "ContosoFlows" });
+            await Assert.That(settings.Solutions).IsEquivalentTo(["ContosoCore", "ContosoFlows"]);
             await Assert.That(settings.Capture).IsEqualTo("both");
             await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
             await Assert.That(settings.Overwrite).IsTrue();

@@ -8,6 +8,7 @@ using Spectre.Console;
 
 namespace dgt.power.process.Commands;
 
+// ReSharper disable once ClassNeverInstantiated.Global — instantiated by Spectre.Console.Cli through the DI container.
 public sealed class ProcessApplyCommand(
     ICommandSpanFactory spans,
     IDataverseConnection connection,

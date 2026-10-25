@@ -42,14 +42,14 @@ public class ProcessInitCommandTests
         using var fixture = new ProcessInitFixture();
         var mappingPath = fixture.WriteMapping(mappingJson);
         var outputPath = fixture.PathFor("existing.json");
-        await System.IO.File.WriteAllTextAsync(outputPath, "preserve this output");
+        await File.WriteAllTextAsync(outputPath, "preserve this output");
         using var console = new TestConsole();
         var context = fixture.CreateCommandContext(console);
 
         var succeeded = context.Execute(ProcessInitFixture.Settings(outputPath, mappingPath, overwrite: true));
 
         await Assert.That(succeeded).IsFalse();
-        await Assert.That(await System.IO.File.ReadAllTextAsync(outputPath)).IsEqualTo("preserve this output");
+        await Assert.That(await File.ReadAllTextAsync(outputPath)).IsEqualTo("preserve this output");
     }
 
     [Test]
@@ -57,14 +57,14 @@ public class ProcessInitCommandTests
     {
         using var fixture = new ProcessInitFixture();
         var outputPath = fixture.PathFor("existing.json");
-        await System.IO.File.WriteAllTextAsync(outputPath, "preserve this output");
+        await File.WriteAllTextAsync(outputPath, "preserve this output");
         using var console = new TestConsole();
         var context = fixture.CreateCommandContext(console, includeSolution: false);
 
         var succeeded = context.Execute(ProcessInitFixture.Settings(outputPath, capture: "state", overwrite: true));
 
         await Assert.That(succeeded).IsFalse();
-        await Assert.That(await System.IO.File.ReadAllTextAsync(outputPath)).IsEqualTo("preserve this output");
+        await Assert.That(await File.ReadAllTextAsync(outputPath)).IsEqualTo("preserve this output");
     }
 
     [Test]
@@ -72,14 +72,14 @@ public class ProcessInitCommandTests
     {
         using var fixture = new ProcessInitFixture();
         var outputPath = fixture.PathFor("existing.json");
-        await System.IO.File.WriteAllTextAsync(outputPath, "preserve this output");
+        await File.WriteAllTextAsync(outputPath, "preserve this output");
         using var console = new TestConsole();
         var context = fixture.CreateCommandContext(console);
 
         var succeeded = context.Execute(ProcessInitFixture.Settings(outputPath, capture: "state"));
 
         await Assert.That(succeeded).IsFalse();
-        await Assert.That(await System.IO.File.ReadAllTextAsync(outputPath)).IsEqualTo("preserve this output");
+        await Assert.That(await File.ReadAllTextAsync(outputPath)).IsEqualTo("preserve this output");
     }
 
     [Test]
@@ -130,7 +130,7 @@ public class ProcessInitCommandTests
         public string WriteMapping(string json)
         {
             var path = PathFor("owners.json");
-            System.IO.File.WriteAllText(path, json);
+            File.WriteAllText(path, json);
             return path;
         }
 

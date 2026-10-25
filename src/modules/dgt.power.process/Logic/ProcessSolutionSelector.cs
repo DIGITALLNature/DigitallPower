@@ -16,7 +16,7 @@ public sealed class ProcessSolutionSelector(IOrganizationServiceAsync2 service)
     private const int WorkflowComponent = 29;
     private const int IncludeAllSubcomponents = SolutionComponent.Options.RootComponentBehavior.IncludeSubcomponents;
 
-    public async Task<IReadOnlyList<Entity>> SelectAsync(
+    public Task<IReadOnlyList<Entity>> SelectAsync(
         IReadOnlyCollection<string> solutionNames,
         CancellationToken cancellationToken = default)
     {
@@ -26,6 +26,13 @@ public sealed class ProcessSolutionSelector(IOrganizationServiceAsync2 service)
             throw new ArgumentException("At least one solution unique name is required.", nameof(solutionNames));
         }
 
+        return SelectCoreAsync(solutionNames.ToArray(), cancellationToken);
+    }
+
+    private async Task<IReadOnlyList<Entity>> SelectCoreAsync(
+        string[] solutionNames,
+        CancellationToken cancellationToken)
+    {
         var uniqueNames = solutionNames.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
         var solutionsQuery = new QueryExpression("solution")
         {

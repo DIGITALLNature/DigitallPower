@@ -2,26 +2,25 @@
 
 using dgt.power.common;
 using dgt.power.common.Ownership;
-using dgt.power.process.Configuration;
 using dgt.power.process.Logic;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.process.Commands;
 
+// ReSharper disable once ClassNeverInstantiated.Global — instantiated by Spectre.Console.Cli through the DI container.
 public sealed class ProcessInitCommand(
     ICommandSpanFactory spans,
     IDataverseConnection connection,
     IAnsiConsole console)
     : PowerCommand<ProcessInitSettings>(spans, console)
 {
-    private readonly IOwnerResolver _ownerResolver = new OwnerResolver();
+    private readonly OwnerResolver _ownerResolver = new();
 
     protected override async Task<bool> RunAsync(ProcessInitSettings settings, CancellationToken cancellationToken)
     {
         var outputPath = Path.GetFullPath(settings.File!, Environment.CurrentDirectory);
-        if (!settings.Overwrite && System.IO.File.Exists(outputPath))
+        if (!settings.Overwrite && File.Exists(outputPath))
         {
             Console.MarkupLine($"[red]Output file '{outputPath.EscapeMarkup()}' already exists. Use --overwrite to replace it.[/]");
             return false;
@@ -101,7 +100,7 @@ public sealed class ProcessInitCommand(
         {
             content = ProcessConfigurationWriter.Serialize(processes, settings.Capture, ownerKeys);
         }
-        catch (Exception exception)
+        catch (InvalidOperationException exception)
         {
             Console.MarkupLine($"[red]Could not serialize process configuration: {exception.Message.EscapeMarkup()}[/]");
             return false;

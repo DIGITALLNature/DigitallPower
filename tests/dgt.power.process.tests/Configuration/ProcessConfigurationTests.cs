@@ -10,7 +10,7 @@ public class ProcessConfigurationTests
     [Test]
     public async Task Parse_ReadmeExampleFixture_AcceptsStrictV1AndSchema()
     {
-        var json = await System.IO.File.ReadAllTextAsync(
+        var json = await File.ReadAllTextAsync(
             Path.Combine(AppContext.BaseDirectory, "Resources", "ProcessConfiguration", "valid-v1.json"));
         var configuration = ProcessConfiguration.Parse(json);
 
@@ -21,7 +21,7 @@ public class ProcessConfigurationTests
         await Assert.That(configuration.Processes[0].Active).IsTrue();
         await Assert.That(configuration.Processes[0].Owner).IsEqualTo("integrationUser");
 
-        using var schema = JsonDocument.Parse(await System.IO.File.ReadAllTextAsync(
+        using var schema = JsonDocument.Parse(await File.ReadAllTextAsync(
             Path.Combine(AppContext.BaseDirectory, "schemas", "process", "v1", "schema.json")));
         await Assert.That(schema.RootElement.GetProperty("properties").GetProperty("schemaVersion").GetProperty("const").GetInt32())
             .IsEqualTo(1);

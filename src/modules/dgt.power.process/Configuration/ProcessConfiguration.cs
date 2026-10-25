@@ -154,7 +154,7 @@ public sealed record ProcessConfiguration(IReadOnlyList<ProcessIntent> Processes
         {
             if (!allowed.Contains(property.Name, StringComparer.Ordinal))
             {
-                throw Invalid($"{path}.{property.Name}", "Unknown properties are not allowed.");
+                throw Invalid($"{path}.{property.Name}", "Unexpected configuration properties are rejected.");
             }
         }
     }

@@ -71,7 +71,7 @@ public class ProcessSolutionSelectorPagingTests
 
         private static Entity[] SolutionPage(int page) =>
         [
-            new Entity("solution", Guid.NewGuid())
+            new("solution", Guid.NewGuid())
             {
                 ["uniquename"] = page == 1 ? "First" : "Second"
             }
@@ -87,7 +87,7 @@ public class ProcessSolutionSelectorPagingTests
 
         private Entity[] BusinessRulePage(int page) =>
         [
-            new Entity("workflow", page == 1 ? indirectRuleId : Guid.NewGuid())
+            new("workflow", page == 1 ? indirectRuleId : Guid.NewGuid())
             {
                 ["type"] = new OptionSetValue(Workflow.Options.Type.Definition),
                 ["category"] = new OptionSetValue(Workflow.Options.Category.BusinessRule),
@@ -97,7 +97,7 @@ public class ProcessSolutionSelectorPagingTests
 
         private Entity[] SelectedWorkflowPage(int page) =>
         [
-            new Entity("workflow", page == 1 ? directId : indirectRuleId)
+            new("workflow", page == 1 ? directId : indirectRuleId)
             {
                 ["type"] = new OptionSetValue(Workflow.Options.Type.Definition),
                 ["category"] = new OptionSetValue(page == 1

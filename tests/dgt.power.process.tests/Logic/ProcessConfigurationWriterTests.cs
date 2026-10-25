@@ -64,17 +64,39 @@ public class ProcessConfigurationWriterTests
     }
 
     [Test]
+    public async Task Serialize_OwnerCaptureEnumeratesSourceOnce()
+    {
+        var process = new Workflow(Guid.NewGuid()) { Name = "Example" };
+        var enumerationCount = 0;
+
+        IEnumerable<Entity> Processes()
+        {
+            enumerationCount++;
+            yield return process;
+        }
+
+        var json = ProcessConfigurationWriter.Serialize(
+            Processes(),
+            "owner",
+            new Dictionary<Guid, string> { [process.Id] = "integrationUser" });
+        var configuration = ProcessConfiguration.Parse(json);
+
+        await Assert.That(enumerationCount).IsEqualTo(1);
+        await Assert.That(configuration.Processes).Count().IsEqualTo(1);
+    }
+
+    [Test]
     public async Task WriteAtomicallyAsync_ProtectsExistingOutputWithoutOverwrite()
     {
         var directory = Path.Combine(Environment.CurrentDirectory, $"process-test-{Guid.NewGuid():N}");
         Directory.CreateDirectory(directory);
         var path = Path.Combine(directory, "config.json");
-        await System.IO.File.WriteAllTextAsync(path, "original");
+        await File.WriteAllTextAsync(path, "original");
         try
         {
             await Assert.That(async () => await ProcessConfigurationWriter.WriteAtomicallyAsync(path, "replacement", false, CancellationToken.None))
                 .Throws<IOException>();
-            await Assert.That(await System.IO.File.ReadAllTextAsync(path)).IsEqualTo("original");
+            await Assert.That(await File.ReadAllTextAsync(path)).IsEqualTo("original");
         }
         finally
         {

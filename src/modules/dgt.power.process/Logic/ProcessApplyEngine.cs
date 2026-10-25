@@ -20,7 +20,7 @@ public sealed class ProcessApplyEngine(
 {
     private static readonly int[] s_supportedCategories = [0, 2, 3, 4, 5];
 
-    public async Task<bool> ApplyAsync(
+    public Task<bool> ApplyAsync(
         ProcessConfiguration configuration,
         OwnerMapping? mapping,
         string? activateAs,
@@ -29,6 +29,17 @@ public sealed class ProcessApplyEngine(
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(configuration);
+        return ApplyCoreAsync(configuration, mapping, activateAs, activateAsOwner, dryRun, cancellationToken);
+    }
+
+    private async Task<bool> ApplyCoreAsync(
+        ProcessConfiguration configuration,
+        OwnerMapping? mapping,
+        string? activateAs,
+        bool activateAsOwner,
+        bool dryRun,
+        CancellationToken cancellationToken)
+    {
         if (configuration.Processes.Count == 0)
         {
             console.MarkupLine("[green]The process configuration is empty; nothing to do.[/]");
@@ -56,7 +67,7 @@ public sealed class ProcessApplyEngine(
         try
         {
             plans = await ResolvePlansAsync(service, configuration, mapping, activateAs, activateAsOwner, cancellationToken);
-            callerServices = await ResolveCallerServicesAsync(service, plans, cancellationToken);
+            callerServices = await ResolveCallerServicesAsync(plans, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -239,7 +250,7 @@ public sealed class ProcessApplyEngine(
                 throw new InvalidOperationException($"Process '{intent.ProcessId:D}' has unsupported category '{category}'.");
             }
 
-            if (activateAsOwner && intent.Active.HasValue && intent.Owner is null)
+            if (activateAsOwner && intent is { Active: not null, Owner: null })
             {
                 throw new InvalidOperationException($"Process '{intent.ProcessId:D}' needs an owner when --activate-as-owner is used with active intent.");
             }
@@ -252,14 +263,14 @@ public sealed class ProcessApplyEngine(
         }
 
         IReadOnlyDictionary<string, ResolvedOwner> resolvedOwners = new Dictionary<string, ResolvedOwner>(StringComparer.Ordinal);
+        if (ownerKeys.Count > 0 && mapping is null)
+        {
+            throw new InvalidOperationException("An owner map is required to resolve owner keys.");
+        }
+
         if (ownerKeys.Count > 0)
         {
-            if (mapping is null)
-            {
-                throw new InvalidOperationException("An owner mapping is required to resolve owner keys.");
-            }
-
-            resolvedOwners = await ownerResolver.ResolveAsync(service, mapping, ownerKeys, cancellationToken);
+            resolvedOwners = await ownerResolver.ResolveAsync(service, mapping!, ownerKeys, cancellationToken);
         }
 
         ResolvedOwner? runCaller = null;
@@ -310,9 +321,6 @@ public sealed class ProcessApplyEngine(
 
             plans.Add(new ResolvedProcessPlan(
                 intent,
-                process,
-                isActive,
-                currentOwner,
                 desiredOwner,
                 callerId,
                 needsDeactivation,
@@ -324,7 +332,6 @@ public sealed class ProcessApplyEngine(
     }
 
     private async Task<Dictionary<Guid, IOrganizationServiceAsync2>> ResolveCallerServicesAsync(
-        IOrganizationServiceAsync2 standardService,
         IReadOnlyList<ResolvedProcessPlan> plans,
         CancellationToken cancellationToken)
     {
@@ -345,7 +352,6 @@ public sealed class ProcessApplyEngine(
             result.Add(caller, impersonatedService);
         }
 
-        _ = standardService;
         return result;
     }
 
@@ -366,7 +372,7 @@ public sealed class ProcessApplyEngine(
 
     private static IOrganizationServiceAsync2 GetCallerService(
         IOrganizationServiceAsync2 standardService,
-        IReadOnlyDictionary<Guid, IOrganizationServiceAsync2> callerServices,
+        Dictionary<Guid, IOrganizationServiceAsync2> callerServices,
         Guid? callerId) =>
         callerId.HasValue ? callerServices[callerId.Value] : standardService;
 

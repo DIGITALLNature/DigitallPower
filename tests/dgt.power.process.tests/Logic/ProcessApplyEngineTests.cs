@@ -422,7 +422,7 @@ public class ProcessApplyEngineTests
             $$"""{"schemaVersion":1,"processes":[{"processId":"{{processId:D}}","active":true}]}""");
         using var console = new TestConsole();
         using var cancellation = new CancellationTokenSource();
-        cancellation.Cancel();
+        await cancellation.CancelAsync();
 
         var result = await new ProcessApplyEngine(
                 new TestDataverseConnection(service),

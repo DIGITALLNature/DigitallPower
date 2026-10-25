@@ -16,7 +16,9 @@ public sealed class ProcessInitSettings : BaseProgramSettings
 
     [CommandOption("--solution <UniqueName>")]
     [Description("Exact unique name of a solution to include; repeat to combine solution scopes.")]
+#pragma warning disable CA1819 // Spectre.Console binds repeatable options through string arrays.
     public string[]? Solutions { get; init; }
+#pragma warning restore CA1819
 
     [CommandOption("--capture <Scope>")]
     [Description("Capture scope: state, owner, or both.")]
@@ -38,9 +40,10 @@ public sealed class ProcessInitSettings : BaseProgramSettings
             return ValidationResult.Error("An output file path is required.");
         }
 
-        if (Solutions is not { Length: > 0 } ||
-            Solutions.Any(string.IsNullOrWhiteSpace) ||
-            Solutions.Any(solution => !string.Equals(solution, solution.Trim(), StringComparison.Ordinal)))
+        var solutions = Solutions;
+        if (solutions is not { Length: > 0 } ||
+            Array.Exists(solutions, string.IsNullOrWhiteSpace) ||
+            Array.Exists(solutions, solution => !string.Equals(solution, solution.Trim(), StringComparison.Ordinal)))
         {
             return ValidationResult.Error("Specify one or more exact, nonblank --solution unique names.");
         }
