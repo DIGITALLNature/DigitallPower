@@ -10,5 +10,6 @@ namespace dgt.power.common.Telemetry;
 public interface ITelemetryNoticeTracker
 {
     /// <summary>True when the telemetry notice has already been shown in this invocation.</summary>
+    // ReSharper disable once UnusedMemberInSuper.Global
     bool IsNoticeShown { get; set; }
 }
