@@ -1,7 +1,0 @@
-﻿[
-  {
-    "entity": "testentity",
-    "field": "name",
-    "format": "TE-{SEQNUM:5}-{RANDSTRING:6}"
-  }
-]

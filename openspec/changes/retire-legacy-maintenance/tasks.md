@@ -14,12 +14,12 @@ All six feature removals are approved. Two deferred Solution feature requests do
 
 ## 2. Approved feature retirement
 
-- [ ] 2.1 Verify the completed `introduce-process-resource` migration before deleting shared dependencies; verify resource-oriented process commands and documented behavior remain available without requiring either deferred Solution request.
-- [ ] 2.2 Remove all six approved command registrations, implementations, and proven orphaned settings/helpers/tests, coordinating bulk-delete shared artifacts with transfer retirement; verify every retired path fails without a Dataverse operation, help/completion omit them, and retained resource commands remain available.
-- [ ] 2.3 Document all six removals and configuration consequences in README and `docs/migrations/2.x-to-3.x.md`; verify no available replacement is promised, the two Solution requests are deferred-only, and existing Dataverse data/metadata/jobs remain unchanged.
+- [x] 2.1 Verify the completed `introduce-process-resource` migration before deleting shared dependencies; verify resource-oriented process commands and documented behavior remain available without requiring either deferred Solution request.
+- [x] 2.2 Remove all six approved command registrations, implementations, and proven orphaned settings/helpers/tests, coordinating bulk-delete shared artifacts with transfer retirement; verify every retired path fails without a Dataverse operation, help/completion omit them, and retained resource commands remain available.
+- [x] 2.3 Document all six removals and configuration consequences in README and `docs/migrations/2.x-to-3.x.md`; verify no available replacement is promised, the two Solution requests are deferred-only, and existing Dataverse data/metadata/jobs remain unchanged.
 
 ## 3. Container removal and integration
 
-- [ ] 3.1 Remove the maintenance branch, project references, DI, and proven orphaned schemas/models/helpers/tests; verify consumer searches show no required dependency was deleted.
-- [ ] 3.2 Update command-tree smoke, completion, and old-branch rejection tests plus README project structure; verify all retained resource commands remain available.
-- [ ] 3.3 Run affected resource/CLI tests, `dotnet build`, and `pnpm exec openspec validate --all`; verify success and merge the CLI delta without losing other changes' requirements before archive.
+- [x] 3.1 Remove the maintenance branch, project references, DI, and proven orphaned schemas/models/helpers/tests; verify consumer searches show no required dependency was deleted.
+- [x] 3.2 Update command-tree smoke, completion, and old-branch rejection tests plus README project structure; verify all retained resource commands remain available.
+- [x] 3.3 Run affected resource/CLI tests, `dotnet build`, and `pnpm exec openspec validate --all`; verify success and merge the CLI delta without losing other changes' requirements before archive.
