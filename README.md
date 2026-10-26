@@ -42,7 +42,6 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
     - [Authentication types](#authentication-types)
   - [Retired legacy transfers](#retired-legacy-transfers)
   - [teamtemplates](#teamtemplates--team-template-transfer)
-  - [analyze](#analyze--solution-analysis)
   - [solution](#solution--solution-scoped-operations)
   - [Retired maintenance commands](#retired-maintenance-commands)
   - [process](#process--process-state-and-ownership)
@@ -74,7 +73,6 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Connections** | Manage typed Dataverse connections (interactive, device-code, client-secret, certificate, Azure DevOps federation) and check authentication status |
 | **Team templates** | Transfer team templates with a versioned file, GUID identity, preflight validation, and explicit table-scoped cleanup |
 | **Document templates** | Transfer active Word and Excel templates as portable, versioned packages |
-| **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Process** | Capture and apply explicit process state and portable ownership by workflow ID, with preflight, dry-run and optional run-level impersonation |
 | **Duplicate Rules** | Capture and apply publication state and portable ownership of existing duplicate-detection rules by rule ID, with capacity preflight, dry-run and bounded publish observation |
@@ -182,7 +180,7 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `teamtemplates` `documenttemplates` `process` `duplicaterules` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp <TAB>` | `teamtemplates` `documenttemplates` `process` `duplicaterules` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
 | `dgtp documenttemplates <TAB>` | `import` `export` |
 | `dgtp documenttemplates export --<TAB>` | `--entity` `--type` `--overwrite` `--no-telemetry` |
 | `dgtp teamtemplates <TAB>` | `import` `export` |
@@ -742,23 +740,6 @@ and scoped deletes without writing to Dataverse or creating/replacing an export 
 transactional: if a mutation fails, completed changes are not rolled back. Execution stops at the
 first failure, reports partial results, and cleanup starts only after all creates and updates
 succeed.
-
-### `analyze` — Solution analysis
-
-Static analysis of one or many Dataverse solutions.
-
-| Command | Description |
-|---------|-------------|
-| `analyze entityallassets` | Scan solutions for entities containing all assets |
-| `analyze noactivelayer` | Find unmanaged solution components without an active layer |
-| `analyze activelayer` | Find managed solution components that already received an active layer |
-| `analyze toplayer` | Find managed solution components where the given solution is not the top layer |
-| `analyze redundantcomponents` | Find components contained in multiple solutions |
-| `analyze redundantpatches` | Find patches that are no longer needed because their components are no longer top-layer |
-
-```bash
-dgtp analyze noactivelayer --inline solution1,solution2
-```
 
 ### Retired maintenance commands
 
@@ -1801,7 +1782,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
                                      | references
                 +--------------------v---------------------+
                 |              Feature modules            |
-                | connection / analyzer                   |
+                | connection                              |
                 | codegeneration / plugin / webresource   |
                 | process / solution / telemetry          |
                 | teamtemplates / documenttemplates       |
@@ -1822,7 +1803,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Cohesive module boundaries.** Each resource area (`documenttemplates`, `duplicaterules`, `plugin`, `process`, `teamtemplates`, `webresource`) has an independent project under `src/modules/`. `analyzer` and `codegeneration` are focused capabilities; `connection` and `telemetry` are infrastructure/operator capabilities. Modules expose `Spectre.Console.Cli` command classes that are registered by the host. The legacy import/export and maintenance projects and their exclusive contracts are removed; retained template and process modules reference shared infrastructure directly, not legacy modules.
+- **Cohesive module boundaries.** Each resource area (`documenttemplates`, `duplicaterules`, `plugin`, `process`, `teamtemplates`, `webresource`) has an independent project under `src/modules/`. `codegeneration` is a focused capability; `connection` and `telemetry` are infrastructure/operator capabilities. Modules expose `Spectre.Console.Cli` command classes that are registered by the host. The legacy import/export, maintenance, and analyzer projects and their exclusive contracts are removed; retained resource modules reference shared infrastructure directly, not legacy modules.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers (including the public `FileAccess/AtomicFileWriter` helper for shared atomic file writes), shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules. The process module now delegates its atomic writes to this shared helper without changing process command behavior.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
@@ -1862,7 +1843,6 @@ DigitallPower/
 │   ├── dgt.power/                # CLI host project (produces the `dgtp` tool)
 │   ├── dgt.power.common/         # Shared infrastructure (typed connections, IO, command lifecycle)
 │   └── modules/
-│       ├── dgt.power.analyzer/        # `analyze` commands
 │       ├── dgt.power.codegeneration/  # `codegeneration` / `cg` command
 │       ├── dgt.power.connection/      # `connection` commands (auth management)
 │       ├── dgt.power.plugin/          # `plugin` commands

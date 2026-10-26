@@ -1,8 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.analyzer.Base;
-using dgt.power.analyzer.Logic;
 using dgt.power.codegeneration;
 using dgt.power.Commands.Complete;
 using dgt.power.connection.Base;
@@ -95,26 +93,6 @@ internal static class CommandTree
                 .WithExample("duplicaterules", "apply", "./duplicaterules.json", "--dry-run")
                 .WithExample("duplicaterules", "apply", "./duplicaterules.json", "--owner-mapping", "./owners.target.json",
                     "--timeout", "600");
-        });
-
-        config.AddBranch<AnalyzeVerb>("analyze", analyze =>
-        {
-            analyze.SetDescription("Analyze specific Dataverse Artifacts in the current Environment");
-            analyze.AddCommand<EntityAllAssetsAnalyze>("entityallassets")
-                .WithDescription("Scans the specified solutions for entities containing with assets");
-            analyze.AddCommand<NoActiveLayerAnalyze>("noactivelayer")
-                .WithDescription("Scans the specified (unmanaged) solutions for components without active layer")
-                .WithExample("analyze", "noactivelayer", "--inline", "solution1,solution2");
-            analyze.AddCommand<RedundantComponentsAnalyze>("redundantcomponents")
-                .WithDescription("Scans for components that are in multiple of the specified solutions");
-            analyze.AddCommand<RedundantPatchAnalyze>("redundantpatches")
-                .WithDescription("Scans for patch solutions that are not longer needed because all contained elements are not top-layer anymore");
-            analyze.AddCommand<ActiveLayerAnalyze>("activelayer")
-                .WithDescription("Scans the specified (managed) solutions for components with active layer")
-                .WithExample("analyze", "activelayer", "--inline", "solution1,solution2");
-            analyze.AddCommand<TopLayerAnalyze>("toplayer")
-                .WithDescription("Scans the specified (managed) solutions for components where solution is not top layer")
-                .WithExample("analyze", "toplayer", "--inline", "solution1,solution2");
         });
 
         config.AddBranch<PluginSettings>("plugin", plugin =>

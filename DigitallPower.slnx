@@ -1,6 +1,5 @@
 <Solution>
   <Folder Name="/Modules/">
-    <Project Path="src/modules/dgt.power.analyzer/dgt.power.analyzer.csproj" />
     <Project Path="src/modules/dgt.power.codegeneration/dgt.power.codegeneration.csproj" />
     <Project Path="src/modules/dgt.power.connection/dgt.power.connection.csproj" />
     <Project Path="src/modules/dgt.power.documenttemplates/dgt.power.documenttemplates.csproj" />
@@ -13,7 +12,6 @@
     <Project Path="src/modules/dgt.power.webresource/dgt.power.webresource.csproj" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="tests/dgt.power.analyzer.tests/dgt.power.analyzer.tests.csproj" />
     <Project Path="tests/dgt.power.codegeneration.tests/dgt.power.codegeneration.tests.csproj" />
     <Project Path="tests/dgt.power.common.tests/dgt.power.common.tests.csproj" />
     <Project Path="tests/dgt.power.connection.tests/dgt.power.connection.tests.csproj" />

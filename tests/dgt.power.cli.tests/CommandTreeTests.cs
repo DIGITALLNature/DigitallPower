@@ -57,7 +57,6 @@ public class CommandTreeTests
     // routing issues that only surface when actually navigating into a specific path.)
     [Test]
     [Arguments("connection")]
-    [Arguments("analyze")]
     [Arguments("solution")]
     [Arguments("codegeneration")]
     [Arguments("cg")] // alias for codegeneration
@@ -127,6 +126,25 @@ public class CommandTreeTests
     }
 
     [Test]
+    [Arguments("analyze", "--help")]
+    [Arguments("analyze", "entityallassets")]
+    [Arguments("analyze", "noactivelayer")]
+    [Arguments("analyze", "activelayer")]
+    [Arguments("analyze", "toplayer")]
+    [Arguments("analyze", "redundantcomponents")]
+    [Arguments("analyze", "redundantpatches")]
+    public async Task RetiredAnalyzePath_IsRejectedWithoutResolvingServices(string branch, string argument)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run(branch, argument);
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
     [Arguments("import", "bulkdeletes")]
     [Arguments("export", "bulkdeletes")]
     [Arguments("import", "queues")]
@@ -184,6 +202,7 @@ public class CommandTreeTests
         var rootCommands = capture.Model!.Commands.Select(command => command.Name).ToArray();
         await Assert.That(rootCommands).DoesNotContain("import");
         await Assert.That(rootCommands).DoesNotContain("export");
+        await Assert.That(rootCommands).DoesNotContain("analyze");
         await Assert.That(rootCommands).Contains("teamtemplates");
         await Assert.That(rootCommands).Contains("documenttemplates");
 
@@ -191,6 +210,7 @@ public class CommandTreeTests
         var root = CompletionEngine.GetCompletions(capture.Model, rootLine, rootLine.Length);
         await Assert.That(root).DoesNotContain("import");
         await Assert.That(root).DoesNotContain("export");
+        await Assert.That(root).DoesNotContain("analyze");
         await Assert.That(root).Contains("teamtemplates");
         await Assert.That(root).Contains("documenttemplates");
 
@@ -200,6 +220,10 @@ public class CommandTreeTests
             var completions = CompletionEngine.GetCompletions(capture.Model, line, line.Length);
             await Assert.That(completions.Count).IsEqualTo(0);
         }
+
+        const string analyzeLine = "dgtp analyze ";
+        var analyzeCompletions = CompletionEngine.GetCompletions(capture.Model, analyzeLine, analyzeLine.Length);
+        await Assert.That(analyzeCompletions.Count).IsEqualTo(0);
     }
 
     [Test]

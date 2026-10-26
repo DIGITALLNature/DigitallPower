@@ -127,7 +127,7 @@ When **modifying any configuration model class** that has a corresponding JSON s
    - `schemas/codegeneration/v1/schema.json` — V1 legacy config
    - `schemas/codegeneration/v2/dotnet.schema.json` — V2 .NET config
    - `schemas/codegeneration/v2/typescript.schema.json` — V2 TypeScript config
-   - `schemas/analyzer/schema.json`, `schemas/push/schema.json`, `schemas/maintenance/…`
+   - `schemas/push/schema.json`, `schemas/maintenance/…`
 
 2. **What requires a schema update:**
    - Adding, removing, or renaming a config property
@@ -209,7 +209,6 @@ Every code change that modifies behavior **must** be accompanied by tests.
   - `tests/dgt.power.maintenance.tests/`
   - `tests/dgt.power.export.tests/`
   - `tests/dgt.power.import.tests/`
-  - `tests/dgt.power.analyzer.tests/`
   - `tests/dgt.power.codegeneration.tests/`
   - `tests/dgt.power.connection.tests/`
   - `tests/dgt.power.telemetry.tests/`
