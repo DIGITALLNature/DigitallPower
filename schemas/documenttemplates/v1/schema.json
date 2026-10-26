@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/documenttemplates/v1/schema.json",
+  "title": "Document template deployment manifest V1",
+  "description": "Active template deployment. Runtime validation additionally checks duplicate JSON properties, duplicate source IDs and semantic identities, target metadata, package structure and resolved path containment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "templates"],
+  "properties": {
+    "$schema": { "type": "string", "format": "uri" },
+    "schemaVersion": { "const": 1 },
+    "templates": { "type": "array", "items": { "$ref": "#/$defs/template" } }
+  },
+  "$defs": {
+    "text": { "type": "string", "minLength": 1, "pattern": "^\\S(?:[\\s\\S]*\\S)?$" },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "name", "documentType", "entity", "file", "languageCode", "description"],
+      "properties": {
+        "sourceId": { "type": "string", "format": "uuid", "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$", "not": { "const": "00000000-0000-0000-0000-000000000000" } },
+        "name": { "$ref": "#/$defs/text" },
+        "documentType": { "enum": ["word", "excel"] },
+        "entity": { "$ref": "#/$defs/text" },
+        "file": { "allOf": [{ "$ref": "#/$defs/text" }, { "pattern": "^(?!/)(?!.*[\\\\:]).+$" }] },
+        "languageCode": { "type": "integer", "minimum": -2147483648, "maximum": 2147483647 },
+        "description": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
