@@ -56,15 +56,21 @@ public sealed class OwnerResolver : IOwnerResolver
         return result;
     }
 
-    public Task<IReadOnlyList<OwnerCapture>> ResolveForCaptureAsync(
+    public Task<OwnerCaptureResult> ResolveForCaptureAsync(
         IOrganizationServiceAsync2 service,
         OwnerMapping mapping,
         IEnumerable<EntityReference> capturedOwners,
+        UnmappedOwnerHandling unmappedOwners = UnmappedOwnerHandling.Fail,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(service);
         ArgumentNullException.ThrowIfNull(mapping);
         ArgumentNullException.ThrowIfNull(capturedOwners);
+        if (!Enum.IsDefined(unmappedOwners))
+        {
+            throw new ArgumentOutOfRangeException(nameof(unmappedOwners), unmappedOwners, "Unsupported unmapped-owner handling.");
+        }
+
         OwnerMappingValidator.Validate(mapping);
         var ownerReferences = capturedOwners.ToArray();
         foreach (var owner in ownerReferences)
@@ -72,18 +78,20 @@ public sealed class OwnerResolver : IOwnerResolver
             ArgumentNullException.ThrowIfNull(owner);
         }
 
-        return CaptureCoreAsync(service, mapping, ownerReferences, cancellationToken);
+        return CaptureCoreAsync(service, mapping, ownerReferences, unmappedOwners, cancellationToken);
     }
 
-    private static async Task<IReadOnlyList<OwnerCapture>> CaptureCoreAsync(
+    private static async Task<OwnerCaptureResult> CaptureCoreAsync(
         IOrganizationServiceAsync2 service,
         OwnerMapping mapping,
         IReadOnlyCollection<EntityReference> capturedOwners,
+        UnmappedOwnerHandling unmappedOwners,
         CancellationToken cancellationToken)
     {
         var allKeys = mapping.Owners.Keys.ToArray();
         var allOwners = await ResolveRequestedAsync(service, mapping, allKeys, cancellationToken);
         var captures = new List<OwnerCapture>();
+        var unmatched = new List<EntityReference>();
         foreach (var capturedOwner in capturedOwners)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -94,10 +102,8 @@ public sealed class OwnerResolver : IOwnerResolver
 
             if (matches.Length == 0)
             {
-                throw new OwnerResolutionException(
-                    OwnerResolutionFailure.MissingCaptureMapping,
-                    $"No source owner key resolves captured principal '{capturedOwner.LogicalName}({capturedOwner.Id:D})'.",
-                    capturedOwner: capturedOwner);
+                unmatched.Add(capturedOwner);
+                continue;
             }
 
             if (matches.Length > 1)
@@ -111,8 +117,71 @@ public sealed class OwnerResolver : IOwnerResolver
             captures.Add(new OwnerCapture(capturedOwner, matches[0].LogicalKey));
         }
 
-        return captures;
+        var skipped = new List<SkippedOwnerCapture>();
+        if (unmatched.Count == 0)
+        {
+            return new OwnerCaptureResult(captures, skipped);
+        }
+
+        var platformPrincipals = await FindPlatformPrincipalsAsync(service, unmatched, cancellationToken);
+        foreach (var capturedOwner in unmatched)
+        {
+            if (platformPrincipals.TryGetValue(capturedOwner.Id, out var platformName) &&
+                string.Equals(capturedOwner.LogicalName, SystemUser, StringComparison.Ordinal))
+            {
+                skipped.Add(new SkippedOwnerCapture(capturedOwner, OwnerCaptureSkipReason.PlatformPrincipal, platformName));
+                continue;
+            }
+
+            if (unmappedOwners == UnmappedOwnerHandling.Skip)
+            {
+                skipped.Add(new SkippedOwnerCapture(capturedOwner, OwnerCaptureSkipReason.Unmapped));
+                continue;
+            }
+
+            throw new OwnerResolutionException(
+                OwnerResolutionFailure.MissingCaptureMapping,
+                $"No source owner key resolves captured principal '{capturedOwner.LogicalName}({capturedOwner.Id:D})'.",
+                capturedOwner: capturedOwner);
+        }
+
+        return new OwnerCaptureResult(captures, skipped);
     }
+
+    // SYSTEM and INTEGRATION are built-in Dataverse principals without directory or application identity.
+    private static async Task<IReadOnlyDictionary<Guid, string>> FindPlatformPrincipalsAsync(
+        IOrganizationServiceAsync2 service,
+        IReadOnlyCollection<EntityReference> unmatched,
+        CancellationToken cancellationToken)
+    {
+        var userIds = unmatched
+            .Where(owner => string.Equals(owner.LogicalName, SystemUser, StringComparison.Ordinal))
+            .Select(owner => owner.Id)
+            .Distinct()
+            .ToArray();
+        if (userIds.Length == 0)
+        {
+            return new Dictionary<Guid, string>();
+        }
+
+        var query = new QueryExpression(SystemUser)
+        {
+            ColumnSet = new ColumnSet("fullname", "domainname", "azureactivedirectoryobjectid", "applicationid")
+        };
+        query.Criteria.AddCondition("systemuserid", ConditionOperator.In, userIds.Cast<object>().ToArray());
+        var users = await service.RetrieveAllAsync(query, cancellationToken: cancellationToken);
+        return users
+            .Where(user => userIds.Contains(user.Id) && IsPlatformPrincipal(user))
+            .ToDictionary(user => user.Id, user => user.GetAttributeValue<string>("fullname")!);
+    }
+
+    private static bool IsPlatformPrincipal(Entity user) =>
+        user.GetAttributeValue<string>("fullname") is "SYSTEM" or "INTEGRATION" &&
+        string.IsNullOrEmpty(user.GetAttributeValue<string>("domainname")) &&
+        IsNullOrEmpty(user.GetAttributeValue<Guid?>("azureactivedirectoryobjectid")) &&
+        IsNullOrEmpty(user.GetAttributeValue<Guid?>("applicationid"));
+
+    private static bool IsNullOrEmpty(Guid? value) => value is null || value == Guid.Empty;
 
     private static async Task<ResolvedOwner> ResolveEntryAsync(
         IOrganizationServiceAsync2 service,

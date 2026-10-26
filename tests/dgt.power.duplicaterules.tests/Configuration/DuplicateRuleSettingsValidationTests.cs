@@ -52,6 +52,24 @@ public class DuplicateRuleSettingsValidationTests
     }
 
     [Test]
+    [Arguments("fail", true)]
+    [Arguments("skip", true)]
+    [Arguments("Skip", false)]
+    [Arguments("ignore", false)]
+    public async Task Init_UnmappedOwners_AcceptsOnlyFailOrSkip(string unmappedOwners, bool expected)
+    {
+        var settings = new DuplicateRuleInitSettings
+        {
+            File = OutputPath(),
+            Capture = "both",
+            OwnerMapping = FixturePath("owners.source.json"),
+            UnmappedOwners = unmappedOwners
+        };
+
+        await Assert.That(settings.Validate().Successful).IsEqualTo(expected);
+    }
+
+    [Test]
     public async Task Init_OwnerCaptureWithMapping_IsValid()
     {
         var settings = new DuplicateRuleInitSettings

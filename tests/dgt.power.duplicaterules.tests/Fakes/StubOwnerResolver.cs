@@ -19,10 +19,11 @@ public sealed class StubOwnerResolver(params ResolvedOwner[] owners) : IOwnerRes
         Task.FromResult<IReadOnlyDictionary<string, ResolvedOwner>>(
             requestedKeys.Distinct(StringComparer.Ordinal).ToDictionary(key => key, key => _owners[key], StringComparer.Ordinal));
 
-    public Task<IReadOnlyList<OwnerCapture>> ResolveForCaptureAsync(
+    public Task<OwnerCaptureResult> ResolveForCaptureAsync(
         IOrganizationServiceAsync2 service,
         OwnerMapping mapping,
         IEnumerable<EntityReference> capturedOwners,
+        UnmappedOwnerHandling unmappedOwners = UnmappedOwnerHandling.Fail,
         CancellationToken cancellationToken = default) =>
-        Task.FromResult<IReadOnlyList<OwnerCapture>>([]);
+        Task.FromResult(new OwnerCaptureResult([], []));
 }

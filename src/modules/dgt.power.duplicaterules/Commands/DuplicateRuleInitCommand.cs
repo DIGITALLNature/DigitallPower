@@ -42,7 +42,7 @@ public sealed class DuplicateRuleInitCommand(
             return false;
         }
 
-        var ownerKeys = new Dictionary<Guid, string>();
+        var ownerCapture = new RecordOwnerCapture(new Dictionary<Guid, string>(), new Dictionary<Guid, SkippedOwnerCapture>());
         if (settings.Capture is "owner" or "both")
         {
             if (mapping is null)
@@ -53,7 +53,12 @@ public sealed class DuplicateRuleInitCommand(
 
             try
             {
-                await CaptureOwnersAsync(service, mapping, rules, ownerKeys, cancellationToken);
+                ownerCapture = await CaptureOwnersAsync(
+                    service,
+                    mapping,
+                    rules,
+                    UnmappedOwnerHandlingOption.Parse(settings.UnmappedOwners),
+                    cancellationToken);
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
             {
@@ -65,7 +70,11 @@ public sealed class DuplicateRuleInitCommand(
         string content;
         try
         {
-            content = DuplicateRuleConfigurationWriter.Serialize(rules, settings.Capture, ownerKeys);
+            content = DuplicateRuleConfigurationWriter.Serialize(
+                rules,
+                settings.Capture,
+                ownerCapture.OwnerKeys,
+                ownerCapture.SkippedRecords.Keys.ToHashSet());
         }
         catch (InvalidOperationException exception)
         {
@@ -83,15 +92,21 @@ public sealed class DuplicateRuleInitCommand(
             return false;
         }
 
-        Console.MarkupLine($"[green]Captured {rules.Count} duplicate rule(s) to '{outputPath.EscapeMarkup()}'.[/]");
+        foreach (var line in SkippedOwnerCaptureReport.Format(ownerCapture.SkippedRecords, "duplicate rule"))
+        {
+            Console.MarkupLine($"[yellow]{line.EscapeMarkup()}[/]");
+        }
+
+        var writtenCount = settings.Capture == "owner" ? rules.Count - ownerCapture.SkippedRecords.Count : rules.Count;
+        Console.MarkupLine($"[green]Captured {writtenCount} duplicate rule(s) to '{outputPath.EscapeMarkup()}'.[/]");
         return true;
     }
 
-    private async Task CaptureOwnersAsync(
+    private Task<RecordOwnerCapture> CaptureOwnersAsync(
         Microsoft.PowerPlatform.Dataverse.Client.IOrganizationServiceAsync2 service,
         OwnerMapping mapping,
         IReadOnlyList<Entity> rules,
-        Dictionary<Guid, string> ownerKeys,
+        UnmappedOwnerHandling unmappedOwners,
         CancellationToken cancellationToken)
     {
         var byRule = new Dictionary<Guid, EntityReference>();
@@ -104,30 +119,6 @@ public sealed class DuplicateRuleInitCommand(
             byRule.Add(rule.Id, owner);
         }
 
-        if (byRule.Count == 0)
-        {
-            return;
-        }
-
-        var captures = await _ownerResolver.ResolveForCaptureAsync(
-            service,
-            mapping,
-            byRule.Values.DistinctBy(owner => (owner.LogicalName, owner.Id)),
-            cancellationToken);
-        var byPrincipal = captures.ToDictionary(
-            capture => (capture.Principal.LogicalName, capture.Principal.Id),
-            capture => capture.LogicalKey);
-        foreach (var (ruleId, principal) in byRule)
-        {
-            if (!byPrincipal.TryGetValue((principal.LogicalName, principal.Id), out var key))
-            {
-                throw new OwnerResolutionException(
-                    OwnerResolutionFailure.MissingCaptureMapping,
-                    $"No owner-mapping key was resolved for duplicate rule '{ruleId:D}'.",
-                    capturedOwner: principal);
-            }
-
-            ownerKeys.Add(ruleId, key);
-        }
+        return _ownerResolver.CaptureRecordOwnersAsync(service, mapping, byRule, unmappedOwners, cancellationToken);
     }
 }

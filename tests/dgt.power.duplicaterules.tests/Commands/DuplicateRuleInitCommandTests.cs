@@ -73,6 +73,71 @@ public class DuplicateRuleInitCommandTests
     }
 
     [Test]
+    public async Task Init_PlatformOwnedRuleIsCapturedWithoutOwnerAndWarns()
+    {
+        using var fixture = new DuplicateRuleInitFixture();
+        var mappingPath = fixture.WriteMapping(
+            """{"schemaVersion":1,"owners":{"integrationUser":{"kind":"user","domainName":"owner@example.org"}}}""");
+        var outputPath = fixture.PathFor("platform.json");
+        using var console = new TestConsole();
+        console.Profile.Width = 1000;
+        var context = fixture.CreateCommandContext(console, includeSystemRule: true);
+
+        var succeeded = context.Execute(DuplicateRuleInitFixture.Settings(outputPath, mappingPath, capture: "both"));
+        var result = DuplicateRuleConfiguration.Load(outputPath);
+
+        await Assert.That(succeeded).IsTrue();
+        await Assert.That(result.Rules).Count().IsEqualTo(2);
+        var mapped = result.Rules.Single(rule => rule.RuleId == fixture.RuleId);
+        var platform = result.Rules.Single(rule => rule.RuleId == fixture.SystemRuleId);
+        await Assert.That(mapped.Owner).IsEqualTo("integrationUser");
+        await Assert.That(platform.Owner).IsNull();
+        await Assert.That(platform.Published).IsTrue();
+        await Assert.That(console.Output).Contains($"owned by platform principal SYSTEM systemuser({fixture.SystemUserId:D}): {fixture.SystemRuleId:D}");
+        await Assert.That(console.Output).Contains("Captured 2 duplicate rule(s)");
+    }
+
+    [Test]
+    public async Task Init_OwnerOnlyCaptureOmitsPlatformOwnedRule()
+    {
+        using var fixture = new DuplicateRuleInitFixture();
+        var mappingPath = fixture.WriteMapping(
+            """{"schemaVersion":1,"owners":{"integrationUser":{"kind":"user","domainName":"owner@example.org"}}}""");
+        var outputPath = fixture.PathFor("owner.json");
+        using var console = new TestConsole();
+        console.Profile.Width = 1000;
+        var context = fixture.CreateCommandContext(console, includeSystemRule: true);
+
+        var succeeded = context.Execute(DuplicateRuleInitFixture.Settings(outputPath, mappingPath, capture: "owner"));
+        var result = DuplicateRuleConfiguration.Load(outputPath);
+
+        await Assert.That(succeeded).IsTrue();
+        await Assert.That(result.Rules).Count().IsEqualTo(1);
+        await Assert.That(result.Rules[0].RuleId).IsEqualTo(fixture.RuleId);
+        await Assert.That(console.Output).Contains("Captured 1 duplicate rule(s)");
+    }
+
+    [Test]
+    public async Task Init_SkipUnmappedOwnersOmitsOwnerAndWarns()
+    {
+        using var fixture = new DuplicateRuleInitFixture();
+        var mappingPath = fixture.WriteMapping(
+            """{"schemaVersion":1,"owners":{"different":{"kind":"user","domainName":"other@example.org"}}}""");
+        var outputPath = fixture.PathFor("skip.json");
+        using var console = new TestConsole();
+        console.Profile.Width = 1000;
+        var context = fixture.CreateCommandContext(console, includeOtherUser: true);
+
+        var succeeded = context.Execute(DuplicateRuleInitFixture.Settings(outputPath, mappingPath, capture: "both", unmappedOwners: "skip"));
+        var result = DuplicateRuleConfiguration.Load(outputPath);
+
+        await Assert.That(succeeded).IsTrue();
+        await Assert.That(result.Rules[0].Published).IsTrue();
+        await Assert.That(result.Rules[0].Owner).IsNull();
+        await Assert.That(console.Output).Contains($"owned by unmapped principal systemuser({fixture.OwnerId:D}): {fixture.RuleId:D}");
+    }
+
+    [Test]
     public async Task Init_MissingRuleIdLeavesExistingOutputUnchanged()
     {
         using var fixture = new DuplicateRuleInitFixture();
@@ -145,7 +210,6 @@ public class DuplicateRuleInitCommandTests
     private sealed class DuplicateRuleInitFixture : IDisposable
     {
         private readonly string _directory = Path.Combine(Environment.CurrentDirectory, $"duplicaterules-init-{Guid.NewGuid():N}");
-        private readonly Guid _ownerId = Guid.NewGuid();
 
         public DuplicateRuleInitFixture()
         {
@@ -153,6 +217,12 @@ public class DuplicateRuleInitCommandTests
         }
 
         public Guid RuleId { get; } = Guid.NewGuid();
+
+        public Guid OwnerId { get; } = Guid.NewGuid();
+
+        public Guid SystemRuleId { get; } = Guid.NewGuid();
+
+        public Guid SystemUserId { get; } = Guid.NewGuid();
 
         public string DirectoryPath => _directory;
 
@@ -169,25 +239,29 @@ public class DuplicateRuleInitCommandTests
             string output,
             string? mapping = null,
             string capture = "state",
-            bool overwrite = false) => new()
+            bool overwrite = false,
+            string unmappedOwners = "fail") => new()
         {
             File = output,
             Entity = "contact",
             Capture = capture,
             OwnerMapping = mapping,
+            UnmappedOwners = unmappedOwners,
             Overwrite = overwrite
         };
 
         public CommandTestContext<DuplicateRuleInitCommand, DuplicateRuleInitSettings> CreateCommandContext(
             TestConsole console,
-            bool includeRule = true)
+            bool includeRule = true,
+            bool includeSystemRule = false,
+            bool includeOtherUser = false)
         {
             var services = new TestServiceCollection();
             services.RemoveAll<IDataverseConnection>();
             services.AddSingleton<IDataverseConnection, TestConnection>();
             var data = new List<Entity>
             {
-                new("systemuser", _ownerId)
+                new("systemuser", OwnerId)
                 {
                     ["domainname"] = "owner@example.org",
                     ["isdisabled"] = false
@@ -201,7 +275,33 @@ public class DuplicateRuleInitCommandTests
                     ["baseentityname"] = "contact",
                     ["statecode"] = new OptionSetValue(DuplicateRule.Options.StateCode.Active),
                     ["statuscode"] = new OptionSetValue(DuplicateRule.Options.StatusCode.Published),
-                    ["ownerid"] = new EntityReference("systemuser", _ownerId)
+                    ["ownerid"] = new EntityReference("systemuser", OwnerId)
+                });
+            }
+
+            if (includeOtherUser)
+            {
+                data.Add(new Entity("systemuser", Guid.NewGuid())
+                {
+                    ["domainname"] = "other@example.org",
+                    ["isdisabled"] = false
+                });
+            }
+
+            if (includeSystemRule)
+            {
+                data.Add(new Entity("systemuser", SystemUserId)
+                {
+                    ["fullname"] = "SYSTEM",
+                    ["isdisabled"] = true
+                });
+                data.Add(new Entity(DuplicateRule.EntityLogicalName, SystemRuleId)
+                {
+                    ["name"] = "Accounts with the same account name",
+                    ["baseentityname"] = "contact",
+                    ["statecode"] = new OptionSetValue(DuplicateRule.Options.StateCode.Active),
+                    ["statuscode"] = new OptionSetValue(DuplicateRule.Options.StatusCode.Published),
+                    ["ownerid"] = new EntityReference("systemuser", SystemUserId)
                 });
             }
 

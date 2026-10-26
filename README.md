@@ -291,8 +291,13 @@ Apply resolution validates the entire file and requested keys locally, then look
 requested keys; unused entries do not cause Dataverse queries. Multiple logical keys may alias the
 same principal for apply. Capture is deliberately stricter: it resolves the entire source mapping
 and requires exactly one key for each captured principal. Aliases are allowed for principals not
-being captured, but aliases for a captured principal are an ambiguity error. Consumers must finish
-capture validation before writing configuration output.
+being captured, but aliases for a captured principal are an ambiguity error. Captured owners
+without a key fail by default. The built-in platform users SYSTEM and INTEGRATION (exact full
+name, no domain name, Entra object ID, or application ID) are always skipped instead, because they
+own platform-provided records and cannot be transported. Consumers can opt into skipping other
+unmapped owners (`--unmapped-owners skip`); ambiguity still fails. Skipped records are written
+without `owner`, so apply preserves the target owner, and each command warns per skipped principal.
+Consumers must finish capture validation before writing configuration output.
 
 Resolution returns principal identity, principal kind, and user-disabled/team-type metadata; it
 does not assign records or claim resource-specific assignment eligibility. Disabled users remain
@@ -815,6 +820,7 @@ but team owners are not.
 | `--solution <UniqueName>` | Required, repeatable exact solution unique name; case-insensitive, no wildcards |
 | `--capture state\|owner\|both` | Defaults to `state`; `owner` and `both` require `--owner-mapping` |
 | `--owner-mapping <File>` | Source owner mapping; if supplied, always validated locally |
+| `--unmapped-owners fail\|skip` | Defaults to `fail`; `skip` writes processes with unmapped owners without `owner` and warns |
 | `--overwrite` | Explicitly allow replacement of existing output |
 
 Capture retrieves all pages of supported process definitions in the selected solution union,
@@ -822,7 +828,9 @@ including indirect business rules of tables included with all subcomponents. Tab
 without subcomponents do not contribute indirect rules. Unknown solutions fail capture.
 Entries are ordered by ID and include informational names. Ownership capture requires exactly one
 logical key per captured owner; missing or ambiguous reverse mappings fail before output is
-created or replaced. Selection and mapping failures leave existing output unchanged, even with
+created or replaced. Processes owned by SYSTEM or INTEGRATION, and with `--unmapped-owners skip`
+other unmapped owners, are reported as warnings and written without `owner` (`--capture both`) or
+omitted (`--capture owner`). Selection and mapping failures leave existing output unchanged, even with
 `--overwrite`. No matches produces a valid empty `processes` array.
 
 #### Apply, impersonation and failures
@@ -930,13 +938,17 @@ teams are supported.
 | `--rule-id <Guid>` | Repeatable; restrict capture to these rule IDs |
 | `--capture state\|owner\|both` | Defaults to `state`; `owner` and `both` require `--owner-mapping` |
 | `--owner-mapping <File>` | Source owner mapping; if supplied, always validated locally |
+| `--unmapped-owners fail\|skip` | Defaults to `fail`; `skip` writes rules with unmapped owners without `owner` and warns |
 | `--overwrite` | Explicitly allow replacement of existing output |
 
 Without filters, capture includes all rules across all pages. `--entity` and `--rule-id` combine
 with AND: a missing selected ID or an ID belonging to another table fails capture. Selected rules
 that are currently publishing or in an unknown state fail capture, so capture only stable states.
 Entries are ordered by ID and include informational names. Ownership capture requires exactly one
-logical key per captured owner. All validation finishes before output is created or replaced; an
+logical key per captured owner. Out-of-the-box rules are owned by SYSTEM: rules owned by SYSTEM or
+INTEGRATION, and with `--unmapped-owners skip` other unmapped owners, are reported as warnings and
+written without `owner` (`--capture both`) or omitted (`--capture owner`). All validation finishes
+before output is created or replaced; an
 existing file is never replaced without `--overwrite`, and failures leave it unchanged. No matches
 produces a valid empty `rules` array.
 

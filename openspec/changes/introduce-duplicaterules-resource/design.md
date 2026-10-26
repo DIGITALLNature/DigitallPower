@@ -60,6 +60,15 @@ Retrieve the entire selected set with paging. Explicit missing IDs and IDs confl
 
 Produce GUID entries with exactly the requested captured properties, deterministically ordered by GUID. Zero matches is successful capture of an empty rules array. Resolve all capture/owner mappings before output creation or replacement. Existing output fails unless `--overwrite`; never replace it after a selection or reverse-mapping error. Local write failure is an error, not a rollback guarantee. Do not invent owner keys or export raw owner IDs as substitutes.
 
+### Platform-owned and unmapped owners on capture
+
+The live evidence run showed that the out-of-the-box rules are owned by the SYSTEM user, which cannot be meaningfully mapped or assigned across environments, so owner capture of a default environment always failed. Shared capture therefore returns an `OwnerCaptureResult` with typed skips instead of throwing for those principals:
+
+- Platform principals (SYSTEM, INTEGRATION) are always skipped. Detection uses only documented columns: exact `fullname` plus empty `domainname`, `azureactivedirectoryobjectid`, and `applicationid`. The internal `identityid` (1/2 in the evidence environment) is not used. An explicit mapping match wins, and detection runs only when unmatched owners remain.
+- `--unmapped-owners skip` (default `fail`) opts into skipping other unmapped owners. Ambiguous aliases and unresolvable mapping entries still fail.
+- Skipped records omit `owner`, which already means "preserve the target owner" at apply time. `both` keeps the state entry; `owner` omits the entry, because an entry without any effect is invalid.
+- Shared code returns skips without console output. Each command prints one warning per principal with the affected record IDs. The same contract applies to `process init`.
+
 ### Ownership policy and sequencing
 
 Use the common resolver in `dgt.power.common/Ownership` for regular users, application users, and owning teams. For an actual owner change, reject disabled users during resource preflight. Also reject a new owner that lacks `prvReadDuplicateRule`: check users with `RetrieveUserPrivilegesRequest` and owning teams with `RetrieveTeamPrivilegesRequest`. The platform rejects Assign to such principals. This check covers one known platform precondition and is not a complete authorization proof. An already satisfied owner request or capture may reference a disabled user; state-only changes do not force owner revalidation or reassignment.

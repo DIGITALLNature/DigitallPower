@@ -33,6 +33,11 @@ public sealed class DuplicateRuleInitSettings : BaseProgramSettings
     [Description("Source environment owner mapping required when capturing ownership.")]
     public string? OwnerMapping { get; init; }
 
+    [CommandOption("--unmapped-owners <Mode>")]
+    [Description("Handling of owners without a source mapping key: fail or skip (omit the owner and warn).")]
+    [DefaultValue(UnmappedOwnerHandlingOption.Fail)]
+    public string UnmappedOwners { get; init; } = UnmappedOwnerHandlingOption.Fail;
+
     [CommandOption("--overwrite")]
     [Description("Replace an existing output file after capture and validation complete.")]
     public bool Overwrite { get; init; }
@@ -50,6 +55,11 @@ public sealed class DuplicateRuleInitSettings : BaseProgramSettings
         if (Capture is not ("state" or "owner" or "both"))
         {
             return ValidationResult.Error("--capture must be state, owner, or both.");
+        }
+
+        if (!UnmappedOwnerHandlingOption.TryParse(UnmappedOwners, out _))
+        {
+            return ValidationResult.Error("--unmapped-owners must be fail or skip.");
         }
 
         if (Entity is not null &&

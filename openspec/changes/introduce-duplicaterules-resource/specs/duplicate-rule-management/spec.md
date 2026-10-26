@@ -20,7 +20,7 @@ The CLI SHALL expose `duplicaterules init` and `duplicaterules apply` to capture
 
 ### Requirement: Commands use explicit paths and options
 
-Both commands SHALL accept a positional file path. Init SHALL expose `--capture state|owner|both` (default `state`), `--entity`, repeatable `--rule-id`, `--owner-mapping`, and `--overwrite`. Apply SHALL expose `--owner-mapping`, `--dry-run`, `--no-wait`, and `--timeout` (default 300 positive integer seconds). Relative CLI paths SHALL resolve against the working directory without automatic file search.
+Both commands SHALL accept a positional file path. Init SHALL expose `--capture state|owner|both` (default `state`), `--entity`, repeatable `--rule-id`, `--owner-mapping`, `--unmapped-owners fail|skip` (default `fail`), and `--overwrite`. Apply SHALL expose `--owner-mapping`, `--dry-run`, `--no-wait`, and `--timeout` (default 300 positive integer seconds). Relative CLI paths SHALL resolve against the working directory without automatic file search.
 
 #### Scenario: Invalid timeout
 - **WHEN** apply receives a noninteger or nonpositive timeout
@@ -88,7 +88,7 @@ Init SHALL capture all rules unless restricted by an exact base-table logical na
 
 ### Requirement: Capture emits only requested properties
 
-Init SHALL emit GUID-ordered entries containing the informational rule name and exactly the requested state, owner, or both. Owner capture SHALL follow the shared full-source-mapping and unique reverse-key contract. State-only capture SHALL NOT require mapping, but an explicitly supplied mapping SHALL be locally validated. Capture SHALL NOT invent owner keys or output raw principal IDs as substitutes.
+Init SHALL emit GUID-ordered entries containing the informational rule name and exactly the requested state, owner, or both. Owner capture SHALL follow the shared full-source-mapping and reverse-key contract, without invented keys or raw principal IDs; rules whose owner that contract skips SHALL be emitted without `owner` and reported as warnings. State-only capture SHALL NOT require mapping, but a supplied mapping SHALL be locally validated.
 
 #### Scenario: Default capture
 - **WHEN** init runs without a capture option
@@ -97,6 +97,18 @@ Init SHALL emit GUID-ordered entries containing the informational rule name and 
 #### Scenario: Capture owner aliases
 - **WHEN** several source mapping keys identify a captured owner
 - **THEN** capture fails rather than selecting a key
+
+#### Scenario: Platform-owned rule
+- **WHEN** a selected rule is owned by the SYSTEM or INTEGRATION platform principal without a matching key
+- **THEN** init warns per principal and writes the rule with `published` but without `owner`, omitting it for owner-only capture
+
+#### Scenario: Unmapped owner by default
+- **WHEN** a selected rule's owner is not a platform principal and has no key, and `--unmapped-owners` is `fail`
+- **THEN** capture fails without writing output
+
+#### Scenario: Unmapped owner skipped
+- **WHEN** a selected rule's owner has no key and `--unmapped-owners skip` is set
+- **THEN** init warns and writes the rule without `owner`, omitting it for owner-only capture
 
 ### Requirement: Empty input and capture output are deliberate
 

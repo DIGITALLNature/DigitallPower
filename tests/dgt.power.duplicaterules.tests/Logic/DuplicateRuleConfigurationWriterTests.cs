@@ -48,6 +48,23 @@ public class DuplicateRuleConfigurationWriterTests
     }
 
     [Test]
+    public async Task Serialize_OwnerlessRules_OmitOwnerOrEntry()
+    {
+        var owners = new Dictionary<Guid, string> { [FirstId] = "integrationUser" };
+        var ownerlessIds = new HashSet<Guid> { SecondId };
+        var rules = new[] { Rule(FirstId, published: true), Rule(SecondId, published: false) };
+
+        var both = DuplicateRuleConfiguration.Parse(DuplicateRuleConfigurationWriter.Serialize(rules, "both", owners, ownerlessIds));
+        var ownerOnly = DuplicateRuleConfiguration.Parse(DuplicateRuleConfigurationWriter.Serialize(rules, "owner", owners, ownerlessIds));
+
+        await Assert.That(both.Rules).Count().IsEqualTo(2);
+        await Assert.That(both.Rules[1].Owner).IsNull();
+        await Assert.That(both.Rules[1].Published).IsFalse();
+        await Assert.That(ownerOnly.Rules).Count().IsEqualTo(1);
+        await Assert.That(ownerOnly.Rules[0].RuleId).IsEqualTo(FirstId);
+    }
+
+    [Test]
     public async Task WriteAtomicallyAsync_ExistingFileWithoutOverwrite_PreservesContent()
     {
         var directory = Path.Combine(AppContext.BaseDirectory, $"writer-{Guid.NewGuid():N}");

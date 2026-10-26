@@ -64,6 +64,34 @@ public class ProcessConfigurationWriterTests
     }
 
     [Test]
+    public async Task Serialize_OwnerlessProcesses_OmitOwnerOrEntry()
+    {
+        var mapped = new Workflow(Guid.Parse("00000000-0000-0000-0000-000000000001"))
+        {
+            Name = "Mapped",
+            StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated)
+        };
+        var ownerless = new Workflow(Guid.Parse("00000000-0000-0000-0000-000000000002"))
+        {
+            Name = "Platform owned",
+            StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated)
+        };
+        var owners = new Dictionary<Guid, string> { [mapped.Id] = "integrationUser" };
+        var ownerlessIds = new HashSet<Guid> { ownerless.Id };
+
+        var both = ProcessConfiguration.Parse(
+            ProcessConfigurationWriter.Serialize([mapped, ownerless], "both", owners, ownerlessIds));
+        var ownerOnly = ProcessConfiguration.Parse(
+            ProcessConfigurationWriter.Serialize([mapped, ownerless], "owner", owners, ownerlessIds));
+
+        await Assert.That(both.Processes).Count().IsEqualTo(2);
+        await Assert.That(both.Processes[1].Owner).IsNull();
+        await Assert.That(both.Processes[1].Active).IsTrue();
+        await Assert.That(ownerOnly.Processes).Count().IsEqualTo(1);
+        await Assert.That(ownerOnly.Processes[0].ProcessId).IsEqualTo(mapped.Id);
+    }
+
+    [Test]
     public async Task Serialize_OwnerCaptureEnumeratesSourceOnce()
     {
         var process = new Workflow(Guid.NewGuid()) { Name = "Example" };

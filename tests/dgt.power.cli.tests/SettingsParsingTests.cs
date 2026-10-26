@@ -269,7 +269,7 @@ public class SettingsParsingTests
             await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
             var result = Parse<ProcessInitSettings>(
                 file, "--solution", "ContosoCore", "--solution", "ContosoFlows",
-                "--capture", "both", "--owner-mapping", mapping, "--overwrite");
+                "--capture", "both", "--owner-mapping", mapping, "--unmapped-owners", "skip", "--overwrite");
             var defaults = Parse<ProcessInitSettings>(file, "--solution", "ContosoCore");
 
             await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
@@ -278,10 +278,12 @@ public class SettingsParsingTests
             await Assert.That(settings.Solutions).IsEquivalentTo(["ContosoCore", "ContosoFlows"]);
             await Assert.That(settings.Capture).IsEqualTo("both");
             await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.UnmappedOwners).IsEqualTo("skip");
             await Assert.That(settings.Overwrite).IsTrue();
             await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
             var defaultSettings = (ProcessInitSettings)defaults.Settings!;
             await Assert.That(defaultSettings.Capture).IsEqualTo("state");
+            await Assert.That(defaultSettings.UnmappedOwners).IsEqualTo("fail");
             await Assert.That(defaultSettings.OwnerMapping).IsNull();
             await Assert.That(defaultSettings.Overwrite).IsFalse();
         }
@@ -435,7 +437,7 @@ public class SettingsParsingTests
             const string secondId = "0a9b8c7d-6e5f-4a3b-2c1d-0e9f8a7b6c5d";
             var result = Parse<DuplicateRuleInitSettings>(
                 file, "--entity", "contact", "--rule-id", firstId, "--rule-id", secondId,
-                "--capture", "both", "--owner-mapping", mapping, "--overwrite");
+                "--capture", "both", "--owner-mapping", mapping, "--unmapped-owners", "skip", "--overwrite");
             var defaults = Parse<DuplicateRuleInitSettings>(file);
 
             await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
@@ -445,10 +447,12 @@ public class SettingsParsingTests
             await Assert.That(settings.RuleIds).IsEquivalentTo([firstId, secondId]);
             await Assert.That(settings.Capture).IsEqualTo("both");
             await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.UnmappedOwners).IsEqualTo("skip");
             await Assert.That(settings.Overwrite).IsTrue();
             await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
             var defaultSettings = (DuplicateRuleInitSettings)defaults.Settings!;
             await Assert.That(defaultSettings.Capture).IsEqualTo("state");
+            await Assert.That(defaultSettings.UnmappedOwners).IsEqualTo("fail");
             await Assert.That(defaultSettings.Entity).IsNull();
             await Assert.That(defaultSettings.RuleIds ?? []).IsEmpty();
             await Assert.That(defaultSettings.OwnerMapping).IsNull();
@@ -498,6 +502,7 @@ public class SettingsParsingTests
     [Test]
     [Arguments("init", "--rule-id", "not-a-guid")]
     [Arguments("init", "--capture", "none")]
+    [Arguments("init", "--unmapped-owners", "ignore")]
     [Arguments("apply", "--timeout", "0")]
     [Arguments("apply", "--timeout", "abc")]
     [Arguments("apply", "--solution", "ContosoCore")]

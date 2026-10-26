@@ -44,6 +44,12 @@ The product contract is approved. Implementation requires a separate apply reque
 - [x] 6.2 Remove only proven orphaned historical duplicate-rule DTOs after consumer checks; verify all remaining Assignee consumers and generated models are preserved and document any retired public types in the major migration guide.
 - [x] 6.3 Run focused resource/CLI tests, relevant shared-fake regression tests, `dotnet build`, and `pnpm exec openspec validate --all`; verify implementation against acceptance scenarios and that no process-module dependency was introduced.
 
+## 7. Owner capture of platform and unmapped principals
+
+- [x] 7.1 Extend shared capture to return typed skips: detect unmapped SYSTEM/INTEGRATION platform principals (exact full name, no domain name, Entra object ID, or application ID) and skip them always; skip other unmapped owners only with Skip handling; verify ambiguity still fails, explicit matches win, look-alike users are not skipped, and fully mapped capture issues no extra query.
+- [x] 7.2 Add `--unmapped-owners fail|skip` (default `fail`) to `duplicaterules init` and `process init`; write skipped records without `owner` for `both` and omit them for `owner`; warn per principal; verify settings parsing/validation, writer output, and command results for both modules.
+- [x] 7.3 Document platform-principal skipping and `--unmapped-owners` in README and specs; run focused common, duplicaterules, process, and CLI tests plus `pnpm exec openspec validate --all`.
+
 ## Workflow follow-up
 
 - After implementation and successful verification, synchronize implemented requirements into main specs and archive through the corresponding OpenSpec workflows.
