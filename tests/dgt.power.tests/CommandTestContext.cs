@@ -20,7 +20,7 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
     where TCommandSettings : CommandSettings
 {
     private readonly TCommand _command;
-    public DataContext DataContext { get; }
+    private DataContext DataContext { get; }
     public FakeOrganizationServiceAsync FakedService { get; }
     public IConfigResolver ConfigResolver { get; }
 
