@@ -816,6 +816,7 @@ success. Cancellation stops further work. Already completed changes are not roll
 import is not atomic. Unlisted active and draft templates remain untouched.
 
 Word preparation validates used CRM field bindings in the main document, headers and footers,
+discovering document parts and custom XML stores through package relationships rather than filenames,
 including `w:dataBinding`, `w15:dataBinding`, related collections and repeating sections.
 It resolves relationship schema/navigation names and lookup display projections from metadata,
 and adapts referenced CRM namespaces to target object type codes without changing foreign
@@ -825,7 +826,7 @@ are supported only with matching `accountleads_association` N:N metadata and `ac
 intersect metadata. Other unknown or ambiguous legacy aliases fail preflight; arbitrary XPath
 and universal legacy N:N aliases are not supported.
 
-Excel packages are checked structurally and uploaded unchanged: formulas, URLs and data sources
+Excel packages, including workbooks with chart sheets, are checked structurally and uploaded unchanged: formulas, URLs and data sources
 are not adapted. Dataverse can normalize package content when storing a newly created Excel
 template; byte-identical server storage is not guaranteed. Neither format guarantees Word/Excel
 rendering, user data access or general cross-environment data-source compatibility.

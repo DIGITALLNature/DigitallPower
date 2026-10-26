@@ -2,6 +2,7 @@
 
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System.IO.Compression;
 using System.Xml;
 using System.Xml.Linq;
@@ -19,10 +20,44 @@ public static class DocumentPackage
             throw new InvalidDataException($"Document path must be relative: '{relativeFile}'.");
         var root = ResolveLinks(Path.GetDirectoryName(Path.GetFullPath(manifestPath))!);
         var candidate = ResolveLinks(Path.GetFullPath(Path.Combine(root, relativeFile)));
-        if (!candidate.StartsWith(root.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.Ordinal) ||
-            !System.IO.File.Exists(candidate))
+        if (!IsWithin(root, candidate))
+        {
+            root = CanonicalizeExistingPath(root);
+            candidate = CanonicalizeExistingPath(candidate);
+        }
+        if (!IsWithin(root, candidate) || !File.Exists(candidate))
             throw new InvalidDataException($"Document is missing or escapes the manifest directory: '{relativeFile}'.");
         return candidate;
+    }
+
+    private static bool IsWithin(string root, string candidate) =>
+        candidate.StartsWith(root.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.Ordinal);
+
+    private static string CanonicalizeExistingPath(string path)
+    {
+        var current = Path.GetPathRoot(path)!;
+        var components = path[current.Length..].Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+        if (OperatingSystem.IsWindows())
+            current = current.ToUpperInvariant();
+        foreach (var component in components)
+        {
+            var next = Path.Combine(current, component);
+            if (!Directory.Exists(current) || (!Directory.Exists(next) && !File.Exists(next)))
+                return path;
+            var entries = Directory.EnumerateFileSystemEntries(current).ToArray();
+            // Prefer exact names so distinct case-sensitive directories never collapse.
+            var exact = Array.Find(entries, entry => Path.GetFileName(entry) == component);
+            if (exact is not null)
+                current = exact;
+            else
+            {
+                var matches = entries.Where(entry => string.Equals(Path.GetFileName(entry), component,
+                    StringComparison.OrdinalIgnoreCase)).Take(2).ToArray();
+                current = matches.Length == 1 ? matches[0]
+                    : throw new InvalidDataException($"Cannot resolve unambiguous filesystem casing for '{next}'.");
+            }
+        }
+        return current;
     }
 
     private static string ResolveLinks(string path)
@@ -81,19 +116,21 @@ public static class DocumentPackage
                 using var package = SpreadsheetDocument.Open(stream, false);
                 if (package.DocumentType != SpreadsheetDocumentType.Workbook ||
                     package.WorkbookPart?.Workbook?.Sheets is null ||
-                    !package.WorkbookPart.WorksheetParts.Any())
-                    throw new InvalidDataException("Expected an XLSX workbook with worksheets.");
+                    (!package.WorkbookPart.WorksheetParts.Any() && !package.WorkbookPart.ChartsheetParts.Any()))
+                    throw new InvalidDataException("Expected an XLSX workbook with worksheets or chart sheets.");
                 foreach (var part in package.WorkbookPart.WorksheetParts)
                     _ = part.Worksheet ?? throw new InvalidDataException("Invalid Excel worksheet.");
-                foreach (var sheet in package.WorkbookPart.Workbook.Sheets.Elements<DocumentFormat.OpenXml.Spreadsheet.Sheet>())
+                foreach (var part in package.WorkbookPart.ChartsheetParts)
+                    _ = part.Chartsheet ?? throw new InvalidDataException("Invalid Excel chart sheet.");
+                foreach (var sheet in package.WorkbookPart.Workbook.Sheets.Elements<Sheet>())
                     if (sheet.Id?.Value is not { } relationshipId ||
-                        package.WorkbookPart.GetPartById(relationshipId) is not WorksheetPart)
-                        throw new InvalidDataException("Excel sheet references a missing worksheet.");
+                        package.WorkbookPart.GetPartById(relationshipId) is not (WorksheetPart or ChartsheetPart))
+                        throw new InvalidDataException("Excel sheet references a missing worksheet or chart sheet.");
             }
             else
                 throw new InvalidDataException($"Unsupported document type '{documentType}'.");
         }
-        catch (Exception exception) when (exception is OpenXmlPackageException or System.IO.FileFormatException or XmlException)
+        catch (Exception exception) when (exception is OpenXmlPackageException or FileFormatException or XmlException)
         {
             throw new InvalidDataException($"Invalid {documentType} package.", exception);
         }

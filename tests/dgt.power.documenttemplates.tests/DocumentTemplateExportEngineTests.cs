@@ -1,5 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 
+using dgt.power.common;
 using dgt.power.documenttemplates.Configuration;
 using dgt.power.documenttemplates.Logic;
 using Spectre.Console.Testing;
@@ -13,11 +14,13 @@ public class DocumentTemplateExportEngineTests
     {
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
-        var connection = Mock.Of<dgt.power.common.IDataverseConnection>();
+        var connection = Mock.Of<IDataverseConnection>();
         connection.GetServiceAsync().Throws(new InvalidOperationException("Must not connect"));
         using var console = new TestConsole();
-        await Assert.That(() => new DocumentTemplateExportEngine(connection.Object, console)
-            .ExportAsync("not-written", null, null, false, cancellation.Token)).Throws<OperationCanceledException>();
+        var engine = new DocumentTemplateExportEngine(connection.Object, console);
+        var token = cancellation.Token;
+        await Assert.That(() => engine.ExportAsync("not-written", null, null, false, token))
+            .Throws<OperationCanceledException>();
     }
 
     [Test]
@@ -166,7 +169,7 @@ public class DocumentTemplateExportEngineTests
         var outside = TemplateTestData.DirectoryPath();
         try
         {
-            var (service, state) = TemplateServiceProxy.Create();
+            var (service, _) = TemplateServiceProxy.Create();
             var target = Path.Combine(outside, "preserve.json");
             await File.WriteAllTextAsync(target, "preserve");
             File.CreateSymbolicLink(Path.Combine(directory, "documenttemplates.json"), target);

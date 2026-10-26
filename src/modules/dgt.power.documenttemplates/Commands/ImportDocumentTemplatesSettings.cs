@@ -15,6 +15,7 @@ public sealed class ImportDocumentTemplatesSettings : BaseProgramSettings
 
     [CommandOption("--dry-run")]
     [Description("Prepare all templates against the target without writing.")]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global -- bound by Spectre.Console.Cli via reflection.
     public bool DryRun { get; init; }
 
     public override ValidationResult Validate() => string.IsNullOrWhiteSpace(Manifest)

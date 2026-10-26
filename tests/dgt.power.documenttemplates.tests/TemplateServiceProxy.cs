@@ -23,10 +23,12 @@ public class TemplateServiceProxy : DispatchProxy
     public static (IOrganizationServiceAsync2 Service, TemplateServiceProxy State) Create()
     {
         var service = Create<IOrganizationServiceAsync2, TemplateServiceProxy>();
+        // DispatchProxy generates a runtime type deriving from this proxy and implementing the service interface.
+        // ReSharper disable once SuspiciousTypeConversion.Global
         return (service, (TemplateServiceProxy)service);
     }
 
-    protected override object? Invoke(MethodInfo? targetMethod, object?[]? args)
+    protected override object Invoke(MethodInfo? targetMethod, object?[]? args)
     {
         if (args?.LastOrDefault() is CancellationToken token)
             token.ThrowIfCancellationRequested();

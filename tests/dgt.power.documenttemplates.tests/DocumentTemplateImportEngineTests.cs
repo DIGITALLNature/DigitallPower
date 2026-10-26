@@ -1,7 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 
 using dgt.power.common;
-using dgt.power.documenttemplates.Configuration;
 using dgt.power.documenttemplates.Logic;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
@@ -20,8 +19,9 @@ public class DocumentTemplateImportEngineTests
         var connection = Mock.Of<IDataverseConnection>();
         connection.GetServiceAsync().Throws(new InvalidOperationException("Must not connect"));
         using var console = new TestConsole();
-        await Assert.That(() => new DocumentTemplateImportEngine(connection.Object, console)
-            .ImportAsync("not-read.json", false, cancellation.Token)).Throws<OperationCanceledException>();
+        var engine = new DocumentTemplateImportEngine(connection.Object, console);
+        var token = cancellation.Token;
+        await Assert.That(() => engine.ImportAsync("not-read.json", false, token)).Throws<OperationCanceledException>();
     }
 
     [Test]
@@ -232,17 +232,21 @@ public class DocumentTemplateImportEngineTests
     {
         using var cancellation = new CancellationTokenSource();
         var (service, state) = TemplateServiceProxy.Create();
-        state.AfterWrite = _ => cancellation.Cancel();
+        state.AfterWrite = CancelAfterWrite(cancellation);
         var first = TemplateTestData.Entry("First");
         var second = TemplateTestData.Entry("Second");
         var content = TemplateTestData.Fixture("Accounts.xlsx");
         using var console = new TestConsole();
-        await Assert.That(() => new DocumentTemplateImportEngine(TemplateTestData.Connection(service), console).ExecuteAsync(
-            [new(first, first.SourceId, true, content), new(second, second.SourceId, true, content)], service, cancellation.Token))
+        var engine = new DocumentTemplateImportEngine(TemplateTestData.Connection(service), console);
+        var token = cancellation.Token;
+        await Assert.That(() => engine.ExecuteAsync(
+            [new(first, first.SourceId, true, content), new(second, second.SourceId, true, content)], service, token))
             .Throws<OperationCanceledException>();
         await Assert.That(state.Writes.Count).IsEqualTo(1);
         await Assert.That(state.Targets.Count).IsEqualTo(1);
     }
+
+    private static Action<Entity> CancelAfterWrite(CancellationTokenSource cancellation) => _ => cancellation.Cancel();
 
     [Test]
     public async Task ReadAllAsync_FollowsPagingCookies()

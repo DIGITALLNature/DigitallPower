@@ -34,24 +34,11 @@ public class DocumentTemplateCommandTests
             using var commandConsole = new TestConsole();
             var services = new ServiceCollection();
             services.AddSingleton<ICommandSpanFactory, TestSpanFactory>();
-            services.AddSingleton<IDataverseConnection>(connection);
+            services.AddSingleton(connection);
             services.AddSingleton<IAnsiConsole>(commandConsole);
             var app = new CommandApp(new TypeRegistrar(services));
             string? error = null;
-            app.Configure(config =>
-            {
-                config.Settings.Console = console;
-                config.SetExceptionHandler((exception, _) =>
-                {
-                    error = exception.Message;
-                    return 1;
-                });
-                config.AddBranch("documenttemplates", branch =>
-                {
-                    branch.AddCommand<DocumentTemplateImportCommand>("import");
-                    branch.AddCommand<DocumentTemplateExportCommand>("export");
-                });
-            });
+            ConfigureApp(app, console, message => error = message);
 
             var result = await app.RunAsync(["documenttemplates", operation,
                 operation == "import" ? manifest : directory, argument]);
@@ -65,5 +52,23 @@ public class DocumentTemplateCommandTests
         {
             Directory.Delete(directory, true);
         }
+    }
+
+    private static void ConfigureApp(CommandApp app, IAnsiConsole console, Action<string> onError)
+    {
+        app.Configure(config =>
+        {
+            config.Settings.Console = console;
+            config.SetExceptionHandler((exception, _) =>
+            {
+                onError(exception.Message);
+                return 1;
+            });
+            config.AddBranch("documenttemplates", branch =>
+            {
+                branch.AddCommand<DocumentTemplateImportCommand>("import");
+                branch.AddCommand<DocumentTemplateExportCommand>("export");
+            });
+        });
     }
 }

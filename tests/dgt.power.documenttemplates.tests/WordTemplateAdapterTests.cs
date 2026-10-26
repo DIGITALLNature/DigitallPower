@@ -1,5 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 
+using System.IO.Packaging;
 using System.Xml.Linq;
 using dgt.power.documenttemplates.Logic;
 using Microsoft.Xrm.Sdk.Metadata;
@@ -45,6 +46,57 @@ public class WordTemplateAdapterTests
             await Assert.That(xml).DoesNotContain("/account/1/");
             await Assert.That(xml).DoesNotContain("/contact/10002/");
         }
+    }
+
+    [Test]
+    public async Task PrepareAsync_RelationshipTargetsAdaptRegardlessOfPartNames()
+    {
+        var bytes = RelocateParts(TemplateTestData.Fixture("Account.docx"));
+        var result = await WordTemplateAdapter.PrepareAsync(bytes, "account", TemplateTestData.Catalog(), CancellationToken.None);
+        foreach (var part in new[] { "word/main.xml", "word/letterhead.xml", "word/colophon.xml",
+                     "stores/account.data", "metadata/account.properties" })
+        {
+            var xml = TemplateTestData.Xml(result, part).ToString();
+            await Assert.That(xml).Contains("/account/10001/");
+            await Assert.That(xml).DoesNotContain("/account/1/");
+        }
+    }
+
+    [Test]
+    [Arguments("word/main.xml")]
+    [Arguments("word/letterhead.xml")]
+    [Arguments("word/colophon.xml")]
+    public async Task PrepareAsync_RelocatedWordPartsRejectUnknownFields(string part)
+    {
+        var bytes = TemplateTestData.Transform(RelocateParts(TemplateTestData.Fixture("Account.docx")), (path, xml) =>
+        {
+            if (path != part)
+                return xml;
+            var document = XDocument.Parse(xml);
+            foreach (var binding in document.Descendants().Where(element => element.Name.LocalName == "dataBinding"))
+            {
+                var xpath = binding.Attributes().Single(attribute => attribute.Name.LocalName == "xpath");
+                xpath.Value = xpath.Value[..(xpath.Value.LastIndexOf('/') + 1)] + "missing_field[1]";
+            }
+            return document.ToString();
+        });
+        await Assert.That(async () =>
+            {
+                await WordTemplateAdapter.PrepareAsync(bytes, "account", TemplateTestData.Catalog(), CancellationToken.None);
+            })
+            .Throws<InvalidDataException>().WithMessageContaining(part);
+    }
+
+    [Test]
+    public async Task PrepareAsync_RelocatedForeignStoresAndBindingsRemainUnchanged()
+    {
+        var bytes = RelocateParts(TemplateTestData.Transform(TemplateTestData.Fixture("Account.docx"), (_, xml) =>
+            xml.Replace("urn:microsoft-crm/document-template/account/1/", "urn:foreign:example", StringComparison.Ordinal)));
+        var result = await WordTemplateAdapter.PrepareAsync(bytes, "account", TemplateTestData.Catalog(), CancellationToken.None);
+        foreach (var part in new[] { "word/main.xml", "word/letterhead.xml", "word/colophon.xml",
+                     "stores/account.data", "metadata/account.properties" })
+            await Assert.That(TemplateTestData.Xml(result, part).ToString())
+                .IsEqualTo(TemplateTestData.Xml(bytes, part).ToString());
     }
 
     [Test]
@@ -241,7 +293,50 @@ public class WordTemplateAdapterTests
     {
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
+        var token = cancellation.Token;
         await Assert.That(async () => { await WordTemplateAdapter.PrepareAsync(TemplateTestData.Fixture("AccountContactRepeating.docx"),
-            "account", TemplateTestData.Catalog(), cancellation.Token); }).Throws<OperationCanceledException>();
+            "account", TemplateTestData.Catalog(), token); }).Throws<OperationCanceledException>();
+    }
+
+    private static byte[] RelocateParts(byte[] bytes)
+    {
+        var paths = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["/word/document.xml"] = "/word/main.xml",
+            ["/word/header2.xml"] = "/word/letterhead.xml",
+            ["/word/footer2.xml"] = "/word/colophon.xml",
+            ["/customXml/item1.xml"] = "/stores/account.data",
+            ["/customXml/itemProps1.xml"] = "/metadata/account.properties"
+        };
+        using var input = new MemoryStream(bytes, false);
+        using var output = new MemoryStream();
+        using (var source = Package.Open(input, FileMode.Open, FileAccess.Read))
+        using (var target = Package.Open(output, FileMode.Create, FileAccess.ReadWrite))
+        {
+            foreach (var part in source.GetParts().Where(part => !PackUriHelper.IsRelationshipPartUri(part.Uri)))
+            {
+                var destination = target.CreatePart(Map(part.Uri), part.ContentType);
+                using (var from = part.GetStream(FileMode.Open, FileAccess.Read))
+                using (var to = destination.GetStream(FileMode.Create, FileAccess.Write))
+                    from.CopyTo(to);
+                CopyRelationships(part.GetRelationships(), destination.CreateRelationship);
+            }
+            CopyRelationships(source.GetRelationships(), target.CreateRelationship);
+        }
+        return output.ToArray();
+
+        Uri Map(Uri uri) => new(paths.GetValueOrDefault(uri.OriginalString, uri.OriginalString), UriKind.Relative);
+
+        void CopyRelationships(IEnumerable<PackageRelationship> relationships,
+            Func<Uri, TargetMode, string, string, PackageRelationship> create)
+        {
+            foreach (var relationship in relationships)
+            {
+                var uri = relationship.TargetMode == TargetMode.External
+                    ? relationship.TargetUri
+                    : Map(PackUriHelper.ResolvePartUri(relationship.SourceUri, relationship.TargetUri));
+                create(uri, relationship.TargetMode, relationship.RelationshipType, relationship.Id);
+            }
+        }
     }
 }

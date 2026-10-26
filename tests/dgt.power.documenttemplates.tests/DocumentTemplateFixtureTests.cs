@@ -13,10 +13,10 @@ public class DocumentTemplateFixtureTests
     [Arguments("AccountLeadManyToMany.docx", 2)]
     public async Task RelationshipExamples_RetainGeneratedBindingsWithoutBusinessContent(string file, int expectedBindings)
     {
-        using var package = ZipFile.OpenRead(Path.Combine(AppContext.BaseDirectory,
+        await using var package = await ZipFile.OpenReadAsync(Path.Combine(AppContext.BaseDirectory,
             "Resources", file));
-        using var documentStream = package.GetEntry("word/document.xml")!.Open();
-        var document = XDocument.Load(documentStream);
+        await using var documentStream = await package.GetEntry("word/document.xml")!.OpenAsync();
+        var document = await XDocument.LoadAsync(documentStream, LoadOptions.None, CancellationToken.None);
         XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
         XNamespace word15 = "http://schemas.microsoft.com/office/word/2012/wordml";
         var bindings = document.Descendants(word15 + "dataBinding").ToArray();
@@ -34,8 +34,8 @@ public class DocumentTemplateFixtureTests
             "xmlns:ns0='urn:microsoft-crm/document-template/account/1/'")).IsTrue();
         foreach (var entry in package.Entries.Where(entry => entry.FullName.EndsWith(".xml", StringComparison.Ordinal)))
         {
-            using var stream = entry.Open();
-            var xml = XDocument.Load(stream);
+            await using var stream = await entry.OpenAsync();
+            var xml = await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
             await Assert.That(xml.Descendants().Where(element => !element.HasElements)
                 .All(element => string.IsNullOrWhiteSpace(element.Value) || element.Value == "Example")).IsTrue();
             if (entry.FullName.StartsWith("docProps/", StringComparison.Ordinal) ||
@@ -49,9 +49,9 @@ public class DocumentTemplateFixtureTests
     [Test]
     public async Task AccountContactRepeating_RetainsBindingsWithoutBusinessContent()
     {
-        using var package = ZipFile.OpenRead(Path.Combine(AppContext.BaseDirectory,
+        await using var package = await ZipFile.OpenReadAsync(Path.Combine(AppContext.BaseDirectory,
             "Resources", "AccountContactRepeating.docx"));
-        var document = ReadPart("word/document.xml");
+        var document = await ReadPartAsync(package, "word/document.xml");
         XNamespace word = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
         XNamespace word15 = "http://schemas.microsoft.com/office/word/2012/wordml";
         var bindings = document.Descendants().Where(element =>
@@ -59,26 +59,25 @@ public class DocumentTemplateFixtureTests
 
         await Assert.That(bindings.Select(element => element.Attribute(word + "xpath")?.Value
                 ?? throw new InvalidDataException("Fixture binding has no XPath.")).ToArray())
-            .IsEquivalentTo(new[]
-            {
+            .IsEquivalentTo([
                 "/ns0:DocumentTemplate[1]/account[1]/name[1]",
                 "/ns0:DocumentTemplate[1]/account[1]/parentaccountidname[1]",
                 "/ns0:DocumentTemplate[1]/account[1]/contact_customer_accounts",
                 "/ns0:DocumentTemplate[1]/account[1]/contact_customer_accounts[1]/fullname[1]",
                 "/ns0:DocumentTemplate[1]/account[1]/contact_customer_accounts[1]/emailaddress1[1]"
-            });
+            ]);
         await Assert.That(document.Descendants(word15 + "repeatingSection").Count()).IsEqualTo(1);
         await Assert.That(document.Descendants(word15 + "repeatingSectionItem").Count()).IsEqualTo(1);
         await Assert.That(document.Descendants(word + "t").All(element => element.Value == "Example")).IsTrue();
 
-        var data = ReadPart("customXml/item1.xml");
+        var data = await ReadPartAsync(package, "customXml/item1.xml");
         await Assert.That(data.Descendants().Where(element => !element.HasElements)
             .Select(element => element.Name.LocalName).ToArray())
-            .IsEquivalentTo(new[] { "name", "parentaccountidname", "fullname", "emailaddress1" });
+            .IsEquivalentTo(["name", "parentaccountidname", "fullname", "emailaddress1"]);
         await Assert.That(data.Descendants().Where(element => !element.HasElements)
             .All(element => element.Value is "Example Account" or "Example Contact" or "fixture@example.invalid")).IsTrue();
 
-        var properties = ReadPart("customXml/itemProps1.xml");
+        var properties = await ReadPartAsync(package, "customXml/itemProps1.xml");
         XNamespace store = "http://schemas.openxmlformats.org/officeDocument/2006/customXml";
         var storeId = (string?)properties.Root!.Attribute(store + "itemID");
         await Assert.That(storeId).IsEqualTo("{11111111-2222-4333-8444-555555555555}");
@@ -87,14 +86,15 @@ public class DocumentTemplateFixtureTests
             "xmlns:ns0='urn:microsoft-crm/document-template/account/1/'")).IsTrue();
         foreach (var entry in package.Entries.Where(entry => entry.FullName.StartsWith("docProps/", StringComparison.Ordinal)))
         {
-            await Assert.That(ReadPart(entry.FullName).Root!.HasElements).IsFalse();
+            var part = await ReadPartAsync(package, entry.FullName);
+            await Assert.That(part.Root!.HasElements).IsFalse();
         }
+    }
 
-        XDocument ReadPart(string name)
-        {
-            var entry = package.GetEntry(name) ?? throw new InvalidDataException($"Missing fixture part: {name}");
-            using var stream = entry.Open();
-            return XDocument.Load(stream);
-        }
+    private static async Task<XDocument> ReadPartAsync(ZipArchive package, string name)
+    {
+        var entry = package.GetEntry(name) ?? throw new InvalidDataException($"Missing fixture part: {name}");
+        await using var stream = await entry.OpenAsync();
+        return await XDocument.LoadAsync(stream, LoadOptions.None, CancellationToken.None);
     }
 }

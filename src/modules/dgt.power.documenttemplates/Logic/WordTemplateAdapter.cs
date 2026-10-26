@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace dgt.power.documenttemplates.Logic;
 
@@ -27,26 +28,26 @@ public static partial class WordTemplateAdapter
     {
         cancellationToken.ThrowIfCancellationRequested();
         DocumentPackage.Validate(bytes, "word");
+        var stores = ResolveStores(bytes, out var wordParts);
+        var partPaths = wordParts.Concat(stores.SelectMany(store => new[] { store.Path, store.PropertiesPath }))
+            .ToHashSet(StringComparer.Ordinal);
         using var stream = new MemoryStream();
         await stream.WriteAsync(bytes, cancellationToken);
         var documents = new Dictionary<string, XDocument>(StringComparer.Ordinal);
-        using (var archive = new ZipArchive(stream, ZipArchiveMode.Update, true))
+        await using (var archive = new ZipArchive(stream, ZipArchiveMode.Update, true))
         {
-            foreach (var entry in archive.Entries.Where(entry =>
-                         entry.FullName.EndsWith(".xml", StringComparison.Ordinal) &&
-                         (IsWordPart(entry.FullName) || entry.FullName.StartsWith("customXml/", StringComparison.Ordinal))))
+            foreach (var entry in archive.Entries.Where(entry => partPaths.Contains(entry.FullName)))
             {
                 await using var input = await entry.OpenAsync(cancellationToken);
                 documents.Add(entry.FullName, await XDocument.LoadAsync(input, LoadOptions.PreserveWhitespace, cancellationToken));
             }
-            var stores = ResolveStores(archive, documents);
             var replacements = new Dictionary<string, string>(StringComparer.Ordinal);
             var referencedParts = new HashSet<string>(StringComparer.Ordinal);
             var crmBindings = new HashSet<XElement>();
-            foreach (var (path, document) in documents.Where(pair => IsWordPart(pair.Key)))
+            foreach (var (path, document) in documents.Where(pair => wordParts.Contains(pair.Key)))
             {
-                foreach (var binding in document.Descendants().Where(element => element.Name.LocalName == "dataBinding" &&
-                             element.Name.NamespaceName is WordNamespace or Word15Namespace))
+                foreach (var binding in document.Descendants().Where(element => element.Name is
+                             { LocalName: "dataBinding", NamespaceName: WordNamespace or Word15Namespace }))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var mappings = Attribute(binding, "prefixMappings") ?? "";
@@ -94,9 +95,9 @@ public static partial class WordTemplateAdapter
                     }
                 }
             }
-            foreach (var (path, document) in documents.Where(pair => IsWordPart(pair.Key) || referencedParts.Contains(pair.Key)))
+            foreach (var (path, document) in documents.Where(pair => wordParts.Contains(pair.Key) || referencedParts.Contains(pair.Key)))
             {
-                if (!Rewrite(document, replacements, IsWordPart(path) ? crmBindings : null))
+                if (!Rewrite(document, replacements, wordParts.Contains(path) ? crmBindings : null))
                     continue;
                 await using var output = await archive.GetEntry(path)!.OpenAsync(cancellationToken);
                 output.SetLength(0);
@@ -143,40 +144,30 @@ public static partial class WordTemplateAdapter
         }
     }
 
-    private static List<(Guid Id, string Path, string PropertiesPath)> ResolveStores(ZipArchive archive,
-        Dictionary<string, XDocument> documents)
+    private static List<(Guid Id, string Path, string PropertiesPath)> ResolveStores(byte[] bytes,
+        out HashSet<string> wordParts)
     {
+        using var stream = new MemoryStream(bytes, false);
+        using var package = WordprocessingDocument.Open(stream, false);
+        var main = package.MainDocumentPart ?? throw new InvalidDataException("Missing Word main document part.");
+        OpenXmlPart[] parts = [main, .. main.HeaderParts, .. main.FooterParts];
+        wordParts = parts.Select(part => part.Uri.OriginalString.TrimStart('/')).ToHashSet(StringComparer.Ordinal);
         var stores = new List<(Guid, string, string)>();
-        foreach (var (path, document) in documents.Where(pair => pair.Value.Root?.Name ==
-                     XName.Get("datastoreItem", DataStoreNamespace)))
+        foreach (var custom in parts.SelectMany(part => part.Parts).Select(pair => pair.OpenXmlPart)
+                     .OfType<CustomXmlPart>().DistinctBy(part => part.Uri))
         {
-            var idValue = document.Root!.Attributes().SingleOrDefault(attribute => attribute.Name.LocalName == "itemID")?.Value;
-            if (!Guid.TryParse(idValue, out var id))
+            if (custom.CustomXmlPropertiesPart is not { } properties)
                 continue;
-            foreach (var relEntry in archive.Entries.Where(entry => entry.FullName.StartsWith("customXml/_rels/", StringComparison.Ordinal) &&
-                         entry.FullName.EndsWith(".rels", StringComparison.Ordinal)))
-            {
-                using var relStream = relEntry.Open();
-                var relations = XDocument.Load(relStream);
-                if (relations.Descendants().Any(element => element.Name.LocalName == "Relationship" &&
-                        ((string?)element.Attribute("Type"))?.EndsWith("/customXmlProps", StringComparison.Ordinal) == true &&
-                        (string?)element.Attribute("TargetMode") != "External" &&
-                        ResolvePart("customXml/", (string?)element.Attribute("Target") ?? "") == path))
-                {
-                    var itemPath = "customXml/" + System.IO.Path.GetFileName(relEntry.FullName)[..^5];
-                    if (documents.ContainsKey(itemPath))
-                        stores.Add((id, itemPath, path));
-                }
-            }
+            using var input = properties.GetStream(FileMode.Open, FileAccess.Read);
+            var document = XDocument.Load(input);
+            if (document.Root?.Name != XName.Get("datastoreItem", DataStoreNamespace))
+                continue;
+            var idValue = document.Root.Attributes().SingleOrDefault(attribute => attribute.Name.LocalName == "itemID")?.Value;
+            if (Guid.TryParse(idValue, out var id))
+                stores.Add((id, custom.Uri.OriginalString.TrimStart('/'), properties.Uri.OriginalString.TrimStart('/')));
         }
         return stores;
     }
-
-    private static string ResolvePart(string directory, string target) =>
-        System.IO.Packaging.PackUriHelper.ResolvePartUri(
-            System.IO.Packaging.PackUriHelper.CreatePartUri(new Uri(directory + "item.xml", UriKind.Relative)),
-            new Uri(target, UriKind.RelativeOrAbsolute))
-            .OriginalString.TrimStart('/');
 
     private static Dictionary<string, string> ParseMappings(string mappings)
     {
@@ -241,11 +232,7 @@ public static partial class WordTemplateAdapter
         return changed;
     }
 
-    private static bool IsWordPart(string path) => path == "word/document.xml" ||
-        (path.StartsWith("word/header", StringComparison.Ordinal) || path.StartsWith("word/footer", StringComparison.Ordinal)) &&
-        path.EndsWith(".xml", StringComparison.Ordinal);
-
-    [GeneratedRegex(@"^urn:microsoft-crm/document-template/(?<table>[A-Za-z_][A-Za-z0-9_]*)/[0-9]+/$", RegexOptions.CultureInvariant)]
+    [GeneratedRegex("^urn:microsoft-crm/document-template/(?<table>[A-Za-z_][A-Za-z0-9_]*)/[0-9]+/$", RegexOptions.CultureInvariant)]
     private static partial Regex CrmNamespace();
 
     [GeneratedRegex(@"^(?:(?<prefix>[A-Za-z_][A-Za-z0-9_]*):)?(?<name>[A-Za-z_][A-Za-z0-9_]*)(?:\[[1-9][0-9]*\])?$", RegexOptions.CultureInvariant)]

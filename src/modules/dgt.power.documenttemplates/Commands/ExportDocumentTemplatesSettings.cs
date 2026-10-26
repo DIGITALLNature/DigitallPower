@@ -23,6 +23,7 @@ public sealed class ExportDocumentTemplatesSettings : BaseProgramSettings
 
     [CommandOption("--overwrite")]
     [Description("Replace generated destinations only; preserve unrelated files.")]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global -- bound by Spectre.Console.Cli via reflection.
     public bool Overwrite { get; init; }
 
     public override ValidationResult Validate()

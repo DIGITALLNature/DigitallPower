@@ -11,7 +11,7 @@ namespace dgt.power.documenttemplates.Logic;
 
 public sealed class DocumentTemplateImportEngine(IDataverseConnection connection, IAnsiConsole console)
 {
-    public static async Task<IReadOnlyList<LocalDocumentTemplate>> LoadAsync(string manifestPath,
+    private static async Task<IReadOnlyList<LocalDocumentTemplate>> LoadAsync(string manifestPath,
         CancellationToken cancellationToken)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(manifestPath);
@@ -70,7 +70,7 @@ public sealed class DocumentTemplateImportEngine(IDataverseConnection connection
         return await ExecuteAsync(prepared, service, cancellationToken);
     }
 
-    public static Task<IReadOnlyList<PreparedDocumentTemplate>> PrepareAsync(
+    private static Task<IReadOnlyList<PreparedDocumentTemplate>> PrepareAsync(
         IReadOnlyList<LocalDocumentTemplate> local, IOrganizationServiceAsync2 service, TemplateMetadata metadata,
         CancellationToken cancellationToken)
     {

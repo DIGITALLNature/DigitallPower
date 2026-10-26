@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 
 using dgt.power.common;
+using dgt.power.common.Exceptions;
 using dgt.power.documenttemplates.Configuration;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
@@ -62,12 +63,12 @@ public sealed class DocumentTemplateExportEngine(IDataverseConnection connection
             foreach (var name in files.Keys)
             {
                 var destination = Path.Combine(output, name);
-                if (System.IO.Directory.Exists(destination) || new FileInfo(destination).LinkTarget is not null ||
+                if (Directory.Exists(destination) || new FileInfo(destination).LinkTarget is not null ||
                     (!overwrite && File.Exists(destination)))
                     throw new IOException($"Destination collision '{destination}'; use --overwrite only for regular files.");
             }
             cancellationToken.ThrowIfCancellationRequested();
-            System.IO.Directory.CreateDirectory(output);
+            Directory.CreateDirectory(output);
             foreach (var (name, content) in files)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -84,7 +85,7 @@ public sealed class DocumentTemplateExportEngine(IDataverseConnection connection
                 console.WriteLine($"Export cancelled; partial output remains (not rolled back): {string.Join(", ", written)}");
             throw;
         }
-        catch (Exception exception) when (exception is not OperationCanceledException)
+        catch (Exception exception) when (exception is not (OperationCanceledException or InteractiveLoginRequiredException))
         {
             console.MarkupLine($"[red]Export failed: {exception.Message.EscapeMarkup()}[/]");
             console.WriteLine(written.Count == 0 ? "No output files written." :
