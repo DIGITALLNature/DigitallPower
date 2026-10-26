@@ -13,8 +13,7 @@ namespace dgt.power.solution.Base;
 /// "Active" layer, keyed by (componenttype, objectid). A top layer of "Active" means the component
 /// has been customized on top of its managed baseline; that customization is what copy-components'
 /// best-practice mode carries forward for managed components, everything else is redundant since
-/// the managed baseline already provides it. Mirrors <c>BaseAnalyze.GetSolutionLayers</c>/
-/// <c>GetTopNotActiveLayer</c> (dgt.power.analyzer), ported to <see cref="IOrganizationServiceAsync2"/>.
+/// the managed baseline already provides it.
 /// </summary>
 public sealed class ComponentActiveLayerResolver(IOrganizationServiceAsync2 connection)
 {

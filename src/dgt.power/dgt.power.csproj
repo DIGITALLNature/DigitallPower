@@ -50,7 +50,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dgt.power.common\dgt.power.common.csproj" />
-    <ProjectReference Include="..\modules\dgt.power.analyzer\dgt.power.analyzer.csproj" />
     <ProjectReference Include="..\modules\dgt.power.codegeneration\dgt.power.codegeneration.csproj" />
     <ProjectReference Include="..\modules\dgt.power.connection\dgt.power.connection.csproj" />
     <ProjectReference Include="..\modules\dgt.power.documenttemplates\dgt.power.documenttemplates.csproj" />

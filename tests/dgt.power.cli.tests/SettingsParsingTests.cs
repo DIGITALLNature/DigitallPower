@@ -1,11 +1,12 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.analyzer.Base;
 using dgt.power.cli.tests.TestDoubles;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.Commands.Complete;
+using dgt.power.common;
+using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
 using dgt.power.duplicaterules.Commands;
 using dgt.power.documenttemplates.Commands;
@@ -118,39 +119,6 @@ public class SettingsParsingTests
         {
             directory.Delete(true);
         }
-    }
-
-    [Test]
-    public async Task AnalyzeVerb_ParsesOptions()
-    {
-        var result = Parse<AnalyzeVerb>(
-            "--inline", "solution1,solution2",
-            "--note-patches",
-            "--generate-report",
-            "--generate-summary",
-            "-c", "myconfig.json",
-            "--no-telemetry",
-            "--non-interactive");
-
-        var settings = (AnalyzeVerb)result.Settings!;
-
-        await Assert.That(settings.InlineData).IsEqualTo("solution1,solution2");
-        await Assert.That(settings.NotePatch).IsTrue();
-        await Assert.That(settings.GenerateReportFile).IsTrue();
-        await Assert.That(settings.GenerateSummaryFile).IsTrue();
-        await Assert.That(settings.Config).IsEqualTo("myconfig.json");
-        await Assert.That(settings.NoTelemetry).IsTrue();
-        await Assert.That(settings.NonInteractive).IsTrue();
-    }
-
-    [Test]
-    public async Task AnalyzeVerb_DefaultConfig_IsConfigJson()
-    {
-        var result = Parse<AnalyzeVerb>();
-
-        var settings = (AnalyzeVerb)result.Settings!;
-
-        await Assert.That(settings.Config).IsEqualTo("config.json");
     }
 
     [Test]
@@ -628,11 +596,11 @@ public class SettingsParsingTests
     [Test]
     public async Task GlobalConnectionSettings_ParsesConnectionSelectionAndAdHocString()
     {
-        var result = Parse<AnalyzeVerb>(
+        var result = Parse<ConnectionSettings>(
             "--connection", "dev",
             "--connection-string", "AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
 
-        var settings = (AnalyzeVerb)result.Settings!;
+        var settings = (ConnectionSettings)result.Settings!;
 
         await Assert.That(settings.Connection).IsEqualTo("dev");
         await Assert.That(settings.ConnectionString).IsEqualTo("AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
