@@ -34,10 +34,10 @@ steps:
       serviceConnection: 'MyPowerPlatformConnection'
       url: 'https://contoso.crm4.dynamics.com'   # optional; falls back to $(BuildTools.EnvironmentUrl) / $(PowerPlatformUrl) if omitted
 
-  - script: dgtp export bulkdeletes --filedir ./output
+  - script: dgtp teamtemplates export ./teamtemplates.json
     env:
       DGTP_CONNECTION_STRING: $(PowerPlatformConnectionString)
-    displayName: 'Export bulk-delete jobs using the client-secret service connection'
+    displayName: 'Export team templates using the client-secret service connection'
 ```
 
 This flow depends on the service connection actually having a client secret to extract — which is

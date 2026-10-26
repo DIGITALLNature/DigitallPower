@@ -10,8 +10,8 @@ dgtp connection select dev
 # 2. Verify the connection (checks token acquisition)
 dgtp connection status
 
-# 3. Export configuration data from the environment
-dgtp export queues --filedir ./out/queues
+# 3. Export team templates from the environment
+dgtp teamtemplates export ./teamtemplates.json
 
 # 4. Generate early-bound C# classes
 dgtp codegeneration ./generated -c ./genconfig.json

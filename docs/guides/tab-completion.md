@@ -63,9 +63,11 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `connection` `export` `import` `maintenance` `analyze` `solution` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
-| `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
-| `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
+| `dgtp <TAB>` | `connection` `teamtemplates` `documenttemplates` `process` `duplicaterules` `solution` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp teamtemplates <TAB>` | `import` `export` |
+| `dgtp documenttemplates <TAB>` | `import` `export` |
+| `dgtp process <TAB>` | `init` `apply` |
+| `dgtp duplicaterules <TAB>` | `init` `apply` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
 | `dgtp telemetry <TAB>` | `status` `enable` `disable` |
 | `dgtp plugin <TAB>` | `push` |

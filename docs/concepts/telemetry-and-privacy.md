@@ -40,7 +40,7 @@ See [`telemetry` commands](../reference/commands/telemetry.md) for the full comm
 **Per invocation:**
 
 ```bash
-dgtp export --no-telemetry
+dgtp teamtemplates export ./teamtemplates.json --no-telemetry
 ```
 
 **Environment variable (takes precedence over the saved preference):**

@@ -18,11 +18,11 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | Area | What it does |
 |------|--------------|
 | **Connections** | Manage typed Dataverse connections (interactive, device-code, client-secret, certificate, Azure DevOps federation) and check authentication status |
-| **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
-| **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
-| **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
-| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
-| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, and more |
+| **Team Templates** | Transfer team templates with `teamtemplates import` / `teamtemplates export` — versioned file, stable GUID identity, preflight validation |
+| **Document Templates** | Transfer active Word and Excel templates with `documenttemplates import` / `documenttemplates export` — portable, versioned packages |
+| **Process** | Capture and apply explicit process state and portable ownership with `process init` / `process apply` — by workflow ID, with preflight and dry-run |
+| **Duplicate Rules** | Capture and apply publication state and ownership of duplicate-detection rules with `duplicaterules init` / `duplicaterules apply` — by rule ID |
+| **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`), increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage plugin steps (configuration, enable/disable, bulk state) |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
@@ -47,8 +47,8 @@ dgtp connection select dev
 # 2. Verify the connection (checks token acquisition)
 dgtp connection status
 
-# 3. Export configuration data from the environment
-dgtp export queues --filedir ./out/queues
+# 3. Export team templates from the environment
+dgtp teamtemplates export ./teamtemplates.json
 
 # 4. Generate early-bound C# classes
 dgtp codegeneration ./generated -c ./genconfig.json
