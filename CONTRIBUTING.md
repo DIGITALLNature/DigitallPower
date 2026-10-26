@@ -20,7 +20,7 @@ See [Build & Test](docs/development/build-and-test.md) for prerequisites and bui
 - **Target Framework:** net10.0
 - **Naming:** Standard .NET naming conventions (PascalCase for public members)
 - **File naming:** Each `.cs` file contains exactly one top-level type; the file name matches the type name
-- **Licensing header:** All source files start with `// Copyright (c) DIGITALL Nature. All rights reserved`
+- **Licensing header:** All source files start with `// SPDX-FileCopyrightText: DIGITALL Nature` and `// SPDX-License-Identifier: MS-RL`
 
 ## Testing
 
