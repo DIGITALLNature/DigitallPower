@@ -526,6 +526,9 @@ Scheduled bulk-delete jobs are not cancelled, disabled, or deleted.
 The independent `teamtemplates import/export` and `documenttemplates import/export` commands remain
 supported. Secure plugin-step configuration uses `plugin step config set`, not `import secureconfigs`.
 See the [3.x migration guide](docs/migrations/2.x-to-3.x.md#retired-legacy-transfers).
+The unused shared CRUD `Try*Async` extension helpers and directory-plus-filename
+`TryGetConfigFile` overload used only by legacy transfers are also removed; the generic
+`TryExecuteAsync` helper and single-path configuration reader remain available.
 
 ### `solution` — solution-scoped operations
 
