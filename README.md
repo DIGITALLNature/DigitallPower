@@ -223,6 +223,8 @@ Global connection/authentication environment variables:
 
 JSON schemas for the various configuration files used by the modules live under [`schemas/`](schemas) and can be referenced from your own config files via the `$schema` property for autocomplete in modern editors.
 
+Configuration files written by capture commands (`process`, `duplicaterules`, `teamtemplates`, and `documenttemplates`) are UTF-8 without a byte order mark and keep printable non-ASCII text such as umlauts and no-break spaces literal; only characters JSON requires to be escaped (quotation marks, backslashes, and control characters) are escaped. Readers accept both literal and `\uXXXX`-escaped text, so older files remain valid. Re-capturing a file written by an earlier version produces a one-time diff in which `\u00E4`-style escapes become literal characters; the content is unchanged.
+
 ### Portable owner mappings
 
 Ownership-aware consumers use a V1 environment-specific mapping to translate stable logical keys

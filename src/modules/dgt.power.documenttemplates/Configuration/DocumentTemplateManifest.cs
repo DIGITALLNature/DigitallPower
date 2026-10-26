@@ -1,6 +1,7 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 
 using System.Text.Json;
+using dgt.power.common.FileAccess;
 
 namespace dgt.power.documenttemplates.Configuration;
 
@@ -51,7 +52,7 @@ public sealed record DocumentTemplateManifest(IReadOnlyList<DocumentTemplateEntr
         return new DocumentTemplateManifest(entries);
     }
 
-    public string ToJson() => JsonSerializer.Serialize(new
+    public string ToJson() => JsonFileOutput.Serialize(new
     {
         schemaVersion = 1,
         templates = Templates.Select(entry => new

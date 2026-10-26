@@ -19,6 +19,19 @@ public class DocumentTemplateManifestTests
     }
 
     [Test]
+    public async Task ToJson_NonAsciiName_IsLiteralAndEscapedInputStillParses()
+    {
+        var entry = TemplateTestData.Entry("Gesch\u00E4ftsbericht\u00A0<&>");
+        var json = new DocumentTemplateManifest([entry]).ToJson();
+        var escaped = json.Replace("\u00E4", "\\u00E4", StringComparison.Ordinal).Replace("\u00A0", "\\u00A0", StringComparison.Ordinal);
+
+        await Assert.That(json).Contains("Gesch\u00E4ftsbericht\u00A0<&>");
+        await Assert.That(json).DoesNotContain("\\u00");
+        await Assert.That(DocumentTemplateManifest.Parse(json).Templates.Single()).IsEqualTo(entry);
+        await Assert.That(DocumentTemplateManifest.Parse(escaped).Templates.Single()).IsEqualTo(entry);
+    }
+
+    [Test]
     [Arguments("sourceId")]
     [Arguments("name")]
     [Arguments("documentType")]
