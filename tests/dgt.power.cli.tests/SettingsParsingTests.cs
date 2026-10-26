@@ -9,9 +9,6 @@ using dgt.power.Commands.Complete;
 using dgt.power.connection.Commands;
 using dgt.power.duplicaterules.Commands;
 using dgt.power.documenttemplates.Commands;
-using dgt.power.maintenance.Base;
-using dgt.power.maintenance.Logic;
-using dgt.power.maintenance.Model.Settings;
 using dgt.power.plugin.Commands;
 using dgt.power.plugin.Models;
 using dgt.power.process.Commands;
@@ -218,34 +215,6 @@ public class SettingsParsingTests
         await Assert.That(defaultSettings.DryRun).IsFalse();
         await Assert.That(defaultSettings.Raw).IsFalse();
         await Assert.That(defaultSettings.Apps).IsEqualTo(AppHandling.Skip);
-    }
-
-    [Test]
-    public async Task MaintenanceVerb_ParsesConfigAliasAndDefault()
-    {
-        var withAlias = Parse<MaintenanceVerb>("-c", "myconfig.json");
-        var defaults = Parse<MaintenanceVerb>();
-
-        await Assert.That(((MaintenanceVerb)withAlias.Settings!).Config).IsEqualTo("myconfig.json");
-        await Assert.That(((MaintenanceVerb)defaults.Settings!).Config).IsEqualTo("config.json");
-    }
-
-    [Test]
-    public async Task BulkDeleteSettings_ParsesPollIntervalAndDefault()
-    {
-        var result = Parse<BulkDeleteSettings>("--poll-interval", "10");
-        var defaults = Parse<BulkDeleteSettings>();
-
-        await Assert.That(((BulkDeleteSettings)result.Settings!).PollInterval).IsEqualTo(10);
-        await Assert.That(((BulkDeleteSettings)defaults.Settings!).PollInterval).IsEqualTo(5);
-    }
-
-    [Test]
-    public async Task BulkDeleteSettings_RejectsNonPositivePollInterval()
-    {
-        var settings = new BulkDeleteSettings { PollInterval = 0 };
-
-        await Assert.That(settings.Validate().Successful).IsFalse();
     }
 
     [Test]
@@ -521,21 +490,6 @@ public class SettingsParsingTests
     }
 
     [Test]
-    public async Task CarrierInfoSettings_ParsesOptionsAndDefaults()
-    {
-        var result = Parse<CarrierInfoSettings>("--filedir", "./carriers", "--filename", "carrier.json");
-        var defaults = Parse<CarrierInfoSettings>();
-
-        var settings = (CarrierInfoSettings)result.Settings!;
-        await Assert.That(settings.FileDir).IsEqualTo("./carriers");
-        await Assert.That(settings.FileName).IsEqualTo("carrier.json");
-
-        var defaultSettings = (CarrierInfoSettings)defaults.Settings!;
-        await Assert.That(defaultSettings.FileDir).IsEqualTo(".");
-        await Assert.That(defaultSettings.FileName).IsEqualTo("carrier.json");
-    }
-
-    [Test]
     public async Task SolutionVersionSettings_ParsesPositionalArgumentAndFlag()
     {
         var result = Parse<SolutionVersionSettings>("sample_solution", "--minor");
@@ -547,19 +501,6 @@ public class SettingsParsingTests
         await Assert.That(settings.Major).IsFalse();
         await Assert.That(settings.Build).IsFalse();
         await Assert.That(settings.Revision).IsTrue(); // DefaultValue(true)
-    }
-
-    [Test]
-    public async Task RemoveRedundantComponentsVerb_ParsesPositionalArgumentsAndFlags()
-    {
-        var result = Parse<RemoveRedundantComponentsVerb>("deploysolution", "tmpsolution", "--dryrun");
-
-        var settings = (RemoveRedundantComponentsVerb)result.Settings!;
-
-        await Assert.That(settings.SourceSolutions).IsEqualTo("deploysolution");
-        await Assert.That(settings.TargetSolution).IsEqualTo("tmpsolution");
-        await Assert.That(settings.DryRun).IsTrue();
-        await Assert.That(settings.Entities).IsFalse();
     }
 
     [Test]
@@ -670,11 +611,11 @@ public class SettingsParsingTests
     [Test]
     public async Task GlobalConnectionSettings_ParsesConnectionSelectionAndAdHocString()
     {
-        var result = Parse<MaintenanceVerb>(
+        var result = Parse<AnalyzeVerb>(
             "--connection", "dev",
             "--connection-string", "AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
 
-        var settings = (MaintenanceVerb)result.Settings!;
+        var settings = (AnalyzeVerb)result.Settings!;
 
         await Assert.That(settings.Connection).IsEqualTo("dev");
         await Assert.That(settings.ConnectionString).IsEqualTo("AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");

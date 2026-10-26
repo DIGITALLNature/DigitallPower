@@ -9,7 +9,6 @@ using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
 using dgt.power.duplicaterules.Commands;
 using dgt.power.documenttemplates.Commands;
-using dgt.power.maintenance.Logic;
 using dgt.power.plugin.Base;
 using dgt.power.plugin.Commands;
 using dgt.power.process.Commands;
@@ -56,34 +55,6 @@ internal static class CommandTree
                 .WithDescription("Exports team templates to a versioned file")
                 .WithExample("teamtemplates", "export", "./teamtemplates.json", "--overwrite");
         });
-
-        config.AddBranch("maintenance",
-            maintenance =>
-            {
-                maintenance.SetDescription("Executes maintenance Tasks against the current Dataverse environment");
-                maintenance.AddExample("maintenance", "bulkdelete");
-                maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
-                    .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
-                    .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml")
-                    .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml", "--poll-interval", "10");
-                maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
-                    .WithDescription("Sets the auto number format for specified columns")
-                    .WithExample("maintenance", "autonumber", "--config", "./config.json");
-                maintenance.AddCommand<ProtectCalculatedFields>("protectfields")
-                    .WithDescription("Prevents all calculated fields from receiving an active layer.")
-                    .WithExample("maintenance", "protectfields");
-                maintenance.AddCommand<ExportCarrierInfo>("carrierinfo")
-                    .WithDescription(
-                        "Exports all active carriers from an environment to a json file. To see what an carrier is check " +
-                        "[link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
-                    .WithExample("maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json");
-                maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
-                    .WithDescription("Removes solution components that are already existing")
-                    .WithExample("maintenance", "removeredundantcomponents", "deploysolution", "tmpsolution", "--dryrun");
-                maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
-                    .WithDescription("Add Messagefiltering for PowerFx Plugins")
-                    .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
-            });
 
         config.AddBranch("documenttemplates", templates =>
         {

@@ -44,7 +44,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [teamtemplates](#teamtemplates--team-template-transfer)
   - [analyze](#analyze--solution-analysis)
   - [solution](#solution--solution-scoped-operations)
-  - [maintenance](#maintenance--operational-tasks)
+  - [Retired maintenance commands](#retired-maintenance-commands)
   - [process](#process--process-state-and-ownership)
   - [duplicaterules](#duplicaterules--duplicate-rule-publication-and-ownership)
   - [documenttemplates](#documenttemplates--portable-document-templates)
@@ -76,7 +76,6 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | **Document templates** | Transfer active Word and Excel templates as portable, versioned packages |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
-| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, filter PowerFx plugin steps, and more |
 | **Process** | Capture and apply explicit process state and portable ownership by workflow ID, with preflight, dry-run and optional run-level impersonation |
 | **Duplicate Rules** | Capture and apply publication state and portable ownership of existing duplicate-detection rules by rule ID, with capacity preflight, dry-run and bounded publish observation |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
@@ -183,7 +182,7 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `teamtemplates` `documenttemplates` `maintenance` `process` `duplicaterules` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp <TAB>` | `teamtemplates` `documenttemplates` `process` `duplicaterules` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
 | `dgtp documenttemplates <TAB>` | `import` `export` |
 | `dgtp documenttemplates export --<TAB>` | `--entity` `--type` `--overwrite` `--no-telemetry` |
 | `dgtp teamtemplates <TAB>` | `import` `export` |
@@ -202,7 +201,7 @@ The shim is written with idempotency markers — running the command again does 
 
 ## ⚙️ Configuration
 
-The former global `dgtp.json` configuration and `dgtp:*` environment-variable binding have been removed. Commands accept their own options and configuration files. For example, `maintenance bulkdelete` accepts `--poll-interval` (seconds; default `5`) to control how often it checks the asynchronous job.
+The former global `dgtp.json` configuration and `dgtp:*` environment-variable binding have been removed. Commands accept their own options and configuration files. For example, `process apply` accepts a positional V1 configuration file and `--dry-run` to preview configured state and ownership changes.
 
 Saved connections and application state use a stable per-user data directory instead of assembly-scoped isolated storage. Set `DGTP_HOME` to override its location. Connections are stored in `connections.json`; client secrets and PFX passwords are stored separately using the platform's protected storage (DPAPI on Windows, Keychain on macOS, and Secret Service on Linux). No 2.x connections are migrated automatically.
 
@@ -527,8 +526,8 @@ The independent `teamtemplates import/export` and `documenttemplates import/expo
 supported. Secure plugin-step configuration uses `plugin step config set`, not `import secureconfigs`.
 See the [3.x migration guide](docs/migrations/2.x-to-3.x.md#retired-legacy-transfers).
 The unused shared CRUD `Try*Async` extension helpers and directory-plus-filename
-`TryGetConfigFile` overload used only by legacy transfers are also removed; the generic
-`TryExecuteAsync` helper and single-path configuration reader remain available.
+`TryGetConfigFile` overload used only by legacy transfers are also removed.
+The single-path configuration reader remains available.
 
 ### `solution` — solution-scoped operations
 
@@ -720,25 +719,30 @@ Static analysis of one or many Dataverse solutions.
 dgtp analyze noactivelayer --inline solution1,solution2
 ```
 
-### `maintenance` — Operational tasks
+### Retired maintenance commands
 
-Day-to-day administrative actions against a live environment.
+The `maintenance` branch and module are removed without aliases. The following standalone
+commands have no currently supported replacements:
 
-| Command | Description |
-|---------|-------------|
-| `maintenance bulkdelete` | Run a bulk delete job for a given FetchXML and wait for completion |
-| `maintenance autonumber` | Set auto-number formats for columns from a JSON config |
-| `maintenance protectfields` | Prevent all calculated fields from receiving an active layer |
-| `maintenance carrierinfo` | Export carrier solutions metadata to JSON |
-| `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
-| `maintenance filterfxplugins` | Add message filtering for PowerFx plugin steps |
+| Removed command | Configuration consequence | Replacement |
+|---|---|---|
+| `maintenance bulkdelete` | Inline FetchXML execution and `--poll-interval` are unsupported; scheduled-job transfer and `bulkdelete.json` are also retired | None |
+| `maintenance autonumber` | Legacy column-format JSON and `schemas/maintenance/autonumber/schema.json` are unsupported | None |
+| `maintenance protectfields` | Environment-wide calculated-field `IsCustomizable` scanning is removed | None; scoped Solution protection is a deferred request only |
+| `maintenance carrierinfo` | `carrier.json` export for custom `dgt_carrier` / `ec4u_carrier` tables is removed | None |
+| `maintenance removeredundantcomponents` | Source/target membership pruning and its `--dryrun` / `--includeEntities` options are removed | None; Solution pruning is a deferred request only |
+| `maintenance filterfxplugins` | Legacy PowerFx-filter JSON and `schemas/maintenance/powerfxplugin/schema.json` are unsupported | None |
 
-`maintenance bulkdelete` accepts `--poll-interval <seconds>` (default `5`) to set the interval
-between asynchronous job status checks. The option is specific to this command.
+No supported configuration migration or exact PAC substitute is promised for these operations.
+Removal does not change existing jobs, auto-number formats, managed properties, carrier data,
+solution memberships, or plugin filtering attributes. Existing jobs are not cancelled, disabled,
+or deleted. The two Solution ideas are deferred proposals, not retirement dependencies or
+available replacements.
 
-```bash
-dgtp maintenance bulkdelete --inline "<fetchxml>...</fetchxml>" --poll-interval 10
-```
+The independently migrated `process init` and `process apply` commands remain supported.
+The orphaned `IFileService` / `FileService` contract and `OrganizationServiceExtensions`
+(including `TryExecuteAsync`) are removed; shared `AtomicFileWriter` remains available.
+See the [3.x migration guide](docs/migrations/2.x-to-3.x.md#retired-maintenance-commands).
 
 ### `documenttemplates` — Portable document templates
 
@@ -1756,7 +1760,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
                                      | references
                 +--------------------v---------------------+
                 |              Feature modules            |
-                | connection / analyzer / maintenance     |
+                | connection / analyzer                   |
                 | codegeneration / plugin / webresource   |
                 | process / solution / telemetry          |
                 | teamtemplates / documenttemplates       |
@@ -1777,7 +1781,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `documenttemplates`, `duplicaterules`, `maintenance`, `plugin`, `process`, `solution`, `telemetry`, `teamtemplates`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The legacy verb-oriented import/export projects and their exclusive DTOs are removed; retained template modules reference shared infrastructure directly, not legacy transfer modules. The process module uses shared ownership and caller-service contracts without depending on maintenance internals.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `documenttemplates`, `duplicaterules`, `plugin`, `process`, `solution`, `telemetry`, `teamtemplates`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The legacy import/export and maintenance projects and their exclusive contracts are removed; retained template and process modules reference shared infrastructure directly, not legacy modules.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers (including the public `FileAccess/AtomicFileWriter` helper for shared atomic file writes), shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules. The process module now delegates its atomic writes to this shared helper without changing process command behavior.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
@@ -1821,7 +1825,6 @@ DigitallPower/
 │       ├── dgt.power.analyzer/        # `analyze` commands
 │       ├── dgt.power.codegeneration/  # `codegeneration` / `cg` command
 │       ├── dgt.power.connection/      # `connection` commands (auth management)
-│       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.plugin/          # `plugin` commands
 │       ├── dgt.power.documenttemplates/ # Portable Word/Excel import/export
 │       ├── dgt.power.process/         # `process init/apply` commands

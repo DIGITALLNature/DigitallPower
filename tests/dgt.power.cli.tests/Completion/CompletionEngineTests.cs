@@ -36,14 +36,14 @@ public class CompletionEngineTests
             Command("documenttemplates"),
             Command("plugin"),
             Command("teamtemplates"),
-            Command("maintenance"));
+            Command("process"));
 
         var result = CompletionEngine.GetCompletions(model, "dgtp ", 5);
 
         await Assert.That(result).Contains("documenttemplates");
         await Assert.That(result).Contains("plugin");
         await Assert.That(result).Contains("teamtemplates");
-        await Assert.That(result).Contains("maintenance");
+        await Assert.That(result).Contains("process");
     }
 
     [Test]
@@ -52,13 +52,13 @@ public class CompletionEngineTests
         var model = BuildModel(
             Command("documenttemplates"),
             Command("plugin"),
-            Command("maintenance"));
+            Command("process"));
 
         var result = CompletionEngine.GetCompletions(model, "dgtp doc", 8);
 
         await Assert.That(result).Contains("documenttemplates");
         await Assert.That(result).DoesNotContain("plugin");
-        await Assert.That(result).DoesNotContain("maintenance");
+        await Assert.That(result).DoesNotContain("process");
     }
 
     [Test]
