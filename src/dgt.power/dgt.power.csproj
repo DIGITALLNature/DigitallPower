@@ -54,7 +54,6 @@
     <ProjectReference Include="..\modules\dgt.power.codegeneration\dgt.power.codegeneration.csproj" />
     <ProjectReference Include="..\modules\dgt.power.connection\dgt.power.connection.csproj" />
     <ProjectReference Include="..\modules\dgt.power.documenttemplates\dgt.power.documenttemplates.csproj" />
-    <ProjectReference Include="..\modules\dgt.power.maintenance\dgt.power.maintenance.csproj" />
     <ProjectReference Include="..\modules\dgt.power.plugin\dgt.power.plugin.csproj" />
     <ProjectReference Include="..\modules\dgt.power.duplicaterules\dgt.power.duplicaterules.csproj" />
     <ProjectReference Include="..\modules\dgt.power.process\dgt.power.process.csproj" />
