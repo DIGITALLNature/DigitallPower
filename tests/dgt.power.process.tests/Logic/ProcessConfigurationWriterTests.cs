@@ -114,6 +114,22 @@ public class ProcessConfigurationWriterTests
     }
 
     [Test]
+    public async Task Serialize_NonAsciiName_IsLiteralAndEscapedInputStillParses()
+    {
+        const string name = "Gesch\u00E4ftlicher\u00A0Prozess \"A\" <&>";
+        var process = new Workflow(Guid.NewGuid()) { Name = name, StateCode = new OptionSetValue(Workflow.Options.StateCode.Draft) };
+
+        var json = ProcessConfigurationWriter.Serialize([process], "state", new Dictionary<Guid, string>());
+        var escaped = json.Replace("\u00E4", "\\u00E4", StringComparison.Ordinal).Replace("\u00A0", "\\u00A0", StringComparison.Ordinal);
+
+        await Assert.That(json).Contains("Gesch\u00E4ftlicher\u00A0Prozess");
+        await Assert.That(json).DoesNotContain("\\u00");
+        await Assert.That(json).Contains("<&>");
+        await Assert.That(ProcessConfiguration.Parse(json).Processes[0].Name).IsEqualTo(name);
+        await Assert.That(ProcessConfiguration.Parse(escaped).Processes[0].Name).IsEqualTo(name);
+    }
+
+    [Test]
     public async Task WriteAtomicallyAsync_ProtectsExistingOutputWithoutOverwrite()
     {
         var directory = Path.Combine(Environment.CurrentDirectory, $"process-test-{Guid.NewGuid():N}");

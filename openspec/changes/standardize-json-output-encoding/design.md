@@ -24,9 +24,16 @@ Atomic writing is already shared through `dgt.power.common.FileAccess.AtomicFile
 
 ## Decisions
 
-- **Encoder:** Use `JavaScriptEncoder.Create(UnicodeRanges.All)` or `JavaScriptEncoder.UnsafeRelaxedJsonEscaping`. `UnicodeRanges.All` still escapes `<`, `>`, `&`, and `'`, which conflicts with the requirement not to escape HTML-sensitive characters. `UnsafeRelaxedJsonEscaping` matches the spec. The name only warns about embedding in HTML or JavaScript, which these files never are. Preferred: `UnsafeRelaxedJsonEscaping`, with a comment explaining why it is safe here.
-- **Shared helper over per-module options:** Each module passes its own `JsonSerializerOptions` for naming and null handling. The helper copies them and enforces the encoder, so modules cannot drift. Alternative: a global DI `JsonSerializerOptions` singleton. Rejected because static writers do not use DI and because the DI singleton is also used for reading.
-- **Export workaround:** Replace it only after characterization tests show what it currently outputs for backslashes, quotes, and control characters. If it currently produces invalid JSON for such values, record that as a bug fix in the PR.
+- **Encoder:** Use `JavaScriptEncoder.UnsafeRelaxedJsonEscaping`. `UnicodeRanges.All` still escapes `<`, `>`, `&`, and `'`, which conflicts with the requirement not to escape HTML-sensitive characters. The name only warns about embedding in HTML or JavaScript, which these files never are. Verified during implementation: every System.Text.Json encoder, including relaxed ones and `TextEncoderSettings.AllowCharacter`, still escapes U+00A0 (a space separator), and unpaired surrogates are replaced by U+FFFD rather than escaped. The helper therefore restores `\u00A0` escapes after serialization, consuming escape sequences pairwise so an escaped backslash followed by `u00A0` is untouched. A custom `JavaScriptEncoder` subclass was rejected because its abstract members are `unsafe`.
+- **Shared helper over per-module options:** Each module passes its own `JsonSerializerOptions` for naming and null handling. `dgt.power.common.FileAccess.JsonFileOutput.Serialize` copies them and enforces the encoder, so modules cannot drift and callers' options (also used for reading) are never mutated. Alternative: a global DI `JsonSerializerOptions` singleton. Rejected because static writers do not use DI and because the DI singleton is also used for reading.
+- **Export workaround:** Obsolete. The export module and its `ExportJson`/`FileService` writers were removed by `retire-legacy-import-export`, so there is no `Regex.Unescape` workaround left to replace or characterize.
+- **Scope decision (call sites under `src/`):**
+
+| Call site | Decision |
+|-----------|----------|
+| `ProcessConfigurationWriter`, `DuplicateRuleConfigurationWriter`, `TeamTemplateConfiguration.Serialize`, `DocumentTemplateManifest.ToJson` | In scope; use the helper |
+| `AnalyzeResultWriter`, `SolutionLintCommand` reports | Out of scope; machine-oriented reports, not configuration input |
+| `StateStore`, `ConnectionStore`, `SecretStore`, `CodeGenerationConfigLoader` | Out of scope (internal stores and config rewriting, see Non-Goals) |
 
 ## Risks / Trade-offs
 
@@ -36,4 +43,4 @@ Atomic writing is already shared through `dgt.power.common.FileAccess.AtomicFile
 
 ## Open Questions
 
-- Should analyzer and lint reports follow the same contract? They are written by commands and may be reviewed, but are not configuration input. Decide during implementation by checking whether any of them contain user-facing non-ASCII text; this does not change the shared helper.
+- Should analyzer and lint reports follow the same contract? Resolved: no, see the scope decision above.

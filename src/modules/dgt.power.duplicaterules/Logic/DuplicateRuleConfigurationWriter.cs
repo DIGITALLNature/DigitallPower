@@ -55,7 +55,7 @@ public static class DuplicateRuleConfigurationWriter
             ["rules"] = entries
         };
 
-        return JsonSerializer.Serialize(document, new JsonSerializerOptions
+        return JsonFileOutput.Serialize(document, new JsonSerializerOptions
         {
             WriteIndented = true,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull

@@ -33,6 +33,23 @@ public class DuplicateRuleConfigurationWriterTests
     }
 
     [Test]
+    public async Task Serialize_NonAsciiName_IsLiteralAndEscapedInputStillParses()
+    {
+        const string name = "Kontakte mit derselben gesch\u00E4ftlichen\u00A0Telefonnummer \"A\" <&>";
+        var rule = Rule(s_firstId, published: true);
+        rule["name"] = name;
+
+        var json = DuplicateRuleConfigurationWriter.Serialize([rule], "state", new Dictionary<Guid, string>());
+        var escaped = json.Replace("\u00E4", "\\u00E4", StringComparison.Ordinal).Replace("\u00A0", "\\u00A0", StringComparison.Ordinal);
+
+        await Assert.That(json).Contains("gesch\u00E4ftlichen\u00A0Telefonnummer");
+        await Assert.That(json).DoesNotContain("\\u00");
+        await Assert.That(json).Contains("<&>");
+        await Assert.That(DuplicateRuleConfiguration.Parse(json).Rules[0].Name).IsEqualTo(name);
+        await Assert.That(DuplicateRuleConfiguration.Parse(escaped).Rules[0].Name).IsEqualTo(name);
+    }
+
+    [Test]
     public async Task Serialize_Empty_WritesEmptyRulesArray()
     {
         var json = DuplicateRuleConfigurationWriter.Serialize([], "state", new Dictionary<Guid, string>());

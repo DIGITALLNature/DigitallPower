@@ -22,6 +22,24 @@ public class TeamTemplateConfigurationTests
     }
 
     [Test]
+    public async Task Serialize_NonAsciiText_IsLiteralAndEscapedInputStillParses()
+    {
+        const string name = "Gesch\u00E4ftsleser\u00A0\"A\" <&>";
+        var json = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Resources", "valid-v1.json"));
+        var parsed = TeamTemplateConfiguration.Parse(json);
+        var configuration = parsed with { Templates = [parsed.Templates[0] with { Name = name }] };
+
+        var serialized = configuration.Serialize();
+        var escaped = serialized.Replace("\u00E4", "\\u00E4", StringComparison.Ordinal).Replace("\u00A0", "\\u00A0", StringComparison.Ordinal);
+
+        await Assert.That(serialized).Contains("Gesch\u00E4ftsleser\u00A0");
+        await Assert.That(serialized).DoesNotContain("\\u00");
+        await Assert.That(serialized).Contains("<&>");
+        await Assert.That(TeamTemplateConfiguration.Parse(serialized).Templates[0].Name).IsEqualTo(name);
+        await Assert.That(TeamTemplateConfiguration.Parse(escaped).Templates[0].Name).IsEqualTo(name);
+    }
+
+    [Test]
     [Arguments("[]")]
     [Arguments("null")]
     [Arguments("""{"schemaVersion":2,"templates":[]}""")]

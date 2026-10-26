@@ -3,6 +3,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using dgt.power.common.FileAccess;
 using Microsoft.Crm.Sdk.Messages;
 
 namespace dgt.power.teamtemplates.Configuration;
@@ -50,7 +51,7 @@ public sealed partial record TeamTemplateConfiguration
     public string Serialize()
     {
         Validate();
-        return JsonSerializer.Serialize(this, s_options);
+        return JsonFileOutput.Serialize(this, s_options);
     }
 
     public void Validate()
