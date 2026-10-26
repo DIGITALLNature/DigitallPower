@@ -5,7 +5,6 @@ using dgt.power.cli.tests.TestDoubles;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.Commands.Complete;
-using dgt.power.common;
 using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
 using dgt.power.duplicaterules.Commands;

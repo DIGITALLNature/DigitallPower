@@ -126,31 +126,19 @@ public class CommandTreeTests
     }
 
     [Test]
-    [Arguments("analyze")]
-    public async Task RetiredAnalyzeBranch_HelpIsRejected(string branch)
+    [Arguments("analyze", "--help")]
+    [Arguments("analyze", "entityallassets")]
+    [Arguments("analyze", "noactivelayer")]
+    [Arguments("analyze", "activelayer")]
+    [Arguments("analyze", "toplayer")]
+    [Arguments("analyze", "redundantcomponents")]
+    [Arguments("analyze", "redundantpatches")]
+    public async Task RetiredAnalyzePath_IsRejectedWithoutResolvingServices(string branch, string argument)
     {
         var tester = new CommandAppTester();
         tester.Configure(CommandTree.Register);
 
-        var result = tester.Run(branch, "--help");
-
-        await Assert.That(result.ExitCode).IsNotEqualTo(0);
-        await Assert.That(result.Output).Contains("Unknown command");
-    }
-
-    [Test]
-    [Arguments("entityallassets")]
-    [Arguments("noactivelayer")]
-    [Arguments("activelayer")]
-    [Arguments("toplayer")]
-    [Arguments("redundantcomponents")]
-    [Arguments("redundantpatches")]
-    public async Task RetiredAnalyzeCommand_IsRejectedWithoutResolvingServices(string command)
-    {
-        var tester = new CommandAppTester();
-        tester.Configure(CommandTree.Register);
-
-        var result = tester.Run("analyze", command);
+        var result = tester.Run(branch, argument);
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
         await Assert.That(result.Output).Contains("Unknown command");
@@ -233,7 +221,7 @@ public class CommandTreeTests
             await Assert.That(completions.Count).IsEqualTo(0);
         }
 
-        var analyzeLine = "dgtp analyze ";
+        const string analyzeLine = "dgtp analyze ";
         var analyzeCompletions = CompletionEngine.GetCompletions(capture.Model, analyzeLine, analyzeLine.Length);
         await Assert.That(analyzeCompletions.Count).IsEqualTo(0);
     }

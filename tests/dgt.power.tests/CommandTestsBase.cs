@@ -21,8 +21,6 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
 
     private string ArtifactDirectory { get; } = $"{Guid.NewGuid():N}";
 
-    protected string GetResourcePath(string fileName) => Path.Combine("Resources", typeof(TCommand).Name, fileName);
-
     /// <summary>
     /// Creates an file from an artifact. Uses System.Text.Json to serialize the artifact.
     /// </summary>
