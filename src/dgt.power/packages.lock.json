@@ -659,12 +659,6 @@
           "dgt.power.common": "[3.0.0-beta.17, )"
         }
       },
-      "dgt.power.maintenance": {
-        "type": "Project",
-        "dependencies": {
-          "dgt.power.common": "[3.0.0-beta.17, )"
-        }
-      },
       "dgt.power.plugin": {
         "type": "Project",
         "dependencies": {

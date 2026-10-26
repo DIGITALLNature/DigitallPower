@@ -42,7 +42,6 @@ public class CommandTreeTests
     // routing issues that only surface when actually navigating into a specific path.)
     [Test]
     [Arguments("connection")]
-    [Arguments("maintenance")]
     [Arguments("analyze")]
     [Arguments("solution")]
     [Arguments("codegeneration")]
@@ -340,7 +339,13 @@ public class CommandTreeTests
     [Test]
     [Arguments("createworkflowstate")]
     [Arguments("workflowstate")]
-    public async Task LegacyWorkflowCommand_IsRejected(string command)
+    [Arguments("bulkdelete")]
+    [Arguments("autonumber")]
+    [Arguments("protectfields")]
+    [Arguments("carrierinfo")]
+    [Arguments("removeredundantcomponents")]
+    [Arguments("filterfxplugins")]
+    public async Task LegacyMaintenanceCommand_IsRejectedWithoutResolvingServices(string command)
     {
         var tester = new CommandAppTester();
         tester.Configure(CommandTree.Register);
@@ -352,17 +357,30 @@ public class CommandTreeTests
     }
 
     [Test]
-    public async Task MaintenanceHelp_DoesNotListLegacyWorkflowCommands_AndKeepsOtherCommands()
+    public async Task MaintenanceHelp_IsRejectedAsUnknownCommand()
     {
         var tester = new CommandAppTester();
         tester.Configure(CommandTree.Register);
 
         var result = tester.Run("maintenance", "--help");
 
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    public async Task RootHelp_OmitsMaintenanceAndPreservesResourceCommands()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("--help");
+
         await Assert.That(result.ExitCode).IsEqualTo(0);
-        await Assert.That(result.Output).DoesNotContain("createworkflowstate");
-        await Assert.That(result.Output).DoesNotContain("workflowstate");
-        await Assert.That(result.Output).Contains("bulkdelete");
+        await Assert.That(result.Output).DoesNotContain("maintenance");
+        await Assert.That(result.Output).Contains("process");
+        await Assert.That(result.Output).Contains("solution");
+        await Assert.That(result.Output).Contains("plugin");
     }
 
     [Test]
@@ -391,6 +409,9 @@ public class CommandTreeTests
         var maintenance = CompletionEngine.GetCompletions(capture.Model!, maintenanceLine, maintenanceLine.Length);
 
         await Assert.That(root).Contains("process");
+        await Assert.That(root).Contains("solution");
+        await Assert.That(root).DoesNotContain("maintenance");
+        await Assert.That(capture.Model!.Commands.Select(command => command.Name)).DoesNotContain("maintenance");
         await Assert.That(branch).Contains("init");
         await Assert.That(branch).Contains("apply");
         await Assert.That(init).Contains("--solution");
@@ -401,8 +422,7 @@ public class CommandTreeTests
         await Assert.That(apply).Contains("--activate-as");
         await Assert.That(apply).Contains("--activate-as-owner");
         await Assert.That(apply).Contains("--dry-run");
-        await Assert.That(maintenance).DoesNotContain("createworkflowstate");
-        await Assert.That(maintenance).DoesNotContain("workflowstate");
+        await Assert.That(maintenance.Count).IsEqualTo(0);
     }
 
     [Test]

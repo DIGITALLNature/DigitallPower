@@ -109,8 +109,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
             .BuildServiceProvider()
             .GetRequiredService<TCommand>();
 
-        return new CommandTestContext<TCommand, TCommandSettings>(command, service,
-            _serviceCollection.BuildServiceProvider().GetRequiredService<IConfigResolver>());
+        return new CommandTestContext<TCommand, TCommandSettings>(command, service);
     }
 
     /// <summary>

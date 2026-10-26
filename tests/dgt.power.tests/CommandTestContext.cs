@@ -22,14 +22,12 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
     private readonly TCommand _command;
     private DataContext DataContext { get; }
     public FakeOrganizationServiceAsync FakedService { get; }
-    public IConfigResolver ConfigResolver { get; }
 
-    internal CommandTestContext(TCommand command, FakeOrganizationServiceAsync fakedService, IConfigResolver configResolver)
+    internal CommandTestContext(TCommand command, FakeOrganizationServiceAsync fakedService)
     {
         _command = command;
         DataContext = new DataContext(fakedService);
         FakedService = fakedService;
-        ConfigResolver = configResolver;
     }
 
     public bool Execute(TCommandSettings settings)
@@ -55,6 +53,4 @@ public class CommandTestContext<TCommand, TCommandSettings> where TCommand : ICo
     public TEntity GetSingle<TEntity>(Expression<Func<TEntity, bool>>? query = null) where TEntity : Entity =>
         Get(query).Single();
 
-    public TEntity GetFirst<TEntity>(Expression<Func<TEntity, bool>>? query = null) where TEntity : Entity =>
-        Get(query).First();
 }

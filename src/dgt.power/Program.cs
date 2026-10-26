@@ -4,8 +4,6 @@
 using System.Globalization;
 using System.Runtime.Caching;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using dgt.power;
 using dgt.power.analyzer.Base;
@@ -19,7 +17,6 @@ using dgt.power.common.Commands;
 using dgt.power.common.Connections;
 using dgt.power.common.Exceptions;
 using dgt.power.common.Extensions;
-using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using dgt.power.common.Storage;
 using dgt.power.common.Telemetry;
@@ -141,19 +138,11 @@ registrations.AddSingleton<ISecretStore>(provider => new SecretStore(
 registrations.AddSingleton<CredentialFactory>();
 registrations.AddSingleton<IConnectionVerifier, DataverseConnectionVerifier>();
 registrations.AddSingleton<ObjectCache, MemoryCache>(_ => MemoryCache.Default);
-registrations.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
-{
-    Converters =
-    {
-        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-    }
-});
 registrations.AddScoped<IConfigResolver, ConfigResolver>();
 registrations.AddScoped<IMetadataService, MetadataService>();
 registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
 registrations.AddScoped<ITypeScriptGenerator, TypeScriptGenerator>();
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
-registrations.AddScoped<IFileService, FileService>();
 registrations.AddSingleton<SolutionComponentReader>();
 registrations.AddSingleton(appConsole);
 registrations.AddSingleton<ShellShimInstaller>();
