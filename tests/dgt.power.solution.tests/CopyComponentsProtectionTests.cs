@@ -3,14 +3,10 @@
 
 using dgt.power.common;
 using dgt.power.dataverse;
-using dgt.power.solution.Base;
-using dgt.power.tests;
 using dgt.power.tests.Extensions;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
@@ -52,7 +48,7 @@ public class CopyComponentsProtectionTests
     public async Task Command_LaterInvalidCandidate_FailsBeforeAllMutations(bool dryRun)
     {
         using var fixture = new Fixture { InvalidLaterField = true };
-        await Assert.That(async () => await fixture.RunAsync(dryRun: dryRun)).ThrowsExactly<InvalidOperationException>();
+        await Assert.That(fixture.RunAsync(dryRun: dryRun)).ThrowsExactly<InvalidOperationException>();
         await Assert.That(fixture.Requests.Any(r => r is AddSolutionComponentRequest or RemoveSolutionComponentRequest or UpdateAttributeRequest))
             .IsFalse();
     }
@@ -61,7 +57,7 @@ public class CopyComponentsProtectionTests
     public async Task Command_MetadataFault_FailsBeforeCopy()
     {
         using var fixture = new Fixture { FailMetadata = true };
-        await Assert.That(async () => await fixture.RunAsync()).ThrowsExactly<FaultException<OrganizationServiceFault>>();
+        await Assert.That(fixture.RunAsync()).ThrowsExactly<FaultException<OrganizationServiceFault>>();
         await Assert.That(fixture.Requests.OfType<AddSolutionComponentRequest>()).IsEmpty();
     }
 
@@ -83,7 +79,7 @@ public class CopyComponentsProtectionTests
     public async Task Command_CopyOrCleanupFault_PreventsAllProtection(string phase)
     {
         using var fixture = new Fixture { IncludeApp = true, FailurePhase = phase };
-        await Assert.That(async () => await fixture.RunAsync(apps: AppHandling.Strip)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
+        await Assert.That(fixture.RunAsync(apps: AppHandling.Strip)).ThrowsExactly<FaultException<OrganizationServiceFault>>();
         await Assert.That(fixture.Requests.OfType<UpdateAttributeRequest>()).IsEmpty();
         await Assert.That(fixture.Console.Output).Contains("No rollback");
         await Assert.That(fixture.Console.Output).Contains(phase == "copy" ? "0 confirmed copied" : "2 confirmed copied");
@@ -107,7 +103,7 @@ public class CopyComponentsProtectionTests
     public async Task Command_CancellationAfterCopy_StopsProtectionAndReportsCompletedEffects()
     {
         using var fixture = new Fixture { CancelAfterCopy = true };
-        await Assert.That(async () => await fixture.RunAsync()).Throws<OperationCanceledException>();
+        await Assert.That(fixture.RunAsync()).Throws<OperationCanceledException>();
         await Assert.That(fixture.Requests.OfType<UpdateAttributeRequest>()).IsEmpty();
         await Assert.That(fixture.Console.Output).Contains("Cancelled");
         await Assert.That(fixture.Console.Output).Contains("1 confirmed copied");

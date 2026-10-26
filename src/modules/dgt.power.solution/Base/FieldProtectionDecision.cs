@@ -35,6 +35,7 @@ internal sealed record FieldProtectionDecision(
             AttributeTypeCode.Money => new MoneyAttributeMetadata(),
             AttributeTypeCode.DateTime => new DateTimeAttributeMetadata(),
             AttributeTypeCode.Boolean => new BooleanAttributeMetadata(),
+            AttributeTypeCode.Picklist => new PicklistAttributeMetadata(),
             _ => throw new InvalidOperationException($"Unsupported calculation storage type for {Identity}: {AttributeType}")
         };
         metadata.MetadataId = MetadataId;

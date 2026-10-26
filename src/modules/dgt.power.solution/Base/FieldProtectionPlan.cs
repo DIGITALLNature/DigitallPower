@@ -5,8 +5,6 @@ using dgt.power.dataverse;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
-using Microsoft.Xrm.Sdk.Metadata.Query;
-using Microsoft.Xrm.Sdk.Query;
 using Spectre.Console;
 
 namespace dgt.power.solution.Base;
@@ -19,8 +17,8 @@ internal sealed class FieldProtectionPlan(IReadOnlyList<FieldProtectionDecision>
         CancellationToken cancellationToken)
     {
         var attributes = new Dictionary<Guid, (string EntityName, AttributeMetadata Attribute)>();
-        foreach (var table in decisions.Where(static d => d.Include &&
-                     d.ComponentType == SolutionComponent.Options.ComponentType.Entity && !d.DoNotIncludeSubcomponents))
+        foreach (var table in decisions.Where(static d => d is
+                 { Include: true, ComponentType: SolutionComponent.Options.ComponentType.Entity, DoNotIncludeSubcomponents: false }))
         {
             cancellationToken.ThrowIfCancellationRequested();
             var metadata = ((RetrieveEntityResponse)await service.ExecuteAsync(new RetrieveEntityRequest
@@ -40,42 +38,22 @@ internal sealed class FieldProtectionPlan(IReadOnlyList<FieldProtectionDecision>
             }
         }
 
-        var standaloneIds = decisions.Where(static d => d.Include &&
-                d.ComponentType == SolutionComponent.Options.ComponentType.Attribute)
+        var standaloneIds = decisions.Where(static d => d is
+                { Include: true, ComponentType: SolutionComponent.Options.ComponentType.Attribute })
             .Select(static d => d.ObjectId).Distinct().Where(id => !attributes.ContainsKey(id)).ToArray();
-        foreach (var batch in standaloneIds.Chunk(200))
+        foreach (var id in standaloneIds)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var criteria = new MetadataFilterExpression(LogicalOperator.And);
-            criteria.Conditions.Add(new MetadataConditionExpression(
-                nameof(AttributeMetadata.MetadataId), MetadataConditionOperator.In, batch));
-            var response = (RetrieveMetadataChangesResponse)await service.ExecuteAsync(new RetrieveMetadataChangesRequest
+            var attribute = ((RetrieveAttributeResponse)await service.ExecuteAsync(new RetrieveAttributeRequest
             {
-                Query = new EntityQueryExpression
-                {
-                    Properties = new MetadataPropertiesExpression(nameof(EntityMetadata.LogicalName), nameof(EntityMetadata.Attributes)),
-                    AttributeQuery = new AttributeQueryExpression
-                    {
-                        Properties = new MetadataPropertiesExpression { AllProperties = true },
-                        Criteria = criteria
-                    }
-                }
-            }, cancellationToken);
-            foreach (var entity in response.EntityMetadata)
+                MetadataId = id,
+                RetrieveAsIfPublished = true
+            }, cancellationToken)).AttributeMetadata;
+            if (attribute?.MetadataId != id)
             {
-                foreach (var attribute in entity.Attributes ?? [])
-                {
-                    if (attribute.MetadataId is { } id && batch.Contains(id))
-                    {
-                        AddAttribute(attributes, entity.LogicalName, attribute);
-                    }
-                }
+                throw new InvalidOperationException($"Protection metadata not found for selected attribute: {id}.");
             }
-            var missing = batch.Where(id => !attributes.ContainsKey(id)).ToArray();
-            if (missing.Length > 0)
-            {
-                throw new InvalidOperationException($"Protection metadata not found for selected attribute(s): {string.Join(", ", missing)}.");
-            }
+            AddAttribute(attributes, attribute.EntityLogicalName, attribute);
         }
 
         var fields = new List<FieldProtectionDecision>();

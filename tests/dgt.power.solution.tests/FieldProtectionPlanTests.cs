@@ -1,12 +1,9 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.solution.Base;
 using dgt.power.tests.Extensions;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
 using Spectre.Console.Testing;
 using System.ServiceModel;
 
@@ -61,29 +58,112 @@ public class FieldProtectionPlanTests
         service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((request, _) =>
         {
             calls.Add(request);
-            if (request is RetrieveMetadataChangesRequest changes)
+            if (request is RetrieveAttributeRequest { EntityLogicalName: null } retrieve)
             {
-                var condition = changes.Query.AttributeQuery.Criteria.Conditions.Single();
-                if (condition.PropertyName != "MetadataId" || !changes.Query.AttributeQuery.Properties.AllProperties)
-                    throw new InvalidOperationException("Unbounded or partial attribute metadata request.");
-                return new RetrieveMetadataChangesResponse
-                {
-                    Results = { ["EntityMetadata"] = new EntityMetadataCollection { entity } }
-                };
+                if (retrieve.MetadataId != field.MetadataId || !retrieve.RetrieveAsIfPublished)
+                    throw new InvalidOperationException("Unbounded or published-only attribute metadata request.");
+                return new RetrieveAttributeResponse { Results = { ["AttributeMetadata"] = field } };
             }
             return Response(request, entity);
         });
         var plan = await FieldProtectionPlan.PrepareAsync(service.Object,
             [Decision(field.MetadataId!.Value, 2), Decision(field.MetadataId.Value, 2)], CancellationToken.None);
-        var query = calls.OfType<RetrieveMetadataChangesRequest>().Single().Query;
-        await Assert.That(query.Properties.PropertyNames.Contains(nameof(EntityMetadata.LogicalName))).IsTrue();
-        await Assert.That(query.Properties.PropertyNames.Contains(nameof(EntityMetadata.Attributes))).IsTrue();
-        await Assert.That(query.AttributeQuery.Criteria.Conditions.Single().Value is Guid[] ids &&
-            ids.SequenceEqual([field.MetadataId.Value])).IsTrue();
+        await Assert.That(calls.OfType<RetrieveAttributeRequest>().Count()).IsEqualTo(1);
+        await Assert.That(calls.OfType<RetrieveMetadataChangesRequest>()).IsEmpty();
         using var console = new TestConsole();
         await plan.ExecuteAsync(service.Object, new CopyExecutionProgress(), console, CancellationToken.None);
         await Assert.That(calls.OfType<UpdateAttributeRequest>().Count()).IsEqualTo(1);
         await Assert.That(calls.OfType<RetrieveEntityRequest>().Count()).IsZero();
+    }
+
+    [Test]
+    [Arguments(0, 3, true, 1)]
+    [Arguments(3, 0, true, 0)]
+    [Arguments(3, 3, false, 0)]
+    [Arguments(null, 3, true, 1)]
+    public async Task Prepare_StandaloneUnpublishedChanges_UsesCurrentMetadata(
+        int? publishedSourceType, int currentSourceType, bool currentCustomizable, int expectedUpdates)
+    {
+        var current = Field("unpublished", currentSourceType);
+        current.IsCustomizable = new BooleanManagedProperty(currentCustomizable) { CanBeChanged = true };
+        var published = publishedSourceType.HasValue ? Field("unpublished", publishedSourceType) : null;
+        if (published is not null) published.MetadataId = current.MetadataId;
+        var entity = Table([current]);
+        var updates = 0;
+        var service = Mock.Of<IOrganizationServiceAsync2>();
+        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((request, _) =>
+        {
+            if (request is RetrieveMetadataChangesRequest)
+                return new RetrieveMetadataChangesResponse
+                {
+                    Results = { ["EntityMetadata"] = new EntityMetadataCollection { Table(published is null ? [] : [published]) } }
+                };
+            if (request is RetrieveAttributeRequest { EntityLogicalName: null } retrieve)
+                return new RetrieveAttributeResponse
+                {
+                    Results = { ["AttributeMetadata"] = retrieve.RetrieveAsIfPublished ? current : published }
+                };
+            if (request is UpdateAttributeRequest) updates++;
+            return Response(request, entity);
+        });
+        var plan = await FieldProtectionPlan.PrepareAsync(service.Object,
+            [Decision(current.MetadataId!.Value, 2)], CancellationToken.None);
+        using var console = new TestConsole();
+        await plan.ExecuteAsync(service.Object, new CopyExecutionProgress(), console, CancellationToken.None);
+        await Assert.That(updates).IsEqualTo(expectedUpdates);
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Prepare_StandaloneIdentityIncomplete_RejectsBeforeWrites(bool mismatchedId)
+    {
+        var field = Field("standalone", 3);
+        if (!mismatchedId)
+            field.SetSealedPropertyValue(nameof(AttributeMetadata.EntityLogicalName), null);
+        var selectedId = mismatchedId ? Guid.NewGuid() : field.MetadataId!.Value;
+        var requests = new List<OrganizationRequest>();
+        var service = Mock.Of<IOrganizationServiceAsync2>();
+        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((request, _) =>
+        {
+            requests.Add(request);
+            return new RetrieveAttributeResponse { Results = { ["AttributeMetadata"] = field } };
+        });
+
+        await Assert.That(FieldProtectionPlan.PrepareAsync(service.Object,
+            [Decision(selectedId, 2)], CancellationToken.None)).ThrowsExactly<InvalidOperationException>();
+
+        await Assert.That(requests.Count).IsEqualTo(1);
+        await Assert.That(requests.Single() is RetrieveAttributeRequest { RetrieveAsIfPublished: true }).IsTrue();
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Prepare_PicklistFormula_UsesMinimalPicklistUpdate(bool completeTable)
+    {
+        var field = Field("choiceformula", 3);
+        field.SetSealedPropertyValue(nameof(AttributeMetadata.AttributeType), AttributeTypeCode.Picklist);
+        var entity = Table([field]);
+        var requests = new List<OrganizationRequest>();
+        var service = Mock.Of<IOrganizationServiceAsync2>();
+        service.ExecuteAsync(Any<OrganizationRequest>(), Any<CancellationToken>()).Returns((request, _) =>
+        {
+            requests.Add(request);
+            if (request is RetrieveAttributeRequest { EntityLogicalName: null })
+                return new RetrieveAttributeResponse { Results = { ["AttributeMetadata"] = field } };
+            return Response(request, entity);
+        });
+        var plan = await FieldProtectionPlan.PrepareAsync(service.Object,
+            [completeTable ? Decision(entity.MetadataId!.Value, 1) : Decision(field.MetadataId!.Value, 2)],
+            CancellationToken.None);
+        using var console = new TestConsole();
+        await plan.ExecuteAsync(service.Object, new CopyExecutionProgress(), console, CancellationToken.None);
+        var payload = requests.OfType<UpdateAttributeRequest>().Single().Attribute;
+        await Assert.That(payload is PicklistAttributeMetadata { OptionSet: null }).IsTrue();
+        await Assert.That(payload.IsCustomizable.Value).IsFalse();
+        await Assert.That(payload.SourceType).IsNull();
+        await Assert.That(payload.DisplayName).IsNull();
     }
 
     [Test]
@@ -213,6 +293,7 @@ public class FieldProtectionPlanTests
                 if (updates == 2 && scenario == "update-fault")
                     throw new FaultException<OrganizationServiceFault>(new OrganizationServiceFault { Message = "update denied" });
                 if (updates == 2 && scenario == "cancel")
+                    // ReSharper disable once AccessToDisposedClosure -- callback completes within awaited execution before disposal.
                     cancellation.Cancel();
             }
             if (request is RetrieveAttributeRequest)
@@ -231,17 +312,17 @@ public class FieldProtectionPlanTests
         console.Profile.Width = 240;
         if (scenario == "cancel")
         {
-            await Assert.That(async () => await plan.ExecuteAsync(service.Object, progress, console, cancellation.Token))
+            await Assert.That(plan.ExecuteAsync(service.Object, progress, console, cancellation.Token))
                 .Throws<OperationCanceledException>();
         }
         else if (scenario == "mismatch")
         {
-            await Assert.That(async () => await plan.ExecuteAsync(service.Object, progress, console, cancellation.Token))
+            await Assert.That(plan.ExecuteAsync(service.Object, progress, console, cancellation.Token))
                 .ThrowsExactly<InvalidOperationException>();
         }
         else
         {
-            await Assert.That(async () => await plan.ExecuteAsync(service.Object, progress, console, cancellation.Token))
+            await Assert.That(plan.ExecuteAsync(service.Object, progress, console, cancellation.Token))
                 .ThrowsExactly<FaultException<OrganizationServiceFault>>();
         }
         progress.ReportFailure(console, cancellation.IsCancellationRequested);
@@ -265,11 +346,11 @@ public class FieldProtectionPlanTests
         {
             requests.Add(request);
             if (fault) throw new InvalidOperationException("Metadata unavailable.");
-            return new RetrieveMetadataChangesResponse { Results = { ["EntityMetadata"] = new EntityMetadataCollection() } };
+            return new RetrieveAttributeResponse();
         });
         await Assert.That(async () => await FieldProtectionPlan.PrepareAsync(service.Object,
             [Decision(Guid.NewGuid(), 2)], CancellationToken.None)).ThrowsExactly<InvalidOperationException>();
-        await Assert.That(requests.All(r => r is RetrieveMetadataChangesRequest)).IsTrue();
+        await Assert.That(requests.All(r => r is RetrieveAttributeRequest { RetrieveAsIfPublished: true })).IsTrue();
     }
 
     [Test]
@@ -296,6 +377,7 @@ public class FieldProtectionPlanTests
     [Arguments(AttributeTypeCode.Money)]
     [Arguments(AttributeTypeCode.DateTime)]
     [Arguments(AttributeTypeCode.Boolean)]
+    [Arguments(AttributeTypeCode.Picklist)]
     public async Task CreateUpdate_SupportedStorage_ContainsOnlyIdentityAndManagedProperty(AttributeTypeCode type)
     {
         var id = Guid.NewGuid();
@@ -342,6 +424,7 @@ public class FieldProtectionPlanTests
         field.SourceType = sourceType;
         field.IsCustomizable = new BooleanManagedProperty(true) { CanBeChanged = true };
         field.SetSealedPropertyValue(nameof(AttributeMetadata.IsManaged), false);
+        field.SetSealedPropertyValue(nameof(AttributeMetadata.EntityLogicalName), "probe");
         return field;
     }
 

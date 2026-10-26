@@ -460,14 +460,11 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
     {
         return new CommandTestContextBuilder<CopyComponentsCommand, CopyComponentsSettings>()
             .WithFakeMessageExecutor(new RetrieveEntityExecutor())
-            .WithExecutionMock<RetrieveMetadataChangesRequest>(_ =>
+            .WithExecutionMock<RetrieveAttributeRequest>(request =>
             {
-                var metadata = new EntityMetadataCollection();
-                foreach (var entity in BuildEntityMetadata())
-                {
-                    metadata.Add(entity);
-                }
-                return new RetrieveMetadataChangesResponse { Results = { ["EntityMetadata"] = metadata } };
+                var attribute = BuildEntityMetadata().SelectMany(entity => entity.Attributes ?? [])
+                    .Single(attribute => attribute.MetadataId == ((RetrieveAttributeRequest)request).MetadataId);
+                return new RetrieveAttributeResponse { Results = { ["AttributeMetadata"] = attribute } };
             })
             .WithMetaData(BuildEntityMetadata())
             .WithData(_ => PrepareData(targetIsManaged));
@@ -549,6 +546,8 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
 
         var inactiveAttribute = new AttributeMetadata { LogicalName = "dgt_inactive", MetadataId = s_inactiveAttributeMetadataId };
         inactiveAttribute.SetSealedPropertyValue(nameof(AttributeMetadata.IsManaged), true);
+        activeAttribute.SetSealedPropertyValue(nameof(AttributeMetadata.EntityLogicalName), "isv_managed");
+        inactiveAttribute.SetSealedPropertyValue(nameof(AttributeMetadata.EntityLogicalName), "isv_managed");
 
         var unmanagedEntity = new EntityMetadata { LogicalName = "dgt_unmanaged", MetadataId = s_unmanagedEntityMetadataId };
         unmanagedEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), false);

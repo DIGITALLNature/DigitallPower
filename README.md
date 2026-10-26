@@ -630,6 +630,10 @@ skipped components, unrelated target membership, and columns added only by app/d
 expansion. Base-currency companions (`IsBaseCurrency=true`) and historic `bpf_duration` are
 reported exceptions; rollup date/state companions have `SourceType=0` and are not calculations.
 
+Protection preparation reads unpublished metadata for both complete tables and standalone
+attributes, so pending calculation edits and previously applied protection do not require
+publication. Choice-backed Power Fx Formula columns are supported without resubmitting options.
+
 **This changes shared environment metadata, not a solution-local copy.** Other solutions
 containing those columns see the same managed property. The policy is intended for managed
 deployment, not field-level security or a lock on unmanaged development. Labels/translations

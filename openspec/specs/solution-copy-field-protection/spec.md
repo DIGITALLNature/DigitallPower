@@ -15,6 +15,10 @@ In best-practice mode, `solution copy-components` SHALL set eligible unmanaged c
 - **THEN** the command sets its customization property to false and verifies that result
 - **AND** it leaves its formula, type, and unrelated column settings unchanged
 
+#### Scenario: Formula returns a choice
+- **WHEN** an eligible Power Fx Formula column has choice-backed storage
+- **THEN** protection uses the column's managed property without changing its option definitions
+
 #### Scenario: Protection changes shared metadata
 - **WHEN** the command presents a protection plan
 - **THEN** it explains that updates affect shared metadata in the current environment, including other solutions containing those columns
@@ -82,6 +86,11 @@ The command SHALL resolve the entire protection plan before any copy, app-cleanu
 #### Scenario: Protection is already satisfied
 - **WHEN** an eligible column has `IsCustomizable.Value` false
 - **THEN** the command reports unchanged protection without an update, even if `CanBeChanged` is false
+
+#### Scenario: Standalone selection has unpublished changes
+- **WHEN** an explicitly selected attribute has unpublished calculation or protection changes
+- **THEN** preflight classifies the current unpublished metadata, even without parent-table membership
+- **AND** an unpublished already-protected property does not cause a repeated protection update
 
 #### Scenario: No columns require protection
 - **WHEN** the final copy plan contains no eligible protection changes

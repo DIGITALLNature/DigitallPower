@@ -37,6 +37,13 @@ After existing copy filtering and app handling, collect:
 
 Resolve selected attribute IDs even when the source has no explicit parent table membership row. Reuse existing metadata retrieval when practical, but do not rely on parent membership to make standalone attributes discoverable. Deduplicate by attribute metadata identity.
 
+Resolve standalone IDs directly with `RetrieveAttributeRequest.MetadataId` and
+`RetrieveAsIfPublished=true`, using the returned `EntityLogicalName` for update identity.
+Like complete-table reads, this includes unpublished calculation and protection changes,
+including a newly created attribute with no published counterpart. Do not use published-only
+metadata queries to classify standalone selections. Choice-backed Formula columns use a minimal
+`PicklistAttributeMetadata` update without resubmitting option definitions.
+
 Limit candidates to `IsManaged == false` and source types 1, 2, or 3. A known null source type is a non-calculation column, not an error. Exclude managed attributes even if they have an active customization layer; copying them does not grant ownership of their managed properties.
 
 Do not expand skeleton-only tables, unrelated existing target membership, or fields brought in solely by platform app/dependency expansion. A field already in the target is still in scope if intentionally selected by this run.
