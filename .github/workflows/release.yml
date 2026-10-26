@@ -11,23 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.CI_GITHUB_TOKEN }}
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: Setup pnpm and Node.js
+        uses: pnpm/setup@v1
         with:
-          node-version: 22
+          cache: true
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          global-json-file: global.json
           cache: true
           cache-dependency-path: "**/packages.lock.json"
-      - name: Install packages
-        run: pnpm install
       - name: Materialize Signing Key
         id: write_sign_key_file
         uses: timheuer/base64-to-file@v1

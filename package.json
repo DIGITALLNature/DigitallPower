@@ -1,81 +1,36 @@
 {
-    "devDependencies": {
-        "@commitlint/cli": "^21.2.3",
-        "@commitlint/config-conventional": "^21.2.3",
-        "@droidsolutions-oss/semantic-release-nuget": "^2.1.0",
-        "@droidsolutions-oss/semantic-release-update-file": "^1.4.0",
-        "@fission-ai/openspec": "^1.14.1",
-        "@semantic-release/changelog": "github:semantic-release/changelog",
-        "@semantic-release/git": "github:semantic-release/git",
-        "husky": "^9.1.7",
-        "semantic-release": "^25.0.9",
-        "typescript": "7.0.2"
+  "type": "module",
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@droidsolutions-oss/semantic-release-nuget": "^2.1.1",
+    "@droidsolutions-oss/semantic-release-update-file": "^2.0.0",
+    "@fission-ai/openspec": "^1.15.0",
+    "@semantic-release/changelog": "github:semantic-release/changelog",
+    "@semantic-release/git": "github:semantic-release/git",
+    "husky": "^9.1.7",
+    "semantic-release": "^25.0.9",
+    "typescript": "7.0.2"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "openspec:update": "pnpm exec openspec update && node scripts/normalize-openspec-commands.mjs",
+    "test:tsl-jest": "pnpm --dir tests/dgt.power.codegeneration.tests/Fixtures/TslJest test"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24",
+      "onFail": "download"
     },
-    "release": {
-        "branches": [
-            "main",
-            {
-                "name": "beta",
-                "prerelease": true
-            }
-        ],
-        "plugins": [
-            "@semantic-release/commit-analyzer",
-            "@semantic-release/release-notes-generator",
-            "@semantic-release/changelog",
-            [
-                "@droidsolutions-oss/semantic-release-update-file",
-                {
-                    "files": [
-                        {
-                            "path": [
-                                "Directory.Build.props"
-                            ],
-                            "type": "xml",
-                            "replacements": [
-                                {
-                                    "key": "Version",
-                                    "value": "${nextRelease.version}"
-                                },
-                                {
-                                    "key": "InformationalVersion",
-                                    "value": "${nextRelease.version}"
-                                },
-                                {
-                                    "key": "RepositoryCommit",
-                                    "value": "${nextRelease.gitHead}"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ],
-            "@droidsolutions-oss/semantic-release-nuget",
-            [
-                "@semantic-release/git",
-                {
-                    "assets": [
-                        "CHANGELOG.md",
-                        "Directory.Build.props"
-                    ],
-                    "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-                }
-            ],
-            "@semantic-release/github"
-        ],
-        "includeSymbols": true,
-        "projectPath": "src/dgt.power/dgt.power.csproj",
-        "npmPublish": false,
-        "usePackageVersion": true
-    },
-    "scripts": {
-        "prepare": "husky install",
-        "openspec:update": "pnpm exec openspec update && node scripts/normalize-openspec-commands.mjs",
-        "test:tsl-jest": "pnpm --dir tests/dgt.power.codegeneration.tests/Fixtures/TslJest test"
-    },
-    "packageManager": "pnpm@11.15.1+sha512.81350b07e53c9538a02f1f2303b4290fa2d7be04e56e2a970c4cc4b417dc761de196edabd49d55c7dc9580db81007c44143e4e3d7e462b3000d23c255122d065",
-    "dependencies": {
-        "@odata/parser": "^0.2.14",
-        "xrm-mock": "^3.6.2"
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.15.0",
+      "onFail": "error"
     }
+  },
+  "dependencies": {
+    "@odata/parser": "^0.2.14",
+    "xrm-mock": "^3.6.2"
+  }
 }
