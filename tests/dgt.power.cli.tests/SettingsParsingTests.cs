@@ -9,8 +9,6 @@ using dgt.power.Commands.Complete;
 using dgt.power.connection.Commands;
 using dgt.power.duplicaterules.Commands;
 using dgt.power.documenttemplates.Commands;
-using dgt.power.export.Base;
-using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
 using dgt.power.maintenance.Logic;
 using dgt.power.maintenance.Model.Settings;
@@ -156,45 +154,6 @@ public class SettingsParsingTests
         var settings = (AnalyzeVerb)result.Settings!;
 
         await Assert.That(settings.Config).IsEqualTo("config.json");
-    }
-
-    [Test]
-    public async Task ExportVerb_ParsesOptions()
-    {
-        var result = Parse<ExportVerb>("--filedir", "c:/TargetDir", "--filename", "out.json", "--inline", "data");
-
-        var settings = (ExportVerb)result.Settings!;
-
-        await Assert.That(settings.FileDir).IsEqualTo("c:/TargetDir");
-        await Assert.That(settings.FileName).IsEqualTo("out.json");
-        await Assert.That(settings.InlineData).IsEqualTo("data");
-    }
-
-    [Test]
-    public async Task ExportVerb_DefaultFileDir_IsCurrentDirectory()
-    {
-        var result = Parse<ExportVerb>();
-
-        var settings = (ExportVerb)result.Settings!;
-
-        await Assert.That(settings.FileDir).IsEqualTo(".");
-    }
-
-    [Test]
-    public async Task ImportVerb_ParsesOptions()
-    {
-        var result = Parse<ImportVerb>(
-            "--filedir", "c:/TargetDir",
-            "--filename", "in.json",
-            "--inline", "data",
-            "--assignee", "user@contoso.com");
-
-        var settings = (ImportVerb)result.Settings!;
-
-        await Assert.That(settings.FileDir).IsEqualTo("c:/TargetDir");
-        await Assert.That(settings.FileName).IsEqualTo("in.json");
-        await Assert.That(settings.InlineData).IsEqualTo("data");
-        await Assert.That(settings.Assignee).IsEqualTo("user@contoso.com");
     }
 
     [Test]

@@ -40,8 +40,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Command Reference](#-command-reference)
   - [connection](#connection--authentication--environments)
     - [Authentication types](#authentication-types)
-  - [export](#export--export-dataverse-artifacts)
-  - [import](#import--import-dataverse-artifacts)
+  - [Retired legacy transfers](#retired-legacy-transfers)
   - [teamtemplates](#teamtemplates--team-template-transfer)
   - [analyze](#analyze--solution-analysis)
   - [solution](#solution--solution-scoped-operations)
@@ -73,9 +72,8 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | Area | What it does |
 |------|--------------|
 | **Connections** | Manage typed Dataverse connections (interactive, device-code, client-secret, certificate, Azure DevOps federation) and check authentication status |
-| **Export** | Extract configuration data (queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
-| **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
 | **Team templates** | Transfer team templates with a versioned file, GUID identity, preflight validation, and explicit table-scoped cleanup |
+| **Document templates** | Transfer active Word and Excel templates as portable, versioned packages |
 | **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
 | **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, filter PowerFx plugin steps, and more |
@@ -111,8 +109,8 @@ dgtp connection select dev
 # 2. Verify the connection by listing connections
 dgtp connection list
 
-# 3. Export configuration data from the environment
-dgtp export queues --filedir ./out/queues
+# 3. Export team templates from the environment
+dgtp teamtemplates export ./teamtemplates.json
 
 # 4. Generate early-bound C# classes
 dgtp codegeneration ./generated -c ./genconfig.json
@@ -185,9 +183,9 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `teamtemplates` `maintenance` `process` `duplicaterules` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
-| `dgtp export <TAB>` | `bulkdeletes` `queues` … |
-| `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
+| `dgtp <TAB>` | `teamtemplates` `documenttemplates` `maintenance` `process` `duplicaterules` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp documenttemplates <TAB>` | `import` `export` |
+| `dgtp documenttemplates export --<TAB>` | `--entity` `--type` `--overwrite` `--no-telemetry` |
 | `dgtp teamtemplates <TAB>` | `import` `export` |
 | `dgtp teamtemplates import --<TAB>` | `--dry-run` `--cleanup` `--cleanup-table` |
 | `dgtp teamtemplates export --<TAB>` | `--dry-run` `--overwrite` `--table` |
@@ -506,25 +504,28 @@ type. Prefer the environment variable for secret-bearing strings to avoid exposi
 command-line arguments or shell history. `connection status` skips their authentication check;
 successful status does not verify their credentials.
 
-### `export` — Export Dataverse artifacts
+### Retired legacy transfers
 
-Exports configuration data from the currently selected environment into JSON files.
+The top-level `import` and `export` branches are removed without compatibility aliases.
+The following transfer pairs and their legacy JSON contracts are unsupported:
 
-| Command | Description |
-|---------|-------------|
-| `export bulkdeletes` | Bulk delete jobs |
-| `export queues` | Queues |
-| `export calendars` | Calendars |
-| `export slaconfigs` | SLAs |
-| `export routingruleconfigs` | Routing rules |
-| `export userroles` | User → security role assignments |
-| `export outlooktemplates` | Outlook templates |
+| Removed import path | Removed export path | Unsupported legacy file | Replacement |
+|---|---|---|---|
+| `import bulkdeletes` | `export bulkdeletes` | `bulkdelete.json` | None |
+| `import queues` | `export queues` | `queue.json` | None |
+| `import calendar` | `export calendars` | `calendar.json` | None |
+| `import slaconfigs` | `export slaconfigs` | `slaconfig.json` | None |
+| `import routingruleconfigs` | `export routingruleconfigs` | `routingruleconfig.json` | None |
+| `import userroles` | `export userroles` | `userrole.json` | None |
+| `import outlooktemplates` | `export outlooktemplates` | `outlooktemplate.json` | None |
 
-All export commands accept `--filedir <path>` to control the output directory.
-
-```bash
-dgtp export bulkdeletes --filedir ./out/bulkdeletes
-```
+No replacement commands or supported configuration migrations are provided for these seven pairs,
+and no exact PAC equivalence is promised. Retirement does not change existing Dataverse jobs,
+queues, calendars, SLAs, routing rules, user-role assignments, or Outlook synchronization filters.
+Scheduled bulk-delete jobs are not cancelled, disabled, or deleted.
+The independent `teamtemplates import/export` and `documenttemplates import/export` commands remain
+supported. Secure plugin-step configuration uses `plugin step config set`, not `import secureconfigs`.
+See the [3.x migration guide](docs/migrations/2.x-to-3.x.md#retired-legacy-transfers).
 
 ### `solution` — solution-scoped operations
 
@@ -629,24 +630,6 @@ dgtp solution copy-components target_solution --source dev_solution --raw
 
 # Also copy model-driven apps, removing the subcomponents Dataverse adds on its own
 dgtp solution copy-components target_solution --source dev_solution --apps strip
-```
-
-### `import` — Import Dataverse artifacts
-
-Counterpart to `export`. Reads the previously exported JSON files and applies them to the currently selected environment.
-
-| Command | Description |
-|---------|-------------|
-| `import outlooktemplates` | Outlook templates |
-| `import userroles` | User → security role assignments |
-| `import queues` | Queues |
-| `import bulkdeletes` | Bulk delete jobs |
-| `import calendar` | Calendars |
-| `import slaconfigs` | SLAs |
-| `import routingruleconfigs` | Routing rules |
-
-```bash
-dgtp import outlooktemplates --filedir ./out/outlooktemplates
 ```
 
 ### `teamtemplates` — Team template transfer
@@ -1667,10 +1650,10 @@ steps:
       serviceConnection: 'MyPowerPlatformConnection'
       url: 'https://contoso.crm4.dynamics.com'   # optional; falls back to $(BuildTools.EnvironmentUrl) / $(PowerPlatformUrl) if omitted
 
-  - script: dgtp export bulkdeletes --filedir ./output
+  - script: dgtp teamtemplates export ./teamtemplates.json
     env:
       DGTP_CONNECTION_STRING: $(PowerPlatformConnectionString)
-    displayName: 'Export bulk-delete jobs using the client-secret service connection'
+    displayName: 'Export team templates using the client-secret service connection'
 ```
 
 This flow depends on the service connection actually having a client secret to extract — which is
@@ -1763,42 +1746,35 @@ runtime, the same way you'd reference it in any built-in task's `azureSubscripti
 DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up dependency injection (`Microsoft.Extensions.DependencyInjection`), configuration (`Microsoft.Extensions.Configuration`) and the [Spectre.Console.Cli](https://spectreconsole.net/cli/) command framework, and then registers commands contributed by independent feature modules.
 
 ```
-                ┌──────────────────────────────────────────┐
-                │              dgt.power (dgtp)            │
-                │  Program.cs · DI container · CLI host    │
-                └────────────────┬─────────────────────────┘
-                                 │ references
-       ┌─────────────────────────┼─────────────────────────────┐
-       │            │            │            │                │
-┌──────┴─────┐ ┌────┴─────┐ ┌────┴─────┐ ┌────┴──────┐  ┌──────┴───────┐
-│ connection │ │  export  │ │  import  │ │  analyze  │  │ maintenance  │
-└────────────┘ └──────────┘ └──────────┘ └───────────┘  └──────────────┘
-       │            │            │            │                │
-       └──────┬─────┴────────────┴────────────┴────────────────┘
-              │
-       ┌──────────┴───────────────┬──────────────────────────────┐
-       │ codegeneration / process │ plugin       │ webresource   │
-       └──────────────────────────┴──────────────┴───────────────┘
-                               │
-                               ▼
-                  ┌──────────────────────────┐
-                  │     dgt.power.common     │
-                  │  (Dataverse connection,  │
-                  │   file access, command   │
-                  │   lifecycle, connection  │
-                  │   management)            │
-                  └──────────────────────────┘
-                               │
-                               ▼
-                ┌──────────────────────────────────┐
-                │  Microsoft.PowerPlatform         │
-                │  .Dataverse.Client / Xrm SDK     │
-                └──────────────────────────────────┘
+                +------------------------------------------+
+                |             dgt.power (dgtp)             |
+                |     Program.cs / DI / CommandTree.cs     |
+                +--------------------+---------------------+
+                                     | references
+                +--------------------v---------------------+
+                |              Feature modules            |
+                | connection / analyzer / maintenance     |
+                | codegeneration / plugin / webresource   |
+                | process / solution / telemetry          |
+                | teamtemplates / documenttemplates       |
+                | duplicaterules                          |
+                +--------------------+---------------------+
+                                     |
+                +--------------------v---------------------+
+                |             dgt.power.common            |
+                | connections / file access / lifecycle   |
+                | ownership / telemetry / shared queries  |
+                +--------------------+---------------------+
+                                     |
+                +--------------------v---------------------+
+                | Microsoft.PowerPlatform.Dataverse.Client|
+                |                Xrm SDK                  |
+                +------------------------------------------+
 ```
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `process`, `teamtemplates`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The process module uses shared ownership and caller-service contracts without depending on maintenance internals.
+- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `documenttemplates`, `duplicaterules`, `maintenance`, `plugin`, `process`, `solution`, `telemetry`, `teamtemplates`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The legacy verb-oriented import/export projects and their exclusive DTOs are removed; retained template modules reference shared infrastructure directly, not legacy transfer modules. The process module uses shared ownership and caller-service contracts without depending on maintenance internals.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers (including the public `FileAccess/AtomicFileWriter` helper for shared atomic file writes), shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules. The process module now delegates its atomic writes to this shared helper without changing process command behavior.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
@@ -1842,14 +1818,14 @@ DigitallPower/
 │       ├── dgt.power.analyzer/        # `analyze` commands
 │       ├── dgt.power.codegeneration/  # `codegeneration` / `cg` command
 │       ├── dgt.power.connection/      # `connection` commands (auth management)
-│       ├── dgt.power.export/          # `export` commands
-│       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.plugin/          # `plugin` commands
 │       ├── dgt.power.documenttemplates/ # Portable Word/Excel import/export
 │       ├── dgt.power.process/         # `process init/apply` commands
 │       ├── dgt.power.duplicaterules/  # `duplicaterules init/apply` commands
 │       ├── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
+│       ├── dgt.power.telemetry/       # `telemetry` commands
+│       ├── dgt.power.teamtemplates/   # Versioned team template transfer
 │       └── dgt.power.webresource/     # `webresource push` command
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
@@ -1858,7 +1834,7 @@ DigitallPower/
 ├── scripts/                      # Repository maintenance scripts
 ├── Directory.Build.props         # Common MSBuild properties
 ├── global.json                   # Pinned .NET SDK
-└── DigitallPower.sln             # Solution file
+└── DigitallPower.slnx            # Solution file
 ```
 
 ## 🛠️ Build & Test
@@ -1988,7 +1964,7 @@ dgtp telemetry disable   # Persistently disable telemetry
 **Per invocation:**
 
 ```bash
-dgtp export --no-telemetry
+dgtp teamtemplates export ./teamtemplates.json --no-telemetry
 ```
 
 **Environment variable (takes precedence over the saved preference):**

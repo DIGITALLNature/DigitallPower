@@ -15,13 +15,13 @@ All resource dispositions are approved. No additional resource migration is requ
 
 ## 2. Approved transfer retirement
 
-- [ ] 2.1 Verify both completed template migrations before removing legacy dependencies; verify resource-oriented paths and behavior with focused tests.
-- [ ] 2.2 Remove all seven approved resource pairs and implementations, coordinating bulk-delete shared artifacts with maintenance retirement; verify all retired paths fail without a Dataverse operation, help/completion omit them, and migrated resource commands remain available.
-- [ ] 2.3 Document every retired path and unsupported legacy JSON contract in README and `docs/migrations/2.x-to-3.x.md`; verify all seven pairs have explicit no-replacement guidance, existing Dataverse data/jobs remain unchanged, and no exact PAC equivalence is promised.
+- [x] 2.1 Verify both completed template migrations before removing legacy dependencies; verify resource-oriented paths and behavior with focused tests.
+- [x] 2.2 Remove all seven approved resource pairs and implementations, coordinating bulk-delete shared artifacts with maintenance retirement; verify all retired paths fail without a Dataverse operation, help/completion omit them, and migrated resource commands remain available.
+- [x] 2.3 Document every retired path and unsupported legacy JSON contract in README and `docs/migrations/2.x-to-3.x.md`; verify all seven pairs have explicit no-replacement guidance, existing Dataverse data/jobs remain unchanged, and no exact PAC equivalence is promised.
 
 ## 3. Container removal and integration
 
-- [ ] 3.1 Remove top-level import/export branches, legacy projects, DI, and proven orphaned base helpers/DTOs/schemas/tests; verify migrated modules no longer depend on them.
-- [ ] 3.2 Update CLI smoke/settings/completion and old-branch rejection tests while preserving `import secureconfigs` rejection and `plugin step config set`; verify focused CLI tests pass.
-- [ ] 3.3 Update README project structure and dependency documentation; verify documentation reflects the final graph and all affected lock files are synchronized when dependencies change.
-- [ ] 3.4 Run affected resource/CLI tests, `dotnet build`, and `pnpm exec openspec validate --all`; verify success and merge the complete secure-config requirement plus transfer delta without losing maintenance changes before archive.
+- [x] 3.1 Remove top-level import/export branches, legacy projects, DI, and proven orphaned base helpers/DTOs/schemas/tests; verify migrated modules no longer depend on them.
+- [x] 3.2 Update CLI smoke/settings/completion and old-branch rejection tests while preserving `import secureconfigs` rejection and `plugin step config set`; verify focused CLI tests pass.
+- [x] 3.3 Update README project structure and dependency documentation; verify documentation reflects the final graph and all affected lock files are synchronized when dependencies change.
+- [x] 3.4 Run affected resource/CLI tests, `dotnet build`, and `pnpm exec openspec validate --all`; verify success and merge the complete secure-config requirement plus transfer delta without losing maintenance changes before archive.
