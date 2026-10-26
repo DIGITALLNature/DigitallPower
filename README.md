@@ -1820,7 +1820,7 @@ DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `documenttemplates`, `duplicaterules`, `plugin`, `process`, `solution`, `telemetry`, `teamtemplates`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host. The legacy import/export and maintenance projects and their exclusive contracts are removed; retained template and process modules reference shared infrastructure directly, not legacy modules.
+- **Cohesive module boundaries.** Each resource area (`documenttemplates`, `duplicaterules`, `plugin`, `process`, `teamtemplates`, `webresource`) has an independent project under `src/modules/`. `analyzer` and `codegeneration` are focused capabilities; `connection` and `telemetry` are infrastructure/operator capabilities. Modules expose `Spectre.Console.Cli` command classes that are registered by the host. The legacy import/export and maintenance projects and their exclusive contracts are removed; retained template and process modules reference shared infrastructure directly, not legacy modules.
 - **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers (including the public `FileAccess/AtomicFileWriter` helper for shared atomic file writes), shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules. The process module now delegates its atomic writes to this shared helper without changing process command behavior.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
@@ -1859,7 +1859,6 @@ DigitallPower/
 ├── src/
 │   ├── dgt.power/                # CLI host project (produces the `dgtp` tool)
 │   ├── dgt.power.common/         # Shared infrastructure (typed connections, IO, command lifecycle)
-│   ├── models/                   # Shared DTOs / data contracts
 │   └── modules/
 │       ├── dgt.power.analyzer/        # `analyze` commands
 │       ├── dgt.power.codegeneration/  # `codegeneration` / `cg` command
