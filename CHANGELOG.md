@@ -1,3 +1,15 @@
+# [3.0.0-beta.19](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2026-10-26)
+
+
+### Bug Fixes
+
+* **common:** restore all unicode space separators in json output ([e884585](https://github.com/DIGITALLNature/DigitallPower/commit/e884585058cb5da0e0f3d41ceb0a55aaa7bd854f))
+
+
+### Features
+
+* **common:** write generated json files with readable unicode ([fb283e5](https://github.com/DIGITALLNature/DigitallPower/commit/fb283e5558b3e48f243b01904339cffaab794824))
+
 # [3.0.0-beta.18](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2026-10-26)
 
 
