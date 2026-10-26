@@ -348,7 +348,7 @@ competing deployments; failed batches cannot produce success-shaped results.
   no plugins is a pipeline misconfiguration to narrow, and an opt-out can be added later without
   breaking anyone, while loosening or tightening a shipped default cannot. `--allow-empty` was
   considered and dropped for lack of a convincing use case. `TargetReadResult.Skipped`
-  is kept for a future global `--verbose` (see `todo.md`).
+  is kept for a future global `--verbose` (see #218).
 - `BatchPreflight` rejects the whole batch when two targets declare the same assembly name,
   package name, data provider or Custom API (case-insensitive). No heuristics: a package and its
   constituent DLL conflict like any other duplicate and the user narrows the glob.

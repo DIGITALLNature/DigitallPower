@@ -1,5 +1,5 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+// SPDX-FileCopyrightText: DIGITALL Nature
+// SPDX-License-Identifier: MS-RL
 
 using System.Buffers;
 using System.Text;
@@ -13,7 +13,7 @@ namespace dgt.power.codegeneration.Base;
 /// </summary>
 public static class CodeGenerationConfigLoader
 {
-    private const string MigrationGuide = "docs/migrations/2.x-to-3.x.md";
+    private const string MigrationGuide = "docs/guides/migrations/2.x-to-3.x.md";
     private static readonly string[] s_removedSettings =
     [
         "TypescriptGeneratorVersion",

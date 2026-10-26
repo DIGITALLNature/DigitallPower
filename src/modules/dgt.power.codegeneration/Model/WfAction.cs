@@ -1,6 +1,6 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
+﻿// SPDX-FileCopyrightText: DIGITALL Nature
 #pragma warning disable CA1002 // InParameters and OutParameters are mutated via .Add() after construction
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+// SPDX-License-Identifier: MS-RL
 
 namespace dgt.power.codegeneration.Model;
 

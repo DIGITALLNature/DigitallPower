@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: DIGITALL Nature
+// SPDX-License-Identifier: MS-RL
+
 global using System;
 global using System.Collections.Generic;
 global using System.IO;

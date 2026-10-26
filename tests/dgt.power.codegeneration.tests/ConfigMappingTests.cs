@@ -1,5 +1,5 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+// SPDX-FileCopyrightText: DIGITALL Nature
+// SPDX-License-Identifier: MS-RL
 
 using System.Text.Json;
 using dgt.power.codegeneration.Base;
@@ -167,7 +167,7 @@ public class ConfigMappingTests
 
         await Assert.That(exception).IsTypeOf<InvalidOperationException>();
         await Assert.That(exception.Message).Contains(expectedMessage);
-        await Assert.That(exception.Message).Contains("docs/migrations/2.x-to-3.x.md");
+        await Assert.That(exception.Message).Contains("docs/guides/migrations/2.x-to-3.x.md");
     }
 
     private static string WriteConfigFile(string fileName, string json)

@@ -158,7 +158,7 @@ dotnet_diagnostic.CA1308.severity = none
 dotnet_diagnostic.CA2007.severity = none
 
 # License header
-file_header_template = Copyright (c) DIGITALL Nature. All rights reserved\nDIGITALL Nature licenses this file to you under the Microsoft Public License.
+file_header_template = SPDX-FileCopyrightText: DIGITALL Nature\nSPDX-License-Identifier: MS-RL
 
 # C++ Files
 [*.{cpp,h,in}]

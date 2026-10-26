@@ -1,4 +1,4 @@
-Microsoft Public License (Ms-PL)
+Microsoft Reciprocal License (Ms-RL)
 
 This license governs use of the accompanying software. If you use the
 software, you accept this license. If you do not accept the license, do not
@@ -27,27 +27,33 @@ directly on its contribution.
      of the contribution in the software.
 
 3.  Conditions and Limitations
-     (A) No Trademark License- This license does not grant you rights to use
+     (A) Reciprocal Grants- For any file you distribute that contains code
+     from the software (in source code or binary format), you must provide
+     recipients the source code to that file along with a copy of this
+     license, which license will govern that file. You may license other
+     files that are entirely your own work and do not contain code from the
+     software under any terms you choose.
+
+     (B) No Trademark License- This license does not grant you rights to use
      any contributors' name, logo, or trademarks.
 
-     (B) If you bring a patent claim against any contributor over patents that
+     (C) If you bring a patent claim against any contributor over patents that
      you claim are infringed by the software, your patent license from such
      contributor to the software ends automatically.
 
-     (C) If you distribute any portion of the software, you must retain all
+     (D) If you distribute any portion of the software, you must retain all
      copyright, patent, trademark, and attribution notices that are present in
      the software.
 
-     (D) If you distribute any portion of the software in source code form,
+     (E) If you distribute any portion of the software in source code form,
      you may do so only under this license by including a complete copy of
      this license with your distribution. If you distribute any portion of the
      software in compiled or object code form, you may only do so under a
      license that complies with this license.
 
-     (E) The software is licensed "as-is." You bear the risk of using it. The
+     (F) The software is licensed "as-is." You bear the risk of using it. The
      contributors give no express warranties, guarantees, or conditions. You
      may have additional consumer rights under your local laws which this
      license cannot change. To the extent permitted under your local laws, the
      contributors exclude the implied warranties of merchantability, fitness
      for a particular purpose and non-infringement.
-    

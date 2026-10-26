@@ -1,5 +1,5 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+// SPDX-FileCopyrightText: DIGITALL Nature
+// SPDX-License-Identifier: MS-RL
 
 using dgt.power.common;
 using Spectre.Console.Cli;

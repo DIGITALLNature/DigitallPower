@@ -1,4 +1,5 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
+// SPDX-FileCopyrightText: DIGITALL Nature
+// SPDX-License-Identifier: MS-RL
 
 global using TUnit.Assertions;
 global using TUnit.Assertions.Extensions;

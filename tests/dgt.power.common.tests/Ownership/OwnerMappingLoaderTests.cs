@@ -153,11 +153,11 @@ public class OwnerMappingLoaderTests
     }
 
     [Test]
-    public async Task ReadmeOwnerMappingExamples_AreAcceptedByTheLoader()
+    public async Task OwnerMappingReferenceExamples_AreAcceptedByTheLoader()
     {
-        var readmePath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../README.md"));
-        var readme = await File.ReadAllTextAsync(readmePath);
-        var section = readme.Split("### Portable owner mappings", 2)[1].Split("## 📚 Command Reference", 2)[0];
+        var docPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../docs/reference/owner-mappings.md"));
+        var doc = await File.ReadAllTextAsync(docPath);
+        var section = doc.Split("# Portable owner mappings", 2)[1];
         var examples = Regex.Matches(section, "```json\\s*(.*?)\\s*```", RegexOptions.Singleline);
 
         await Assert.That(examples.Count).IsEqualTo(3);
