@@ -18,8 +18,9 @@ public class DocumentPackageTests
         await stream.WriteAsync(original);
         using (var package = SpreadsheetDocument.Open(stream, true))
         {
-            var workbook = package.WorkbookPart!;
-            var sheets = workbook.Workbook.Sheets!;
+            var workbook = package.WorkbookPart ?? throw new InvalidDataException("Fixture has no workbook part.");
+            var definition = workbook.Workbook ?? throw new InvalidDataException("Fixture has no workbook.");
+            var sheets = definition.Sheets ?? throw new InvalidDataException("Fixture has no sheets.");
             if (chartsOnly)
             {
                 sheets.RemoveAllChildren();
@@ -27,10 +28,13 @@ public class DocumentPackageTests
                     workbook.DeletePart(worksheet);
             }
             var chart = workbook.AddNewPart<ChartsheetPart>();
-            chart.Chartsheet = new Chartsheet(new SheetViews(new SheetView { WorkbookViewId = 0U }));
+            var views = new SheetViews();
+            views.AppendChild(new SheetView { WorkbookViewId = 0U });
+            chart.Chartsheet = new Chartsheet();
+            chart.Chartsheet.AppendChild(views);
             var nextId = sheets.Elements<Sheet>().Select(sheet => sheet.SheetId!.Value).DefaultIfEmpty(0U).Max() + 1;
-            sheets.Append(new Sheet { Name = "Chart", SheetId = nextId, Id = workbook.GetIdOfPart(chart) });
-            workbook.Workbook.Save();
+            sheets.AppendChild(new Sheet { Name = "Chart", SheetId = nextId, Id = workbook.GetIdOfPart(chart) });
+            definition.Save();
         }
         DocumentPackage.Validate(stream.ToArray(), "excel");
     }
