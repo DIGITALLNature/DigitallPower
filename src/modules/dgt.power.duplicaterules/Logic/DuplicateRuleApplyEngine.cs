@@ -20,7 +20,7 @@ public sealed class DuplicateRuleApplyEngine(
     IAnsiConsole console,
     TimeProvider timeProvider)
 {
-    private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan s_pollInterval = TimeSpan.FromSeconds(2);
 
     private const int JobCompleted = 3;
     private const int JobFailed = 31;
@@ -307,7 +307,7 @@ public sealed class DuplicateRuleApplyEngine(
                 break;
             }
 
-            await Task.Delay(remaining < PollInterval ? remaining : PollInterval, timeProvider, cancellationToken);
+            await Task.Delay(remaining < s_pollInterval ? remaining : s_pollInterval, timeProvider, cancellationToken);
             Dictionary<Guid, Entity> rules;
             Dictionary<Guid, Entity> jobs;
             try
