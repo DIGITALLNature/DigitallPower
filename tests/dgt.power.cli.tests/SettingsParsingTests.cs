@@ -218,6 +218,23 @@ public class SettingsParsingTests
     }
 
     [Test]
+    [Arguments(false, false)]
+    [Arguments(false, true)]
+    [Arguments(true, false)]
+    [Arguments(true, true)]
+    public async Task CopyComponentsSettings_RawAndDryRun_AreIndependent(bool raw, bool dryRun)
+    {
+        var arguments = new List<string> { "target", "--source", "source" };
+        if (raw) arguments.Add("--raw");
+        if (dryRun) arguments.Add("--dry-run");
+        var result = Parse<CopyComponentsSettings>(arguments.ToArray());
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        var settings = (CopyComponentsSettings)result.Settings!;
+        await Assert.That(settings.Raw).IsEqualTo(raw);
+        await Assert.That(settings.DryRun).IsEqualTo(dryRun);
+    }
+
+    [Test]
     public async Task ProcessInitSettings_ParsesPathRepeatedSolutionsAndOptions()
     {
         var directory = Directory.CreateTempSubdirectory();

@@ -12,7 +12,7 @@ Official documentation establishes the intended model:
 - [Managed properties](https://learn.microsoft.com/en-us/power-platform/alm/use-managed-properties): protection takes effect after managed deployment, not as a lock on unmanaged development.
 - [Column managed properties](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/set-managed-properties-for-field): disabling customization affects the whole column and its subordinate customization options.
 
-These documents do not prove the exact update, publication, technical-companion, and export/import behavior for every supported field type. The platform gate below is mandatory.
+These documents describe the intended managed-property model, not a guarantee that every property is immutable. The approved evidence and explicit user acceptance below govern implementation; labels/translations may remain editable.
 
 ## Goals / Non-Goals
 
@@ -76,22 +76,23 @@ Confirm each write by reading the relevant metadata and verifying `IsCustomizabl
 
 An unchanged rerun issues no protection writes. This promise does not change existing membership-add idempotence behavior.
 
-### 5. Mandatory platform evidence before dependent implementation
+### 5. Approved platform evidence and accepted limitations
 
-No live writes have been authorized. Obtain separate consent and an explicitly bounded disposable environment/solution before any write experiment, including publish or managed import. Read-only documentation and test preparation may proceed.
+On 2026-10-26 the user authorized a disposable test solution, publisher, and table in the stored `dupgate` connection, including managed export/import and cleanup. Existing business components were not modified. Formula definitions were created through supported Power Apps editors, not speculative SDK formula payloads.
 
-Demonstrate:
+- Minimal `UpdateAttributeRequest` payloads succeeded for Calculated (`StringAttributeMetadata`), Rollup (`IntegerAttributeMetadata`), and Formula (`DecimalAttributeMetadata`). Payloads contained only metadata ID, logical name, and `IsCustomizable = new BooleanManagedProperty(false)`, with entity name and `MergeLabels = true`. Use corresponding typed metadata for other supported storage types rather than resubmitting retrieved metadata.
+- Per-field read-back confirmed false. Serialized before/after metadata differed only in `IsCustomizable` and the expected server `ModifiedOn` timestamp; formulas and unrelated settings were unchanged. An unchanged rerun issued zero updates.
+- Both unmanaged and managed exports contained protection false for all three fields without publication. After removing only the disposable source solution and table, importing the managed archive in the same environment returned managed fields with protection false and `CanBeChanged = false`. No publish operation is required by this implementation.
+- A label update to the managed calculated field succeeded and read-back confirmed its new label despite `IsCustomizable = false`. The user explicitly accepted editable labels/translations as compatible with protection. Do not promise either a formula-only lock or complete immutability of every column property.
+- This was a same-environment roundtrip, not an independent target-environment test. Original-publisher servicing was prepared but not executed. Universal cross-environment restrictions and servicing behavior are not verified; disclose these limits rather than reporting those tests as passed.
+- Complete-table retrieval returned rollup date/state companions with `SourceType = 0`, `AttributeOf = null`, and `IsLogical = false`: classify them as non-calculation fields, not by name suffix. The currency base field had `MoneyAttributeMetadata.IsBaseCurrency = true`, while the business money field had false. Use that explicit flag for basis-currency exceptions. Retain the exact historic `bpf_duration` exception as compatibility policy, not a newly verified live BPF test.
 
-1. For unmanaged Calculated, Rollup, and Formula columns: a minimal supported update, metadata read-back, preserved formula/unrelated settings, and already-protected behavior.
-2. Whether narrow publication is required for managed export to carry protection; export and import into an approved disposable target, verify the protected customization behavior and original-publisher servicing behavior without promising universal upgrade compatibility.
-3. Field eligibility and technical companions on complete tables, including basis-currency, rollup companions, and the historic `bpf_duration` exception; establish exact exclusions without unsupported name matching.
-
-Capture concise durable conclusions and references in this design and executable fixtures/tests, not a standalone session log. If a type is unsupported, whole-column semantics differ, the intended scope cannot be established, or required writes exceed the approved plan, pause for design review. Do not silently reduce the type set, downgrade an error to a warning, or add broad publication.
+The user explicitly approved these conclusions and limitations and released implementation gates on 2026-10-26. No further platform experiments are required. Further live writes beyond disposable cleanup require separate approval. Accurate fixtures must model these observations without claiming unperformed platform tests.
 
 ## Risks / Trade-offs
 
 - Shared metadata affects other solutions -> explain scope and consequences before execution; never describe protection as target-local.
-- Whole-column restrictions reduce downstream flexibility -> make this deliberate product policy, document same-publisher servicing and managed-only applicability, preserve `--raw`.
+- Column-level managed-property protection affects downstream flexibility -> disclose editable labels/translations, unverified servicing and cross-environment limits, and managed-only intent; preserve `--raw`.
 - Metadata can change after preflight -> surface runtime failures, read back each change, make no atomicity or permission-completeness claim.
 - Copy succeeds but protection partly fails -> fail the command with separate confirmed/unconfirmed outcomes; do not claim rollback.
 - Complete tables add more candidates than explicit membership rows -> test complete-table expansion, standalone attributes, duplicates, and absence of unrelated updates.
@@ -99,7 +100,7 @@ Capture concise durable conclusions and references in this design and executable
 
 ## Migration Plan
 
-Implement within `dgt.power.solution` only after the platform gate passes. Preserve existing CLI registration and app-handling tests; add protection and failure coverage. Update README, option help, and `docs/migrations/2.x-to-3.x.md` before release. No file format or JSON schema change is planned.
+Implement within `dgt.power.solution` using the approved evidence and accepted limits above. Preserve existing CLI registration and app-handling tests; add protection and failure coverage. Update README, option help, and `docs/migrations/2.x-to-3.x.md` before release. No file format or JSON schema change is planned.
 
 Existing pipelines using best-practice mode will acquire a metadata mutation; users must assess this policy before upgrading. `--raw` bypasses it but also changes selection as it does today. Removing or disabling the new code later does not restore modified properties. Any restoration requires a separately assessed metadata change by the appropriate owner, not an automatic rollback.
 

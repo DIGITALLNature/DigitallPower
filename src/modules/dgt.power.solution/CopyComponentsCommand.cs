@@ -65,8 +65,12 @@ public class CopyComponentsCommand(
         var bestPractices = !settings.Raw;
         var context = await CopyComponentsContext.CreateAsync(orgService, sourceSolutions.Select(static solution => solution.Id).ToArray(), cancellationToken);
         var decisions = ApplyAppHandling(await context.BuildDecisionsAsync(orgService, bestPractices, cancellationToken), settings.Apps);
+        var protection = bestPractices
+            ? await FieldProtectionPlan.PrepareAsync(orgService, decisions, cancellationToken)
+            : null;
 
         RenderPlan(decisions, bestPractices);
+        protection?.Render(Console);
 
         if (settings.DryRun)
         {
@@ -74,7 +78,26 @@ public class CopyComponentsCommand(
             return true;
         }
 
-        await ExecuteAsync(orgService, target, decisions, settings.Apps == AppHandling.Strip, cancellationToken);
+        var progress = new CopyExecutionProgress();
+        var completed = false;
+        try
+        {
+            await ExecuteAsync(orgService, target, decisions, settings.Apps == AppHandling.Strip, progress, cancellationToken);
+            progress.CopyCompleted = true;
+            if (protection is not null)
+            {
+                await protection.ExecuteAsync(orgService, progress, Console, cancellationToken);
+            }
+            cancellationToken.ThrowIfCancellationRequested();
+            completed = true;
+        }
+        finally
+        {
+            if (!completed)
+            {
+                progress.ReportFailure(Console, cancellationToken.IsCancellationRequested);
+            }
+        }
 
         return true;
     }
@@ -84,6 +107,7 @@ public class CopyComponentsCommand(
         Solution target,
         IReadOnlyList<ComponentCopyDecision> decisions,
         bool stripAppSubcomponents,
+        CopyExecutionProgress progress,
         CancellationToken cancellationToken)
     {
         var targetUniqueName = target.UniqueName!;
@@ -134,6 +158,8 @@ public class CopyComponentsCommand(
                 }
 
                 // DoNotIncludeSubcomponents is only accepted by Dataverse for Entity roots - any other componenttype is rejected.
+                cancellationToken.ThrowIfCancellationRequested();
+                progress.PendingEffect = $"Copy failed or unconfirmed: {decision.ComponentTypeName} {decision.ObjectId}";
                 await orgService.ExecuteAsync(new AddSolutionComponentRequest
                 {
                     ComponentId = decision.ObjectId,
@@ -142,6 +168,8 @@ public class CopyComponentsCommand(
                     AddRequiredComponents = false,
                     DoNotIncludeSubcomponents = decision.DoNotIncludeSubcomponents
                 }, cancellationToken);
+                progress.CopiedComponents++;
+                progress.PendingEffect = null;
 
                 if (index != lastAppPhaseIndex || membershipBeforeAppPhase == null)
                 {
@@ -164,6 +192,8 @@ public class CopyComponentsCommand(
                     status.Status($"Removing subcomponents added together with the apps... ({DescribeKey(key)})");
                     try
                     {
+                        cancellationToken.ThrowIfCancellationRequested();
+                        progress.PendingEffect = $"App cleanup failed or unconfirmed: {DescribeKey(key)}";
                         await orgService.ExecuteAsync(new RemoveSolutionComponentRequest
                         {
                             ComponentId = key.ObjectId,
@@ -171,6 +201,8 @@ public class CopyComponentsCommand(
                             SolutionUniqueName = targetUniqueName
                         }, cancellationToken);
                         removedSubcomponents.Add(key);
+                        progress.RemovedComponents++;
+                        progress.PendingEffect = null;
                     }
                     catch (FaultException<OrganizationServiceFault>)
                     {
@@ -182,6 +214,7 @@ public class CopyComponentsCommand(
                         }
 
                         alreadyGoneSubcomponents.Add(key);
+                        progress.PendingEffect = null;
                     }
                 }
 

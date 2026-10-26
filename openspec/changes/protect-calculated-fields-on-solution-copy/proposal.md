@@ -11,7 +11,7 @@ Calculated, rollup, and Power Fx formula columns contain application logic that 
 - `--raw` bypasses protection-specific reads and writes; `--dry-run` prepares and reports the same protection plan without mutations.
 - Prepare all metadata before any copy/protection write. Already protected columns require no update; unknown or unchangeable protection requirements fail preflight.
 - Run protection only after all copy/app-cleanup work succeeds; update sequentially, read back each result, and stop on failure with explicit partial-effect reporting and no rollback promise.
-- Require platform evidence for all three types, technical exceptions, minimal updates, and managed export/import behavior before dependent implementation. Live writes require separate approval.
+- Use the approved disposable-platform evidence for all three types, minimal updates, technical exceptions, and managed export/import. The user accepted the same-environment roundtrip and remaining deployment-test limitations on 2026-10-26.
 - Do not retain the standalone maintenance command or scan the whole environment.
 
 ## Capabilities
@@ -26,4 +26,4 @@ None at this stage.
 
 ## Impact
 
-Affects the existing solution module's copy planning/execution, settings descriptions, resource and CLI tests, README, and `docs/migrations/2.x-to-3.x.md`. No new module, dependency, configuration file, or schema is planned. The restriction applies to the whole column after managed deployment, not only its formula; it is not field-level security and does not lock unmanaged development. `retire-legacy-maintenance` remains independent. Product decisions are approved for planning; implementation remains gated on concrete platform evidence.
+Affects the existing solution module's copy planning/execution, settings descriptions, resource and CLI tests, README, and `docs/migrations/2.x-to-3.x.md`. No new module, dependency, configuration file, or schema is planned. Protection means setting and verifying the column's `IsCustomizable.Value` managed property, not a formula-only lock or a guarantee that every column property is immutable. Labels/translations may remain editable. It is not field-level security and does not lock unmanaged development. `retire-legacy-maintenance` remains independent. The user approved implementation with the recorded evidence and limitations on 2026-10-26.

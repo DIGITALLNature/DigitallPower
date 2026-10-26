@@ -8,7 +8,7 @@ Protect calculation-bearing columns intentionally included in a solution copy as
 
 ### Requirement: Best-practice copying protects calculation-bearing columns
 
-In best-practice mode, `solution copy-components` SHALL set eligible unmanaged columns' `IsCustomizable.Value` to false. Eligible calculation types SHALL be Calculated, Rollup, and Power Fx Formula (`SourceType` 1, 2, and 3). Protection SHALL apply to the whole column's customization settings, not only its formula, without changing the calculation definition.
+In best-practice mode, `solution copy-components` SHALL set eligible unmanaged columns' `IsCustomizable.Value` to false. Eligible calculation types SHALL be Calculated, Rollup, and Power Fx Formula (`SourceType` 1, 2, and 3). Protection SHALL mean setting and verifying this column-level managed property without changing the calculation definition. It SHALL NOT promise either a formula-only lock or complete immutability of every column property; labels/translations may remain editable.
 
 #### Scenario: Each supported calculation type is protected
 - **WHEN** a best-practice copy succeeds and includes an eligible unprotected column of any supported type
@@ -18,7 +18,8 @@ In best-practice mode, `solution copy-components` SHALL set eligible unmanaged c
 #### Scenario: Protection changes shared metadata
 - **WHEN** the command presents a protection plan
 - **THEN** it explains that updates affect shared metadata in the current environment, including other solutions containing those columns
-- **AND** the restriction takes effect after managed deployment, not as an unmanaged-development or data-access lock
+- **AND** the managed-property policy is intended for managed deployment, not as an unmanaged-development or data-access lock
+- **AND** editable labels/translations do not invalidate the verified managed-property protection
 
 ### Requirement: Protection follows the final intentional copy scope
 
@@ -133,7 +134,12 @@ Protection SHALL begin only after all copy and app-cleanup operations succeed. P
 
 ### Requirement: Help and migration guidance disclose the policy
 
-CLI help, README, and major-version migration guidance SHALL describe default protection for all three types, whole-column and shared-environment effects, bounded scope, `--raw` bypass, dry-run behavior, and non-atomic execution. They SHALL NOT claim formula-only locking, protection in unmanaged development, or complete rollback.
+CLI help, README, and migration guidance SHALL describe default protection, column-level managed-property and shared-environment effects, bounded scope, raw bypass, dry-run, and non-atomic execution. They SHALL NOT promise formula-only locking, complete column immutability, an unmanaged-development lock, or rollback.
+
+#### Scenario: Guidance reflects platform test limits
+- **WHEN** users review the protection guidance
+- **THEN** it discloses editable labels/translations
+- **AND** the same-environment test is not presented as proof of universal cross-environment restrictions or original-publisher servicing
 
 #### Scenario: Existing automation upgrades
 - **WHEN** users review copy-component help and the major-version migration guide

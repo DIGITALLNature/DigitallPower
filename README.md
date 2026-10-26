@@ -602,8 +602,8 @@ Copies the `solutioncomponent` rows of one or more source solutions into an unma
 | Option | Description |
 |--------|-------------|
 | `-s, --source <Sol1,Sol2>` | Comma-separated unique names of the solutions to copy components from (required) |
-| `--dry-run` | Print the planned changes without adding any component to the target solution |
-| `--raw` | Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior (shell-only sources are treated as non-complete) and skip the managed-active-layer filter |
+| `--dry-run` | Prepare and display the copy and field-protection plans, without adding, removing, updating, or publishing anything |
+| `--raw` | Disable best-practice normalization: preserve complete vs. non-complete table behavior (shell-only sources become non-complete), skip managed-active-layer filtering, and bypass all field-protection reads and updates |
 | `--apps <skip\|strip\|allow>` | How to handle model-driven apps (default `skip`), see below |
 
 Dataverse rejects `DoNotIncludeSubcomponents` on anything but tables, so a model-driven app cannot be added without Dataverse's own expansion. `--apps` controls the trade-off:
@@ -620,14 +620,49 @@ By default (best-practice mode, no `--raw`), the command avoids two common cause
 - **A managed component (attribute, form, view, workflow, ...) is only copied if it has its own active customization layer** (its top `msdyn_componentlayer` row is the synthetic `Active` layer). A managed component with no active layer is redundant - the managed baseline the target environment already has installed provides it - and is skipped.
 - **`AddRequiredComponents` is always `false`.** This keeps Dataverse from adding the "required" dependencies of any component - only the components explicitly present in the source solution(s) are added (model-driven apps are the exception, see `--apps`).
 
+Best-practice mode also sets **`IsCustomizable.Value = false`** for eligible unmanaged
+**Calculated, Rollup, and Power Fx Formula** columns (`SourceType` 1, 2, and 3). Scope is the final
+intentional plan: explicitly included attributes (even without a parent-table membership row)
+and eligible fields of tables copied completely. A column selected by multiple sources is
+considered once. Skeleton-only tables do not expand the protection scope. Managed columns are
+excluded even when they have an active customization layer, as are simple/prompt columns,
+skipped components, unrelated target membership, and columns added only by app/dependency
+expansion. Base-currency companions (`IsBaseCurrency=true`) and historic `bpf_duration` are
+reported exceptions; rollup date/state companions have `SourceType=0` and are not calculations.
+
+**This changes shared environment metadata, not a solution-local copy.** Other solutions
+containing those columns see the same managed property. The policy is intended for managed
+deployment, not field-level security or a lock on unmanaged development. Labels/translations
+may remain editable: neither a formula-only lock nor complete immutability of every column
+property is promised. Disposable platform tests verified all three types, minimal updates,
+unchanged formulas/settings, and managed export/import without publication. That roundtrip used
+the same environment; universal cross-environment restrictions and original-publisher servicing
+were not verified.
+
+All protection metadata is prepared before any copy or cleanup mutation. Missing required
+metadata or an unprotected immutable property fails preflight, including in dry-run; an already
+false property is unchanged even if immutable. Preflight does not establish complete permissions
+or guarantee runtime success. The caller needs solution-copy and applicable metadata-update
+permissions. Copying and app cleanup must succeed before sequential protection updates begin.
+Each update changes only the managed property and is read back before proceeding; formulas and
+unrelated settings are not resubmitted. No publication is performed.
+
+Execution is **not atomic**. A failure or cancellation stops later client mutations and reports
+confirmed copy/cleanup effects, confirmed protected columns, and failed or unconfirmed effects.
+In-flight server operations may still take effect. There are no client mutation retries or
+automatic rollback. Already protected columns receive no protection update on a rerun.
+Removing this policy later does not restore previously changed properties. Use `--dry-run`
+before upgrading existing automation, or `--raw` to bypass protection **and** the existing
+best-practice selection rules.
+
 ```bash
-# Preview what would be copied, without changing the target solution
+# Preview copying and shared-metadata protection without any mutations
 dgtp solution copy-components target_solution --source dev_solution --dry-run
 
-# Copy with best-practice filtering (default)
+# Copy with best-practice filtering and calculation-column protection (default)
 dgtp solution copy-components target_solution --source dev_solution_a,dev_solution_b
 
-# Mirror every source component as-is (no managed/active-layer filtering)
+# Bypass protection AND best-practice selection; preserve complete/non-complete table behavior
 dgtp solution copy-components target_solution --source dev_solution --raw
 
 # Also copy model-driven apps, removing the subcomponents Dataverse adds on its own
@@ -721,14 +756,14 @@ dgtp analyze noactivelayer --inline solution1,solution2
 
 ### Retired maintenance commands
 
-The `maintenance` branch and module are removed without aliases. The following standalone
-commands have no currently supported replacements:
+The `maintenance` branch and module are removed without aliases. Environment-wide operations
+remain retired; scoped field protection is owned by `solution copy-components`:
 
 | Removed command | Configuration consequence | Replacement |
 |---|---|---|
 | `maintenance bulkdelete` | Inline FetchXML execution and `--poll-interval` are unsupported; scheduled-job transfer and `bulkdelete.json` are also retired | None |
 | `maintenance autonumber` | Legacy column-format JSON and `schemas/maintenance/autonumber/schema.json` are unsupported | None |
-| `maintenance protectfields` | Environment-wide calculated-field `IsCustomizable` scanning is removed | None; scoped Solution protection is a deferred request only |
+| `maintenance protectfields` | Environment-wide calculated-field `IsCustomizable` scanning is removed | Plan-scoped protection in `solution copy-components` (not an environment-wide equivalent) |
 | `maintenance carrierinfo` | `carrier.json` export for custom `dgt_carrier` / `ec4u_carrier` tables is removed | None |
 | `maintenance removeredundantcomponents` | Source/target membership pruning and its `--dryrun` / `--includeEntities` options are removed | None; Solution pruning is a deferred request only |
 | `maintenance filterfxplugins` | Legacy PowerFx-filter JSON and `schemas/maintenance/powerfxplugin/schema.json` are unsupported | None |
@@ -736,8 +771,8 @@ commands have no currently supported replacements:
 No supported configuration migration or exact PAC substitute is promised for these operations.
 Removal does not change existing jobs, auto-number formats, managed properties, carrier data,
 solution memberships, or plugin filtering attributes. Existing jobs are not cancelled, disabled,
-or deleted. The two Solution ideas are deferred proposals, not retirement dependencies or
-available replacements.
+or deleted. Solution component pruning remains a deferred idea, not an available replacement
+or retirement dependency. Scoped field protection does not restore the old maintenance command.
 
 The independently migrated `process init` and `process apply` commands remain supported.
 The orphaned `IFileService` / `FileService` contract and `OrganizationServiceExtensions`

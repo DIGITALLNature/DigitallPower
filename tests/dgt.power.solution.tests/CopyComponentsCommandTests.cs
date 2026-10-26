@@ -460,6 +460,15 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
     {
         return new CommandTestContextBuilder<CopyComponentsCommand, CopyComponentsSettings>()
             .WithFakeMessageExecutor(new RetrieveEntityExecutor())
+            .WithExecutionMock<RetrieveMetadataChangesRequest>(_ =>
+            {
+                var metadata = new EntityMetadataCollection();
+                foreach (var entity in BuildEntityMetadata())
+                {
+                    metadata.Add(entity);
+                }
+                return new RetrieveMetadataChangesResponse { Results = { ["EntityMetadata"] = metadata } };
+            })
             .WithMetaData(BuildEntityMetadata())
             .WithData(_ => PrepareData(targetIsManaged));
     }
@@ -543,6 +552,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
 
         var unmanagedEntity = new EntityMetadata { LogicalName = "dgt_unmanaged", MetadataId = s_unmanagedEntityMetadataId };
         unmanagedEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), false);
+        unmanagedEntity.SetAttributeCollection([]);
 
         var managedEntity = new EntityMetadata { LogicalName = "isv_managed", MetadataId = s_managedEntityMetadataId };
         managedEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), true);
@@ -550,6 +560,7 @@ public class CopyComponentsCommandTests : CommandTestsBase<CopyComponentsCommand
 
         var shellOnlyEntity = new EntityMetadata { LogicalName = "dgt_shell_only", MetadataId = s_shellOnlyEntityMetadataId };
         shellOnlyEntity.SetSealedPropertyValue(nameof(EntityMetadata.IsManaged), false);
+        shellOnlyEntity.SetAttributeCollection([]);
 
         // Backing table for the standalone (record-based) Workflow componenttype scenario - only
         // needs an "ismanaged" attribute and a primary id so ComponentManagedStateResolver can query it.
