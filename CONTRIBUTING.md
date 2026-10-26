@@ -73,4 +73,4 @@ For significant changes to public CLI behavior, configuration, or architecture, 
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the [MS-PL License](LICENSE.md).
+By contributing, you agree that your contributions will be licensed under the [MS-RL License](LICENSE.md).

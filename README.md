@@ -83,4 +83,4 @@ DigitallPower CLI is a **community-driven open source project** backed by DIGITA
 
 ## 📘 License
 
-DigitallPower CLI is released under the terms of the [MS-PL License](LICENSE.md).
+DigitallPower CLI is released under the terms of the [MS-RL License](LICENSE.md).

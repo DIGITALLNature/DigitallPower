@@ -25,7 +25,7 @@ DigitallPower/
 ├── scripts/                      # Repository maintenance scripts
 ├── AGENTS.md                     # AI agent guidelines
 ├── CONTRIBUTING.md               # Contribution guidelines
-├── LICENSE.md                    # License (MS-PL)
+├── LICENSE.md                    # License (MS-RL)
 ├── SECURITY.md                   # Security policy
 ├── README.md                     # Project overview and quick links
 ├── Directory.Build.props         # Common MSBuild properties
