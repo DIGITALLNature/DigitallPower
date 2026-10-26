@@ -38,7 +38,7 @@ jobs:
           cache-dependency-path: '**/packages.lock.json'
 
       - name: Setup uv
-        uses: astral-sh/setup-uv@v10
+        uses: astral-sh/setup-uv@v10.3.1
         with:
           enable-cache: true
           cache-dependency-glob: graphify-version.txt
