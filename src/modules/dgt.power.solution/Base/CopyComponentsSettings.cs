@@ -9,7 +9,8 @@ namespace dgt.power.solution.Base;
 public class CopyComponentsSettings : SolutionSettings
 {
     [CommandArgument(0, "<Target>")]
-    [Description("The unique name of the unmanaged solution to copy components into")]
+    [Description("The unique name of the unmanaged target solution; best-practice mode also protects included unmanaged " +
+        "Calculated, Rollup and Power Fx Formula columns in shared environment metadata")]
     public string Target { get; init; } = string.Empty;
 
     [CommandOption("-s|--source")]
@@ -18,12 +19,12 @@ public class CopyComponentsSettings : SolutionSettings
     public string Source { get; init; } = string.Empty;
 
     [CommandOption("--dry-run")]
-    [Description("Print the planned changes without adding any component to the target solution")]
+    [Description("Prepare and print the copy and field-protection plans without adding, removing, updating or publishing anything")]
     public bool DryRun { get; init; }
 
     [CommandOption("--raw")]
     [Description("Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior " +
-        "(shell-only sources are treated as non-complete) and skip the managed-active-layer filter")]
+        "(shell-only sources are treated as non-complete), skip the managed-active-layer filter and bypass field-protection reads and updates")]
     public bool Raw { get; init; }
 
     [CommandOption("--apps <MODE>")]

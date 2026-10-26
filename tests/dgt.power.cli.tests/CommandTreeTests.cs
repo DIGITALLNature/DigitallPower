@@ -23,6 +23,21 @@ namespace dgt.power.cli.tests;
 public class CommandTreeTests
 {
     [Test]
+    public async Task CopyComponents_Help_DisclosesDefaultProtectionAndBypasses()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+        var result = tester.Run("solution", "copy-components", "--help");
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.Output).Contains("Calculated");
+        await Assert.That(result.Output).Contains("Rollup");
+        await Assert.That(result.Output).Contains("Power Fx Formula");
+        await Assert.That(result.Output).Contains("field-protection");
+        await Assert.That(result.Output).Contains("--raw");
+        await Assert.That(result.Output).Contains("--dry-run");
+    }
+
+    [Test]
     public async Task Register_WithValidateExamples_BuildsModelWithoutThrowing()
     {
         var tester = new CommandAppTester();
