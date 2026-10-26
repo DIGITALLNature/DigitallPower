@@ -7,7 +7,7 @@ JSON files written by the CLI encode non-ASCII text inconsistently. `process ini
 ## What Changes
 
 - Define one observable contract for JSON files the CLI writes: UTF-8 without escaping of printable non-ASCII characters, escaping only what JSON requires, and stable indentation.
-- Provide one shared serialization entry point for generated JSON files and use it in resource capture writers (`process`, `duplicaterules`, `teamtemplates`, and `documenttemplates` once merged), export JSON output, and `FileService.ExportJsonFile`.
+- Provide one shared serialization entry point for generated JSON files and use it in the resource capture writers (`process`, `duplicaterules`, `teamtemplates`, and `documenttemplates`).
 - Replace the double-serialize and `Regex.Unescape` workaround with the shared serializer after verifying its current behavior with backslashes, quotes, and control characters.
 - Output-only change: readers continue to accept both escaped and unescaped input, so existing files remain valid. Byte-level output changes for files containing non-ASCII text, so version-controlled files show a one-time diff on the next capture.
 
@@ -23,7 +23,7 @@ None. Existing capability specs do not state an encoding; resource specs keep ow
 
 ## Impact
 
-- Code: `src/dgt.power.common` (new shared JSON output helper; `FileAccess/FileService.cs`), `src/modules/dgt.power.export/Base/ExportJson.cs`, `src/modules/dgt.power.process/Logic/ProcessConfigurationWriter.cs`, `src/modules/dgt.power.duplicaterules/Logic/DuplicateRuleConfigurationWriter.cs`, `src/modules/dgt.power.teamtemplates/Configuration/TeamTemplateConfiguration.cs`, and the documenttemplates writer if present.
+- Code: `src/dgt.power.common` (new shared JSON output helper), `src/modules/dgt.power.process/Logic/ProcessConfigurationWriter.cs`, `src/modules/dgt.power.duplicaterules/Logic/DuplicateRuleConfigurationWriter.cs`, `src/modules/dgt.power.teamtemplates/Configuration/TeamTemplateConfiguration.cs`, and `src/modules/dgt.power.documenttemplates/Configuration/DocumentTemplateManifest.cs`.
 - Out of scope: internal state and secret stores (`StateStore`, `ConnectionStore`, `SecretStore`), analyzer and lint reports unless analysis shows they are user-reviewed artifacts, JSON read paths, schemas, and console output.
 - Coordination: lands after the parallel resource PRs into `marcel/planing2026` to avoid conflicts in the writers.
 - No schema, CLI option, or configuration format change.
