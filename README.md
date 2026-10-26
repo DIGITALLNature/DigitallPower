@@ -1326,7 +1326,7 @@ DigitallPower/
 ## 🛠️ Build & Test
 
 ```bash
-pnpm install                 # Install JS tooling, TypeScript compiler, and local OpenSpec CLI
+pnpm install                 # Install JS tooling, TypeScript compiler, and local OpenSpec CLI (also provisions Node.js 24 via devEngines)
 dotnet restore                # Restore dependencies (uses lock files)
 dotnet build                  # Build the solution
 dotnet test                   # Run all tests
@@ -1400,7 +1400,7 @@ dotnet tool install --global --add-source ./packages dgt.power --version <versio
 ## ✅ Requirements
 
 - **.NET SDK 10.0** (the SDK version is pinned via [`global.json`](global.json))
-- **Node.js 22 + pnpm** (needed for the TypeScript compile gate in `dgt.power.codegeneration.tests`)
+- **pnpm 12** — install once via `curl -fsSL https://get.pnpm.io/install.sh | sh -`; Node.js 24 is managed automatically via `devEngines` in `package.json` (needed for the TypeScript compile gate in `dgt.power.codegeneration.tests`)
 - Network access to your Dataverse environment (`*.dynamics.com`) and to `api.nuget.org` (for the version check)
 - An account with sufficient privileges on the target Dataverse environment
 
