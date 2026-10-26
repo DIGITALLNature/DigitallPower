@@ -22,4 +22,5 @@
 
 ## Workflow follow-up
 
-- After the implementation PR is merged into `beta` or `main`, synchronize the `json-file-output` spec into main specs and archive this change.
+- The current `json-file-output` capability spec lives in `openspec/specs/json-file-output/spec.md` and ships with the implementation PR.
+- Keep this change active after the implementation PR merges into `beta` or `main`. Archive it only in a separate follow-up after verifying that the merged implementation PR targets `main`, a published stable (non-draft, non-prerelease) GitHub release contains it, and the PR merge commit is an ancestor of the release tag that is reachable from `origin/main`.

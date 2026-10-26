@@ -1,5 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 
+using System.Globalization;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -15,43 +16,55 @@ public static class JsonFileOutput
     // embedding the output in HTML or JavaScript, which these files never are; JSON-required escapes remain.
     private static readonly JavaScriptEncoder s_encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
 
-    private const string NoBreakSpaceEscape = "\\u00A0";
+    private const int UnicodeEscapeLength = 6; // \uXXXX
 
     public static string Serialize<T>(T value, JsonSerializerOptions? options = null)
     {
         var copy = options is null ? new JsonSerializerOptions() : new JsonSerializerOptions(options);
         copy.Encoder = s_encoder;
-        return RestoreNoBreakSpaces(JsonSerializer.Serialize(value, copy));
+        return RestoreSpaceSeparators(JsonSerializer.Serialize(value, copy));
     }
 
-    // System.Text.Json encoders always escape U+00A0 (a space separator), so it is restored afterwards.
-    // Escape sequences are consumed pairwise so an escaped backslash followed by "u00A0" stays untouched.
-    private static string RestoreNoBreakSpaces(string json)
+    // System.Text.Json encoders always escape Unicode space separators (U+00A0, U+2003, U+202F, U+3000, ...)
+    // although they are printable, so they are restored afterwards. Escape sequences are consumed as a unit so an
+    // escaped backslash followed by "u00A0" stays untouched; line/paragraph separators and control characters
+    // keep their escapes.
+    private static string RestoreSpaceSeparators(string json)
     {
-        if (!json.Contains(NoBreakSpaceEscape, StringComparison.OrdinalIgnoreCase))
+        if (!json.Contains("\\u", StringComparison.Ordinal))
         {
             return json;
         }
 
         var builder = new StringBuilder(json.Length);
-        for (var i = 0; i < json.Length; i++)
+        var position = 0;
+        while (position < json.Length)
         {
-            if (json[i] != '\\' || i + 1 >= json.Length)
+            var length = EscapeLength(json, position);
+            if (length == UnicodeEscapeLength &&
+                ushort.TryParse(json.AsSpan(position + 2, 4), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out var code) &&
+                char.GetUnicodeCategory((char)code) == UnicodeCategory.SpaceSeparator)
             {
-                builder.Append(json[i]);
-            }
-            else if (string.Compare(json, i, NoBreakSpaceEscape, 0, NoBreakSpaceEscape.Length, StringComparison.OrdinalIgnoreCase) == 0)
-            {
-                builder.Append('\u00A0');
-                i += NoBreakSpaceEscape.Length - 1;
+                builder.Append((char)code);
             }
             else
             {
-                builder.Append(json[i]).Append(json[i + 1]);
-                i++;
+                builder.Append(json, position, length);
             }
+
+            position += length;
         }
 
         return builder.ToString();
+    }
+
+    private static int EscapeLength(string json, int position)
+    {
+        if (json[position] != '\\' || position + 1 >= json.Length)
+        {
+            return 1;
+        }
+
+        return json[position + 1] == 'u' && position + UnicodeEscapeLength <= json.Length ? UnicodeEscapeLength : 2;
     }
 }

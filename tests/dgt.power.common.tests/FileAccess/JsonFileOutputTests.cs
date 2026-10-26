@@ -55,6 +55,28 @@ public class JsonFileOutputTests
     }
 
     [Test]
+    public async Task Serialize_UnicodeSpaceSeparators_AreWrittenLiterally()
+    {
+        const string value = "a\u00A0b\u2003c\u202Fd\u3000e\u1680f";
+
+        var json = JsonFileOutput.Serialize(new { name = value });
+
+        await Assert.That(json).Contains(value);
+        await Assert.That(json).DoesNotContain("\\u");
+        await Assert.That(JsonDocument.Parse(json).RootElement.GetProperty("name").GetString()).IsEqualTo(value);
+    }
+
+    [Test]
+    public async Task Serialize_LineSeparatorsAndControlCharacters_KeepEscapes()
+    {
+        var json = JsonFileOutput.Serialize(new { name = "a\u2028b\u2029c\u0001" });
+
+        await Assert.That(json).Contains("\\u2028");
+        await Assert.That(json).Contains("\\u2029");
+        await Assert.That(json).Contains("\\u0001");
+    }
+
+    [Test]
     public async Task Serialize_UnpairedSurrogate_IsReplacedAndOutputStaysValid()
     {
         var json = JsonFileOutput.Serialize(new { name = "broken\uD800" });
