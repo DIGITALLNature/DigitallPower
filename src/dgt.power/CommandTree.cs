@@ -8,6 +8,7 @@ using dgt.power.Commands.Complete;
 using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
 using dgt.power.duplicaterules.Commands;
+using dgt.power.documenttemplates.Commands;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.import.Base;
@@ -57,8 +58,6 @@ internal static class CommandTree
                 .WithDescription("Exports the bulk delete jobs from the current environment");
             export.AddCommand<QueueExport>("queues")
                 .WithDescription("Exports the existing queues from the current environment");
-            export.AddCommand<DocumentTemplateExport>("documenttemplates")
-                .WithDescription("Exports the existing document templates from the curent environment");
             export.AddCommand<CalendarExport>("calendars")
                 .WithDescription("Exports the existing calendars from the current environment");
             export.AddCommand<SlaConfigExport>("slaconfigs")
@@ -109,6 +108,17 @@ internal static class CommandTree
                     .WithDescription("Add Messagefiltering for PowerFx Plugins")
                     .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
             });
+
+        config.AddBranch("documenttemplates", templates =>
+        {
+            templates.SetDescription("Imports and exports active Word and Excel document templates");
+            templates.AddCommand<DocumentTemplateImportCommand>("import")
+                .WithDescription("Imports a portable document template manifest and activates listed templates")
+                .WithExample("documenttemplates", "import", "./templates/documenttemplates.json", "--dry-run");
+            templates.AddCommand<DocumentTemplateExportCommand>("export")
+                .WithDescription("Exports active document templates as a portable package")
+                .WithExample("documenttemplates", "export", "./templates", "--entity", "account", "--type", "word");
+        });
 
         config.AddBranch("process", process =>
         {
@@ -168,7 +178,6 @@ internal static class CommandTree
             import.AddCommand<UserRoleImport>("userroles");
             import.AddCommand<QueueImport>("queues");
             import.AddCommand<BulkDeleteImport>("bulkdeletes");
-            import.AddCommand<DocumentTemplateImport>("documenttemplates");
             import.AddCommand<CalendarImport>("calendar");
             import.AddCommand<SlaConfigImport>("slaconfigs");
             import.AddCommand<RoutingRuleConfigImport>("routingruleconfigs");

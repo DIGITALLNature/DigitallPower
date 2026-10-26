@@ -8,6 +8,7 @@ using dgt.power.codegeneration.Constants;
 using dgt.power.Commands.Complete;
 using dgt.power.connection.Commands;
 using dgt.power.duplicaterules.Commands;
+using dgt.power.documenttemplates.Commands;
 using dgt.power.export.Base;
 using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
@@ -39,6 +40,36 @@ namespace dgt.power.cli.tests;
 /// </summary>
 public class SettingsParsingTests
 {
+    [Test]
+    public async Task ImportDocumentTemplatesSettings_ParsesOptions()
+    {
+        var result = Parse<ImportDocumentTemplatesSettings>(
+            "./templates/documenttemplates.json", "--dry-run", "--non-interactive", "--no-telemetry");
+        var settings = (ImportDocumentTemplatesSettings)result.Settings!;
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(settings.Manifest).IsEqualTo("./templates/documenttemplates.json");
+        await Assert.That(settings.DryRun).IsTrue();
+        var defaults = Parse<ImportDocumentTemplatesSettings>("./templates/documenttemplates.json");
+        await Assert.That(((ImportDocumentTemplatesSettings)defaults.Settings!).DryRun).IsFalse();
+    }
+
+    [Test]
+    public async Task ExportDocumentTemplatesSettings_ParsesOptions()
+    {
+        var result = Parse<ExportDocumentTemplatesSettings>(
+            "./templates", "--entity", "account", "--type", "word", "--overwrite");
+        var settings = (ExportDocumentTemplatesSettings)result.Settings!;
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(settings.Directory).IsEqualTo("./templates");
+        await Assert.That(settings.Entity).IsEqualTo("account");
+        await Assert.That(settings.Type).IsEqualTo("word");
+        await Assert.That(settings.Overwrite).IsTrue();
+        var defaults = (ExportDocumentTemplatesSettings)Parse<ExportDocumentTemplatesSettings>("./templates").Settings!;
+        await Assert.That(defaults.Entity).IsNull();
+        await Assert.That(defaults.Type).IsNull();
+        await Assert.That(defaults.Overwrite).IsFalse();
+    }
+
     private static CommandAppResult Parse<TSettings>(params string[] args)
         where TSettings : CommandSettings
     {

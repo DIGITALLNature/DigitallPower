@@ -53,6 +53,7 @@ public class CommandTreeTests
     [Arguments("process")]
     [Arguments("teamtemplates")]
     [Arguments("duplicaterules")]
+    [Arguments("documenttemplates")]
     [Arguments("telemetry")]
     [Arguments("webresource")]
     [Arguments("complete")]
@@ -129,6 +130,17 @@ public class CommandTreeTests
     [Test]
     [Arguments("import")]
     [Arguments("export")]
+    public async Task DocumentTemplateSubCommand_HelpInvocation_Succeeds(string operation)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+        var result = tester.Run("documenttemplates", operation, "--help");
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    [Arguments("import")]
+    [Arguments("export")]
     public async Task LegacyTeamTemplatesCommand_IsRejected(string verb)
     {
         var tester = new CommandAppTester();
@@ -138,6 +150,54 @@ public class CommandTreeTests
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
         await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    [Arguments("import")]
+    [Arguments("export")]
+    public async Task LegacyDocumentTemplatePath_IsRejected(string operation)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+        var result = tester.Run(operation, "documenttemplates");
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    public async Task DocumentTemplateCompletion_ContainsResourcePathsNotLegacyPaths()
+    {
+        var capture = new ModelCaptureHelpProvider();
+        var tester = new CommandAppTester();
+        tester.Configure(config =>
+        {
+            CommandTree.Register(config);
+            config.SetHelpProvider(capture);
+        });
+        var result = tester.Run("--help");
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(capture.Model).IsNotNull();
+        const string rootLine = "dgtp ";
+        const string resourceLine = "dgtp documenttemplates ";
+        const string importLine = "dgtp documenttemplates import --";
+        const string exportLine = "dgtp documenttemplates export --";
+        const string legacyImportLine = "dgtp import ";
+        const string legacyExportLine = "dgtp export ";
+        var root = CompletionEngine.GetCompletions(capture.Model!, rootLine, rootLine.Length);
+        var resource = CompletionEngine.GetCompletions(capture.Model!, resourceLine, resourceLine.Length);
+        var import = CompletionEngine.GetCompletions(capture.Model!, importLine, importLine.Length);
+        var export = CompletionEngine.GetCompletions(capture.Model!, exportLine, exportLine.Length);
+        var legacyImport = CompletionEngine.GetCompletions(capture.Model!, legacyImportLine, legacyImportLine.Length);
+        var legacyExport = CompletionEngine.GetCompletions(capture.Model!, legacyExportLine, legacyExportLine.Length);
+        await Assert.That(root).Contains("documenttemplates");
+        await Assert.That(resource).Contains("import");
+        await Assert.That(resource).Contains("export");
+        await Assert.That(import).Contains("--dry-run");
+        await Assert.That(export).Contains("--entity");
+        await Assert.That(export).Contains("--type");
+        await Assert.That(export).Contains("--overwrite");
+        await Assert.That(legacyImport).DoesNotContain("documenttemplates");
+        await Assert.That(legacyExport).DoesNotContain("documenttemplates");
     }
 
     [Test]
