@@ -36,36 +36,4 @@
   <ItemGroup>
     <None Include="Resources/**" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
-
-
-  <ItemGroup>
-    <None Update="Resources\DocumentTemplateImport\Account.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\Accounts.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\Contact.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\Contacts.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\create-templates.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\disable-templates.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\force-update-templates.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\not-found-templates.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\DocumentTemplateImport\update-templates.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

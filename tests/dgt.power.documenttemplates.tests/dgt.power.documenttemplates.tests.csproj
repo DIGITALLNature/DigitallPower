@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Update="TUnit" Version="1.76.0" />
+    <PackageReference Include="JsonSchema.Net" Version="7.4.0" />
+    <ProjectReference Include="../../src/modules/dgt.power.documenttemplates/dgt.power.documenttemplates.csproj" />
+    <ProjectReference Include="../dgt.power.tests/dgt.power.tests.csproj" />
+    <None Update="Resources/**" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../schemas/documenttemplates/v1/schema.json" Link="schema.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

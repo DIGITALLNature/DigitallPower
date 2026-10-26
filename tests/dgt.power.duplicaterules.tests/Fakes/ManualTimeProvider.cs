@@ -12,7 +12,7 @@ public sealed class ManualTimeProvider : TimeProvider
 
     public int Delays { get; private set; }
 
-    public Action<int>? OnDelay { get; set; }
+    public Action<int>? OnDelay { get; init; }
 
     public override DateTimeOffset GetUtcNow() => Now;
 

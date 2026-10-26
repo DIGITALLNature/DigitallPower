@@ -48,6 +48,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [maintenance](#maintenance--operational-tasks)
   - [process](#process--process-state-and-ownership)
   - [duplicaterules](#duplicaterules--duplicate-rule-publication-and-ownership)
+  - [documenttemplates](#documenttemplates--portable-document-templates)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
   - [webresource](#webresource--deploy-webresources)
@@ -513,7 +514,6 @@ Exports configuration data from the currently selected environment into JSON fil
 |---------|-------------|
 | `export bulkdeletes` | Bulk delete jobs |
 | `export queues` | Queues |
-| `export documenttemplates` | Document templates |
 | `export calendars` | Calendars |
 | `export slaconfigs` | SLAs |
 | `export routingruleconfigs` | Routing rules |
@@ -641,7 +641,6 @@ Counterpart to `export`. Reads the previously exported JSON files and applies th
 | `import userroles` | User → security role assignments |
 | `import queues` | Queues |
 | `import bulkdeletes` | Bulk delete jobs |
-| `import documenttemplates` | Document templates |
 | `import calendar` | Calendars |
 | `import slaconfigs` | SLAs |
 | `import routingruleconfigs` | Routing rules |
@@ -754,6 +753,83 @@ between asynchronous job status checks. The option is specific to this command.
 ```bash
 dgtp maintenance bulkdelete --inline "<fetchxml>...</fetchxml>" --poll-interval 10
 ```
+
+### `documenttemplates` — Portable document templates
+
+Import and export active Word and Excel templates with a strict portable V1 package.
+The resource-owned `dgt.power.documenttemplates` module replaces the legacy documenttemplate
+commands and manifest; see the [migration guide](docs/migrations/2.x-to-3.x.md#document-templates).
+
+```bash
+dgtp documenttemplates export ./templates --entity account --type word
+dgtp documenttemplates export ./templates --overwrite
+dgtp documenttemplates import ./templates/documenttemplates.json --dry-run
+dgtp documenttemplates import ./templates/documenttemplates.json
+```
+
+Export includes only active Word/Excel templates. Optional single-value `--entity` and
+`--type word|excel` filters combine with AND; neither can include drafts. Export writes
+`documenttemplates.json` and lowercase source-GUID `.docx`/`.xlsx` filenames. It prepares the
+output and checks destination collisions before writing. Existing destinations fail unless
+`--overwrite` is explicit; unrelated files are never removed. No matches produces a valid empty
+manifest. A filesystem write failure can leave partial output and is reported as failure.
+
+```json
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "sourceId": "12345678-1234-1234-1234-123456789abc",
+      "name": "Account summary",
+      "documentType": "word",
+      "entity": "account",
+      "file": "12345678-1234-1234-1234-123456789abc.docx",
+      "languageCode": 1033,
+      "description": null
+    }
+  ]
+}
+```
+
+All shown fields are required. `description: null` clears an existing description;
+`languageCode` is explicit with no implicit language default. An optional root `$schema` URI
+is allowed for editor tooling; unknown properties, duplicate identities/IDs and unsupported
+versions are errors. See the [V1 schema](schemas/documenttemplates/v1/schema.json).
+
+Identity is `(name, documentType, entity)`, with ordinal case-insensitive name matching.
+A matched target keeps its ID and receives the manifest's name spelling. A new template uses
+the nonempty `sourceId`; an ID occupied by another template fails preflight. Names must not
+have surrounding whitespace. Changing an identity component is not an inferred rename:
+the old unlisted template stays unchanged. There is no cleanup or delete/recreate fallback.
+
+Document paths resolve exclusively relative to the manifest directory. Subdirectories are
+allowed; absolute paths, traversal/symlink escapes, missing files, invalid packages and
+declared-type mismatches fail preparation. Import validates local inputs before connecting,
+then prepares the complete input against target metadata before any writes. A valid empty
+manifest succeeds without authentication. Dry-run performs the same preparation and reports
+intended writes without executing them; it does not prove server-side privileges or success.
+
+Every successfully imported template is active, including a matched draft. Execution is sequential
+and best-effort across templates: a failed write skips that template's dependent steps, other
+independent templates continue, and any failure fails the command. Activation failure is not
+success. Cancellation stops further work. Already completed changes are not rolled back;
+import is not atomic. Unlisted active and draft templates remain untouched.
+
+Word preparation validates used CRM field bindings in the main document, headers and footers,
+discovering document parts and custom XML stores through package relationships rather than filenames,
+including `w:dataBinding`, `w15:dataBinding`, related collections and repeating sections.
+It resolves relationship schema/navigation names and lookup display projections from metadata,
+and adapts referenced CRM namespaces to target object type codes without changing foreign
+bindings or unrelated content. Unused embedded fields need not exist in the target.
+The evidenced legacy aliases `account_leads` (account fields) and `lead_accounts` (lead fields)
+are supported only with matching `accountleads_association` N:N metadata and `accountleads`
+intersect metadata. Other unknown or ambiguous legacy aliases fail preflight; arbitrary XPath
+and universal legacy N:N aliases are not supported.
+
+Excel packages, including workbooks with chart sheets, are checked structurally and uploaded unchanged: formulas, URLs and data sources
+are not adapted. Dataverse can normalize package content when storing a newly created Excel
+template; byte-identical server storage is not guaranteed. Neither format guarantees Word/Excel
+rendering, user data access or general cross-environment data-source compatibility.
 
 ### `process` — Process state and ownership
 
@@ -1770,6 +1846,7 @@ DigitallPower/
 │       ├── dgt.power.import/          # `import` commands
 │       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.plugin/          # `plugin` commands
+│       ├── dgt.power.documenttemplates/ # Portable Word/Excel import/export
 │       ├── dgt.power.process/         # `process init/apply` commands
 │       ├── dgt.power.duplicaterules/  # `duplicaterules init/apply` commands
 │       ├── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)

@@ -92,6 +92,19 @@ Before writes, import SHALL validate used CRM bindings in the main document, hea
 - **WHEN** an absent target field occurs only in unused embedded XML
 - **THEN** that field does not cause preflight to fail
 
+### Requirement: Word resolves only evidenced relationship names
+
+Relationship schema/navigation names SHALL resolve from metadata. Legacy `account_leads` and `lead_accounts` SHALL resolve to account and lead only when metadata confirms N:N `accountleads_association`, account/lead endpoints, and intersect `accountleads`. Unknown or ambiguous aliases SHALL fail preflight without naming or field-overlap heuristics. Universal legacy-alias support is not implied.
+
+#### Scenario: Verified account/lead aliases
+- **WHEN** a used binding traverses `account_leads` or `lead_accounts`
+- **THEN** preflight verifies the required N:N metadata and validates used fields on account or lead respectively
+- **AND** missing or incompatible relationship metadata fails before writes
+
+#### Scenario: Unknown legacy alias
+- **WHEN** a relationship step matches neither supported metadata names nor a verified supported alias
+- **THEN** preflight fails with the offending binding rather than guessing its target
+
 ### Requirement: Word adapts CRM namespace references
 
 Import SHALL adapt supported CRM document-template namespace references to target object type codes in the main document, referenced custom XML and its namespace properties, headers, and footers. It SHALL preserve unrelated content and foreign bindings. Related-table bindings sharing a primary-table namespace SHALL retain that relationship. This contract SHALL NOT imply Word rendering or user data-access validation.

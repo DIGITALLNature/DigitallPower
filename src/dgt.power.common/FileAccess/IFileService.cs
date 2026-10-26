@@ -7,5 +7,6 @@ public interface IFileService
 {
     string ExportJsonFile<TObject>(string fileDirectory, string fileName, TObject jsonObject);
     string ExportFile(string fileDirectory, string fileName, string content);
+    // ReSharper disable once UnusedMemberInSuper.Global -- retained as part of the shared binary file-service contract.
     string ExportFile(string fileDirectory, string fileName, byte[] content);
 }
