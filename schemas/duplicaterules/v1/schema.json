@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/duplicaterules/v1/schema.json",
+  "title": "DigitallPower duplicate-rule configuration",
+  "description": "Explicit publication state and ownership intent for existing Dataverse duplicate-detection rules. Rule definitions and conditions are not part of this format. Runtime validation also rejects duplicate rule IDs and duplicate JSON properties, which JSON Schema cannot express.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/rule"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "rules"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "nonblankTrimmed": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\S(?:[\\s\\S]*\\S)?(?![\\s\\S])"
+    },
+    "rule": {
+      "type": "object",
+      "properties": {
+        "ruleId": {
+          "description": "The duplicateruleid of an existing rule, transported with a stable ID through solutions.",
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^(?!00000000-0000-0000-0000-000000000000$)[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "name": {
+          "description": "Informational rule name for reviews and diagnostics; never used for matching or written.",
+          "type": "string"
+        },
+        "published": {
+          "description": "Requested publication state. Omit to leave the target state unchanged.",
+          "type": "boolean"
+        },
+        "owner": {
+          "description": "Logical owner key resolved through the target environment owner mapping. Omit to leave ownership unchanged.",
+          "$ref": "#/$defs/nonblankTrimmed"
+        }
+      },
+      "required": [
+        "ruleId"
+      ],
+      "anyOf": [
+        {
+          "required": [ "published" ]
+        },
+        {
+          "required": [ "owner" ]
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

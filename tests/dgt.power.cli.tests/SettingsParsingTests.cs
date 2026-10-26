@@ -7,6 +7,7 @@ using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.Commands.Complete;
 using dgt.power.connection.Commands;
+using dgt.power.duplicaterules.Commands;
 using dgt.power.export.Base;
 using dgt.power.import.Base;
 using dgt.power.maintenance.Base;
@@ -268,7 +269,7 @@ public class SettingsParsingTests
             await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
             var result = Parse<ProcessInitSettings>(
                 file, "--solution", "ContosoCore", "--solution", "ContosoFlows",
-                "--capture", "both", "--owner-mapping", mapping, "--overwrite");
+                "--capture", "both", "--owner-mapping", mapping, "--unmapped-owners", "skip", "--overwrite");
             var defaults = Parse<ProcessInitSettings>(file, "--solution", "ContosoCore");
 
             await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
@@ -277,10 +278,12 @@ public class SettingsParsingTests
             await Assert.That(settings.Solutions).IsEquivalentTo(["ContosoCore", "ContosoFlows"]);
             await Assert.That(settings.Capture).IsEqualTo("both");
             await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.UnmappedOwners).IsEqualTo("skip");
             await Assert.That(settings.Overwrite).IsTrue();
             await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
             var defaultSettings = (ProcessInitSettings)defaults.Settings!;
             await Assert.That(defaultSettings.Capture).IsEqualTo("state");
+            await Assert.That(defaultSettings.UnmappedOwners).IsEqualTo("fail");
             await Assert.That(defaultSettings.OwnerMapping).IsNull();
             await Assert.That(defaultSettings.Overwrite).IsFalse();
         }
@@ -419,6 +422,112 @@ public class SettingsParsingTests
         var result = tester.Run("process", command, "./processes.json", option, "legacy");
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
+    public async Task DuplicateRuleInitSettings_ParsesPathRepeatedRuleIdsAndOptions()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, Path.Combine(directory.FullName, "duplicaterules.json"));
+            var mapping = Path.Combine(directory.FullName, "owners.source.json");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            const string firstId = "6f1c2b4e-8d3a-4f5b-9c7d-1e2f3a4b5c6d";
+            const string secondId = "0a9b8c7d-6e5f-4a3b-2c1d-0e9f8a7b6c5d";
+            var result = Parse<DuplicateRuleInitSettings>(
+                file, "--entity", "contact", "--rule-id", firstId, "--rule-id", secondId,
+                "--capture", "both", "--owner-mapping", mapping, "--unmapped-owners", "skip", "--overwrite");
+            var defaults = Parse<DuplicateRuleInitSettings>(file);
+
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (DuplicateRuleInitSettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.Entity).IsEqualTo("contact");
+            await Assert.That(settings.RuleIds).IsEquivalentTo([firstId, secondId]);
+            await Assert.That(settings.Capture).IsEqualTo("both");
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.UnmappedOwners).IsEqualTo("skip");
+            await Assert.That(settings.Overwrite).IsTrue();
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (DuplicateRuleInitSettings)defaults.Settings!;
+            await Assert.That(defaultSettings.Capture).IsEqualTo("state");
+            await Assert.That(defaultSettings.UnmappedOwners).IsEqualTo("fail");
+            await Assert.That(defaultSettings.Entity).IsNull();
+            await Assert.That(defaultSettings.RuleIds ?? []).IsEmpty();
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.Overwrite).IsFalse();
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    public async Task DuplicateRuleApplySettings_ParsesPathWaitOptionsAndDefaults()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var absoluteFile = Path.Combine(directory.FullName, "duplicaterules.json");
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, absoluteFile);
+            var mapping = Path.Combine(directory.FullName, "owners.target.json");
+            await File.WriteAllTextAsync(absoluteFile, """{"schemaVersion":1,"rules":[]}""");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            var result = Parse<DuplicateRuleApplySettings>(
+                file, "--owner-mapping", mapping, "--dry-run", "--no-wait", "--timeout", "600");
+            var defaults = Parse<DuplicateRuleApplySettings>(file);
+
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (DuplicateRuleApplySettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.DryRun).IsTrue();
+            await Assert.That(settings.NoWait).IsTrue();
+            await Assert.That(settings.Timeout).IsEqualTo(600);
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (DuplicateRuleApplySettings)defaults.Settings!;
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.DryRun).IsFalse();
+            await Assert.That(defaultSettings.NoWait).IsFalse();
+            await Assert.That(defaultSettings.Timeout).IsEqualTo(DuplicateRuleApplySettings.DefaultTimeoutSeconds);
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    [Arguments("init", "--rule-id", "not-a-guid")]
+    [Arguments("init", "--capture", "none")]
+    [Arguments("init", "--unmapped-owners", "ignore")]
+    [Arguments("apply", "--timeout", "0")]
+    [Arguments("apply", "--timeout", "abc")]
+    [Arguments("apply", "--solution", "ContosoCore")]
+    public async Task DuplicateRuleSettings_RejectInvalidOptions(string command, string option, string value)
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var file = Path.Combine(directory.FullName, "duplicaterules.json");
+            if (command == "apply")
+            {
+                await File.WriteAllTextAsync(file, """{"schemaVersion":1,"rules":[]}""");
+            }
+
+            var tester = new CommandAppTester();
+            tester.Configure(CommandTree.Register);
+
+            var result = tester.Run("duplicaterules", command, file, option, value);
+
+            await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
     }
 
     [Test]

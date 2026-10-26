@@ -13,10 +13,11 @@ Duplicate-rule DTOs and publish/unpublish test executors exist, but the current 
 - Treat a valid empty apply as a successful no-op without Dataverse access, consistent with the command-execution contract.
 - Capture state, ownership, or both; select existing rules by base table and/or explicit GUIDs.
 - Validate publish capacity, complete explicit unpublishes first, then assign owners and submit publishes sequentially. Observe submitted jobs together rather than waiting separately for each rule.
-- Confirm final states by default with a five-minute budget per observation phase; allow explicit submission-only publishing with `--no-wait`.
+- Confirm final publish states by default with a five-minute shared budget; allow explicit submission-only publishing with `--no-wait`. Unpublish is synchronous and confirmed by immediate read-back.
 - Identify rules by GUID only, relying on solution-stable IDs; do not fall back to name matching.
 - Consume the shared owner-resolution contract from `introduce-portable-owner-resolution`; keep rule-specific owner admissibility and assignment sequencing here.
 - Preserve publication state during owner-only changes without implicit unpublish/republish; verify platform support before implementation.
+- Let shared owner capture skip unmapped SYSTEM/INTEGRATION platform principals, which own the standard rules, and add an opt-in `--unmapped-owners skip` to `duplicaterules init` and `process init`. Skipped records are written without `owner` (preserving the target owner on apply) and reported as warnings; ambiguity and other unmapped owners still fail by default.
 - Out of scope: creating rules, transporting definitions or conditions, and deleting rules.
 
 ## Capabilities
@@ -27,7 +28,8 @@ Duplicate-rule DTOs and publish/unpublish test executors exist, but the current 
 
 ### Modified Capabilities
 
-None.
+- `owner-resolution`: Capture reports platform principals, and optionally unmapped owners, as typed skips instead of failing.
+- `process-management`: `process init` gains `--unmapped-owners` and writes skipped owners without `owner`.
 
 ## Impact
 

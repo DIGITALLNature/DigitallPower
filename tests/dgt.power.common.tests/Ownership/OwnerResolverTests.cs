@@ -419,9 +419,9 @@ public class OwnerResolverTests
             service,
             mapping,
             [new EntityReference("team", uniquePrincipal.Id)]);
-        await Assert.That(captured[0].LogicalKey).IsEqualTo("unique");
-        await Assert.That(captured[0].Principal.LogicalName).IsEqualTo("team");
-        await Assert.That(captured[0].Principal.Id).IsEqualTo(uniquePrincipal.Id);
+        await Assert.That(captured.Captures[0].LogicalKey).IsEqualTo("unique");
+        await Assert.That(captured.Captures[0].Principal.LogicalName).IsEqualTo("team");
+        await Assert.That(captured.Captures[0].Principal.Id).IsEqualTo(uniquePrincipal.Id);
 
         var exception = await Assert.That(async () => await _resolver.ResolveForCaptureAsync(
                 service,
@@ -465,6 +465,104 @@ public class OwnerResolverTests
             .Throws<OwnerResolutionException>();
 
         await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.MissingCaptureMapping);
+    }
+
+    [Test]
+    [Arguments(UnmappedOwnerHandling.Fail)]
+    [Arguments(UnmappedOwnerHandling.Skip)]
+    public async Task ResolveForCaptureAsync_SkipsPlatformPrincipalsRegardlessOfHandling(UnmappedOwnerHandling handling)
+    {
+        var groupId = Guid.NewGuid();
+        var mapped = Team(Guid.NewGuid(), "Mapped", Guid.NewGuid(), (int)OwnerTeamType.SecurityGroup, groupId, 1);
+        var system = PlatformUser(Guid.NewGuid(), "SYSTEM");
+        var integration = PlatformUser(Guid.NewGuid(), "INTEGRATION");
+        var service = CreateService(mapped, system, integration);
+        var mapping = Mapping(("mapped", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
+
+        var result = await _resolver.ResolveForCaptureAsync(
+            service,
+            mapping,
+            [
+                new EntityReference("team", mapped.Id),
+                new EntityReference("systemuser", system.Id),
+                new EntityReference("systemuser", integration.Id)
+            ],
+            handling);
+
+        await Assert.That(result.Captures.Count).IsEqualTo(1);
+        await Assert.That(result.Captures[0].LogicalKey).IsEqualTo("mapped");
+        await Assert.That(result.Skipped.Count).IsEqualTo(2);
+        await Assert.That(result.Skipped.All(skipped => skipped.Reason == OwnerCaptureSkipReason.PlatformPrincipal)).IsTrue();
+        await Assert.That(result.FindSkipped(new EntityReference("systemuser", system.Id))!.DisplayName).IsEqualTo("SYSTEM");
+        await Assert.That(result.FindSkipped(new EntityReference("systemuser", integration.Id))!.DisplayName).IsEqualTo("INTEGRATION");
+    }
+
+    [Test]
+    public async Task ResolveForCaptureAsync_UserNamedSystemWithDirectoryIdentityIsNotPlatformPrincipal()
+    {
+        var impostor = PlatformUser(Guid.NewGuid(), "SYSTEM");
+        impostor["domainname"] = "system@example.org";
+        var service = CreateService(impostor);
+
+        var exception = await Assert.That(async () => await _resolver.ResolveForCaptureAsync(
+                service,
+                Mapping(),
+                [new EntityReference("systemuser", impostor.Id)]))
+            .Throws<OwnerResolutionException>();
+
+        await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.MissingCaptureMapping);
+    }
+
+    [Test]
+    public async Task ResolveForCaptureAsync_SkipHandlingReportsUnmappedPrincipals()
+    {
+        var unmappedUser = User(Guid.NewGuid(), "someone@example.org", disabled: false);
+        var unmappedTeam = new EntityReference("team", Guid.NewGuid());
+        var service = CreateService(unmappedUser);
+
+        var result = await _resolver.ResolveForCaptureAsync(
+            service,
+            Mapping(),
+            [new EntityReference("systemuser", unmappedUser.Id), unmappedTeam],
+            UnmappedOwnerHandling.Skip);
+
+        await Assert.That(result.Captures).IsEmpty();
+        await Assert.That(result.Skipped.Count).IsEqualTo(2);
+        await Assert.That(result.Skipped.All(skipped => skipped.Reason == OwnerCaptureSkipReason.Unmapped)).IsTrue();
+        await Assert.That(result.FindSkipped(unmappedTeam)).IsNotNull();
+    }
+
+    [Test]
+    public async Task ResolveForCaptureAsync_SkipHandlingStillRejectsAmbiguousCapture()
+    {
+        var groupId = Guid.NewGuid();
+        var team = Team(Guid.NewGuid(), "Shared", Guid.NewGuid(), (int)OwnerTeamType.SecurityGroup, groupId, 1);
+        var service = CreateService(team);
+        var mapping = Mapping(
+            ("a", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }),
+            ("b", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
+
+        var exception = await Assert.That(async () => await _resolver.ResolveForCaptureAsync(
+                service,
+                mapping,
+                [new EntityReference("team", team.Id)],
+                UnmappedOwnerHandling.Skip))
+            .Throws<OwnerResolutionException>();
+
+        await Assert.That(exception!.Failure).IsEqualTo(OwnerResolutionFailure.AmbiguousCaptureMapping);
+    }
+
+    [Test]
+    public async Task ResolveForCaptureAsync_FullyMappedCaptureDoesNotQueryPlatformPrincipals()
+    {
+        var groupId = Guid.NewGuid();
+        var team = Team(Guid.NewGuid(), "Mapped", Guid.NewGuid(), (int)OwnerTeamType.SecurityGroup, groupId, 1);
+        var service = CreateService(team);
+        var mapping = Mapping(("mapped", new OwnerMappingEntry { Kind = OwnerKind.Team, EntraObjectId = groupId }));
+
+        await _resolver.ResolveForCaptureAsync(service, mapping, [new EntityReference("team", team.Id)]);
+
+        await Assert.That(Queries(service).Any(query => query.EntityName == "systemuser")).IsFalse();
     }
 
     [Test]
@@ -529,6 +627,9 @@ public class OwnerResolverTests
     }
 
     private static Entity BusinessUnit(Guid id, string name) => new("businessunit", id) { ["name"] = name };
+
+    private static Entity PlatformUser(Guid id, string fullName) =>
+        new("systemuser", id) { ["fullname"] = fullName, ["isdisabled"] = true };
 
     private static Entity Team(
         Guid id,

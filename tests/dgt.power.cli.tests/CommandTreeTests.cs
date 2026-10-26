@@ -52,6 +52,7 @@ public class CommandTreeTests
     [Arguments("plugin")]
     [Arguments("process")]
     [Arguments("teamtemplates")]
+    [Arguments("duplicaterules")]
     [Arguments("telemetry")]
     [Arguments("webresource")]
     [Arguments("complete")]
@@ -150,6 +151,56 @@ public class CommandTreeTests
         var result = tester.Run("process", subCommand, "--help");
 
         await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    [Arguments("init")]
+    [Arguments("apply")]
+    public async Task DuplicateRulesSubCommand_HelpInvocation_Succeeds(string subCommand)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("duplicaterules", subCommand, "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+    }
+
+    [Test]
+    public async Task DuplicateRulesCompletion_UsesResourceCommandsAndOptions()
+    {
+        var capture = new ModelCaptureHelpProvider();
+        var tester = new CommandAppTester();
+        tester.Configure(config =>
+        {
+            CommandTree.Register(config);
+            config.SetHelpProvider(capture);
+        });
+        var result = tester.Run("--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(capture.Model).IsNotNull();
+        const string rootLine = "dgtp ";
+        const string branchLine = "dgtp duplicaterules ";
+        const string initLine = "dgtp duplicaterules init --";
+        const string applyLine = "dgtp duplicaterules apply --";
+        var root = CompletionEngine.GetCompletions(capture.Model!, rootLine, rootLine.Length);
+        var branch = CompletionEngine.GetCompletions(capture.Model!, branchLine, branchLine.Length);
+        var init = CompletionEngine.GetCompletions(capture.Model!, initLine, initLine.Length);
+        var apply = CompletionEngine.GetCompletions(capture.Model!, applyLine, applyLine.Length);
+
+        await Assert.That(root).Contains("duplicaterules");
+        await Assert.That(branch).Contains("init");
+        await Assert.That(branch).Contains("apply");
+        await Assert.That(init).Contains("--entity");
+        await Assert.That(init).Contains("--rule-id");
+        await Assert.That(init).Contains("--capture");
+        await Assert.That(init).Contains("--owner-mapping");
+        await Assert.That(init).Contains("--overwrite");
+        await Assert.That(apply).Contains("--owner-mapping");
+        await Assert.That(apply).Contains("--dry-run");
+        await Assert.That(apply).Contains("--no-wait");
+        await Assert.That(apply).Contains("--timeout");
     }
 
     [Test]

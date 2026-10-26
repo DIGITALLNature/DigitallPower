@@ -53,6 +53,45 @@ public class ProcessInitCommandTests
     }
 
     [Test]
+    public async Task Init_PlatformOwnedProcessIsCapturedWithoutOwnerAndWarns()
+    {
+        using var fixture = new ProcessInitFixture();
+        var mappingPath = fixture.WriteMapping(
+            """{"schemaVersion":1,"owners":{"other":{"kind":"user","domainName":"other@example.org"}}}""");
+        var outputPath = fixture.PathFor("platform.json");
+        using var console = new TestConsole();
+        console.Profile.Width = 1000;
+        var context = fixture.CreateCommandContext(console, platformOwner: true, includeOtherUser: true);
+
+        var succeeded = context.Execute(ProcessInitFixture.Settings(outputPath, mappingPath));
+        var result = ProcessConfiguration.Load(outputPath);
+
+        await Assert.That(succeeded).IsTrue();
+        await Assert.That(result.Processes[0].Owner).IsNull();
+        await Assert.That(result.Processes[0].Active).IsTrue();
+        await Assert.That(console.Output).Contains($"owned by platform principal SYSTEM systemuser({fixture.OwnerUserId:D}): {fixture.ProcessId:D}");
+    }
+
+    [Test]
+    public async Task Init_SkipUnmappedOwnersOmitsOwnerOnlyEntriesAndWarns()
+    {
+        using var fixture = new ProcessInitFixture();
+        var mappingPath = fixture.WriteMapping(
+            """{"schemaVersion":1,"owners":{"other":{"kind":"user","domainName":"other@example.org"}}}""");
+        var outputPath = fixture.PathFor("skip.json");
+        using var console = new TestConsole();
+        console.Profile.Width = 1000;
+        var context = fixture.CreateCommandContext(console, includeOtherUser: true);
+
+        var succeeded = context.Execute(ProcessInitFixture.Settings(outputPath, mappingPath, capture: "owner", unmappedOwners: "skip"));
+
+        await Assert.That(succeeded).IsTrue();
+        await Assert.That(ProcessConfiguration.Load(outputPath).Processes).IsEmpty();
+        await Assert.That(console.Output).Contains($"owned by unmapped principal systemuser({fixture.OwnerUserId:D}): {fixture.ProcessId:D}");
+        await Assert.That(console.Output).Contains("Captured 0 processes");
+    }
+
+    [Test]
     public async Task Init_UnknownSolutionDoesNotCreateOrReplaceOutput()
     {
         using var fixture = new ProcessInitFixture();
@@ -115,13 +154,15 @@ public class ProcessInitCommandTests
     {
         private readonly string _directory = Path.Combine(Environment.CurrentDirectory, $"process-init-{Guid.NewGuid():N}");
         private readonly Guid _solutionId = Guid.NewGuid();
-        private readonly Guid _processId = Guid.NewGuid();
-        private readonly Guid _ownerId = Guid.NewGuid();
 
         public ProcessInitFixture()
         {
             Directory.CreateDirectory(_directory);
         }
+
+        public Guid ProcessId { get; } = Guid.NewGuid();
+
+        public Guid OwnerUserId { get; } = Guid.NewGuid();
 
         public string DirectoryPath => _directory;
 
@@ -138,19 +179,23 @@ public class ProcessInitCommandTests
             string output,
             string? mapping = null,
             string capture = "both",
-            bool overwrite = false) => new()
+            bool overwrite = false,
+            string unmappedOwners = "fail") => new()
         {
             File = output,
             Solutions = ["Core"],
             Capture = capture,
             OwnerMapping = mapping,
+            UnmappedOwners = unmappedOwners,
             Overwrite = overwrite
         };
 
         public CommandTestContext<ProcessInitCommand, ProcessInitSettings> CreateCommandContext(
             TestConsole console,
             bool includeSolution = true,
-            bool includeProcess = true)
+            bool includeProcess = true,
+            bool platformOwner = false,
+            bool includeOtherUser = false)
         {
             var services = new TestServiceCollection();
             services.RemoveAll<IDataverseConnection>();
@@ -165,26 +210,41 @@ public class ProcessInitCommandTests
             {
                 data.AddRange(
                 [
-                    new Workflow(_processId)
+                    new Workflow(ProcessId)
                     {
                         Name = "Process for capture",
                         Type = new OptionSetValue(Workflow.Options.Type.Definition),
                         Category = new OptionSetValue(Workflow.Options.Category.Workflow),
                         StateCode = new OptionSetValue(Workflow.Options.StateCode.Activated),
-                        OwnerId = new EntityReference("systemuser", _ownerId)
+                        OwnerId = new EntityReference("systemuser", OwnerUserId)
                     },
                     new Entity("solutioncomponent", Guid.NewGuid())
                     {
-                        ["objectid"] = _processId,
+                        ["objectid"] = ProcessId,
                         ["componenttype"] = new OptionSetValue(SolutionComponent.Options.ComponentType.Workflow),
                         ["solutionid"] = new EntityReference("solution", _solutionId)
                     },
-                    new Entity("systemuser", _ownerId)
-                    {
-                        ["domainname"] = "owner@example.org",
-                        ["isdisabled"] = false
-                    }
+                    platformOwner
+                        ? new Entity("systemuser", OwnerUserId)
+                        {
+                            ["fullname"] = "SYSTEM",
+                            ["isdisabled"] = true
+                        }
+                        : new Entity("systemuser", OwnerUserId)
+                        {
+                            ["domainname"] = "owner@example.org",
+                            ["isdisabled"] = false
+                        }
                 ]);
+            }
+
+            if (includeOtherUser)
+            {
+                data.Add(new Entity("systemuser", Guid.NewGuid())
+                {
+                    ["domainname"] = "other@example.org",
+                    ["isdisabled"] = false
+                });
             }
 
             return new CommandTestContextBuilder<ProcessInitCommand, ProcessInitSettings>()
