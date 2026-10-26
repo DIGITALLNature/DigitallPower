@@ -127,7 +127,7 @@ When **modifying any configuration model class** that has a corresponding JSON s
    - `schemas/codegeneration/v1/schema.json` — V1 legacy config
    - `schemas/codegeneration/v2/dotnet.schema.json` — V2 .NET config
    - `schemas/codegeneration/v2/typescript.schema.json` — V2 TypeScript config
-   - `schemas/analyzer/schema.json`, `schemas/push/schema.json`, `schemas/maintenance/…`
+   - `schemas/push/schema.json`, `schemas/maintenance/…`
 
 2. **What requires a schema update:**
    - Adding, removing, or renaming a config property
@@ -209,7 +209,6 @@ Every code change that modifies behavior **must** be accompanied by tests.
   - `tests/dgt.power.maintenance.tests/`
   - `tests/dgt.power.export.tests/`
   - `tests/dgt.power.import.tests/`
-  - `tests/dgt.power.analyzer.tests/`
   - `tests/dgt.power.codegeneration.tests/`
   - `tests/dgt.power.connection.tests/`
   - `tests/dgt.power.telemetry.tests/`
@@ -304,8 +303,13 @@ Do not create a proposal for a localized bug fix, test-only or documentation-onl
 1. Read the relevant main specs with `pnpm exec openspec list --specs` and inspect the implementation, tests, schemas, and README that define current behavior.
 2. For unclear or broad work, explore first. Otherwise create a proposal with `/opsx-propose`; include scope, affected capabilities, design constraints, and test/validation tasks.
 3. Review the proposal before implementation. Implement only after the user authorizes the work, using `/opsx-apply` where available.
-4. Update the main specs to match the implemented behavior, run focused tests and `pnpm exec openspec validate --all`, then archive the completed change with `/opsx-archive`.
-5. Refresh generated Copilot instructions with `pnpm run openspec:update` so OpenSpec CLI examples continue to use the repository-local pnpm installation.
+4. Update the main specs to match the implemented behavior, run focused tests and `pnpm exec openspec validate --all`, and submit the implementation PR. Keep the change active while the PR is open, even when all tasks and checks are complete.
+5. Archive with `/opsx-archive` only after a stable GitHub release containing the implementation has been published from `main`. A merge into `beta` (including beta preparation for a later main release), a merge into `main` before release, or a beta/prerelease publication is not sufficient. Before any archive-related write:
+   - Verify the implementation PR belongs to this change and has `state: MERGED`, a non-null `mergedAt`, and `baseRefName: main`, for example with `gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,mergeCommit,url`.
+   - Verify a GitHub release containing that implementation is published and is neither a draft nor a prerelease, for example with `gh release view <tag> --repo DIGITALLNature/DigitallPower --json isDraft,isPrerelease,publishedAt,tagName`.
+   - Fetch the latest `main` and release tag, then verify the PR merge commit is an ancestor of the release tag and the release tag commit is reachable from `origin/main`.
+   - If the PR, release, or commit ancestry cannot be verified, report the blocker and leave the change active. Completed tasks, green CI, approval, closing without merging, beta integration, or an unrelated release are insufficient. Archive only as a separate post-release follow-up using a checkout containing the released implementation, never during beta preparation or in the implementation PR.
+6. Refresh generated Copilot instructions with `pnpm run openspec:update` so OpenSpec CLI examples use the repository-local pnpm installation and generated workflows retain the post-release archive gate.
 
 ### Where knowledge belongs
 

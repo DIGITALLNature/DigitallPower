@@ -36,14 +36,17 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 - [Quick Start](#-quick-start)
 - [Tab Completion](#-tab-completion)
 - [Configuration](#%EF%B8%8F-configuration)
+  - [Portable owner mappings](#portable-owner-mappings)
 - [Command Reference](#-command-reference)
   - [connection](#connection--authentication--environments)
     - [Authentication types](#authentication-types)
-  - [export](#export--export-dataverse-artifacts)
-  - [import](#import--import-dataverse-artifacts)
-  - [analyze](#analyze--solution-analysis)
+  - [Retired legacy transfers](#retired-legacy-transfers)
+  - [teamtemplates](#teamtemplates--team-template-transfer)
   - [solution](#solution--solution-scoped-operations)
-  - [maintenance](#maintenance--operational-tasks)
+  - [Retired maintenance commands](#retired-maintenance-commands)
+  - [process](#process--process-state-and-ownership)
+  - [duplicaterules](#duplicaterules--duplicate-rule-publication-and-ownership)
+  - [documenttemplates](#documenttemplates--portable-document-templates)
   - [codegeneration](#codegeneration-cg--early-bound-code-generation)
   - [plugin](#plugin--manage-plugin-assembliespackages)
   - [webresource](#webresource--deploy-webresources)
@@ -52,6 +55,7 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
   - [Client Secret service connection](#client-secret-service-connection)
   - [Workload Identity Federation (OIDC) service connection](#workload-identity-federation-oidc-service-connection)
 - [Solution Architecture](#-solution-architecture)
+  - [Caller-specific Dataverse services](#caller-specific-dataverse-services)
 - [Repository Layout](#-repository-layout)
 - [Build & Test](#%EF%B8%8F-build--test)
 - [Spec-Driven Development](#spec-driven-development)
@@ -67,11 +71,11 @@ DigitallPower (`dgtp`) is a cross-platform global .NET tool that helps developer
 | Area | What it does |
 |------|--------------|
 | **Connections** | Manage typed Dataverse connections (interactive, device-code, client-secret, certificate, Azure DevOps federation) and check authentication status |
-| **Export** | Extract configuration data (team templates, queues, SLAs, calendars, routing rules, document/Outlook templates, user roles, bulk delete jobs) from an environment |
-| **Import** | Import the previously exported artifacts into another environment — ideal for ALM pipelines |
-| **Analyze** | Inspect solutions for redundant components, active-layer issues, top-layer problems and obsolete patches |
+| **Team templates** | Transfer team templates with a versioned file, GUID identity, preflight validation, and explicit table-scoped cleanup |
+| **Document templates** | Transfer active Word and Excel templates as portable, versioned packages |
 | **Solution** | Run configuration-driven Dataverse quality gates (`solution lint`) such as unmanaged field naming and table completeness checks against a single solution, increment solution versions (`solution version`), and copy solution components between solutions (`solution copy-components`) |
-| **Maintenance** | Bulk-delete records, manage auto-number formats, protect calculated fields, increment solution versions, update workflow states, filter PowerFx plugin steps, and more |
+| **Process** | Capture and apply explicit process state and portable ownership by workflow ID, with preflight, dry-run and optional run-level impersonation |
+| **Duplicate Rules** | Capture and apply publication state and portable ownership of existing duplicate-detection rules by rule ID, with capacity preflight, dry-run and bounded publish observation |
 | **Code Generation** | Generate strongly-typed C# (early-bound), TypeScript and metadata files for Dataverse entities |
 | **Plugin** | Deploy plugin assemblies and packages with `plugin push`; manage plugin steps (configuration, enable/disable, bulk state) |
 | **Webresources** | Push webresources from a directory or a single file, with publisher-prefix naming and solution membership |
@@ -102,8 +106,8 @@ dgtp connection select dev
 # 2. Verify the connection by listing connections
 dgtp connection list
 
-# 3. Export configuration data from the environment
-dgtp export queues --filedir ./out/queues
+# 3. Export team templates from the environment
+dgtp teamtemplates export ./teamtemplates.json
 
 # 4. Generate early-bound C# classes
 dgtp codegeneration ./generated -c ./genconfig.json
@@ -176,21 +180,26 @@ The shim is written with idempotency markers — running the command again does 
 
 | Input | Completions |
 |-------|-------------|
-| `dgtp <TAB>` | `export` `import` `maintenance` `analyze` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
-| `dgtp export <TAB>` | `teamtemplates` `bulkdeletes` `queues` … |
-| `dgtp export --<TAB>` | `--filedir` `--filename` `--inline` `--no-telemetry` |
+| `dgtp <TAB>` | `teamtemplates` `documenttemplates` `process` `duplicaterules` `connection` `codegeneration` `plugin` `webresource` `telemetry` `complete` |
+| `dgtp documenttemplates <TAB>` | `import` `export` |
+| `dgtp documenttemplates export --<TAB>` | `--entity` `--type` `--overwrite` `--no-telemetry` |
+| `dgtp teamtemplates <TAB>` | `import` `export` |
+| `dgtp teamtemplates import --<TAB>` | `--dry-run` `--cleanup` `--cleanup-table` |
+| `dgtp teamtemplates export --<TAB>` | `--dry-run` `--overwrite` `--table` |
 | `dgtp connection <TAB>` | `list` `create` `delete` `select` `status` `refresh` |
 | `dgtp telemetry <TAB>` | `status` `enable` `disable` |
 | `dgtp plugin <TAB>` | `push` |
 | `dgtp plugin step <TAB>` | `enable` `disable` `config` `state` |
 | `dgtp plugin step config <TAB>` | `set` |
 | `dgtp plugin step state <TAB>` | `set` |
+| `dgtp process <TAB>` | `init` `apply` |
+| `dgtp duplicaterules <TAB>` | `init` `apply` |
 
 > **Note:** Tab completion is static (command names and option flags only). It does not connect to Dataverse and requires no network access.
 
 ## ⚙️ Configuration
 
-The former global `dgtp.json` configuration and `dgtp:*` environment-variable binding have been removed. Commands accept their own options and configuration files. For example, `maintenance bulkdelete` accepts `--poll-interval` (seconds; default `5`) to control how often it checks the asynchronous job.
+The former global `dgtp.json` configuration and `dgtp:*` environment-variable binding have been removed. Commands accept their own options and configuration files. For example, `process apply` accepts a positional V1 configuration file and `--dry-run` to preview configured state and ownership changes.
 
 Saved connections and application state use a stable per-user data directory instead of assembly-scoped isolated storage. Set `DGTP_HOME` to override its location. Connections are stored in `connections.json`; client secrets and PFX passwords are stored separately using the platform's protected storage (DPAPI on Windows, Keychain on macOS, and Secret Service on Linux). No 2.x connections are migrated automatically.
 
@@ -211,6 +220,131 @@ Global connection/authentication environment variables:
 `--connection` and `--connection-string` override their corresponding environment variables. A command-line `--connection-string` or `DGTP_CONNECTION_STRING` takes precedence over the named connection.
 
 JSON schemas for the various configuration files used by the modules live under [`schemas/`](schemas) and can be referenced from your own config files via the `$schema` property for autocomplete in modern editors.
+
+Configuration files written by capture commands (`process`, `duplicaterules`, `teamtemplates`, and `documenttemplates`) are UTF-8 without a byte order mark and keep printable non-ASCII text such as umlauts and no-break spaces literal; only characters JSON requires to be escaped (quotation marks, backslashes, and control characters) are escaped. Readers accept both literal and `\uXXXX`-escaped text, so older files remain valid. Re-capturing a file written by an earlier version produces a one-time diff in which `\u00E4`-style escapes become literal characters; the content is unchanged.
+
+### Portable owner mappings
+
+Ownership-aware consumers use a V1 environment-specific mapping to translate stable logical keys
+into existing Dataverse users, application users, or owning teams. Keep resource intent portable:
+refer to keys such as `salesOwner`, and keep tenant-specific Entra IDs and names in the mapping for
+the selected environment.
+
+```json
+{
+  "$schema": "https://digitallpower.dev/schemas/ownership/v1/schema.json",
+  "schemaVersion": 1,
+  "owners": {
+    "salesOwner": {
+      "kind": "team",
+      "namePattern": "Sales-*",
+      "businessUnitName": "Sales"
+    },
+    "groupOwner": {
+      "kind": "team",
+      "entraObjectId": "11111111-1111-1111-1111-111111111111",
+      "businessUnitName": "Sales",
+      "membershipType": "members"
+    },
+    "humanOwner": {
+      "kind": "user",
+      "domainName": "deployment@example.org"
+    },
+    "entraUser": {
+      "kind": "user",
+      "entraObjectId": "33333333-3333-3333-3333-333333333333"
+    },
+    "automationOwner": {
+      "kind": "applicationUser",
+      "applicationId": "22222222-2222-2222-2222-222222222222"
+    }
+  }
+}
+```
+
+The V1 schema is [`schemas/ownership/v1/schema.json`](schemas/ownership/v1/schema.json).
+Ownership-aware consumers use `--owner-mapping <File>`; the
+[`process` commands](#process--process-state-and-ownership) support this shared contract for
+regular and application users; the
+[`duplicaterules` commands](#duplicaterules--duplicate-rule-publication-and-ownership) also
+support owning teams.
+Relative mapping paths are resolved from the working directory. There is no implicit file search,
+default owner, connection-identity fallback, or selector fallback. Explicitly supplied files are
+validated even when a consumer invocation has no owner intent; state-only operations do not need a
+mapping. Logical keys are ordinal case-sensitive; keys and selector strings must be nonblank and
+must not have leading or trailing whitespace.
+
+`user` selectors use exactly one of `entraObjectId` or `domainName` (matched to
+`systemuser.domainname`); `applicationUser` uses `applicationId`. A `team` uses either
+`entraObjectId`, optionally qualified by `businessUnitName` and `membershipType`, or a
+`namePattern` together with `businessUnitName`. GUID selectors must be nonempty. Names and
+domain names are compared as whole values using ordinal, case-insensitive comparison. Team
+patterns match the whole name and only `*` expands to zero or more characters; `?`, `%`, `_`, and
+brackets are literal. Business-unit names must identify exactly one unit, and team qualifiers
+combine with AND. Membership values are `membersAndGuests`, `members`, `owners`, and `guests`.
+An Entra group-ID selector resolves only group-backed security or Microsoft 365 teams; a name
+pattern can also resolve an owner team.
+
+Apply resolution validates the entire file and requested keys locally, then looks up only the
+requested keys; unused entries do not cause Dataverse queries. Multiple logical keys may alias the
+same principal for apply. Capture is deliberately stricter: it resolves the entire source mapping
+and requires exactly one key for each captured principal. Aliases are allowed for principals not
+being captured, but aliases for a captured principal are an ambiguity error. Captured owners
+without a key fail by default. The built-in platform users SYSTEM and INTEGRATION (exact full
+name, no domain name, Entra object ID, or application ID) are always skipped instead, because they
+own platform-provided records and cannot be transported. Consumers can opt into skipping other
+unmapped owners (`--unmapped-owners skip`); ambiguity still fails. Skipped records are written
+without `owner`, so apply preserves the target owner, and each command warns per skipped principal.
+Consumers must finish capture validation before writing configuration output.
+
+Resolution returns principal identity, principal kind, and user-disabled/team-type metadata; it
+does not assign records or claim resource-specific assignment eligibility. Disabled users remain
+resolvable so a consumer can apply its own policy before writing. Owner, security-group, and
+Microsoft 365 group teams can own records; access teams and unclassified teams are rejected.
+Missing, ambiguous, wrong-kind, and ineligible matches fail explicitly with selector context.
+Lookups use complete Dataverse paging, do not choose a first match, and do not retry or substitute
+another selector. The [portable mapping example](tests/dgt.power.common.tests/Ownership/Fixtures/owner-mapping.example.json)
+is shared with loader tests.
+
+Resource configuration refers to the logical key rather than embedding a tenant identity, for
+example `{ "owner": "salesOwner" }`. Process and duplicate-rule commands use this contract; additional resources
+may adopt it with their own eligibility policies. Use the source environment's mapping file during
+capture and the destination environment's
+mapping file during apply. The same logical key can intentionally resolve to different principals
+in those files. Apply permits aliases, while capture rejects aliases only when multiple keys resolve
+to an owner being captured; aliases for uncaptured principals are harmless.
+
+For resources that allow team owners (such as duplicate rules, but not process commands), the source mapping can pin the source
+team's Entra group identity while the target mapping uses a target-specific name and business unit:
+
+```json
+{
+  "schemaVersion": 1,
+  "owners": {
+    "salesOwner": {
+      "kind": "team",
+      "entraObjectId": "11111111-1111-1111-1111-111111111111"
+    }
+  }
+}
+```
+
+```json
+{
+  "schemaVersion": 1,
+  "owners": {
+    "salesOwner": {
+      "kind": "team",
+      "namePattern": "Sales-*",
+      "businessUnitName": "Sales"
+    }
+  }
+}
+```
+
+The source file is resolved and reverse-matched during capture; the target file is lazily resolved
+for requested keys during apply. Each consumer must validate resource-specific admissibility before
+its first write and must finish capture validation before creating or replacing its output file.
 
 ## 📚 Command Reference
 
@@ -369,27 +503,31 @@ type. Prefer the environment variable for secret-bearing strings to avoid exposi
 command-line arguments or shell history. `connection status` skips their authentication check;
 successful status does not verify their credentials.
 
-### `export` — Export Dataverse artifacts
+### Retired legacy transfers
 
-Exports configuration data from the currently selected environment into JSON files.
+The top-level `import` and `export` branches are removed without compatibility aliases.
+The following transfer pairs and their legacy JSON contracts are unsupported:
 
-| Command | Description |
-|---------|-------------|
-| `export teamtemplates` | Team templates |
-| `export bulkdeletes` | Bulk delete jobs |
-| `export queues` | Queues |
-| `export documenttemplates` | Document templates |
-| `export calendars` | Calendars |
-| `export slaconfigs` | SLAs |
-| `export routingruleconfigs` | Routing rules |
-| `export userroles` | User → security role assignments |
-| `export outlooktemplates` | Outlook templates |
+| Removed import path | Removed export path | Unsupported legacy file | Replacement |
+|---|---|---|---|
+| `import bulkdeletes` | `export bulkdeletes` | `bulkdelete.json` | None |
+| `import queues` | `export queues` | `queue.json` | None |
+| `import calendar` | `export calendars` | `calendar.json` | None |
+| `import slaconfigs` | `export slaconfigs` | `slaconfig.json` | None |
+| `import routingruleconfigs` | `export routingruleconfigs` | `routingruleconfig.json` | None |
+| `import userroles` | `export userroles` | `userrole.json` | None |
+| `import outlooktemplates` | `export outlooktemplates` | `outlooktemplate.json` | None |
 
-All export commands accept `--filedir <path>` to control the output directory.
-
-```bash
-dgtp export bulkdeletes --filedir ./out/bulkdeletes
-```
+No replacement commands or supported configuration migrations are provided for these seven pairs,
+and no exact PAC equivalence is promised. Retirement does not change existing Dataverse jobs,
+queues, calendars, SLAs, routing rules, user-role assignments, or Outlook synchronization filters.
+Scheduled bulk-delete jobs are not cancelled, disabled, or deleted.
+The independent `teamtemplates import/export` and `documenttemplates import/export` commands remain
+supported. Secure plugin-step configuration uses `plugin step config set`, not `import secureconfigs`.
+See the [3.x migration guide](docs/migrations/2.x-to-3.x.md#retired-legacy-transfers).
+The unused shared CRUD `Try*Async` extension helpers and directory-plus-filename
+`TryGetConfigFile` overload used only by legacy transfers are also removed.
+The single-path configuration reader remains available.
 
 ### `solution` — solution-scoped operations
 
@@ -464,8 +602,8 @@ Copies the `solutioncomponent` rows of one or more source solutions into an unma
 | Option | Description |
 |--------|-------------|
 | `-s, --source <Sol1,Sol2>` | Comma-separated unique names of the solutions to copy components from (required) |
-| `--dry-run` | Print the planned changes without adding any component to the target solution |
-| `--raw` | Disable best-practice normalization: for tables, preserve only complete vs. non-complete behavior (shell-only sources are treated as non-complete) and skip the managed-active-layer filter |
+| `--dry-run` | Prepare and display the copy and field-protection plans, without adding, removing, updating, or publishing anything |
+| `--raw` | Disable best-practice normalization: preserve complete vs. non-complete table behavior (shell-only sources become non-complete), skip managed-active-layer filtering, and bypass all field-protection reads and updates |
 | `--apps <skip\|strip\|allow>` | How to handle model-driven apps (default `skip`), see below |
 
 Dataverse rejects `DoNotIncludeSubcomponents` on anything but tables, so a model-driven app cannot be added without Dataverse's own expansion. `--apps` controls the trade-off:
@@ -482,78 +620,464 @@ By default (best-practice mode, no `--raw`), the command avoids two common cause
 - **A managed component (attribute, form, view, workflow, ...) is only copied if it has its own active customization layer** (its top `msdyn_componentlayer` row is the synthetic `Active` layer). A managed component with no active layer is redundant - the managed baseline the target environment already has installed provides it - and is skipped.
 - **`AddRequiredComponents` is always `false`.** This keeps Dataverse from adding the "required" dependencies of any component - only the components explicitly present in the source solution(s) are added (model-driven apps are the exception, see `--apps`).
 
+Best-practice mode also sets **`IsCustomizable.Value = false`** for eligible unmanaged
+**Calculated, Rollup, and Power Fx Formula** columns (`SourceType` 1, 2, and 3). Scope is the final
+intentional plan: explicitly included attributes (even without a parent-table membership row)
+and eligible fields of tables copied completely. A column selected by multiple sources is
+considered once. Skeleton-only tables do not expand the protection scope. Managed columns are
+excluded even when they have an active customization layer, as are simple/prompt columns,
+skipped components, unrelated target membership, and columns added only by app/dependency
+expansion. Base-currency companions (`IsBaseCurrency=true`) and historic `bpf_duration` are
+reported exceptions; rollup date/state companions have `SourceType=0` and are not calculations.
+
+Protection preparation reads unpublished metadata for both complete tables and standalone
+attributes, so pending calculation edits and previously applied protection do not require
+publication. Choice-backed Power Fx Formula columns are supported without resubmitting options.
+
+**This changes shared environment metadata, not a solution-local copy.** Other solutions
+containing those columns see the same managed property. The policy is intended for managed
+deployment, not field-level security or a lock on unmanaged development. Labels/translations
+may remain editable: neither a formula-only lock nor complete immutability of every column
+property is promised. Disposable platform tests verified all three types, minimal updates,
+unchanged formulas/settings, and managed export/import without publication. That roundtrip used
+the same environment; universal cross-environment restrictions and original-publisher servicing
+were not verified.
+
+All protection metadata is prepared before any copy or cleanup mutation. Missing required
+metadata or an unprotected immutable property fails preflight, including in dry-run; an already
+false property is unchanged even if immutable. Preflight does not establish complete permissions
+or guarantee runtime success. The caller needs solution-copy and applicable metadata-update
+permissions. Copying and app cleanup must succeed before sequential protection updates begin.
+Each update changes only the managed property and is read back before proceeding; formulas and
+unrelated settings are not resubmitted. No publication is performed.
+
+Execution is **not atomic**. A failure or cancellation stops later client mutations and reports
+confirmed copy/cleanup effects, confirmed protected columns, and failed or unconfirmed effects.
+In-flight server operations may still take effect. There are no client mutation retries or
+automatic rollback. Already protected columns receive no protection update on a rerun.
+Removing this policy later does not restore previously changed properties. Use `--dry-run`
+before upgrading existing automation, or `--raw` to bypass protection **and** the existing
+best-practice selection rules.
+
 ```bash
-# Preview what would be copied, without changing the target solution
+# Preview copying and shared-metadata protection without any mutations
 dgtp solution copy-components target_solution --source dev_solution --dry-run
 
-# Copy with best-practice filtering (default)
+# Copy with best-practice filtering and calculation-column protection (default)
 dgtp solution copy-components target_solution --source dev_solution_a,dev_solution_b
 
-# Mirror every source component as-is (no managed/active-layer filtering)
+# Bypass protection AND best-practice selection; preserve complete/non-complete table behavior
 dgtp solution copy-components target_solution --source dev_solution --raw
 
 # Also copy model-driven apps, removing the subcomponents Dataverse adds on its own
 dgtp solution copy-components target_solution --source dev_solution --apps strip
 ```
 
-### `import` — Import Dataverse artifacts
+### `teamtemplates` — Team template transfer
 
-Counterpart to `export`. Reads the previously exported JSON files and applies them to the currently selected environment.
+Use resource-oriented commands to export or import Dataverse team templates. Both commands require
+an explicit file path. Export includes all non-system templates by default; repeat `--table
+<LogicalName>` to filter by table. Import reads the complete file and matches templates by GUID
+only; names never substitute for identity. Existing export files are preserved unless
+`--overwrite` is supplied.
+
+```bash
+# Export all non-system templates to a versioned resource file
+dgtp teamtemplates export ./teamtemplates.json
+
+# Export only templates associated with the selected logical tables
+dgtp teamtemplates export ./teamtemplates.json --table account --table contact
+
+# Preview an import without making Dataverse writes
+dgtp teamtemplates import ./teamtemplates.json --dry-run
+
+# Explicitly remove unlisted templates only within named tables
+dgtp teamtemplates import ./teamtemplates.json \
+  --cleanup --cleanup-table account --cleanup-table contact --dry-run
+```
+
+Table options are repeatable: pass one `--table` or `--cleanup-table` per logical table name;
+comma-separated lists are not used. Cleanup requires both `--cleanup` and at least one explicit
+`--cleanup-table`. There is no `--all` or other global cleanup option: scope is never inferred
+from the file or export filters, and system templates are never updated or deleted. Access-team
+enablement and valid Dataverse rights are checked during preflight.
+
+Transfer files use `schemaVersion: 1` and a `templates` array. The schema is published at
+[`schemas/teamtemplates/v1/schema.json`](schemas/teamtemplates/v1/schema.json).
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/teamtemplates/v1/schema.json",
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "teamtemplateid": "4e17461c-efec-43a0-835b-08fa78af1f83",
+      "entity": "account",
+      "teamtemplatename": "Account readers",
+      "description": null,
+      "defaultaccessrightsmask": 1
+    }
+  ]
+}
+```
+
+The `defaultaccessrightsmask` must contain a supported, non-zero combination of access-team
+rights: Read (`1`), Write (`2`), Append (`4`), Append To (`16`), Delete (`65536`), Share
+(`262144`), and Assign (`524288`). Create (`32`) is not supported for access-team templates.
+Names are limited to 100 characters and descriptions to 1,500 characters. Table names use
+lowercase Dataverse logical names matching `^[a-z][a-z0-9_]*$`. Name duplicates and target
+collisions are compared case-insensitively.
+
+Import validates the entire file and target plan before its first write. A missing or invalid file,
+unsupported version, invalid rights, a GUID assigned to another table, a table/name collision
+under another GUID, a system-template target, or invalid table metadata fails preflight with no
+writes. Omitted or null `description` clears the existing description. Unlisted templates are
+preserved by default. A valid empty `templates` array is a no-op only without cleanup; empty input
+with cleanup is rejected rather than interpreted as a request to clear the selected tables.
+
+Dry-run performs the same validation and reports planned creates, updates, unchanged templates,
+and scoped deletes without writing to Dataverse or creating/replacing an export file. Apply is not
+transactional: if a mutation fails, completed changes are not rolled back. Execution stops at the
+first failure, reports partial results, and cleanup starts only after all creates and updates
+succeed.
+
+### Retired maintenance commands
+
+The `maintenance` branch and module are removed without aliases. Environment-wide operations
+remain retired; scoped field protection is owned by `solution copy-components`:
+
+| Removed command | Configuration consequence | Replacement |
+|---|---|---|
+| `maintenance bulkdelete` | Inline FetchXML execution and `--poll-interval` are unsupported; scheduled-job transfer and `bulkdelete.json` are also retired | None |
+| `maintenance autonumber` | Legacy column-format JSON and `schemas/maintenance/autonumber/schema.json` are unsupported | None |
+| `maintenance protectfields` | Environment-wide calculated-field `IsCustomizable` scanning is removed | Plan-scoped protection in `solution copy-components` (not an environment-wide equivalent) |
+| `maintenance carrierinfo` | `carrier.json` export for custom `dgt_carrier` / `ec4u_carrier` tables is removed | None |
+| `maintenance removeredundantcomponents` | Source/target membership pruning and its `--dryrun` / `--includeEntities` options are removed | None; Solution pruning is a deferred request only |
+| `maintenance filterfxplugins` | Legacy PowerFx-filter JSON and `schemas/maintenance/powerfxplugin/schema.json` are unsupported | None |
+
+No supported configuration migration or exact PAC substitute is promised for these operations.
+Removal does not change existing jobs, auto-number formats, managed properties, carrier data,
+solution memberships, or plugin filtering attributes. Existing jobs are not cancelled, disabled,
+or deleted. Solution component pruning remains a deferred idea, not an available replacement
+or retirement dependency. Scoped field protection does not restore the old maintenance command.
+
+The independently migrated `process init` and `process apply` commands remain supported.
+The orphaned `IFileService` / `FileService` contract and `OrganizationServiceExtensions`
+(including `TryExecuteAsync`) are removed; shared `AtomicFileWriter` remains available.
+See the [3.x migration guide](docs/migrations/2.x-to-3.x.md#retired-maintenance-commands).
+
+### `documenttemplates` — Portable document templates
+
+Import and export active Word and Excel templates with a strict portable V1 package.
+The resource-owned `dgt.power.documenttemplates` module replaces the legacy documenttemplate
+commands and manifest; see the [migration guide](docs/migrations/2.x-to-3.x.md#document-templates).
+
+```bash
+dgtp documenttemplates export ./templates --entity account --type word
+dgtp documenttemplates export ./templates --overwrite
+dgtp documenttemplates import ./templates/documenttemplates.json --dry-run
+dgtp documenttemplates import ./templates/documenttemplates.json
+```
+
+Export includes only active Word/Excel templates. Optional single-value `--entity` and
+`--type word|excel` filters combine with AND; neither can include drafts. Export writes
+`documenttemplates.json` and lowercase source-GUID `.docx`/`.xlsx` filenames. It prepares the
+output and checks destination collisions before writing. Existing destinations fail unless
+`--overwrite` is explicit; unrelated files are never removed. No matches produces a valid empty
+manifest. A filesystem write failure can leave partial output and is reported as failure.
+
+```json
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "sourceId": "12345678-1234-1234-1234-123456789abc",
+      "name": "Account summary",
+      "documentType": "word",
+      "entity": "account",
+      "file": "12345678-1234-1234-1234-123456789abc.docx",
+      "languageCode": 1033,
+      "description": null
+    }
+  ]
+}
+```
+
+All shown fields are required. `description: null` clears an existing description;
+`languageCode` is explicit with no implicit language default. An optional root `$schema` URI
+is allowed for editor tooling; unknown properties, duplicate identities/IDs and unsupported
+versions are errors. See the [V1 schema](schemas/documenttemplates/v1/schema.json).
+
+Identity is `(name, documentType, entity)`, with ordinal case-insensitive name matching.
+A matched target keeps its ID and receives the manifest's name spelling. A new template uses
+the nonempty `sourceId`; an ID occupied by another template fails preflight. Names must not
+have surrounding whitespace. Changing an identity component is not an inferred rename:
+the old unlisted template stays unchanged. There is no cleanup or delete/recreate fallback.
+
+Document paths resolve exclusively relative to the manifest directory. Subdirectories are
+allowed; absolute paths, traversal/symlink escapes, missing files, invalid packages and
+declared-type mismatches fail preparation. Import validates local inputs before connecting,
+then prepares the complete input against target metadata before any writes. A valid empty
+manifest succeeds without authentication. Dry-run performs the same preparation and reports
+intended writes without executing them; it does not prove server-side privileges or success.
+
+Every successfully imported template is active, including a matched draft. Execution is sequential
+and best-effort across templates: a failed write skips that template's dependent steps, other
+independent templates continue, and any failure fails the command. Activation failure is not
+success. Cancellation stops further work. Already completed changes are not rolled back;
+import is not atomic. Unlisted active and draft templates remain untouched.
+
+Word preparation validates used CRM field bindings in the main document, headers and footers,
+discovering document parts and custom XML stores through package relationships rather than filenames,
+including `w:dataBinding`, `w15:dataBinding`, related collections and repeating sections.
+It resolves relationship schema/navigation names and lookup display projections from metadata,
+and adapts referenced CRM namespaces to target object type codes without changing foreign
+bindings or unrelated content. Unused embedded fields need not exist in the target.
+The evidenced legacy aliases `account_leads` (account fields) and `lead_accounts` (lead fields)
+are supported only with matching `accountleads_association` N:N metadata and `accountleads`
+intersect metadata. Other unknown or ambiguous legacy aliases fail preflight; arbitrary XPath
+and universal legacy N:N aliases are not supported.
+
+Excel packages, including workbooks with chart sheets, are checked structurally and uploaded unchanged: formulas, URLs and data sources
+are not adapted. Dataverse can normalize package content when storing a newly created Excel
+template; byte-identical server storage is not guaranteed. Neither format guarantees Word/Excel
+rendering, user data access or general cross-environment data-source compatibility.
+
+### `process` — Process state and ownership
+
+Capture and apply state and ownership for classic workflows (category 0), business rules (2),
+actions (3), business process flows (4), and cloud flows (5). Only process definitions are
+supported; dialogs, AI flows and desktop flows are excluded. These commands do not deploy
+definitions or manage connection references.
 
 | Command | Description |
 |---------|-------------|
-| `import outlooktemplates` | Outlook templates |
-| `import userroles` | User → security role assignments |
-| `import queues` | Queues |
-| `import teamtemplates` | Team templates |
-| `import bulkdeletes` | Bulk delete jobs |
-| `import documenttemplates` | Document templates |
-| `import calendar` | Calendars |
-| `import slaconfigs` | SLAs |
-| `import routingruleconfigs` | Routing rules |
+| `process init <File> --solution <UniqueName>` | Capture process state from one or more solutions |
+| `process apply <File>` | Apply only the state and owner intent recorded in the file |
+
+Both commands require an explicit file path; relative paths use the working directory.
 
 ```bash
-dgtp import outlooktemplates --filedir ./out/outlooktemplates
+# Capture state only (the default); repeat --solution to form a union
+dgtp process init ./processes.json --solution ContosoCore --solution ContosoFlows
+
+# Capture ownership as logical keys using a source-environment mapping
+dgtp process init ./processes.json --solution ContosoCore \
+  --capture both --owner-mapping ./owners.source.json --overwrite
+
+# Review the same target resolution and transitions without writes
+dgtp process apply ./processes.json --owner-mapping ./owners.target.json --dry-run
+
+# Run all state transitions as one mapped principal; assignments use the connection identity
+dgtp process apply ./processes.json --owner-mapping ./owners.target.json \
+  --activate-as integrationUser
 ```
 
-### `analyze` — Solution analysis
+#### V1 configuration
 
-Static analysis of one or many Dataverse solutions.
+The schema is available at [`schemas/process/v1/schema.json`](schemas/process/v1/schema.json).
+`processId` is the Dataverse `workflowid`, preserved by solution import. `name` is informational:
+apply never matches a process by display name, unique name or table.
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/process/v1/schema.json",
+  "schemaVersion": 1,
+  "processes": [
+    {
+      "processId": "265a263f-958b-4d32-b89d-6b3fdeac0458",
+      "name": "Create additional Document Location",
+      "active": true,
+      "owner": "integrationUser"
+    }
+  ]
+}
+```
+
+Each entry requires a nonempty GUID and at least one of `active` or `owner`. Omitted properties
+preserve target values, and unlisted processes are untouched. Explicit nulls, unknown or duplicate
+JSON properties, duplicate IDs, unsupported versions and root-level defaults are rejected.
+Owner keys must be nonblank without surrounding whitespace. Use environment-specific
+[portable owner mappings](#portable-owner-mappings); regular and application users are supported,
+but team owners are not.
+
+#### Capture and output
+
+| Option | Behavior |
+|--------|----------|
+| `--solution <UniqueName>` | Required, repeatable exact solution unique name; case-insensitive, no wildcards |
+| `--capture state\|owner\|both` | Defaults to `state`; `owner` and `both` require `--owner-mapping` |
+| `--owner-mapping <File>` | Source owner mapping; if supplied, always validated locally |
+| `--unmapped-owners fail\|skip` | Defaults to `fail`; `skip` writes processes with unmapped owners without `owner` and warns |
+| `--overwrite` | Explicitly allow replacement of existing output |
+
+Capture retrieves all pages of supported process definitions in the selected solution union,
+including indirect business rules of tables included with all subcomponents. Tables included
+without subcomponents do not contribute indirect rules. Unknown solutions fail capture.
+Entries are ordered by ID and include informational names. Ownership capture requires exactly one
+logical key per captured owner; missing or ambiguous reverse mappings fail before output is
+created or replaced. Processes owned by SYSTEM or INTEGRATION, and with `--unmapped-owners skip`
+other unmapped owners, are reported as warnings and written without `owner` (`--capture both`) or
+omitted (`--capture owner`). Selection and mapping failures leave existing output unchanged, even with
+`--overwrite`. No matches produces a valid empty `processes` array.
+
+#### Apply, impersonation and failures
+
+| Option | Behavior |
+|--------|----------|
+| `--owner-mapping <File>` | Target owner mapping, required for requested owner keys and `--activate-as`; supplied mappings are always validated |
+| `--activate-as <OwnerKey>` | Use this mapped user for every activation and deactivation |
+| `--activate-as-owner` | Use each process's configured owner for its state transitions; entries requesting `active` must also specify `owner` |
+| `--dry-run` | Resolve the same complete plan, visibly report transitions or unchanged entries, and perform no writes or retry rounds |
+
+The two impersonation options are mutually exclusive. Assignments always use the connection
+identity; requested impersonation never falls back to it. All process IDs, categories, owners and
+required caller services are resolved before the first write. Disabled users are rejected for an
+actual owner change or impersonation, but an already satisfied disabled owner does not prevent an
+otherwise valid state-only operation. A missing ID never falls back to a similarly named process.
+An empty array is a successful no-op without authentication; invalid supplied mappings still fail
+local validation.
+
+Already satisfied effects perform no writes. Changing the owner of an active process first
+deactivates it, assigns the owner, then restores activation unless `active: false` was requested.
+If assignment fails after deactivation, exactly one reactivation attempts to restore the original
+state; the report identifies whether that restoration succeeded. Failed requested activations are
+retried in rounds only while the failed set shrinks, allowing child flows to activate before
+parents. Deactivation, assignment and restoration failures are not retried.
+
+Every run reports per-process outcomes. Independent processes continue after a runtime failure;
+any failed requested operation yields an unsuccessful exit. Cancellation stops further work and
+reports completed transitions. There is no transaction or general rollback, and failed restoration
+can leave a process inactive. Dry-run does not prove operation permissions or activation
+dependencies; missing impersonation privileges surface when Dataverse executes a request.
+
+### `duplicaterules` — Duplicate-rule publication and ownership
+
+Capture and apply the publication state and owner of existing duplicate-detection rules. Rule
+definitions and conditions travel through solutions; these commands never create, delete, or
+change definitions, match rules by name, or clean up unlisted rules.
 
 | Command | Description |
 |---------|-------------|
-| `analyze entityallassets` | Scan solutions for entities containing all assets |
-| `analyze noactivelayer` | Find unmanaged solution components without an active layer |
-| `analyze activelayer` | Find managed solution components that already received an active layer |
-| `analyze toplayer` | Find managed solution components where the given solution is not the top layer |
-| `analyze redundantcomponents` | Find components contained in multiple solutions |
-| `analyze redundantpatches` | Find patches that are no longer needed because their components are no longer top-layer |
+| `duplicaterules init <File>` | Capture state and/or ownership of existing rules |
+| `duplicaterules apply <File>` | Apply only the publication and owner intent recorded in the file |
+
+Both commands require an explicit file path; relative paths use the working directory.
 
 ```bash
-dgtp analyze noactivelayer --inline solution1,solution2
+# Capture the publication state of all rules (the default)
+dgtp duplicaterules init ./duplicaterules.json
+
+# Capture state and ownership of contact rules using a source-environment mapping
+dgtp duplicaterules init ./duplicaterules.json --entity contact \
+  --capture both --owner-mapping ./owners.source.json --overwrite
+
+# Capture selected rules only; repeat --rule-id for several rules
+dgtp duplicaterules init ./duplicaterules.json \
+  --rule-id 6f1c2b4e-8d3a-4f5b-9c7d-1e2f3a4b5c6d --rule-id 0a9b8c7d-6e5f-4a3b-2c1d-0e9f8a7b6c5d
+
+# Review the resolved plan, owners and capacity without writes
+dgtp duplicaterules apply ./duplicaterules.json --owner-mapping ./owners.target.json --dry-run
+
+# Apply and wait up to 10 minutes for all publish jobs together
+dgtp duplicaterules apply ./duplicaterules.json --owner-mapping ./owners.target.json --timeout 600
 ```
 
-### `maintenance` — Operational tasks
+#### V1 configuration
 
-Day-to-day administrative actions against a live environment.
+The schema is available at
+[`schemas/duplicaterules/v1/schema.json`](schemas/duplicaterules/v1/schema.json). `ruleId` is the
+Dataverse `duplicateruleid`, preserved by solution import. `name` is informational: apply never
+matches a rule by name, table, or definition, and a missing GUID fails preflight even if a rule
+with the same name exists.
 
-| Command | Description |
-|---------|-------------|
-| `maintenance bulkdelete` | Run a bulk delete job for a given FetchXML and wait for completion |
-| `maintenance autonumber` | Set auto-number formats for columns from a JSON config |
-| `maintenance protectfields` | Prevent all calculated fields from receiving an active layer |
-| `maintenance carrierinfo` | Export carrier solutions metadata to JSON |
-| `maintenance createworkflowstate` | Generate a workflow-state configuration file |
-| `maintenance workflowstate` | Apply a workflow-state configuration |
-| `maintenance removeredundantcomponents <SourceSolutions> <TargetSolution> [--dryrun] [--includeEntities]` | Remove components from `TargetSolution` that already exist in `SourceSolutions` (comma-separated) |
-| `maintenance filterfxplugins` | Add message filtering for PowerFx plugin steps |
-
-`maintenance bulkdelete` accepts `--poll-interval <seconds>` (default `5`) to set the interval
-between asynchronous job status checks. The option is specific to this command.
-
-```bash
-dgtp maintenance bulkdelete --inline "<fetchxml>...</fetchxml>" --poll-interval 10
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/duplicaterules/v1/schema.json",
+  "schemaVersion": 1,
+  "rules": [
+    {
+      "ruleId": "6f1c2b4e-8d3a-4f5b-9c7d-1e2f3a4b5c6d",
+      "name": "Contacts with the same e-mail address",
+      "published": true,
+      "owner": "integrationUser"
+    },
+    {
+      "ruleId": "0a9b8c7d-6e5f-4a3b-2c1d-0e9f8a7b6c5d",
+      "name": "Accounts with the same name",
+      "published": false
+    }
+  ]
+}
 ```
+
+Each entry requires a nonempty GUID and at least one of `published` or `owner`. Omitted properties
+preserve target values, and unlisted rules are untouched. Explicit nulls, unknown or duplicate JSON
+properties, duplicate IDs, and unsupported versions are rejected. Owner keys must be nonblank
+without surrounding whitespace and use
+[portable owner mappings](#portable-owner-mappings); regular users, application users, and owning
+teams are supported.
+
+#### Capture and output
+
+| Option | Behavior |
+|--------|----------|
+| `--entity <BaseTable>` | Restrict capture to rules of one exact base-table logical name |
+| `--rule-id <Guid>` | Repeatable; restrict capture to these rule IDs |
+| `--capture state\|owner\|both` | Defaults to `state`; `owner` and `both` require `--owner-mapping` |
+| `--owner-mapping <File>` | Source owner mapping; if supplied, always validated locally |
+| `--unmapped-owners fail\|skip` | Defaults to `fail`; `skip` writes rules with unmapped owners without `owner` and warns |
+| `--overwrite` | Explicitly allow replacement of existing output |
+
+Without filters, capture includes all rules across all pages. `--entity` and `--rule-id` combine
+with AND: a missing selected ID or an ID belonging to another table fails capture. Selected rules
+that are currently publishing or in an unknown state fail capture, so capture only stable states.
+Entries are ordered by ID and include informational names. Ownership capture requires exactly one
+logical key per captured owner. Out-of-the-box rules are owned by SYSTEM: rules owned by SYSTEM or
+INTEGRATION, and with `--unmapped-owners skip` other unmapped owners, are reported as warnings and
+written without `owner` (`--capture both`) or omitted (`--capture owner`). All validation finishes
+before output is created or replaced; an
+existing file is never replaced without `--overwrite`, and failures leave it unchanged. No matches
+produces a valid empty `rules` array.
+
+#### Apply, capacity and completion
+
+| Option | Behavior |
+|--------|----------|
+| `--owner-mapping <File>` | Target owner mapping, required for requested owner keys; supplied mappings are always validated |
+| `--dry-run` | Resolve the same complete plan and report operations, owners and capacity without writes (also with `--no-wait`) |
+| `--no-wait` | Report accepted publish submissions with job IDs instead of waiting for Published |
+| `--timeout <Seconds>` | Shared publish observation budget; positive integer, default `300` |
+
+Preflight resolves all rule IDs and owner keys before the first write; any invalid entry prevents
+all writes. Listed rules that are currently publishing are rejected. New owners must not be
+disabled users and must hold the duplicate-rule read privilege (`prvReadDuplicateRule`), checked through the user's
+or owning team's privileges; already satisfied owners are accepted unchanged. This
+is not a complete permission check. Dataverse allows at most five Published or Publishing rules
+per base table. For tables receiving new publishes, preflight counts all such rules, including
+unlisted ones, applies the requested unpublishes, and fails before writes if the end state would
+exceed the limit. Rules are never unpublished implicitly to free slots. An empty `rules` array is a
+successful no-op without authentication; invalid supplied mappings still fail locally.
+
+Execution runs in ordered phases:
+
+1. Requested unpublishes run sequentially; each is confirmed by read-back before other writes.
+2. Owner changes are assigned directly, preserving the current publication state.
+3. Requested publishes are submitted in file order without waiting for each job.
+4. All accepted publishes are then observed together every two seconds within one shared
+   `--timeout` budget.
+
+Already satisfied effects perform no writes. A failed unpublish or assignment skips the dependent
+publish of that rule. Publish faults are reported per rule, for example a rule without criteria or
+a table with no free slot (capacity changed concurrently); publishes are never queued or retried.
+Failed or canceled publish jobs are terminal failures. On timeout, unresolved rules fail with their
+last observed state and job ID. With `--no-wait`, unpublish confirmation and owner changes still
+complete, accepted publishes count as successful submissions, and the report states that the
+later server-side outcome is unverified.
+
+Every run reports per-rule outcomes. Independent rules continue after a runtime failure; any failed
+requested operation yields an unsuccessful exit. Cancellation stops further client work. Timeout or
+cancellation does not cancel submitted server jobs or roll back completed changes.
 
 ### `codegeneration` (`cg`) — Early-bound code generation
 
@@ -1155,10 +1679,10 @@ steps:
       serviceConnection: 'MyPowerPlatformConnection'
       url: 'https://contoso.crm4.dynamics.com'   # optional; falls back to $(BuildTools.EnvironmentUrl) / $(PowerPlatformUrl) if omitted
 
-  - script: dgtp export bulkdeletes --filedir ./output
+  - script: dgtp teamtemplates export ./teamtemplates.json
     env:
       DGTP_CONNECTION_STRING: $(PowerPlatformConnectionString)
-    displayName: 'Export bulk-delete jobs using the client-secret service connection'
+    displayName: 'Export team templates using the client-secret service connection'
 ```
 
 This flow depends on the service connection actually having a client secret to extract — which is
@@ -1251,47 +1775,63 @@ runtime, the same way you'd reference it in any built-in task's `azureSubscripti
 DigitallPower is built as a modular CLI. The host project (`dgt.power`) wires up dependency injection (`Microsoft.Extensions.DependencyInjection`), configuration (`Microsoft.Extensions.Configuration`) and the [Spectre.Console.Cli](https://spectreconsole.net/cli/) command framework, and then registers commands contributed by independent feature modules.
 
 ```
-                ┌──────────────────────────────────────────┐
-                │              dgt.power (dgtp)            │
-                │  Program.cs · DI container · CLI host    │
-                └────────────────┬─────────────────────────┘
-                                 │ references
-       ┌─────────────────────────┼─────────────────────────────┐
-       │            │            │            │                │
-┌──────┴─────┐ ┌────┴─────┐ ┌────┴─────┐ ┌────┴──────┐  ┌──────┴───────┐
-│ connection │ │  export  │ │  import  │ │  analyze  │  │ maintenance  │
-└────────────┘ └──────────┘ └──────────┘ └───────────┘  └──────────────┘
-       │            │            │            │                │
-       └──────┬─────┴────────────┴────────────┴────────────────┘
-              │
-       ┌──────────┴───────────────┬──────────────────────────────┐
-       │  codegeneration          │ plugin       │ webresource   │
-       └──────────────────────────┴──────────────┴───────────────┘
-                               │
-                               ▼
-                  ┌──────────────────────────┐
-                  │     dgt.power.common     │
-                  │  (Dataverse connection,  │
-                  │   file access, command   │
-                  │   lifecycle, connection  │
-                  │   management)            │
-                  └──────────────────────────┘
-                               │
-                               ▼
-                ┌──────────────────────────────────┐
-                │  Microsoft.PowerPlatform         │
-                │  .Dataverse.Client / Xrm SDK     │
-                └──────────────────────────────────┘
+                +------------------------------------------+
+                |             dgt.power (dgtp)             |
+                |     Program.cs / DI / CommandTree.cs     |
+                +--------------------+---------------------+
+                                     | references
+                +--------------------v---------------------+
+                |              Feature modules            |
+                | connection                              |
+                | codegeneration / plugin / webresource   |
+                | process / solution / telemetry          |
+                | teamtemplates / documenttemplates       |
+                | duplicaterules                          |
+                +--------------------+---------------------+
+                                     |
+                +--------------------v---------------------+
+                |             dgt.power.common            |
+                | connections / file access / lifecycle   |
+                | ownership / telemetry / shared queries  |
+                +--------------------+---------------------+
+                                     |
+                +--------------------v---------------------+
+                | Microsoft.PowerPlatform.Dataverse.Client|
+                |                Xrm SDK                  |
+                +------------------------------------------+
 ```
 
 Key design principles:
 
-- **Module isolation.** Every feature area (`analyzer`, `codegeneration`, `connection`, `export`, `import`, `maintenance`, `plugin`, `webresource`) is an independent project under `src/modules/`. Modules expose `Spectre.Console.Cli`-style command classes that are registered by the host.
-- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers, shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules.
+- **Cohesive module boundaries.** Each resource area (`documenttemplates`, `duplicaterules`, `plugin`, `process`, `teamtemplates`, `webresource`) has an independent project under `src/modules/`. `codegeneration` is a focused capability; `connection` and `telemetry` are infrastructure/operator capabilities. Modules expose `Spectre.Console.Cli` command classes that are registered by the host. The legacy import/export, maintenance, and analyzer projects and their exclusive contracts are removed; retained resource modules reference shared infrastructure directly, not legacy modules.
+- **Shared kernel.** `dgt.power.common` provides the cross-cutting infrastructure: `IDataverseConnection`, parsed per-invocation connection settings, typed connection storage and credential construction, protected-storage warnings, file I/O helpers (including the public `FileAccess/AtomicFileWriter` helper for shared atomic file writes), shared Dataverse query paging, the `PowerCommand<TSettings>` lifecycle base class, telemetry and exception types, plus shared runtime environment helpers (`ExecutionEnvironment`) used by multiple modules. The process module now delegates its atomic writes to this shared helper without changing process command behavior.
 - **DI everywhere.** Long-lived services (HTTP/NuGet clients, connection store, caches, JSON options) are singletons; per-command services (metadata, config resolver, generators, file service) are scoped. Commands that need Dataverse request `IDataverseConnection` and call `GetServiceAsync()`; the connection is established on first use and cached, so commands that do not need Dataverse never authenticate.
 - **Command output.** Every command ends with a rule showing the result and duration (`✔ Command finished in 2.3s` or `✘ Command failed in 0.4s`). Exit codes are unchanged: `0` success, `1` failure, `2` authentication required.
 - **Stable connection storage.** `connections.json` and `state.json` live under the per-user dgtp home; secrets and the Azure.Identity token cache use OS-protected persistence.
 - **Update awareness.** A `VersionCheckInterceptor` queries NuGet on each run to warn the user when a newer version of `dgt.power` is available.
+
+### Caller-specific Dataverse services
+
+Consumers of `IDataverseConnection` can acquire an isolated service for a Dataverse
+`systemuser` ID (not an Entra object ID):
+
+```csharp
+var standardService = await connection.GetServiceAsync();
+var callerService = await connection.GetServiceAsync(systemUserId);
+await callerService.ExecuteAsync(request, cancellationToken);
+```
+
+The invocation retains its selected environment and authentication configuration and lazily
+caches one independent service per caller. An empty ID is rejected before authentication.
+Services are borrowed: the connection disposes the standard and caller services; consumers
+must not dispose them or mutate their caller state.
+
+Acquisition guarantees a ready, caller-configured service, not that the caller exists, is
+enabled, or has permission for subsequent operations. There is no caller-specific `WhoAmI`
+or privilege probe, and Dataverse faults propagate without an identity fallback. Consumers
+requiring no writes on acquisition failure must acquire all required services before writing;
+later operations can still fail. The API itself adds no global CLI options; `process apply`
+exposes resource-specific impersonation options described above.
 
 ## 📁 Repository Layout
 
@@ -1302,16 +1842,16 @@ DigitallPower/
 ├── src/
 │   ├── dgt.power/                # CLI host project (produces the `dgtp` tool)
 │   ├── dgt.power.common/         # Shared infrastructure (typed connections, IO, command lifecycle)
-│   ├── models/                   # Shared DTOs / data contracts
 │   └── modules/
-│       ├── dgt.power.analyzer/        # `analyze` commands
 │       ├── dgt.power.codegeneration/  # `codegeneration` / `cg` command
 │       ├── dgt.power.connection/      # `connection` commands (auth management)
-│       ├── dgt.power.export/          # `export` commands
-│       ├── dgt.power.import/          # `import` commands
-│       ├── dgt.power.maintenance/     # `maintenance` commands
 │       ├── dgt.power.plugin/          # `plugin` commands
+│       ├── dgt.power.documenttemplates/ # Portable Word/Excel import/export
+│       ├── dgt.power.process/         # `process init/apply` commands
+│       ├── dgt.power.duplicaterules/  # `duplicaterules init/apply` commands
 │       ├── dgt.power.solution/        # `solution` commands (e.g. `solution lint`)
+│       ├── dgt.power.telemetry/       # `telemetry` commands
+│       ├── dgt.power.teamtemplates/   # Versioned team template transfer
 │       └── dgt.power.webresource/     # `webresource push` command
 ├── tests/                        # Unit and integration tests
 ├── samples/                      # Example inputs (configs, plugin samples)
@@ -1320,7 +1860,7 @@ DigitallPower/
 ├── scripts/                      # Repository maintenance scripts
 ├── Directory.Build.props         # Common MSBuild properties
 ├── global.json                   # Pinned .NET SDK
-└── DigitallPower.sln             # Solution file
+└── DigitallPower.slnx            # Solution file
 ```
 
 ## 🛠️ Build & Test
@@ -1339,7 +1879,12 @@ pnpm exec openspec validate --specs  # Validate current OpenSpec specifications
 Use [OpenSpec](https://github.com/Fission-AI/OpenSpec) for significant changes to public CLI/API
 behavior, configuration and schemas, architecture, module boundaries, or behavior spanning
 capabilities. Start with `/opsx-propose`; after review, implement with `/opsx-apply`, update the
-main specs, validate them, and archive the completed change. Small fixes, test-only changes, and
+main specs, validate them, and submit the implementation PR. Keep the change active until that PR
+has successfully merged into `beta` or `main`. Archive with `/opsx-archive` only in a separate
+post-merge follow-up, after verifying the PR is `MERGED`, has a merge timestamp, and targets one
+of those exact branch names. Completed tasks, an open or approved PR, green CI, a closed-but-unmerged
+PR, or a merge into another branch do not permit archiving. If merge verification is unavailable,
+leave the change active and report the blocker. Small fixes, test-only changes, and
 behavior-preserving refactors do not require a proposal. The CLI is installed locally with pnpm
 and is run as `pnpm exec openspec`.
 
@@ -1347,7 +1892,8 @@ Current requirements live in [`openspec/specs/`](openspec/specs/). Durable desig
 [`docs/architecture/decisions/`](docs/architecture/decisions/). The README remains the user-facing
 command and configuration reference; implementation details belong beside their code and tests.
 Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
-CLI examples after OpenSpec updates them.
+CLI examples and the post-merge archive gate after OpenSpec updates them. Validate this
+normalization with `node --test scripts/normalize-openspec-commands.test.mjs`.
 
 GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
 [`openspec/config.yaml`](openspec/config.yaml). Its setup workflow installs the locked pnpm
@@ -1444,7 +1990,7 @@ dgtp telemetry disable   # Persistently disable telemetry
 **Per invocation:**
 
 ```bash
-dgtp export --no-telemetry
+dgtp teamtemplates export ./teamtemplates.json --no-telemetry
 ```
 
 **Environment variable (takes precedence over the saved preference):**

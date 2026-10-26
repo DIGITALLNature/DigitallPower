@@ -24,10 +24,26 @@ The CLI test suite MUST validate command-tree construction and smoke-test regist
 - **WHEN** the CLI structural tests run
 - **THEN** command registration and representative command paths are checked without bootstrapping external services
 
+### Requirement: Legacy analysis commands are retired
+
+The CLI SHALL NOT register or accept the `analyze` branch or its command paths, including compatibility aliases. Help and shell completion SHALL omit the branch. No replacement command or supported migration for analyzer configuration or report files SHALL be provided.
+
+#### Scenario: A retired analysis command is invoked
+
+- **WHEN** a user invokes `analyze entityallassets`, `analyze noactivelayer`, `analyze activelayer`, `analyze toplayer`, `analyze redundantcomponents`, or `analyze redundantpatches`
+- **THEN** parsing fails with a nonzero exit code and an unknown-command diagnostic
+- **AND** no Dataverse operation is performed
+
+#### Scenario: The retired analysis surface is inspected
+
+- **WHEN** top-level help or shell-completion metadata is generated
+- **THEN** `analyze` and its command paths are absent
+- **AND** unrelated registered commands remain available
+
 ### Requirement: Secure configuration import is resource-oriented
 
 The CLI MUST NOT register or accept `import secureconfigs`, including as a compatibility
-alias. Import help and generated shell-completion metadata MUST NOT advertise it. The
+alias. Help and generated shell-completion metadata MUST NOT advertise it. The
 supported command for setting secure plugin-step configuration MUST remain
 `plugin step config set`.
 
@@ -39,9 +55,9 @@ supported command for setting secure plugin-step configuration MUST remain
 
 #### Scenario: The import surface is inspected
 
-- **WHEN** import help or shell-completion command metadata is generated
-- **THEN** `secureconfigs` is absent
-- **AND** the other registered import commands remain available
+- **WHEN** CLI help or shell-completion command metadata is generated
+- **THEN** `import secureconfigs` is absent
+- **AND** approved resource-oriented replacements for retained transfer functionality remain available
 
 #### Scenario: The replacement remains available
 
@@ -66,3 +82,81 @@ The CLI MUST register a top-level `telemetry` branch with `status`, `enable`, an
 
 - **WHEN** shell completion metadata is generated
 - **THEN** the `telemetry` branch and its subcommands are included
+
+### Requirement: Bulk-delete transfer is retired without replacement
+
+The CLI SHALL NOT register or accept `import bulkdeletes` or `export bulkdeletes`, including compatibility aliases. Help and completion SHALL omit both paths. No replacement command or supported migration of `bulkdelete.json` SHALL be provided. Retiring these commands SHALL NOT modify existing Dataverse jobs.
+
+#### Scenario: Retired bulk-delete transfer is invoked
+- **WHEN** a user invokes `dgtp import bulkdeletes` or `dgtp export bulkdeletes`
+- **THEN** parsing fails with a nonzero exit code and an unknown-command diagnostic
+- **AND** no Dataverse operation is performed
+
+#### Scenario: Bulk-delete transfer is absent before container retirement
+- **WHEN** help or completion is generated while other legacy transfer resources remain registered
+- **THEN** both bulk-delete transfer paths are absent
+- **AND** unrelated registered transfer commands remain available
+
+### Requirement: Retired verb-first transfer surface is absent
+
+The CLI SHALL NOT register or accept top-level `import` or `export` branches, including compatibility aliases. Help and completion SHALL omit them and preserve independently migrated resource-oriented commands.
+
+#### Scenario: Approved legacy resource pairs are retired
+- **WHEN** a user invokes either old transfer direction for bulk deletes, queues, calendars, SLA configurations, routing-rule configurations, user-role assignments, or Outlook synchronization-filter templates
+- **THEN** parsing fails with a nonzero exit code without a Dataverse operation
+- **AND** no replacement command or supported migration of their legacy JSON formats is provided
+
+#### Scenario: Retirement preserves existing environment data
+- **WHEN** a user upgrades to the CLI without the legacy transfer branches
+- **THEN** retirement does not modify existing Dataverse jobs, queues, calendars, SLAs, routing rules, role assignments, or Outlook filters
+
+#### Scenario: Migrated template resources remain available
+- **WHEN** a user requests help for `teamtemplates import`, `teamtemplates export`, `documenttemplates import`, or `documenttemplates export`
+- **THEN** the corresponding resource-oriented help remains available
+
+#### Scenario: Legacy transfer command is invoked after retirement
+- **WHEN** a user invokes a command under top-level `import` or `export`
+- **THEN** parsing fails with a nonzero exit code and an unknown-command diagnostic
+- **AND** no Dataverse operation is performed
+
+#### Scenario: Transfer surface is inspected
+- **WHEN** top-level help or completion metadata is generated
+- **THEN** the legacy transfer branches are absent
+- **AND** approved resource-oriented transfer commands remain registered
+
+### Requirement: Bulk-delete execution is retired without replacement
+
+The CLI SHALL NOT register or accept `maintenance bulkdelete`, including compatibility aliases. Help and completion SHALL omit it. No replacement command SHALL be provided. Retiring this command SHALL NOT cancel, disable, or delete existing Dataverse jobs.
+
+#### Scenario: Retired bulk-delete execution is invoked
+- **WHEN** a user invokes `dgtp maintenance bulkdelete`
+- **THEN** parsing fails with a nonzero exit code and an unknown-command diagnostic
+- **AND** no Dataverse operation is performed
+
+#### Scenario: Bulk-delete execution is absent before container retirement
+- **WHEN** help or completion is generated while other maintenance commands remain registered
+- **THEN** `maintenance bulkdelete` is absent
+- **AND** unrelated registered maintenance commands remain available
+
+### Requirement: Retired maintenance surface is absent
+
+The CLI SHALL NOT register or accept the `maintenance` branch, including compatibility aliases. Help and completion SHALL omit it. Independently migrated process commands SHALL remain available. Deferred Solution feature requests SHALL NOT be prerequisites or advertised as supported replacements.
+
+#### Scenario: All approved standalone maintenance commands are retired
+- **WHEN** a user invokes `maintenance bulkdelete`, `maintenance autonumber`, `maintenance protectfields`, `maintenance carrierinfo`, `maintenance removeredundantcomponents`, or `maintenance filterfxplugins`
+- **THEN** parsing fails with a nonzero exit code and an unknown-command diagnostic
+- **AND** no Dataverse operation is performed
+
+#### Scenario: Retirement preserves existing environment state
+- **WHEN** a user upgrades to the CLI without the maintenance branch
+- **THEN** retirement does not modify jobs, auto-number formats, managed properties, carrier data, solution memberships, or plugin filtering attributes
+
+#### Scenario: Legacy maintenance command is invoked after retirement
+- **WHEN** a user invokes a command under `maintenance`
+- **THEN** parsing fails with a nonzero exit code and an unknown-command diagnostic
+- **AND** no Dataverse operation is performed
+
+#### Scenario: Retired surface is inspected
+- **WHEN** top-level help or completion metadata is generated
+- **THEN** `maintenance` is absent
+- **AND** approved resource-oriented replacements remain registered

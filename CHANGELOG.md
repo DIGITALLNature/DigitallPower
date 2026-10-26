@@ -1,3 +1,49 @@
+# [3.0.0-beta.19](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2026-10-26)
+
+
+### Bug Fixes
+
+* **common:** restore all unicode space separators in json output ([e884585](https://github.com/DIGITALLNature/DigitallPower/commit/e884585058cb5da0e0f3d41ceb0a55aaa7bd854f))
+
+
+### Features
+
+* **common:** write generated json files with readable unicode ([fb283e5](https://github.com/DIGITALLNature/DigitallPower/commit/fb283e5558b3e48f243b01904339cffaab794824))
+
+# [3.0.0-beta.18](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2026-10-26)
+
+
+* feat(cli)!: retire legacy import and export branches ([#227](https://github.com/DIGITALLNature/DigitallPower/issues/227)) ([f26ff4f](https://github.com/DIGITALLNature/DigitallPower/commit/f26ff4f92d1c12c6ed6f9a87c6eed05b060ab9ed))
+* feat(cli)!: retire legacy maintenance commands ([#228](https://github.com/DIGITALLNature/DigitallPower/issues/228)) ([4453de8](https://github.com/DIGITALLNature/DigitallPower/commit/4453de82a0b9ab3fd84b0ff9e5ae9140eddb0a61))
+* feat(documenttemplates)!: introduce resource-owned template transfer ([#225](https://github.com/DIGITALLNature/DigitallPower/issues/225)) ([33f129a](https://github.com/DIGITALLNature/DigitallPower/commit/33f129a897f77231befdd69214083611d990a9b0))
+* feat(process)!: add explicit process state and ownership commands ([#215](https://github.com/DIGITALLNature/DigitallPower/issues/215)) ([2a7a2d2](https://github.com/DIGITALLNature/DigitallPower/commit/2a7a2d215326fb6c4bf4c1d437d50e305fa8802e))
+* feat(solution)!: protect calculation columns when copying components ([#229](https://github.com/DIGITALLNature/DigitallPower/issues/229)) ([25eaeb1](https://github.com/DIGITALLNature/DigitallPower/commit/25eaeb1628aacc87ced8e205b159583c85adc5b2))
+* feat(teamtemplates)!: introduce resource-oriented template transfer ([#222](https://github.com/DIGITALLNature/DigitallPower/issues/222)) ([45126e0](https://github.com/DIGITALLNature/DigitallPower/commit/45126e0d88d52ab784e94e715f729d3bd38dff9f))
+
+
+### Features
+
+* **connection:** add isolated caller impersonation services ([#212](https://github.com/DIGITALLNature/DigitallPower/issues/212)) ([2db61ea](https://github.com/DIGITALLNature/DigitallPower/commit/2db61ea9d1ea38f46595e6774d8dbdb743c9cb82))
+* **duplicaterules:** add duplicate rule publication and ownership commands ([#223](https://github.com/DIGITALLNature/DigitallPower/issues/223)) ([368ea03](https://github.com/DIGITALLNature/DigitallPower/commit/368ea030ae8dceda7aff68f52f2f1b2d1419bf37))
+* **ownership:** add portable owner resolution ([#210](https://github.com/DIGITALLNature/DigitallPower/issues/210)) ([16d68f6](https://github.com/DIGITALLNature/DigitallPower/commit/16d68f6dbf0517831729eec7f582af986bee54a2))
+
+
+### BREAKING CHANGES
+
+* best-practice solution copies now set and verify IsCustomizable=false
+on eligible unmanaged calculation columns in shared environment metadata. Use --raw to bypass
+protection and existing best-practice selection rules.
+* Remove the maintenance branch and assembly, maintenance
+schemas, and orphaned file-service and organization-extension APIs.
+* remove top-level import and export branches and legacy public types;
+the seven resource pairs have no replacements.
+* replace import/export documenttemplates and legacy manifests with
+documenttemplates import/export and the strict V1 manifest.
+* use teamtemplates import/export and the versioned resource envelope.
+Cleanup and export file replacement now require explicit opt-in.
+* maintenance createworkflowstate/workflowstate and legacy configs are removed.
+Use process init/apply with workflow IDs and explicit intent.
+
 # [3.0.0-beta.17](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2026-10-25)
 
 

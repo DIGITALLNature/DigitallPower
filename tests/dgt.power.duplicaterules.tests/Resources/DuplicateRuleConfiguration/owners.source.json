@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/ownership/v1/schema.json",
+  "schemaVersion": 1,
+  "owners": {
+    "integrationUser": {
+      "kind": "user",
+      "domainName": "integration@example.org"
+    }
+  }
+}

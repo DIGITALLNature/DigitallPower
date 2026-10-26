@@ -10,6 +10,29 @@ metadata:
   generatedBy: "1.14.1"
 ---
 
+<!-- digitallpower:post-merge-archive -->
+## Repository archive gate (required)
+
+This repository rule takes precedence over archive suggestions and completion examples below.
+Keep the change active until a stable GitHub release containing the implementation has been
+published from `main`. Merging into `beta` (including beta preparation for a later main release)
+does not permit archiving. Merging into `main` without a published stable release, or publishing
+a beta/prerelease, is also insufficient.
+
+Before any archive-related writes, verify that the implementation PR for this change is merged
+into `main`, and that the published stable release includes that PR:
+1. Check the PR with `gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,mergeCommit,url`. Require `state: MERGED`, non-null `mergedAt`, and `baseRefName: main`. Confirm it contains this change.
+2. Check the corresponding GitHub release with `gh release view <tag> --repo DIGITALLNature/DigitallPower --json isDraft,isPrerelease,publishedAt,tagName`. Require a published, non-draft, non-prerelease release.
+3. Fetch current `main` and the release tag, then verify the PR merge commit is an ancestor of the release tag and the release tag commit is reachable from `origin/main`.
+
+Do not use an unrelated PR or release, or infer release status from the current branch. If the PR, release, or commit ancestry cannot be verified, report the blocker and stop without archiving; confirmation or optional guidance cannot bypass this gate.
+
+After implementation, report "Implementation complete; awaiting stable release on main" rather
+than offering immediate archival. Archive only as a separate post-release follow-up using a
+checkout containing the released implementation, never during beta preparation or in the
+implementation PR.
+<!-- /digitallpower:post-merge-archive -->
+
 Implement tasks from an OpenSpec change.
 
 **Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `pnpm exec openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `pnpm exec openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.

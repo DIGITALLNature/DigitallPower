@@ -1,8 +1,6 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Runtime.CompilerServices;
-using dgt.power.common;
 using dgt.power.tests.FakeExecutor;
 using Digitall.Dataverse.Testing;
 using Digitall.Dataverse.Testing.OrganizationRequests;
@@ -26,7 +24,6 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
     private IServiceCollection _serviceCollection = new TestServiceCollection();
     private List<Entity> _data = [];
     private List<EntityMetadata> _metadata = [];
-    private readonly List<RelationshipMetadataBase> _relationships = [];
     private readonly List<IOrganizationRequestFake> _requestFakes = [];
     private readonly List<Action<FakeOrganizationServiceAsync>> _customConfigurations = [];
     private Func<FakeOrganizationServiceAsync, IEnumerable<Entity>>? _dataPreparer;
@@ -73,12 +70,6 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
             service.AddMetadata(_metadata);
         }
 
-        // Add relationships
-        if (_relationships.Count > 0)
-        {
-            service.AddRelationships(_relationships);
-        }
-
         // Apply custom configurations
         foreach (var config in _customConfigurations)
         {
@@ -117,15 +108,7 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
             .BuildServiceProvider()
             .GetRequiredService<TCommand>();
 
-        return new CommandTestContext<TCommand, TCommandSettings>(command, service,
-            _serviceCollection.BuildServiceProvider().GetRequiredService<IConfigResolver>());
-    }
-
-    public CommandTestContextBuilder<TCommand, TCommandSettings> WithRelationship(
-        RelationshipMetadataBase relationship)
-    {
-        _relationships.Add(relationship);
-        return this;
+        return new CommandTestContext<TCommand, TCommandSettings>(command, service);
     }
 
     /// <summary>
@@ -155,22 +138,6 @@ public class CommandTestContextBuilder<TCommand, TCommandSettings>
         Func<FakeOrganizationServiceAsync, IEnumerable<Entity>> dataPreparer)
     {
         _dataPreparer = dataPreparer;
-        return this;
-    }
-
-    /// <summary>
-    /// Adds the entities in a tuple to the service. Only tuple members that derive <see cref="Entity"/> class are
-    /// added. Additional members are ignored.
-    /// </summary>
-    /// <param name="tuple">The tuple containing the entities to add.</param>
-    /// <returns>self</returns>
-    public CommandTestContextBuilder<TCommand, TCommandSettings> WithData(ITuple tuple)
-    {
-        var data = Enumerable.Range(0, tuple.Length)
-            .Select(i => tuple[i])
-            .OfType<Entity>()
-            .ToList();
-        WithData(data);
         return this;
     }
 

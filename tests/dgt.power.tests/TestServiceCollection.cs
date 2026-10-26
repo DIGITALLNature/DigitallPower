@@ -1,10 +1,7 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using dgt.power.common;
-using dgt.power.common.FileAccess;
 using dgt.power.common.Logic;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
@@ -17,15 +14,7 @@ public class TestServiceCollection : ServiceCollection
     {
         this.AddSingleton<ICommandSpanFactory, TestSpanFactory>();
         this.AddSingleton<IDataverseConnection, TestConnection>();
-        this.AddSingleton<JsonSerializerOptions>(_ => new JsonSerializerOptions
-        {
-            Converters =
-            {
-                new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-            }
-        });
         this.AddScoped<IConfigResolver, ConfigResolver>();
-        this.AddScoped<IFileService, FileService>();
         this.AddSingleton(AnsiConsole.Console);
     }
 }

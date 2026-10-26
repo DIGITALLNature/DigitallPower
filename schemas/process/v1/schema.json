@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/process/v1/schema.json",
+  "title": "DigitallPower process configuration",
+  "description": "Explicit state and ownership intent for supported Dataverse process definitions. Runtime validation also rejects duplicate process IDs and duplicate JSON properties, which JSON Schema cannot express.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "processes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/process"
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "processes"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "nonblankTrimmed": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\S(?:[\\s\\S]*\\S)?(?![\\s\\S])"
+    },
+    "process": {
+      "type": "object",
+      "properties": {
+        "processId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^(?!00000000-0000-0000-0000-000000000000$)[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+        },
+        "name": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "owner": {
+          "$ref": "#/$defs/nonblankTrimmed"
+        }
+      },
+      "required": [
+        "processId"
+      ],
+      "anyOf": [
+        {
+          "required": [ "active" ]
+        },
+        {
+          "required": [ "owner" ]
+        }
+      ],
+      "additionalProperties": false
+    }
+  }
+}

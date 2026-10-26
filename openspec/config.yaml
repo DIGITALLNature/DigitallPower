@@ -15,6 +15,19 @@ context: |
   architecture changes, and work spanning capabilities. Trivial fixes, test-only changes, and
   behavior-preserving refactors do not need a proposal.
 
+  Keep implemented changes active through beta integration and until a stable GitHub release
+  containing the implementation has been published from main. A PR merged into beta is not
+  sufficient, and a PR merged into main without a published stable release is not sufficient.
+  Before any archive-related writes, verify that the implementation PR belongs to this change,
+  has state MERGED, a non-null mergedAt, and baseRefName exactly main. Identify a published
+  GitHub release that is neither a draft nor a prerelease; verify its tag points to a commit
+  reachable from main and that the PR merge commit is an ancestor of that release commit.
+  Completed tasks, green CI, a beta or prerelease publication, closing without merging, or a
+  merge without a qualifying release are insufficient. If the PR or release cannot be
+  verified, report the blocker and leave the change active. Archive only as a separate
+  post-release follow-up using a checkout containing the released implementation, never as
+  part of beta preparation or the implementation PR.
+
   Language: English
   All artifacts must be written in English.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.

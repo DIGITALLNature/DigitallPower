@@ -1,24 +1,21 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.analyzer.Base;
-using dgt.power.analyzer.Logic;
 using dgt.power.codegeneration;
 using dgt.power.Commands.Complete;
 using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
-using dgt.power.export.Base;
-using dgt.power.export.Logic;
-using dgt.power.import.Base;
-using dgt.power.import.Logic;
-using dgt.power.maintenance.Logic;
+using dgt.power.duplicaterules.Commands;
+using dgt.power.documenttemplates.Commands;
 using dgt.power.plugin.Base;
 using dgt.power.plugin.Commands;
+using dgt.power.process.Commands;
 using dgt.power.solution;
 using dgt.power.solution.Base;
 using dgt.power.Telemetry;
 using dgt.power.telemetry.Base;
 using dgt.power.telemetry.Commands;
+using dgt.power.teamtemplates.Commands;
 using dgt.power.webresource.Base;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli;
@@ -46,98 +43,56 @@ internal static class CommandTree
             RegisterConnectionCommands(connection);
         });
 
-        config.AddBranch<ExportVerb>("export", export =>
+        config.AddBranch("teamtemplates", teamtemplates =>
         {
-            export.SetDescription("Exports artifacts from the current Dataverse Environment");
-            export.AddExample("export", "bulkdeletes", "--filedir", "c:/TargetDir");
-            export.AddCommand<TeamTemplateExport>("teamtemplates")
-                .WithDescription("Exports the existing teamtemplates from the current environment");
-            export.AddCommand<BulkDeleteExport>("bulkdeletes")
-                .WithDescription("Exports the bulk delete jobs from the current environment");
-            export.AddCommand<QueueExport>("queues")
-                .WithDescription("Exports the existing queues from the current environment");
-            export.AddCommand<DocumentTemplateExport>("documenttemplates")
-                .WithDescription("Exports the existing document templates from the curent environment");
-            export.AddCommand<CalendarExport>("calendars")
-                .WithDescription("Exports the existing calendars from the current environment");
-            export.AddCommand<SlaConfigExport>("slaconfigs")
-                .WithDescription("exports the existing slas from the current environment");
-            export.AddCommand<RoutingRuleConfigExport>("routingruleconfigs")
-                .WithDescription("Exports the existing routing rules from the current environment");
-            export.AddCommand<UserRoleExport>("userroles")
-                .WithDescription("Exports the user assigned security roles from the current environment");
-            export.AddCommand<OutlookTemplateExport>("outlooktemplates")
-                .WithDescription("Exports the existing outlook templates from the current environment");
+            teamtemplates.SetDescription("Imports and exports Dataverse team templates");
+            teamtemplates.AddCommand<TeamTemplateImportCommand>("import")
+                .WithDescription("Imports team templates from a versioned file")
+                .WithExample("teamtemplates", "import", "./teamtemplates.json", "--dry-run");
+            teamtemplates.AddCommand<TeamTemplateExportCommand>("export")
+                .WithDescription("Exports team templates to a versioned file")
+                .WithExample("teamtemplates", "export", "./teamtemplates.json", "--overwrite");
         });
 
-        config.AddBranch("maintenance",
-            maintenance =>
-            {
-                maintenance.SetDescription("Executes maintenance Tasks against the current Dataverse environment");
-                maintenance.AddExample("maintenance", "bulkdelete");
-                maintenance.AddCommand<BulkDeleteUtil>("bulkdelete")
-                    .WithDescription("Starts an bulk delete job for the given fetchXml and waits for completion")
-                    .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml")
-                    .WithExample("maintenance", "bulkdelete", "--inline", "<fetchxml>...</fetchxml", "--poll-interval", "10");
-                maintenance.AddCommand<AutoNumberFormatAction>("autonumber")
-                    .WithDescription("Sets the auto number format for specified columns")
-                    .WithExample("maintenance", "autonumber", "--config", "./config.json");
-                maintenance.AddCommand<ProtectCalculatedFields>("protectfields")
-                    .WithDescription("Prevents all calculated fields from receiving an active layer.")
-                    .WithExample("maintenance", "protectfields");
-                maintenance.AddCommand<ExportCarrierInfo>("carrierinfo")
-                    .WithDescription(
-                        "Exports all active carriers from an environment to a json file. To see what an carrier is check " +
-                        "[link]https://dev.azure.com/ec4u/Dynamics%20DevLab/_wiki/wikis/Dynamics-DevLab.wiki/111/Solution-Concept[/]")
-                    .WithExample("maintenance", "carrierinfo", "--filedir", "./carriers", "--filename", "carrier.json");
-                maintenance.AddCommand<CreateWorkflowStateConfig>("createworkflowstate")
-                    .WithDescription("Creates a workflowstate configuration file")
-                    .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--solutions", "solution1,solution2")
-                    .WithExample("maintenance", "createworkflowstate", "--output", "./config.json", "--publishers", "publisher1,publisher2");
-                maintenance.AddCommand<UpdateWorkflowState>("workflowstate")
-                    .WithDescription("Updates workflows with given configuration")
-                    .WithExample("maintenance", "workflowstate", "--config", "./config.json");
-                maintenance.AddCommand<RemoveRedundantComponents>("removeredundantcomponents")
-                    .WithDescription("Removes solution components that are already existing")
-                    .WithExample("maintenance", "removeredundantcomponents", "deploysolution", "tmpsolution", "--dryrun");
-                maintenance.AddCommand<FilterPowerFxPluginSteps>("filterfxplugins")
-                    .WithDescription("Add Messagefiltering for PowerFx Plugins")
-                    .WithExample("maintenance", "filterfxplugins", "--config", "./config.json");
-            });
-
-        config.AddBranch<AnalyzeVerb>("analyze", analyze =>
+        config.AddBranch("documenttemplates", templates =>
         {
-            analyze.SetDescription("Analyze specific Dataverse Artifacts in the current Environment");
-            analyze.AddCommand<EntityAllAssetsAnalyze>("entityallassets")
-                .WithDescription("Scans the specified solutions for entities containing with assets");
-            analyze.AddCommand<NoActiveLayerAnalyze>("noactivelayer")
-                .WithDescription("Scans the specified (unmanaged) solutions for components without active layer")
-                .WithExample("analyze", "noactivelayer", "--inline", "solution1,solution2");
-            analyze.AddCommand<RedundantComponentsAnalyze>("redundantcomponents")
-                .WithDescription("Scans for components that are in multiple of the specified solutions");
-            analyze.AddCommand<RedundantPatchAnalyze>("redundantpatches")
-                .WithDescription("Scans for patch solutions that are not longer needed because all contained elements are not top-layer anymore");
-            analyze.AddCommand<ActiveLayerAnalyze>("activelayer")
-                .WithDescription("Scans the specified (managed) solutions for components with active layer")
-                .WithExample("analyze", "activelayer", "--inline", "solution1,solution2");
-            analyze.AddCommand<TopLayerAnalyze>("toplayer")
-                .WithDescription("Scans the specified (managed) solutions for components where solution is not top layer")
-                .WithExample("analyze", "toplayer", "--inline", "solution1,solution2");
+            templates.SetDescription("Imports and exports active Word and Excel document templates");
+            templates.AddCommand<DocumentTemplateImportCommand>("import")
+                .WithDescription("Imports a portable document template manifest and activates listed templates")
+                .WithExample("documenttemplates", "import", "./templates/documenttemplates.json", "--dry-run");
+            templates.AddCommand<DocumentTemplateExportCommand>("export")
+                .WithDescription("Exports active document templates as a portable package")
+                .WithExample("documenttemplates", "export", "./templates", "--entity", "account", "--type", "word");
         });
 
-        config.AddBranch<ImportVerb>("import", import =>
+        config.AddBranch("process", process =>
         {
-            import.SetDescription("import specific artifacts in the current Dataverse environment");
-            import.AddExample("import", "outlooktemplates", "--filedir", "c:/TargetDir");
-            import.AddCommand<OutlookTemplateImport>("outlooktemplates");
-            import.AddCommand<UserRoleImport>("userroles");
-            import.AddCommand<QueueImport>("queues");
-            import.AddCommand<TeamTemplateImport>("teamtemplates");
-            import.AddCommand<BulkDeleteImport>("bulkdeletes");
-            import.AddCommand<DocumentTemplateImport>("documenttemplates");
-            import.AddCommand<CalendarImport>("calendar");
-            import.AddCommand<SlaConfigImport>("slaconfigs");
-            import.AddCommand<RoutingRuleConfigImport>("routingruleconfigs");
+            process.SetDescription("Captures and applies explicit process state and ownership");
+            process.AddCommand<ProcessInitCommand>("init")
+                .WithDescription("Captures process state or ownership from selected solutions")
+                .WithExample("process", "init", "./processes.json", "--solution", "ContosoCore")
+                .WithExample("process", "init", "./processes.json", "--solution", "ContosoCore",
+                    "--capture", "both", "--owner-mapping", "./owners.source.json");
+            process.AddCommand<ProcessApplyCommand>("apply")
+                .WithDescription("Applies configured process state and ownership by workflow ID")
+                .WithExample("process", "apply", "./processes.json", "--dry-run")
+                .WithExample("process", "apply", "./processes.json", "--owner-mapping", "./owners.target.json",
+                    "--activate-as", "integrationUser");
+        });
+
+        config.AddBranch("duplicaterules", duplicateRules =>
+        {
+            duplicateRules.SetDescription("Captures and applies publication state and ownership of existing duplicate-detection rules");
+            duplicateRules.AddCommand<DuplicateRuleInitCommand>("init")
+                .WithDescription("Captures publication state or ownership of existing duplicate rules")
+                .WithExample("duplicaterules", "init", "./duplicaterules.json", "--entity", "contact")
+                .WithExample("duplicaterules", "init", "./duplicaterules.json", "--rule-id", "11111111-1111-1111-1111-111111111111",
+                    "--capture", "both", "--owner-mapping", "./owners.source.json");
+            duplicateRules.AddCommand<DuplicateRuleApplyCommand>("apply")
+                .WithDescription("Applies configured publication state and ownership by duplicate rule ID")
+                .WithExample("duplicaterules", "apply", "./duplicaterules.json", "--dry-run")
+                .WithExample("duplicaterules", "apply", "./duplicaterules.json", "--owner-mapping", "./owners.target.json",
+                    "--timeout", "600");
         });
 
         config.AddBranch<PluginSettings>("plugin", plugin =>

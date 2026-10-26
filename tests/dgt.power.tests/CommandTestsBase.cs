@@ -1,7 +1,6 @@
 ﻿// Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -20,12 +19,7 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     private readonly JsonSerializerOptions _jsonSerializerOptions = new() {Converters = {new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)}};
 
 
-    protected virtual string ResourceDirectory => Path.Combine("Resources", typeof(TCommand).Name);
-
-    protected virtual string ArtifactDirectory { get; } = $"{Guid.NewGuid():N}";
-
-    protected string GetResourcePath(string fileName) => Path.Combine(ResourceDirectory, fileName);
-    protected string GetArtifactPath(string fileName) => Path.Combine(ArtifactDirectory, fileName);
+    private string ArtifactDirectory { get; } = $"{Guid.NewGuid():N}";
 
     /// <summary>
     /// Creates an file from an artifact. Uses System.Text.Json to serialize the artifact.
@@ -52,59 +46,12 @@ public abstract class CommandTestsBase<TCommand, TCommandSettings> : IDisposable
     }
 
 
-    /// <summary>
-    /// Use this method to deserialize configuration artifacts, that were created during test runs.
-    /// </summary>
-    /// <param name="fileName">The file name of the configuration.</param>
-    /// <typeparam name="TResource">The type to deserialize the configuration to.</typeparam>
-    /// <returns>The deserialized configuration.</returns>
-    /// <exception cref="FileNotFoundException">If the file is not found with the given fileName.</exception>
-    protected TResource GetConfigurationTestArtifact<TResource>(string fileName) where TResource : new()
-    {
-        var filePath = GetArtifactPath(fileName);
-        return GetConfigurationFile<TResource>(fileName, filePath);
-    }
-
-    /// <summary>
-    /// Use this method to deserialize configuration resources, that are stored under the resource directory for this command.
-    /// </summary>
-    /// <param name="fileName">The file name of the resource.</param>
-    /// <typeparam name="TResource">The type to deserialize the resource to.</typeparam>
-    /// <returns>The deserialized resource.</returns>
-    /// <exception cref="FileNotFoundException">If the file is not found with the given fileName.</exception>
-    protected TResource GetConfigurationResource<TResource>(string fileName) where TResource : new()
-    {
-        var filePath = GetResourcePath(fileName);
-        var isLoaded = GetContext().ConfigResolver
-            .TryConfigFromFile<TResource>(filePath, out var resource);
-
-        return isLoaded
-            ? resource
-            : throw new FileNotFoundException($"Couldn't find resource '{fileName}' under '{filePath}'.", filePath);
-    }
-
-
-    protected string GetTestFileName([CallerMemberName] string methodName = "")
-    {
-        return $"{typeof(TCommand).Name}-{methodName}.json";
-    }
-
     protected virtual CommandTestContextBuilder<TCommand, TCommandSettings> GetBuilder() =>
         new CommandTestContextBuilder<TCommand, TCommandSettings>().WithAnsiConsole(TestConsole);
 
     protected virtual CommandTestContext<TCommand, TCommandSettings> GetContext() =>
         GetBuilder()
             .Build();
-
-    private TResource GetConfigurationFile<TResource>(string fileName, string filePath) where TResource : new()
-    {
-        var isLoaded = GetContext().ConfigResolver
-            .TryConfigFromFile<TResource>(filePath, out var resource);
-
-        return isLoaded
-            ? resource
-            : throw new FileNotFoundException($"Couldn't find file '{fileName}' under '{filePath}'.", filePath);
-    }
 
     public virtual void Dispose()
     {

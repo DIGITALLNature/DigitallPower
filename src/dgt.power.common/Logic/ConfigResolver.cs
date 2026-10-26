@@ -20,8 +20,6 @@ public class ConfigResolver(IAnsiConsole console) : IConfigResolver
         PropertyNameCaseInsensitive = true
     };
 
-    public bool TryGetConfigFile<TC>(string fileDir, string file, out TC config) where TC : class, new() => ConfigFromFileCached(Path.Combine(fileDir, file), out config);
-
     public bool TryGetConfigFile<TC>(string file, out TC config) where TC : class, new() => ConfigFromFileCached(file, out config);
 
     public bool TryConfigFromFile<T>(string file, [NotNull] out T obj) where T : new()

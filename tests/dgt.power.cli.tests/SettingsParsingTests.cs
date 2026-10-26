@@ -1,21 +1,20 @@
 // Copyright (c) DIGITALL Nature. All rights reserved
 // DIGITALL Nature licenses this file to you under the Microsoft Public License.
 
-using dgt.power.analyzer.Base;
 using dgt.power.cli.tests.TestDoubles;
 using dgt.power.codegeneration.Base;
 using dgt.power.codegeneration.Constants;
 using dgt.power.Commands.Complete;
+using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
-using dgt.power.export.Base;
-using dgt.power.import.Base;
-using dgt.power.maintenance.Base;
-using dgt.power.maintenance.Logic;
-using dgt.power.maintenance.Model.Settings;
+using dgt.power.duplicaterules.Commands;
+using dgt.power.documenttemplates.Commands;
 using dgt.power.plugin.Commands;
 using dgt.power.plugin.Models;
+using dgt.power.process.Commands;
 using dgt.power.solution.Base;
 using dgt.power.telemetry.Base;
+using dgt.power.teamtemplates.Commands;
 using dgt.power.webresource.Commands;
 using Spectre.Console.Cli.Testing;
 using Spectre.Console.Cli;
@@ -36,6 +35,36 @@ namespace dgt.power.cli.tests;
 /// </summary>
 public class SettingsParsingTests
 {
+    [Test]
+    public async Task ImportDocumentTemplatesSettings_ParsesOptions()
+    {
+        var result = Parse<ImportDocumentTemplatesSettings>(
+            "./templates/documenttemplates.json", "--dry-run", "--non-interactive", "--no-telemetry");
+        var settings = (ImportDocumentTemplatesSettings)result.Settings!;
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(settings.Manifest).IsEqualTo("./templates/documenttemplates.json");
+        await Assert.That(settings.DryRun).IsTrue();
+        var defaults = Parse<ImportDocumentTemplatesSettings>("./templates/documenttemplates.json");
+        await Assert.That(((ImportDocumentTemplatesSettings)defaults.Settings!).DryRun).IsFalse();
+    }
+
+    [Test]
+    public async Task ExportDocumentTemplatesSettings_ParsesOptions()
+    {
+        var result = Parse<ExportDocumentTemplatesSettings>(
+            "./templates", "--entity", "account", "--type", "word", "--overwrite");
+        var settings = (ExportDocumentTemplatesSettings)result.Settings!;
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(settings.Directory).IsEqualTo("./templates");
+        await Assert.That(settings.Entity).IsEqualTo("account");
+        await Assert.That(settings.Type).IsEqualTo("word");
+        await Assert.That(settings.Overwrite).IsTrue();
+        var defaults = (ExportDocumentTemplatesSettings)Parse<ExportDocumentTemplatesSettings>("./templates").Settings!;
+        await Assert.That(defaults.Entity).IsNull();
+        await Assert.That(defaults.Type).IsNull();
+        await Assert.That(defaults.Overwrite).IsFalse();
+    }
+
     private static CommandAppResult Parse<TSettings>(params string[] args)
         where TSettings : CommandSettings
     {
@@ -89,78 +118,6 @@ public class SettingsParsingTests
         {
             directory.Delete(true);
         }
-    }
-
-    [Test]
-    public async Task AnalyzeVerb_ParsesOptions()
-    {
-        var result = Parse<AnalyzeVerb>(
-            "--inline", "solution1,solution2",
-            "--note-patches",
-            "--generate-report",
-            "--generate-summary",
-            "-c", "myconfig.json",
-            "--no-telemetry",
-            "--non-interactive");
-
-        var settings = (AnalyzeVerb)result.Settings!;
-
-        await Assert.That(settings.InlineData).IsEqualTo("solution1,solution2");
-        await Assert.That(settings.NotePatch).IsTrue();
-        await Assert.That(settings.GenerateReportFile).IsTrue();
-        await Assert.That(settings.GenerateSummaryFile).IsTrue();
-        await Assert.That(settings.Config).IsEqualTo("myconfig.json");
-        await Assert.That(settings.NoTelemetry).IsTrue();
-        await Assert.That(settings.NonInteractive).IsTrue();
-    }
-
-    [Test]
-    public async Task AnalyzeVerb_DefaultConfig_IsConfigJson()
-    {
-        var result = Parse<AnalyzeVerb>();
-
-        var settings = (AnalyzeVerb)result.Settings!;
-
-        await Assert.That(settings.Config).IsEqualTo("config.json");
-    }
-
-    [Test]
-    public async Task ExportVerb_ParsesOptions()
-    {
-        var result = Parse<ExportVerb>("--filedir", "c:/TargetDir", "--filename", "out.json", "--inline", "data");
-
-        var settings = (ExportVerb)result.Settings!;
-
-        await Assert.That(settings.FileDir).IsEqualTo("c:/TargetDir");
-        await Assert.That(settings.FileName).IsEqualTo("out.json");
-        await Assert.That(settings.InlineData).IsEqualTo("data");
-    }
-
-    [Test]
-    public async Task ExportVerb_DefaultFileDir_IsCurrentDirectory()
-    {
-        var result = Parse<ExportVerb>();
-
-        var settings = (ExportVerb)result.Settings!;
-
-        await Assert.That(settings.FileDir).IsEqualTo(".");
-    }
-
-    [Test]
-    public async Task ImportVerb_ParsesOptions()
-    {
-        var result = Parse<ImportVerb>(
-            "--filedir", "c:/TargetDir",
-            "--filename", "in.json",
-            "--inline", "data",
-            "--assignee", "user@contoso.com");
-
-        var settings = (ImportVerb)result.Settings!;
-
-        await Assert.That(settings.FileDir).IsEqualTo("c:/TargetDir");
-        await Assert.That(settings.FileName).IsEqualTo("in.json");
-        await Assert.That(settings.InlineData).IsEqualTo("data");
-        await Assert.That(settings.Assignee).IsEqualTo("user@contoso.com");
     }
 
     [Test]
@@ -228,46 +185,292 @@ public class SettingsParsingTests
     }
 
     [Test]
-    public async Task MaintenanceVerb_ParsesConfigAliasAndDefault()
+    [Arguments(false, false)]
+    [Arguments(false, true)]
+    [Arguments(true, false)]
+    [Arguments(true, true)]
+    public async Task CopyComponentsSettings_RawAndDryRun_AreIndependent(bool raw, bool dryRun)
     {
-        var withAlias = Parse<MaintenanceVerb>("-c", "myconfig.json");
-        var defaults = Parse<MaintenanceVerb>();
-
-        await Assert.That(((MaintenanceVerb)withAlias.Settings!).Config).IsEqualTo("myconfig.json");
-        await Assert.That(((MaintenanceVerb)defaults.Settings!).Config).IsEqualTo("config.json");
+        var arguments = new List<string> { "target", "--source", "source" };
+        if (raw) arguments.Add("--raw");
+        if (dryRun) arguments.Add("--dry-run");
+        var result = Parse<CopyComponentsSettings>(arguments.ToArray());
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        var settings = (CopyComponentsSettings)result.Settings!;
+        await Assert.That(settings.Raw).IsEqualTo(raw);
+        await Assert.That(settings.DryRun).IsEqualTo(dryRun);
     }
 
     [Test]
-    public async Task BulkDeleteSettings_ParsesPollIntervalAndDefault()
+    public async Task ProcessInitSettings_ParsesPathRepeatedSolutionsAndOptions()
     {
-        var result = Parse<BulkDeleteSettings>("--poll-interval", "10");
-        var defaults = Parse<BulkDeleteSettings>();
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, Path.Combine(directory.FullName, "processes.json"));
+            var mapping = Path.Combine(directory.FullName, "owners.source.json");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            var result = Parse<ProcessInitSettings>(
+                file, "--solution", "ContosoCore", "--solution", "ContosoFlows",
+                "--capture", "both", "--owner-mapping", mapping, "--unmapped-owners", "skip", "--overwrite");
+            var defaults = Parse<ProcessInitSettings>(file, "--solution", "ContosoCore");
 
-        await Assert.That(((BulkDeleteSettings)result.Settings!).PollInterval).IsEqualTo(10);
-        await Assert.That(((BulkDeleteSettings)defaults.Settings!).PollInterval).IsEqualTo(5);
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (ProcessInitSettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.Solutions).IsEquivalentTo(["ContosoCore", "ContosoFlows"]);
+            await Assert.That(settings.Capture).IsEqualTo("both");
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.UnmappedOwners).IsEqualTo("skip");
+            await Assert.That(settings.Overwrite).IsTrue();
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (ProcessInitSettings)defaults.Settings!;
+            await Assert.That(defaultSettings.Capture).IsEqualTo("state");
+            await Assert.That(defaultSettings.UnmappedOwners).IsEqualTo("fail");
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.Overwrite).IsFalse();
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
     }
 
     [Test]
-    public async Task BulkDeleteSettings_RejectsNonPositivePollInterval()
+    public async Task ProcessApplySettings_ParsesPathImpersonationAndDefaults()
     {
-        var settings = new BulkDeleteSettings { PollInterval = 0 };
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var absoluteFile = Path.Combine(directory.FullName, "processes.json");
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, absoluteFile);
+            var mapping = Path.Combine(directory.FullName, "owners.target.json");
+            await File.WriteAllTextAsync(absoluteFile, """{"schemaVersion":1,"processes":[]}""");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            var result = Parse<ProcessApplySettings>(
+                file, "--owner-mapping", mapping, "--activate-as", "integrationUser", "--dry-run");
+            var asOwner = Parse<ProcessApplySettings>(file, "--owner-mapping", mapping, "--activate-as-owner");
+            var defaults = Parse<ProcessApplySettings>(file);
 
-        await Assert.That(settings.Validate().Successful).IsFalse();
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (ProcessApplySettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.ActivateAs).IsEqualTo("integrationUser");
+            await Assert.That(settings.ActivateAsOwner).IsFalse();
+            await Assert.That(settings.DryRun).IsTrue();
+            await Assert.That(asOwner.ExitCode).IsEqualTo(0).Because(asOwner.Output);
+            await Assert.That(((ProcessApplySettings)asOwner.Settings!).ActivateAsOwner).IsTrue();
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (ProcessApplySettings)defaults.Settings!;
+            await Assert.That(defaultSettings.ActivateAs).IsNull();
+            await Assert.That(defaultSettings.ActivateAsOwner).IsFalse();
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.DryRun).IsFalse();
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
     }
 
     [Test]
-    public async Task CarrierInfoSettings_ParsesOptionsAndDefaults()
+    public async Task TeamTemplateImportSettings_ParsesRepeatedCleanupTablesAndDryRun()
     {
-        var result = Parse<CarrierInfoSettings>("--filedir", "./carriers", "--filename", "carrier.json");
-        var defaults = Parse<CarrierInfoSettings>();
+        const string file = "./teamtemplates.json";
+        var result = Parse<TeamTemplateImportSettings>(
+            file,
+            "--dry-run",
+            "--cleanup",
+            "--cleanup-table", "account",
+            "--cleanup-table", "contact");
 
-        var settings = (CarrierInfoSettings)result.Settings!;
-        await Assert.That(settings.FileDir).IsEqualTo("./carriers");
-        await Assert.That(settings.FileName).IsEqualTo("carrier.json");
+        await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+        var settings = (TeamTemplateImportSettings)result.Settings!;
+        await Assert.That(settings.File).IsEqualTo(file);
+        await Assert.That(settings.DryRun).IsTrue();
+        await Assert.That(settings.Cleanup).IsTrue();
+        await Assert.That(settings.CleanupTables).IsEquivalentTo(["account", "contact"]);
+    }
 
-        var defaultSettings = (CarrierInfoSettings)defaults.Settings!;
-        await Assert.That(defaultSettings.FileDir).IsEqualTo(".");
-        await Assert.That(defaultSettings.FileName).IsEqualTo("carrier.json");
+    [Test]
+    public async Task TeamTemplateExportSettings_ParsesRepeatedTablesOverwriteAndDryRun()
+    {
+        const string file = "./teamtemplates.json";
+        var result = Parse<TeamTemplateExportSettings>(
+            file,
+            "--dry-run",
+            "--overwrite",
+            "--table", "account",
+            "--table", "contact");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+        var settings = (TeamTemplateExportSettings)result.Settings!;
+        await Assert.That(settings.File).IsEqualTo(file);
+        await Assert.That(settings.DryRun).IsTrue();
+        await Assert.That(settings.Overwrite).IsTrue();
+        await Assert.That(settings.Tables).IsEquivalentTo(["account", "contact"]);
+    }
+
+    [Test]
+    public async Task TeamTemplateSettings_DefaultOptionsAndRequiredFile()
+    {
+        var importDefaults = Parse<TeamTemplateImportSettings>("./teamtemplates.json");
+        var exportDefaults = Parse<TeamTemplateExportSettings>("./teamtemplates.json");
+        var importMissingFile = Parse<TeamTemplateImportSettings>();
+        var exportMissingFile = Parse<TeamTemplateExportSettings>();
+
+        await Assert.That(importDefaults.ExitCode).IsEqualTo(0).Because(importDefaults.Output);
+        var import = (TeamTemplateImportSettings)importDefaults.Settings!;
+        await Assert.That(import.File).IsEqualTo("./teamtemplates.json");
+        await Assert.That(import.DryRun).IsFalse();
+        await Assert.That(import.Cleanup).IsFalse();
+        await Assert.That(import.CleanupTables).IsNull();
+
+        await Assert.That(exportDefaults.ExitCode).IsEqualTo(0).Because(exportDefaults.Output);
+        var export = (TeamTemplateExportSettings)exportDefaults.Settings!;
+        await Assert.That(export.File).IsEqualTo("./teamtemplates.json");
+        await Assert.That(export.DryRun).IsFalse();
+        await Assert.That(export.Overwrite).IsFalse();
+        await Assert.That(export.Tables).IsNull();
+
+        await Assert.That(importMissingFile.ExitCode).IsNotEqualTo(0);
+        await Assert.That(exportMissingFile.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
+    public async Task TeamTemplateImportSettings_RejectsInvalidCleanupScope()
+    {
+        var missingTables = Parse<TeamTemplateImportSettings>("./teamtemplates.json", "--cleanup");
+        var cleanupNotRequested = Parse<TeamTemplateImportSettings>(
+            "./teamtemplates.json", "--cleanup-table", "account");
+        var commaSeparated = Parse<TeamTemplateImportSettings>(
+            "./teamtemplates.json", "--cleanup", "--cleanup-table", "account,contact");
+
+        await Assert.That(missingTables.ExitCode).IsNotEqualTo(0);
+        await Assert.That(cleanupNotRequested.ExitCode).IsNotEqualTo(0);
+        await Assert.That(commaSeparated.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
+    [Arguments("init", "--publishers")]
+    [Arguments("init", "--solutions")]
+    [Arguments("init", "--detailed")]
+    [Arguments("apply", "--tablereport")]
+    public async Task ProcessSettings_RejectLegacyOptions(string command, string option)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("process", command, "./processes.json", option, "legacy");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
+    public async Task DuplicateRuleInitSettings_ParsesPathRepeatedRuleIdsAndOptions()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, Path.Combine(directory.FullName, "duplicaterules.json"));
+            var mapping = Path.Combine(directory.FullName, "owners.source.json");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            const string firstId = "6f1c2b4e-8d3a-4f5b-9c7d-1e2f3a4b5c6d";
+            const string secondId = "0a9b8c7d-6e5f-4a3b-2c1d-0e9f8a7b6c5d";
+            var result = Parse<DuplicateRuleInitSettings>(
+                file, "--entity", "contact", "--rule-id", firstId, "--rule-id", secondId,
+                "--capture", "both", "--owner-mapping", mapping, "--unmapped-owners", "skip", "--overwrite");
+            var defaults = Parse<DuplicateRuleInitSettings>(file);
+
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (DuplicateRuleInitSettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.Entity).IsEqualTo("contact");
+            await Assert.That(settings.RuleIds).IsEquivalentTo([firstId, secondId]);
+            await Assert.That(settings.Capture).IsEqualTo("both");
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.UnmappedOwners).IsEqualTo("skip");
+            await Assert.That(settings.Overwrite).IsTrue();
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (DuplicateRuleInitSettings)defaults.Settings!;
+            await Assert.That(defaultSettings.Capture).IsEqualTo("state");
+            await Assert.That(defaultSettings.UnmappedOwners).IsEqualTo("fail");
+            await Assert.That(defaultSettings.Entity).IsNull();
+            await Assert.That(defaultSettings.RuleIds ?? []).IsEmpty();
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.Overwrite).IsFalse();
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    public async Task DuplicateRuleApplySettings_ParsesPathWaitOptionsAndDefaults()
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var absoluteFile = Path.Combine(directory.FullName, "duplicaterules.json");
+            var file = Path.GetRelativePath(Environment.CurrentDirectory, absoluteFile);
+            var mapping = Path.Combine(directory.FullName, "owners.target.json");
+            await File.WriteAllTextAsync(absoluteFile, """{"schemaVersion":1,"rules":[]}""");
+            await File.WriteAllTextAsync(mapping, """{"schemaVersion":1,"owners":{}}""");
+            var result = Parse<DuplicateRuleApplySettings>(
+                file, "--owner-mapping", mapping, "--dry-run", "--no-wait", "--timeout", "600");
+            var defaults = Parse<DuplicateRuleApplySettings>(file);
+
+            await Assert.That(result.ExitCode).IsEqualTo(0).Because(result.Output);
+            var settings = (DuplicateRuleApplySettings)result.Settings!;
+            await Assert.That(settings.File).IsEqualTo(file);
+            await Assert.That(settings.OwnerMapping).IsEqualTo(mapping);
+            await Assert.That(settings.DryRun).IsTrue();
+            await Assert.That(settings.NoWait).IsTrue();
+            await Assert.That(settings.Timeout).IsEqualTo(600);
+            await Assert.That(defaults.ExitCode).IsEqualTo(0).Because(defaults.Output);
+            var defaultSettings = (DuplicateRuleApplySettings)defaults.Settings!;
+            await Assert.That(defaultSettings.OwnerMapping).IsNull();
+            await Assert.That(defaultSettings.DryRun).IsFalse();
+            await Assert.That(defaultSettings.NoWait).IsFalse();
+            await Assert.That(defaultSettings.Timeout).IsEqualTo(DuplicateRuleApplySettings.DefaultTimeoutSeconds);
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
+    }
+
+    [Test]
+    [Arguments("init", "--rule-id", "not-a-guid")]
+    [Arguments("init", "--capture", "none")]
+    [Arguments("init", "--unmapped-owners", "ignore")]
+    [Arguments("apply", "--timeout", "0")]
+    [Arguments("apply", "--timeout", "abc")]
+    [Arguments("apply", "--solution", "ContosoCore")]
+    public async Task DuplicateRuleSettings_RejectInvalidOptions(string command, string option, string value)
+    {
+        var directory = Directory.CreateTempSubdirectory();
+        try
+        {
+            var file = Path.Combine(directory.FullName, "duplicaterules.json");
+            if (command == "apply")
+            {
+                await File.WriteAllTextAsync(file, """{"schemaVersion":1,"rules":[]}""");
+            }
+
+            var tester = new CommandAppTester();
+            tester.Configure(CommandTree.Register);
+
+            var result = tester.Run("duplicaterules", command, file, option, value);
+
+            await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        }
+        finally
+        {
+            directory.Delete(true);
+        }
     }
 
     [Test]
@@ -282,50 +485,6 @@ public class SettingsParsingTests
         await Assert.That(settings.Major).IsFalse();
         await Assert.That(settings.Build).IsFalse();
         await Assert.That(settings.Revision).IsTrue(); // DefaultValue(true)
-    }
-
-    [Test]
-    public async Task RemoveRedundantComponentsVerb_ParsesPositionalArgumentsAndFlags()
-    {
-        var result = Parse<RemoveRedundantComponentsVerb>("deploysolution", "tmpsolution", "--dryrun");
-
-        var settings = (RemoveRedundantComponentsVerb)result.Settings!;
-
-        await Assert.That(settings.SourceSolutions).IsEqualTo("deploysolution");
-        await Assert.That(settings.TargetSolution).IsEqualTo("tmpsolution");
-        await Assert.That(settings.DryRun).IsTrue();
-        await Assert.That(settings.Entities).IsFalse();
-    }
-
-    [Test]
-    public async Task CreateWorkflowStateConfigSettings_ParsesOptionsAndCommaSeparatedLists()
-    {
-        var result = Parse<CreateWorkflowStateConfigSettings>(
-            "-o", "out.json",
-            "--overwrite",
-            "-s", "solution1,solution2",
-            "-p", "publisher1,publisher2",
-            "--detailed");
-
-        var settings = (CreateWorkflowStateConfigSettings)result.Settings!;
-
-        await Assert.That(settings.Config).IsEqualTo("out.json");
-        await Assert.That(settings.Overwrite).IsTrue();
-        await Assert.That(settings.Solutions).IsEqualTo("solution1,solution2");
-        await Assert.That(settings.Publishers).IsEqualTo("publisher1,publisher2");
-        await Assert.That(settings.TableReport).IsTrue(); // DefaultValue(true)
-        await Assert.That(settings.Detailed).IsTrue();
-    }
-
-    [Test]
-    public async Task UpdateWorkflowStateSettings_ParsesConfigAndDefaults()
-    {
-        var result = Parse<UpdateWorkflowStateSettings>("-c", "cfg.json");
-
-        var settings = (UpdateWorkflowStateSettings)result.Settings!;
-
-        await Assert.That(settings.Config).IsEqualTo("cfg.json");
-        await Assert.That(settings.TableReport).IsTrue(); // DefaultValue(true)
     }
 
     [Test]
@@ -436,11 +595,11 @@ public class SettingsParsingTests
     [Test]
     public async Task GlobalConnectionSettings_ParsesConnectionSelectionAndAdHocString()
     {
-        var result = Parse<MaintenanceVerb>(
+        var result = Parse<ConnectionSettings>(
             "--connection", "dev",
             "--connection-string", "AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
 
-        var settings = (MaintenanceVerb)result.Settings!;
+        var settings = (ConnectionSettings)result.Settings!;
 
         await Assert.That(settings.Connection).IsEqualTo("dev");
         await Assert.That(settings.ConnectionString).IsEqualTo("AuthType=ClientSecret;Url=https://org.crm.dynamics.com;");
