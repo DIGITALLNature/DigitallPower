@@ -42,10 +42,8 @@ public class CommandTreeTests
     // routing issues that only surface when actually navigating into a specific path.)
     [Test]
     [Arguments("connection")]
-    [Arguments("export")]
     [Arguments("maintenance")]
     [Arguments("analyze")]
-    [Arguments("import")]
     [Arguments("solution")]
     [Arguments("codegeneration")]
     [Arguments("cg")] // alias for codegeneration
@@ -112,6 +110,82 @@ public class CommandTreeTests
 
         await Assert.That(result.ExitCode).IsNotEqualTo(0);
         await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    [Arguments("import", "bulkdeletes")]
+    [Arguments("export", "bulkdeletes")]
+    [Arguments("import", "queues")]
+    [Arguments("export", "queues")]
+    [Arguments("import", "calendar")]
+    [Arguments("export", "calendars")]
+    [Arguments("import", "slaconfigs")]
+    [Arguments("export", "slaconfigs")]
+    [Arguments("import", "routingruleconfigs")]
+    [Arguments("export", "routingruleconfigs")]
+    [Arguments("import", "userroles")]
+    [Arguments("export", "userroles")]
+    [Arguments("import", "outlooktemplates")]
+    [Arguments("export", "outlooktemplates")]
+    public async Task RetiredTransferPath_IsRejectedWithoutResolvingServices(string branch, string resource)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run(branch, resource);
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    [Arguments("import")]
+    [Arguments("export")]
+    public async Task RetiredTransferBranch_HelpIsRejected(string branch)
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run(branch, "--help");
+
+        await Assert.That(result.ExitCode).IsNotEqualTo(0);
+        await Assert.That(result.Output).Contains("Unknown command");
+    }
+
+    [Test]
+    public async Task TransferHelpAndCompletion_OnlyExposeResourceBranches()
+    {
+        var capture = new ModelCaptureHelpProvider();
+        var tester = new CommandAppTester();
+        tester.Configure(config =>
+        {
+            CommandTree.Register(config);
+            config.SetHelpProvider(capture);
+        });
+
+        var result = tester.Run("--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(capture.Model).IsNotNull();
+        var rootCommands = capture.Model!.Commands.Select(command => command.Name).ToArray();
+        await Assert.That(rootCommands).DoesNotContain("import");
+        await Assert.That(rootCommands).DoesNotContain("export");
+        await Assert.That(rootCommands).Contains("teamtemplates");
+        await Assert.That(rootCommands).Contains("documenttemplates");
+
+        const string rootLine = "dgtp ";
+        var root = CompletionEngine.GetCompletions(capture.Model, rootLine, rootLine.Length);
+        await Assert.That(root).DoesNotContain("import");
+        await Assert.That(root).DoesNotContain("export");
+        await Assert.That(root).Contains("teamtemplates");
+        await Assert.That(root).Contains("documenttemplates");
+
+        foreach (var branch in new[] { "import", "export" })
+        {
+            var line = $"dgtp {branch} ";
+            var completions = CompletionEngine.GetCompletions(capture.Model, line, line.Length);
+            await Assert.That(completions.Count).IsEqualTo(0);
+        }
     }
 
     [Test]
@@ -366,16 +440,19 @@ public class CommandTreeTests
     }
 
     [Test]
-    public async Task ImportHelp_DoesNotListSecureConfigs_AndKeepsOtherCommands()
+    public async Task RootHelp_DoesNotListRetiredTransfers_AndKeepsTemplateResources()
     {
         var tester = new CommandAppTester();
         tester.Configure(CommandTree.Register);
 
-        var result = tester.Run("import", "--help");
+        var result = tester.Run("--help");
 
         await Assert.That(result.ExitCode).IsEqualTo(0);
         await Assert.That(result.Output).DoesNotContain("secureconfigs");
-        await Assert.That(result.Output).Contains("outlooktemplates");
+        await Assert.That(result.Output).DoesNotContain("outlooktemplates");
+        await Assert.That(result.Output).DoesNotContain("bulkdeletes");
+        await Assert.That(result.Output).Contains("teamtemplates");
+        await Assert.That(result.Output).Contains("documenttemplates");
     }
 
     [Test]

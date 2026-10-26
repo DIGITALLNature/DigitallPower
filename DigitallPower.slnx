@@ -4,8 +4,6 @@
     <Project Path="src/modules/dgt.power.codegeneration/dgt.power.codegeneration.csproj" />
     <Project Path="src/modules/dgt.power.connection/dgt.power.connection.csproj" />
     <Project Path="src/modules/dgt.power.documenttemplates/dgt.power.documenttemplates.csproj" />
-    <Project Path="src/modules/dgt.power.export/dgt.power.export.csproj" />
-    <Project Path="src/modules/dgt.power.import/dgt.power.import.csproj" />
     <Project Path="src/modules/dgt.power.maintenance/dgt.power.maintenance.csproj" />
     <Project Path="src/modules/dgt.power.plugin/dgt.power.plugin.csproj" />
     <Project Path="src/modules/dgt.power.duplicaterules/dgt.power.duplicaterules.csproj" />
@@ -21,8 +19,6 @@
     <Project Path="tests/dgt.power.common.tests/dgt.power.common.tests.csproj" />
     <Project Path="tests/dgt.power.connection.tests/dgt.power.connection.tests.csproj" />
     <Project Path="tests/dgt.power.documenttemplates.tests/dgt.power.documenttemplates.tests.csproj" />
-    <Project Path="tests/dgt.power.export.tests/dgt.power.export.tests.csproj" />
-    <Project Path="tests/dgt.power.import.tests/dgt.power.import.tests.csproj" />
     <Project Path="tests/dgt.power.maintenance.tests/dgt.power.maintenance.tests.csproj" />
     <Project Path="tests/dgt.power.plugin.tests/dgt.power.plugin.tests.csproj" />
     <Project Path="tests/dgt.power.duplicaterules.tests/dgt.power.duplicaterules.tests.csproj" />
