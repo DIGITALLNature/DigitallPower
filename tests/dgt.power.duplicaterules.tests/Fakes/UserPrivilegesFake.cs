@@ -15,10 +15,15 @@ public sealed class UserPrivilegesFake(ISet<Guid> grantedPrincipals, Guid privil
     public OrganizationResponse Execute(OrganizationRequest organizationRequest, FakeOrganizationService fakeOrganizationService)
     {
         var userId = ((RetrieveUserPrivilegesRequest)organizationRequest).UserId;
-        var response = new RetrieveUserPrivilegesResponse();
-        response.Results["RolePrivileges"] = grantedPrincipals.Contains(userId)
-            ? new[] { new RolePrivilege { PrivilegeId = privilegeId, PrivilegeName = DuplicateRulePreflight.ReadPrivilegeName } }
-            : Array.Empty<RolePrivilege>();
+        var response = new RetrieveUserPrivilegesResponse
+        {
+            Results =
+            {
+                ["RolePrivileges"] = grantedPrincipals.Contains(userId)
+                    ? new[] { new RolePrivilege { PrivilegeId = privilegeId, PrivilegeName = DuplicateRulePreflight.ReadPrivilegeName } }
+                    : Array.Empty<RolePrivilege>()
+            }
+        };
         return response;
     }
 }

@@ -97,7 +97,6 @@ public sealed class DuplicateRulePreflight(IOwnerResolver ownerResolver)
                 rule.GetAttributeValue<string>("name") ?? string.Empty,
                 baseTable,
                 state,
-                currentOwner,
                 desiredOwner,
                 NeedsUnpublish: isPublished && !desiredPublished,
                 NeedsAssignment: needsAssignment,

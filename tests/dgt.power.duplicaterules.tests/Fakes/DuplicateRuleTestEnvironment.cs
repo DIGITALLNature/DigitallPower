@@ -43,7 +43,7 @@ public sealed class DuplicateRuleTestEnvironment
 
     public HashSet<Guid> GrantedPrincipals { get; } = [];
 
-    public Guid PrivilegeId { get; } = Guid.NewGuid();
+    private Guid PrivilegeId { get; } = Guid.NewGuid();
 
     public Guid AddRule(
         string table,

@@ -9,7 +9,7 @@ namespace dgt.power.common.tests.Ownership;
 
 public class OwnerResolverExtensionsTests
 {
-    private static readonly OwnerMapping EmptyMapping = new(1, new Dictionary<string, OwnerMappingEntry>(StringComparer.Ordinal));
+    private static readonly OwnerMapping s_emptyMapping = new(1, new Dictionary<string, OwnerMappingEntry>(StringComparer.Ordinal));
 
     [Test]
     public async Task CaptureRecordOwnersAsync_SplitsRecordsIntoKeysAndSkippedPrincipals()
@@ -25,12 +25,12 @@ public class OwnerResolverExtensionsTests
 
         var result = await resolver.CaptureRecordOwnersAsync(
             new FakeOrganizationServiceAsync(),
-            EmptyMapping,
+            s_emptyMapping,
             new Dictionary<Guid, EntityReference>
             {
                 [firstRecord] = mapped,
                 [secondRecord] = platform,
-                [thirdRecord] = new EntityReference("systemuser", platform.Id)
+                [thirdRecord] = new("systemuser", platform.Id)
             },
             UnmappedOwnerHandling.Fail);
 
@@ -46,7 +46,7 @@ public class OwnerResolverExtensionsTests
 
         var exception = await Assert.That(async () => await resolver.CaptureRecordOwnersAsync(
                 new FakeOrganizationServiceAsync(),
-                EmptyMapping,
+                s_emptyMapping,
                 new Dictionary<Guid, EntityReference> { [Guid.NewGuid()] = new("team", Guid.NewGuid()) },
                 UnmappedOwnerHandling.Skip))
             .Throws<OwnerResolutionException>();
@@ -61,7 +61,7 @@ public class OwnerResolverExtensionsTests
 
         var result = await resolver.CaptureRecordOwnersAsync(
             new FakeOrganizationServiceAsync(),
-            EmptyMapping,
+            s_emptyMapping,
             new Dictionary<Guid, EntityReference>(),
             UnmappedOwnerHandling.Fail);
 

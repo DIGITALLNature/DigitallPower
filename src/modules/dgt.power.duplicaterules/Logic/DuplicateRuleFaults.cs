@@ -11,7 +11,7 @@ public static class DuplicateRuleFaults
     public const int MaximumPublishedRules = unchecked((int)0x80048419);
     public const int AlreadyPublishing = unchecked((int)0x80048434);
 
-    public static int? FindErrorCode(Exception exception)
+    private static int? FindErrorCode(Exception exception)
     {
         for (var current = exception; current is not null; current = current.InnerException)
         {

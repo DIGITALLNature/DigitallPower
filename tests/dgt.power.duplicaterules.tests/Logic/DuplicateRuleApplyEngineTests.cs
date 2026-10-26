@@ -262,12 +262,14 @@ public class DuplicateRuleApplyEngineTests
         var occupying = Enumerable.Range(0, 4).Select(_ => environment.AddRule(Contact, DuplicateRulePublicationState.Published, owner)).ToArray();
         var released = environment.AddRule(Contact, DuplicateRulePublicationState.Published, owner);
         var added = environment.AddRule(Contact, DuplicateRulePublicationState.Unpublished, owner);
-        var time = new ManualTimeProvider();
-        time.OnDelay = delay =>
+        var time = new ManualTimeProvider
         {
-            if (delay == 3)
+            OnDelay = delay =>
             {
-                environment.Publish.CompleteAll(environment.Service);
+                if (delay == 3)
+                {
+                    environment.Publish.CompleteAll(environment.Service);
+                }
             }
         };
         using var console = new TestConsole();
@@ -492,6 +494,7 @@ public class DuplicateRuleApplyEngineTests
         var owner = environment.AddUser("owner@example.org");
         var ruleId = environment.AddRule(Contact, DuplicateRulePublicationState.Unpublished, owner);
         using var cancellation = new CancellationTokenSource();
+        // ReSharper disable once AccessToDisposedClosure
         environment.Publish.OnSubmit = _ => cancellation.Cancel();
         using var console = new TestConsole();
         console.Profile.Width = 1000;

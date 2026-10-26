@@ -20,7 +20,7 @@ public sealed class DuplicateRuleApplyEngine(
     IAnsiConsole console,
     TimeProvider timeProvider)
 {
-    public static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(2);
+    private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(2);
 
     private const int JobCompleted = 3;
     private const int JobFailed = 31;
@@ -297,7 +297,7 @@ public sealed class DuplicateRuleApplyEngine(
     {
         var failures = new List<Guid>();
         var pending = submitted.ToDictionary(publish => publish.Plan.Intent.RuleId);
-        var lastObserved = pending.Keys.ToDictionary(id => id, _ => DuplicateRulePublicationState.Publishing.ToString());
+        var lastObserved = pending.Keys.ToDictionary(id => id, _ => nameof(DuplicateRulePublicationState.Publishing));
         var deadline = timeProvider.GetUtcNow() + timeout;
         while (pending.Count > 0)
         {

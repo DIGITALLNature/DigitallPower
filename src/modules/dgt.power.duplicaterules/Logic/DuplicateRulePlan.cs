@@ -2,7 +2,6 @@
 
 using dgt.power.common.Ownership;
 using dgt.power.duplicaterules.Configuration;
-using Microsoft.Xrm.Sdk;
 
 namespace dgt.power.duplicaterules.Logic;
 
@@ -11,7 +10,6 @@ public sealed record DuplicateRulePlan(
     string Name,
     string BaseTable,
     DuplicateRulePublicationState CurrentState,
-    EntityReference CurrentOwner,
     ResolvedOwner? DesiredOwner,
     bool NeedsUnpublish,
     bool NeedsAssignment,

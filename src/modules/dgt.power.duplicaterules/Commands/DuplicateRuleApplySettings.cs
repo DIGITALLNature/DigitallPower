@@ -27,6 +27,7 @@ public sealed class DuplicateRuleApplySettings : BaseProgramSettings
 
     [CommandOption("--no-wait")]
     [Description("Report accepted publish submissions without waiting for publication to complete.")]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global -- bound by Spectre.Console.Cli via reflection
     public bool NoWait { get; init; }
 
     [CommandOption("--timeout <Seconds>")]

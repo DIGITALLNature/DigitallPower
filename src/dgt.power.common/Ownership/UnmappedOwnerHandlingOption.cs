@@ -5,7 +5,7 @@ namespace dgt.power.common.Ownership;
 public static class UnmappedOwnerHandlingOption
 {
     public const string Fail = "fail";
-    public const string Skip = "skip";
+    private const string Skip = "skip";
 
     public static bool TryParse(string? value, out UnmappedOwnerHandling handling)
     {

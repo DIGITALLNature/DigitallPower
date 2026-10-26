@@ -15,8 +15,9 @@ namespace dgt.power.duplicaterules.tests.Fakes;
 [EntityLogicalName(EntityLogicalName)]
 public sealed class Privilege : Entity
 {
-    public const string EntityLogicalName = "privilege";
+    private const string EntityLogicalName = "privilege";
 
+    // ReSharper disable once UnusedMember.Global -- required by the SDK proxy-type materialization
     public Privilege() : base(EntityLogicalName)
     {
     }
@@ -28,6 +29,7 @@ public sealed class Privilege : Entity
     [AttributeLogicalName("privilegeid")]
     public Guid? PrivilegeId
     {
+        // ReSharper disable once UnusedMember.Global -- read by the SDK proxy-type materialization
         get => GetAttributeValue<Guid?>("privilegeid");
         set
         {
@@ -46,6 +48,7 @@ public sealed class Privilege : Entity
     [AttributeLogicalName("name")]
     public string? Name
     {
+        // ReSharper disable once UnusedMember.Global -- read by the fake service query evaluation
         get => GetAttributeValue<string?>("name");
         set => SetAttributeValue("name", value);
     }

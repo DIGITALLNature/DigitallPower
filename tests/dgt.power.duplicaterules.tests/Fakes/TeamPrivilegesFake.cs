@@ -17,10 +17,15 @@ public sealed class TeamPrivilegesFake(ISet<Guid> grantedPrincipals, Guid privil
     {
         var teamId = ((RetrieveTeamPrivilegesRequest)organizationRequest).TeamId;
         Requested.Add(teamId);
-        var response = new RetrieveTeamPrivilegesResponse();
-        response.Results["RolePrivileges"] = grantedPrincipals.Contains(teamId)
-            ? new[] { new RolePrivilege { PrivilegeId = privilegeId } }
-            : Array.Empty<RolePrivilege>();
+        var response = new RetrieveTeamPrivilegesResponse
+        {
+            Results =
+            {
+                ["RolePrivileges"] = grantedPrincipals.Contains(teamId)
+                    ? new[] { new RolePrivilege { PrivilegeId = privilegeId } }
+                    : Array.Empty<RolePrivilege>()
+            }
+        };
         return response;
     }
 }
