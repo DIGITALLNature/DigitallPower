@@ -5,7 +5,7 @@
 [![NuGet](https://img.shields.io/nuget/v/dgt.power)](https://www.nuget.org/packages/dgt.power)
 
 > **Upgrading between major versions?** Review the
-> [migration guides](docs/guides/migrations/) for user-affecting breaking changes before upgrading.
+> [migration guides](https://github.com/DIGITALLNature/DigitallPower/tree/beta/docs/guides/migrations/) for user-affecting breaking changes before upgrading.
 
 ## Introduction
 
@@ -35,7 +35,7 @@ DigitallPower is published as a [.NET global tool](https://www.nuget.org/package
 dotnet tool install -g dgt.power
 ```
 
-After installation the command `dgtp` is available globally. See [Installation](docs/getting-started/installation.md) for update/uninstall instructions and requirements.
+After installation the command `dgtp` is available globally. See [Installation](https://github.com/DIGITALLNature/DigitallPower/blob/beta/docs/getting-started/installation.md) for update/uninstall instructions and requirements.
 
 ## ⚡ Quick Start
 
@@ -44,8 +44,8 @@ After installation the command `dgtp` is available globally. See [Installation](
 dgtp connection create dev --url https://contoso-dev.crm4.dynamics.com --tenant contoso.onmicrosoft.com
 dgtp connection select dev
 
-# 2. Verify the connection by listing connections
-dgtp connection list
+# 2. Verify the connection (checks token acquisition)
+dgtp connection status
 
 # 3. Export configuration data from the environment
 dgtp export queues --filedir ./out/queues
@@ -54,19 +54,11 @@ dgtp export queues --filedir ./out/queues
 dgtp codegeneration ./generated -c ./genconfig.json
 ```
 
-Run `dgtp --help` or `dgtp <command> --help` to discover all options. See [Quick Start](docs/getting-started/quick-start.md) for next steps.
+Run `dgtp --help` or `dgtp <command> --help` to discover all options. See [Quick Start](https://github.com/DIGITALLNature/DigitallPower/blob/beta/docs/getting-started/quick-start.md) for next steps.
 
 ## 📚 Documentation
 
-| Section | Description |
-|---------|-------------|
-| [Getting Started](docs/getting-started/) | Install dgtp and verify your setup |
-| [Guides](docs/guides/) | CI/CD integration, tab completion, plugin deployment, migration guides |
-| [Command Reference](docs/reference/commands/) | All commands organized by branch |
-| [Configuration](docs/reference/configuration.md) | Environment variables, connection settings, JSON schemas |
-| [Concepts](docs/concepts/) | Architecture, telemetry & privacy, connection model |
-| [Contributor Docs](docs/development/) | Build & test, repository layout, spec-driven development |
-| [Full docs index](docs/README.md) | Complete documentation navigation |
+Full documentation — getting started, guides, command reference, concepts, and contributor docs — is available in the [`docs/`](https://github.com/DIGITALLNature/DigitallPower/tree/beta/docs) directory on GitHub.
 
 > **DIGITALL guidelines:** The [DIGITALL BizApps Guidelines](https://digitallnature.github.io/) site provides project-level guidance for working with dgtp in DIGITALL projects, including ALM workflows and coding standards.
 
@@ -79,7 +71,7 @@ dgtp telemetry disable   # Opt out permanently
 dgtp telemetry status    # Check current state
 ```
 
-See [Telemetry and Privacy](docs/concepts/telemetry-and-privacy.md) for what data is collected, how it's anonymized, and all opt-out options.
+See [Telemetry and Privacy](https://github.com/DIGITALLNature/DigitallPower/blob/beta/docs/concepts/telemetry-and-privacy.md) for what data is collected, how it's anonymized, and all opt-out options.
 
 ## 🤝 Community and Contributions
 

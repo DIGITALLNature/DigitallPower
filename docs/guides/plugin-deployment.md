@@ -5,7 +5,7 @@ End-to-end workflow for developing, deploying, and managing Dataverse plugins wi
 ## Prerequisites
 
 - A Dataverse environment and a [connection](../reference/commands/connection.md) to it
-- A .NET plugin project referencing `Digitall.Plugins.Registration` 3.0.0-beta.3 or later
+- A .NET plugin project referencing `Digitall.Plugins.Registration` 3.0.0 or later
 - The `dgtp` CLI [installed](../getting-started/installation.md)
 
 ## 1. Write the plugin
