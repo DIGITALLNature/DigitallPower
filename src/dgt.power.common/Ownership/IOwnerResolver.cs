@@ -13,9 +13,10 @@ public interface IOwnerResolver
         IEnumerable<string> requestedKeys,
         CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<OwnerCapture>> ResolveForCaptureAsync(
+    Task<OwnerCaptureResult> ResolveForCaptureAsync(
         IOrganizationServiceAsync2 service,
         OwnerMapping mapping,
         IEnumerable<EntityReference> capturedOwners,
+        UnmappedOwnerHandling unmappedOwners = UnmappedOwnerHandling.Fail,
         CancellationToken cancellationToken = default);
 }
