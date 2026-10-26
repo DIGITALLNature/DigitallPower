@@ -47,21 +47,23 @@ const archiveGate = `<!-- digitallpower:post-merge-archive -->
 ## Repository archive gate (required)
 
 This repository rule takes precedence over archive suggestions and completion examples below.
-Keep the change active until its implementation PR has successfully merged into \`beta\` or
-\`main\` (exact, case-sensitive branch names). Finished tasks, an open or approved PR, green CI,
-a closed-but-unmerged PR, or a merge into another branch do not permit archiving.
+Keep the change active until a stable GitHub release containing the implementation has been
+published from \`main\`. Merging into \`beta\` (including beta preparation for a later main release)
+does not permit archiving. Merging into \`main\` without a published stable release, or publishing
+a beta/prerelease, is also insufficient.
 
-Before any archive-related writes, verify the implementation PR for the selected change:
-\`gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,url\`.
-Require \`state: MERGED\`, non-null \`mergedAt\`, and \`baseRefName\` equal to \`beta\` or \`main\`.
-Confirm that this PR actually contains the selected change; do not use an unrelated merged PR
-or infer merge success from the current branch. If the PR is unknown, ask for it. If verification
-fails or is unavailable, report the blocker and stop without archiving; confirmation or optional
-operation guidance cannot bypass this gate.
+Before any archive-related writes, verify that the implementation PR for this change is merged
+into \`main\`, and that the published stable release includes that PR:
+1. Check the PR with \`gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,mergeCommit,url\`. Require \`state: MERGED\`, non-null \`mergedAt\`, and \`baseRefName: main\`. Confirm it contains this change.
+2. Check the corresponding GitHub release with \`gh release view <tag> --repo DIGITALLNature/DigitallPower --json isDraft,isPrerelease,publishedAt,tagName\`. Require a published, non-draft, non-prerelease release.
+3. Fetch current \`main\` and the release tag, then verify the PR merge commit is an ancestor of the release tag and the release tag commit is reachable from \`origin/main\`.
 
-After implementation, report "Implementation complete; awaiting merge into beta or main" rather
-than offering immediate archival. After a verified merge, archive as a separate post-merge
-follow-up using a checkout containing the merged implementation, not in the implementation PR.
+Do not use an unrelated PR or release, or infer release status from the current branch. If the PR, release, or commit ancestry cannot be verified, report the blocker and stop without archiving; confirmation or optional guidance cannot bypass this gate.
+
+After implementation, report "Implementation complete; awaiting stable release on main" rather
+than offering immediate archival. Archive only as a separate post-release follow-up using a
+checkout containing the released implementation, never during beta preparation or in the
+implementation PR.
 <!-- /digitallpower:post-merge-archive -->`;
 
 async function findMarkdownFiles(directory) {
