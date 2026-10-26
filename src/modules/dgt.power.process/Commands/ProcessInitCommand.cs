@@ -42,7 +42,7 @@ public sealed class ProcessInitCommand(
             return false;
         }
 
-        var ownerKeys = new Dictionary<Guid, string>();
+        var ownerCapture = new RecordOwnerCapture(new Dictionary<Guid, string>(), new Dictionary<Guid, SkippedOwnerCapture>());
         if (settings.Capture is "owner" or "both")
         {
             if (mapping is null)
@@ -63,30 +63,12 @@ public sealed class ProcessInitCommand(
                         "A selected process did not have an owner reference.");
                 }
 
-                IReadOnlyList<OwnerCapture> captures = [];
-                if (byProcess.Count > 0)
-                {
-                    captures = await _ownerResolver.ResolveForCaptureAsync(
-                        service,
-                        mapping,
-                        byProcess.Values.DistinctBy(owner => (owner.LogicalName, owner.Id)),
-                        cancellationToken);
-                }
-                var byPrincipal = captures.ToDictionary(
-                    capture => (capture.Principal.LogicalName, capture.Principal.Id),
-                    capture => capture.LogicalKey);
-                foreach (var (processId, principal) in byProcess)
-                {
-                    if (!byPrincipal.TryGetValue((principal.LogicalName, principal.Id), out var key))
-                    {
-                        throw new OwnerResolutionException(
-                            OwnerResolutionFailure.MissingCaptureMapping,
-                            $"No owner mapping was resolved for process '{processId:D}'.",
-                            capturedOwner: principal);
-                    }
-
-                    ownerKeys.Add(processId, key);
-                }
+                ownerCapture = await _ownerResolver.CaptureRecordOwnersAsync(
+                    service,
+                    mapping,
+                    byProcess,
+                    UnmappedOwnerHandlingOption.Parse(settings.UnmappedOwners),
+                    cancellationToken);
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
             {
@@ -98,7 +80,11 @@ public sealed class ProcessInitCommand(
         string content;
         try
         {
-            content = ProcessConfigurationWriter.Serialize(processes, settings.Capture, ownerKeys);
+            content = ProcessConfigurationWriter.Serialize(
+                processes,
+                settings.Capture,
+                ownerCapture.OwnerKeys,
+                ownerCapture.SkippedRecords.Keys.ToHashSet());
         }
         catch (InvalidOperationException exception)
         {
@@ -115,7 +101,13 @@ public sealed class ProcessInitCommand(
             return false;
         }
 
-        Console.MarkupLine($"[green]Captured {processes.Count} processes to '{outputPath.EscapeMarkup()}'.[/]");
+        foreach (var line in SkippedOwnerCaptureReport.Format(ownerCapture.SkippedRecords, "process"))
+        {
+            Console.MarkupLine($"[yellow]{line.EscapeMarkup()}[/]");
+        }
+
+        var writtenCount = settings.Capture == "owner" ? processes.Count - ownerCapture.SkippedRecords.Count : processes.Count;
+        Console.MarkupLine($"[green]Captured {writtenCount} processes to '{outputPath.EscapeMarkup()}'.[/]");
         return true;
     }
 }

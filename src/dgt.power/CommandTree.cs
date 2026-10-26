@@ -7,6 +7,7 @@ using dgt.power.codegeneration;
 using dgt.power.Commands.Complete;
 using dgt.power.connection.Base;
 using dgt.power.connection.Commands;
+using dgt.power.duplicaterules.Commands;
 using dgt.power.export.Base;
 using dgt.power.export.Logic;
 using dgt.power.import.Base;
@@ -122,6 +123,21 @@ internal static class CommandTree
                 .WithExample("process", "apply", "./processes.json", "--dry-run")
                 .WithExample("process", "apply", "./processes.json", "--owner-mapping", "./owners.target.json",
                     "--activate-as", "integrationUser");
+        });
+
+        config.AddBranch("duplicaterules", duplicateRules =>
+        {
+            duplicateRules.SetDescription("Captures and applies publication state and ownership of existing duplicate-detection rules");
+            duplicateRules.AddCommand<DuplicateRuleInitCommand>("init")
+                .WithDescription("Captures publication state or ownership of existing duplicate rules")
+                .WithExample("duplicaterules", "init", "./duplicaterules.json", "--entity", "contact")
+                .WithExample("duplicaterules", "init", "./duplicaterules.json", "--rule-id", "11111111-1111-1111-1111-111111111111",
+                    "--capture", "both", "--owner-mapping", "./owners.source.json");
+            duplicateRules.AddCommand<DuplicateRuleApplyCommand>("apply")
+                .WithDescription("Applies configured publication state and ownership by duplicate rule ID")
+                .WithExample("duplicaterules", "apply", "./duplicaterules.json", "--dry-run")
+                .WithExample("duplicaterules", "apply", "./duplicaterules.json", "--owner-mapping", "./owners.target.json",
+                    "--timeout", "600");
         });
 
         config.AddBranch<AnalyzeVerb>("analyze", analyze =>

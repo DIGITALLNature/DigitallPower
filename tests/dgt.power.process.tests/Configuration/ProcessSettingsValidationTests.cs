@@ -39,6 +39,25 @@ public class ProcessSettingsValidationTests
     }
 
     [Test]
+    [Arguments("fail", true)]
+    [Arguments("skip", true)]
+    [Arguments("Skip", false)]
+    [Arguments("ignore", false)]
+    public async Task Init_UnmappedOwners_AcceptsOnlyFailOrSkip(string unmappedOwners, bool expected)
+    {
+        var settings = new ProcessInitSettings
+        {
+            File = $"process-output-{Guid.NewGuid():N}.json",
+            Solutions = ["ContosoCore"],
+            Capture = "both",
+            OwnerMapping = FixturePath("owners.source.json"),
+            UnmappedOwners = unmappedOwners
+        };
+
+        await Assert.That(settings.Validate().Successful).IsEqualTo(expected);
+    }
+
+    [Test]
     public async Task Apply_OwnerConfigAndActivateAsAcceptValidMappingFixture()
     {
         var settings = new ProcessApplySettings

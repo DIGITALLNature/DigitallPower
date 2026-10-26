@@ -646,6 +646,12 @@
           "dgt.power.common": "[3.0.0-beta.17, )"
         }
       },
+      "dgt.power.duplicaterules": {
+        "type": "Project",
+        "dependencies": {
+          "dgt.power.common": "[3.0.0-beta.17, )"
+        }
+      },
       "dgt.power.export": {
         "type": "Project",
         "dependencies": {

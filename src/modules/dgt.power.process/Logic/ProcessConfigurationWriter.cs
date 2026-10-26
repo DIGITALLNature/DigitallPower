@@ -13,28 +13,37 @@ public static class ProcessConfigurationWriter
     private const string SchemaUri = "https://raw.githubusercontent.com/DIGITALLNature/DigitallPower/main/schemas/process/v1/schema.json";
 #pragma warning restore S1075
 
-    public static string Serialize(IEnumerable<Entity> processes, string capture, IReadOnlyDictionary<Guid, string> ownerKeys)
+    public static string Serialize(
+        IEnumerable<Entity> processes,
+        string capture,
+        IReadOnlyDictionary<Guid, string> ownerKeys,
+        IReadOnlySet<Guid>? ownerlessIds = null)
     {
         ArgumentNullException.ThrowIfNull(processes);
         ArgumentNullException.ThrowIfNull(ownerKeys);
         var processArray = processes.ToArray();
         var includeState = capture is "state" or "both";
         var includeOwner = capture is "owner" or "both";
-        if (includeOwner && Array.Exists(processArray, process => !ownerKeys.ContainsKey(process.Id)))
+        ownerlessIds ??= new HashSet<Guid>();
+        if (includeOwner && Array.Exists(processArray, process => !ownerKeys.ContainsKey(process.Id) && !ownerlessIds.Contains(process.Id)))
         {
             throw new InvalidOperationException("Every captured process must have exactly one resolved owner key.");
         }
 
-        var entries = processArray.OrderBy(process => process.Id).Select(process =>
-        {
-            var processId = process.Id;
-            var name = process.GetAttributeValue<string>("name");
-            var active = includeState
-                ? process.GetAttributeValue<OptionSetValue>("statecode")?.Value == 1
-                : (bool?)null;
-            var owner = includeOwner && ownerKeys.TryGetValue(process.Id, out var key) ? key : null;
-            return new { processId, name, active, owner };
-        }).ToArray();
+        var entries = processArray
+            .Where(process => includeState || !ownerlessIds.Contains(process.Id))
+            .OrderBy(process => process.Id)
+            .Select(process =>
+            {
+                var processId = process.Id;
+                var name = process.GetAttributeValue<string>("name");
+                var active = includeState
+                    ? process.GetAttributeValue<OptionSetValue>("statecode")?.Value == 1
+                    : (bool?)null;
+                var owner = includeOwner && ownerKeys.TryGetValue(process.Id, out var key) ? key : null;
+                return new { processId, name, active, owner };
+            })
+            .ToArray();
         var document = new Dictionary<string, object?>
         {
             ["$schema"] = SchemaUri,

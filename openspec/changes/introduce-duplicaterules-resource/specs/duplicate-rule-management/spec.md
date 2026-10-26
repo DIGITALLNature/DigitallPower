@@ -20,7 +20,7 @@ The CLI SHALL expose `duplicaterules init` and `duplicaterules apply` to capture
 
 ### Requirement: Commands use explicit paths and options
 
-Both commands SHALL accept a positional file path. Init SHALL expose `--capture state|owner|both` (default `state`), `--entity`, repeatable `--rule-id`, `--owner-mapping`, and `--overwrite`. Apply SHALL expose `--owner-mapping`, `--dry-run`, `--no-wait`, and `--timeout` (default 300 positive integer seconds). Relative CLI paths SHALL resolve against the working directory without automatic file search.
+Both commands SHALL accept a positional file path. Init SHALL expose `--capture state|owner|both` (default `state`), `--entity`, repeatable `--rule-id`, `--owner-mapping`, `--unmapped-owners fail|skip` (default `fail`), and `--overwrite`. Apply SHALL expose `--owner-mapping`, `--dry-run`, `--no-wait`, and `--timeout` (default 300 positive integer seconds). Relative CLI paths SHALL resolve against the working directory without automatic file search.
 
 #### Scenario: Invalid timeout
 - **WHEN** apply receives a noninteger or nonpositive timeout
@@ -32,10 +32,10 @@ Both commands SHALL accept a positional file path. Init SHALL expose `--capture 
 
 ### Requirement: Configuration expresses strict V1 intent
 
-Configuration SHALL require `schemaVersion: 1` and `rules`, with optional root `$schema` URI. Each entry SHALL require a nonempty GUID `ruleId` and at least one of boolean `published` or logical-key `owner`. Null values, duplicate IDs/properties, unknown fields, unsupported versions, and blank or whitespace-padded owner keys SHALL fail local validation. Omitted effect properties SHALL mean unchanged.
+Configuration SHALL require `schemaVersion: 1` and `rules`, with optional root `$schema` URI. Each entry SHALL require a nonempty GUID `ruleId` and at least one of boolean `published` or logical-key `owner`. An optional string `name` SHALL be informational only and SHALL NOT be used for matching or as a requested effect. Null values, duplicate IDs/properties, unknown fields, unsupported versions, and blank or whitespace-padded owner keys SHALL fail local validation. Omitted effect properties SHALL mean unchanged.
 
 #### Scenario: No requested effect
-- **WHEN** an entry contains only its rule ID
+- **WHEN** an entry contains only its rule ID, optionally with an informational name
 - **THEN** local validation fails
 
 #### Scenario: Strict input
@@ -49,6 +49,10 @@ Application SHALL identify existing rules by their configured GUID, relying on I
 #### Scenario: Same name but different ID
 - **WHEN** the configured GUID is absent but a rule with the same name exists
 - **THEN** preflight fails without changing that rule
+
+#### Scenario: Informational name differs from target
+- **WHEN** the configured informational name differs from the target rule's current name
+- **THEN** application matches by GUID and does not rename the rule
 
 ### Requirement: Rule changes express explicit intent
 
@@ -84,7 +88,7 @@ Init SHALL capture all rules unless restricted by an exact base-table logical na
 
 ### Requirement: Capture emits only requested properties
 
-Init SHALL emit GUID-ordered entries containing exactly the requested state, owner, or both. Owner capture SHALL follow the shared full-source-mapping and unique reverse-key contract. State-only capture SHALL NOT require mapping, but an explicitly supplied mapping SHALL be locally validated. Capture SHALL NOT invent owner keys or output raw principal IDs as substitutes.
+Init SHALL emit GUID-ordered entries containing the informational rule name and exactly the requested state, owner, or both. Owner capture SHALL follow the shared full-source-mapping and reverse-key contract, without invented keys or raw principal IDs; rules whose owner that contract skips SHALL be emitted without `owner` and reported as warnings. State-only capture SHALL NOT require mapping, but a supplied mapping SHALL be locally validated.
 
 #### Scenario: Default capture
 - **WHEN** init runs without a capture option
@@ -93,6 +97,18 @@ Init SHALL emit GUID-ordered entries containing exactly the requested state, own
 #### Scenario: Capture owner aliases
 - **WHEN** several source mapping keys identify a captured owner
 - **THEN** capture fails rather than selecting a key
+
+#### Scenario: Platform-owned rule
+- **WHEN** a selected rule is owned by the SYSTEM or INTEGRATION platform principal without a matching key
+- **THEN** init warns per principal and writes the rule with `published` but without `owner`, omitting it for owner-only capture
+
+#### Scenario: Unmapped owner by default
+- **WHEN** a selected rule's owner is not a platform principal and has no key, and `--unmapped-owners` is `fail`
+- **THEN** capture fails without writing output
+
+#### Scenario: Unmapped owner skipped
+- **WHEN** a selected rule's owner has no key and `--unmapped-owners skip` is set
+- **THEN** init warns and writes the rule without `owner`, omitting it for owner-only capture
 
 ### Requirement: Empty input and capture output are deliberate
 
@@ -140,7 +156,7 @@ Configured owners SHALL use the shared logical-owner and environment-mapping con
 
 ### Requirement: Owner changes preserve publication without implicit transitions
 
-Application SHALL support direct assignment to regular users, application users, and owning teams without implicit unpublish/republish. It SHALL reject disabled users for actual owner changes, but permit capture and already satisfied owner intent. Explicit unpublish SHALL complete before assignment; assignment SHALL complete before dependent publish. Failed assignment SHALL skip that publish without changing rule definitions.
+Application SHALL support direct assignment to regular users, application users, and owning teams without implicit unpublish/republish. It SHALL reject disabled users and new owners lacking the duplicate-rule read privilege for actual owner changes, but permit capture and already satisfied owner intent. Explicit unpublish SHALL complete before assignment; assignment SHALL complete before dependent publish. Failed assignment SHALL skip that publish without changing rule definitions.
 
 #### Scenario: Owner-only published rule
 - **WHEN** ownership alone changes successfully on a published rule
@@ -148,6 +164,10 @@ Application SHALL support direct assignment to regular users, application users,
 
 #### Scenario: Disabled new owner
 - **WHEN** an actual owner change targets a disabled user
+- **THEN** preflight fails without any rule writes
+
+#### Scenario: New owner lacks read privilege
+- **WHEN** an actual owner change targets a user or owning team without `prvReadDuplicateRule`
 - **THEN** preflight fails without any rule writes
 
 #### Scenario: Existing disabled owner is already desired
@@ -160,23 +180,23 @@ Application SHALL support direct assignment to regular users, application users,
 
 ### Requirement: Publication capacity is checked without eviction
 
-For base tables receiving new publishes, preflight SHALL count all Published and Publishing rules, including unlisted rules, project explicit changes, and reject occupancy above five before writes. Execution SHALL free slots only after confirmed unpublish and reserve slots for accepted publishes without double-counting. It SHALL check actual capacity before submission and SHALL NOT change unlisted rules to make room.
+For base tables receiving new publishes, preflight SHALL count all Published and Publishing rules, including unlisted rules, project explicit changes, and reject occupancy above five before writes. Execution SHALL treat a slot as freed only after confirmed unpublish. A publish rejected at runtime by the platform's capacity limit SHALL be reported as failed without queuing or retrying it. Application SHALL NOT change unlisted rules to make room.
 
 #### Scenario: End state exceeds limit
-- **WHEN** requested publishes would exceed five occupied/reserved slots after requested unpublishes
+- **WHEN** requested publishes would exceed five occupied slots after requested unpublishes
 - **THEN** preflight fails without writes
 
 #### Scenario: Unpublish does not finish
 - **WHEN** an expected slot release fails or remains unconfirmed
 - **THEN** its slot remains occupied and a publish needing that slot is reported failed/skipped
 
-#### Scenario: Own accepted job is not yet visible
-- **WHEN** an accepted publish is not yet returned as Publishing by a later query
-- **THEN** execution still reserves its slot
+#### Scenario: Capacity changed concurrently
+- **WHEN** the platform rejects a publish because the base table reached its published-rule limit after preflight
+- **THEN** that publish is reported as failed for lack of capacity and independent rules continue
 
-### Requirement: Requests are submitted in two observable phases
+### Requirement: Requests are executed in ordered phases
 
-Application SHALL submit explicit unpublishes sequentially and observe them together before remaining owner changes and publishes. It SHALL submit publishes sequentially without awaiting each job separately, then observe accepted publishes together. Independent item failures SHALL NOT halt all submissions. Pending sets SHALL use a shared phase deadline, not a new deadline per rule.
+Application SHALL execute explicit unpublishes sequentially and confirm each by read-back before remaining owner changes and publishes. It SHALL submit publishes sequentially without awaiting each job separately, then observe accepted publishes together. Independent item failures SHALL NOT halt all submissions. Pending publishes SHALL use a shared deadline, not a new deadline per rule.
 
 #### Scenario: Several rules need publication
 - **WHEN** several publishes are valid and capacity permits
@@ -187,16 +207,16 @@ Application SHALL submit explicit unpublishes sequentially and observe them toge
 - **WHEN** one explicit unpublish is needed to free a slot for another rule
 - **THEN** the unpublish is confirmed before the new publish is submitted
 
-### Requirement: Wait mode confirms completion within a shared phase budget
+### Requirement: Wait mode confirms completion within a shared publish budget
 
-Each observation phase SHALL default to 300 seconds, overridden by `--timeout`, starting after its submission loop. Pending rules SHALL be observed together on a two-second cadence. Normal mode SHALL confirm final target state, retain returned job IDs, and report attributable terminal job failures. Timeout SHALL fail unresolved entries with last observed state and partial effects, without resubmitting mutations.
+The publish observation phase SHALL default to 300 seconds, overridden by `--timeout`, starting after the publish submission loop. Pending rules SHALL be observed together on a two-second cadence. Normal mode SHALL confirm final target state, retain returned job IDs, and report failed or canceled jobs as terminal failures. Timeout SHALL fail unresolved entries with last observed state and partial effects, without resubmitting mutations.
 
 #### Scenario: One job fails and another succeeds
 - **WHEN** one submitted publish fails while another completes
 - **THEN** both outcomes are reported and the overall command fails
 
 #### Scenario: Shared deadline
-- **WHEN** several pending rules reach the phase deadline
+- **WHEN** several pending rules reach the publish deadline
 - **THEN** unresolved rules fail without each receiving a new timeout window
 
 #### Scenario: Accepted request is not completion
@@ -213,7 +233,7 @@ Each observation phase SHALL default to 300 seconds, overridden by `--timeout`, 
 
 #### Scenario: No-wait requires slot release
 - **WHEN** no-wait execution needs an explicit unpublish to release capacity
-- **THEN** it still waits for unpublish confirmation using the phase timeout
+- **THEN** it still confirms the unpublish by read-back before submitting the publish
 
 ### Requirement: Cancellation and unknown results do not imply rollback
 
