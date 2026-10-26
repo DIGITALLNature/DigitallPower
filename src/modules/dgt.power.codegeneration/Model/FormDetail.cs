@@ -1,5 +1,5 @@
-﻿// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+﻿// SPDX-FileCopyrightText: DIGITALL Nature
+// SPDX-License-Identifier: MS-RL
 
 namespace dgt.power.codegeneration.Model;
 // ReSharper disable CollectionNeverQueried.Global

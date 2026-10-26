@@ -1,5 +1,5 @@
-// Copyright (c) DIGITALL Nature. All rights reserved
-// DIGITALL Nature licenses this file to you under the Microsoft Public License.
+// SPDX-FileCopyrightText: DIGITALL Nature
+// SPDX-License-Identifier: MS-RL
 
 // Configuration objects and properties are populated by System.Text.Json.
 // ReSharper disable ClassNeverInstantiated.Global
