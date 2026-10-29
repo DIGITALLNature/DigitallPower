@@ -1,31 +1,31 @@
 ---
 name: openspec-sync-specs
-description: Sync delta specs from an OpenSpec change to main specs. Use when the user wants to update main specs with changes from a delta spec, without archiving the change. Also use when the user says "pnpm exec openspec sync" or "opsx sync".
+description: Sync delta specs from an OpenSpec change to main specs. Use when the user wants to update main specs with changes from a delta spec, without archiving the change. Also use when the user says "openspec sync" or "opsx sync".
 allowed-tools: Bash(openspec:*)
 license: MIT
 compatibility: Requires openspec CLI.
 metadata:
   author: openspec
   version: "1.0"
-  generatedBy: "1.14.1"
+  generatedBy: "1.15.0"
 ---
 
 Sync delta specs from a change to main specs.
 
 This is an **agent-driven** operation - you will read delta specs and directly edit main specs to apply the changes. This allows intelligent merging (e.g., adding a scenario without copying the entire requirement).
 
-**Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `pnpm exec openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `pnpm exec openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
+**Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
 
-**Project check:** These steps expect a project that already uses OpenSpec. Before the first step that writes anything (`new change`, `archive`, `sync specs`, or authoring an artifact file), confirm the project has a root: run `pnpm exec openspec list --json` (with `--store <id>` when a store is selected, since the store is then the root) and read `root`. A root object means the project is set up. `"root": null` means it is not - there is no `openspec/` directory here, and a write such as `pnpm exec openspec new change` would create one as a side effect. The command also exits non-zero, which is that answer rather than a broken CLI, so read the JSON instead of retrying or working around it.
+**Project check:** These steps expect a project that already uses OpenSpec. Before the first step that writes anything (`new change`, `archive`, `sync specs`, or authoring an artifact file), confirm the project has a root: run `openspec list --json` (with `--store <id>` when a store is selected, since the store is then the root) and read `root`. A root object means the project is set up. `"root": null` means it is not - there is no `openspec/` directory here, and a write such as `openspec new change` would create one as a side effect. The command also exits non-zero, which is that answer rather than a broken CLI, so read the JSON instead of retrying or working around it.
 
 One `"root": null` is not about setup: when a `status` error message starts with `Declared in` or `Invalid store declaration in` and names this project's `openspec/config.yaml` (or `config.yml`), the project does use OpenSpec through a store it declares, which this machine cannot resolve (the store is not registered, or the `store:` line is malformed). Do not treat it as uninitialized and skip the branches below: stop before writing and show the user that error's `message` and `fix`.
 
 Otherwise, with no root, what happens next depends on how this workflow was reached:
 
 - **Auto-selected**: you chose this workflow yourself, without the user naming OpenSpec, naming this skill, or running its slash command. Stop using OpenSpec and answer the request normally, as you would with no OpenSpec installed. Do not ask them to set anything up and do not mention OpenSpec setup.
-- **Explicit OpenSpec request**: the user named OpenSpec, named this skill, or ran its slash command. Stop before writing and ask how to proceed: set this project up (`pnpm exec openspec init`), target a store they already have (`--store <id>`), or continue without OpenSpec for this request. Wait for their answer.
+- **Explicit OpenSpec request**: the user named OpenSpec, named this skill, or ran its slash command. Stop before writing and ask how to proceed: set this project up (`openspec init`), target a store they already have (`--store <id>`), or continue without OpenSpec for this request. Wait for their answer.
 
-In both branches, never create the root as a side effect: do not run `pnpm exec openspec init` until the user asks for it, do not hand-create `openspec/` files, and do not let a command create it.
+In both branches, never create the root as a side effect: do not run `openspec init` until the user asks for it, do not hand-create `openspec/` files, and do not let a command create it.
 
 `<capability-path>` is the spec directory relative to `specs/` (for example, `user-auth` or `identity/user-auth`). Preserve the full path from each delta spec when resolving its main spec.
 
@@ -38,7 +38,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
    If a name is provided, use it. Otherwise:
    - Infer from conversation context if the user mentioned a change
    - Auto-select if only one active change exists
-   - If ambiguous, run `pnpm exec openspec list --json` to get available changes and ask the user to select one
+   - If ambiguous, run `openspec list --json` to get available changes and ask the user to select one
 
    When prompting, show changes that have delta specs (under `specs/` directory).
 
@@ -48,7 +48,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
 
    Run:
    ```bash
-   pnpm exec openspec status --change "<name>" --json
+   openspec status --change "<name>" --json
    ```
 
    The JSON includes `planningHome.root`. Main specs live under `<planningHome.root>/openspec/specs/` — use that (store-aware) root for every main-spec path below, not a hardcoded repo path. When a store is selected it points at the store, not the current repository.
@@ -87,7 +87,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
 
    Before the first main-spec write, obtain one current specs-rule snapshot:
    - If archive invoked this workflow inline and supplied a valid snapshot from
-     `pnpm exec openspec instructions specs --change "<name>" --json`, reuse it and do not
+     `openspec instructions specs --change "<name>" --json`, reuse it and do not
      fetch the same instructions again.
    - Otherwise run that command once now with the same selected-root flags.
    - If the direct lookup exits non-zero or returns invalid artifact-instruction
@@ -107,7 +107,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
 
    b. **Read the main spec** at `<planningHome.root>/openspec/specs/<capability-path>/spec.md` (may not exist yet)
 
-      **If it does not exist yet** (a new capability), match what `pnpm exec openspec archive` does:
+      **If it does not exist yet** (a new capability), match what `openspec archive` does:
       only ADDED requirements may be applied - step d creates the spec from them.
       MODIFIED and RENAMED have no requirement to act on, so stop the sync for that
       capability and report that its main spec does not exist and only ADDED is allowed
@@ -158,7 +158,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
 
       **`## Purpose` in the delta:**
       - The main spec already has one and it is authoritative - leave it alone
-        (this is what `pnpm exec openspec archive` does; it warns and moves on)
+        (this is what `openspec archive` does; it warns and moves on)
 
    d. **Create new main spec** if capability doesn't exist yet:
       - Only when the delta has ADDED requirements to put in it and no MODIFIED or
@@ -166,18 +166,18 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
         and leave the specs directory untouched. For a REMOVED-only delta, if the change's
         `.openspec.yaml` declares `retire_capabilities: true`, report it as already retired
         and continue without recreating the spec. Without that marker, report the sync as blocked:
-        `pnpm exec openspec archive` rejects it with `Spec must have at least one requirement`.
+        `openspec archive` rejects it with `Spec must have at least one requirement`.
         An empty delta has no operations to sync; report it as blocked too.
         Never write an empty `## Requirements` section.
       - Create `<planningHome.root>/openspec/specs/<capability-path>/spec.md`
       - Add Purpose section: copy the delta's `## Purpose` body verbatim when it has one
-        (this is what `pnpm exec openspec archive` does); only write a brief TBD placeholder when it does not
+        (this is what `openspec archive` does); only write a brief TBD placeholder when it does not
       - Add Requirements section with the ADDED requirements
       - Follow the **Main Spec Format Reference** below
 
 5. **Validate updated main specs**
 
-   Run `pnpm exec openspec validate --specs` with the same selected-root flags used earlier.
+   Run `openspec validate --specs` with the same selected-root flags used earlier.
    If validation fails, report the problems and do not claim the sync succeeded.
 
 6. **Show summary**
@@ -254,7 +254,7 @@ The system SHALL do something new.
 **Key Principle: Intelligent Merging**
 
 Unlike programmatic merging, you merge rather than overwrite:
-- A MODIFIED block carries the whole requirement - body plus every scenario that survives the change. `pnpm exec openspec validate` and `pnpm exec openspec archive` both reject one that drops a scenario the main spec still has.
+- A MODIFIED block carries the whole requirement - body plus every scenario that survives the change. `openspec validate` and `openspec archive` both reject one that drops a scenario the main spec still has.
 - Keep anything the delta does not mention, in the main spec's existing order
 - Use your judgment to merge changes sensibly
 

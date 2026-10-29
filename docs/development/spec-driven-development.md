@@ -10,8 +10,10 @@ and is run as `pnpm exec openspec`.
 Current requirements live in [`openspec/specs/`](../../openspec/specs/). Durable design rationale lives in
 [`docs/architecture/decisions/](../architecture/decisions/). User-facing documentation lives in
 [`docs/](../README.md); implementation details belong beside their code and tests.
-Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
-CLI examples after OpenSpec updates them.
+Run `pnpm exec openspec update` when refreshing generated Copilot files. Repository-specific rules
+(local `pnpm exec` CLI usage and the post-release archive gate) live in
+[`openspec/config.yaml`](../../openspec/config.yaml) under `context` and `operations.*.guidance`
+and reach the generated workflows at runtime; do not post-process the generated files.
 
 GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
 [`openspec/config.yaml`](../../openspec/config.yaml). Its setup workflow installs the locked pnpm
