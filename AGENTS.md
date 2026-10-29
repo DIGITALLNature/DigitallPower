@@ -317,7 +317,7 @@ Do not create a proposal for a localized bug fix, test-only or documentation-onl
    - Verify a GitHub release containing that implementation is published and is neither a draft nor a prerelease, for example with `gh release view <tag> --repo DIGITALLNature/DigitallPower --json isDraft,isPrerelease,publishedAt,tagName`.
    - Fetch the latest `main` and release tag, then verify the PR merge commit is an ancestor of the release tag and the release tag commit is reachable from `origin/main`.
    - If the PR, release, or commit ancestry cannot be verified, report the blocker and leave the change active. Completed tasks, green CI, approval, closing without merging, beta integration, or an unrelated release are insufficient. Archive only as a separate post-release follow-up using a checkout containing the released implementation, never during beta preparation or in the implementation PR.
-6. Refresh generated Copilot instructions with `pnpm run openspec:update` so OpenSpec CLI examples use the repository-local pnpm installation and generated workflows retain the post-release archive gate.
+6. Refresh generated Copilot instructions with `pnpm exec openspec update`. Repository-specific rules — repository-local `pnpm exec openspec` usage and the post-release archive gate — live in `openspec/config.yaml` under `context` and `operations.*.guidance` and reach the generated workflows at runtime through `openspec instructions`; do not post-process or hand-edit the generated files.
 
 ### Where knowledge belongs
 

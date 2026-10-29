@@ -2,43 +2,20 @@
 description: "Archive a completed change in the experimental workflow"
 ---
 
-<!-- digitallpower:post-merge-archive -->
-## Repository archive gate (required)
-
-This repository rule takes precedence over archive suggestions and completion examples below.
-Keep the change active until a stable GitHub release containing the implementation has been
-published from `main`. Merging into `beta` (including beta preparation for a later main release)
-does not permit archiving. Merging into `main` without a published stable release, or publishing
-a beta/prerelease, is also insufficient.
-
-Before any archive-related writes, verify that the implementation PR for this change is merged
-into `main`, and that the published stable release includes that PR:
-1. Check the PR with `gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,mergeCommit,url`. Require `state: MERGED`, non-null `mergedAt`, and `baseRefName: main`. Confirm it contains this change.
-2. Check the corresponding GitHub release with `gh release view <tag> --repo DIGITALLNature/DigitallPower --json isDraft,isPrerelease,publishedAt,tagName`. Require a published, non-draft, non-prerelease release.
-3. Fetch current `main` and the release tag, then verify the PR merge commit is an ancestor of the release tag and the release tag commit is reachable from `origin/main`.
-
-Do not use an unrelated PR or release, or infer release status from the current branch. If the PR, release, or commit ancestry cannot be verified, report the blocker and stop without archiving; confirmation or optional guidance cannot bypass this gate.
-
-After implementation, report "Implementation complete; awaiting stable release on main" rather
-than offering immediate archival. Archive only as a separate post-release follow-up using a
-checkout containing the released implementation, never during beta preparation or in the
-implementation PR.
-<!-- /digitallpower:post-merge-archive -->
-
 Archive a completed change in the experimental workflow.
 
-**Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `pnpm exec openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `pnpm exec openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
+**Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
 
-**Project check:** These steps expect a project that already uses OpenSpec. Before the first step that writes anything (`new change`, `archive`, `sync specs`, or authoring an artifact file), confirm the project has a root: run `pnpm exec openspec list --json` (with `--store <id>` when a store is selected, since the store is then the root) and read `root`. A root object means the project is set up. `"root": null` means it is not - there is no `openspec/` directory here, and a write such as `pnpm exec openspec new change` would create one as a side effect. The command also exits non-zero, which is that answer rather than a broken CLI, so read the JSON instead of retrying or working around it.
+**Project check:** These steps expect a project that already uses OpenSpec. Before the first step that writes anything (`new change`, `archive`, `sync specs`, or authoring an artifact file), confirm the project has a root: run `openspec list --json` (with `--store <id>` when a store is selected, since the store is then the root) and read `root`. A root object means the project is set up. `"root": null` means it is not - there is no `openspec/` directory here, and a write such as `openspec new change` would create one as a side effect. The command also exits non-zero, which is that answer rather than a broken CLI, so read the JSON instead of retrying or working around it.
 
 One `"root": null` is not about setup: when a `status` error message starts with `Declared in` or `Invalid store declaration in` and names this project's `openspec/config.yaml` (or `config.yml`), the project does use OpenSpec through a store it declares, which this machine cannot resolve (the store is not registered, or the `store:` line is malformed). Do not treat it as uninitialized and skip the branches below: stop before writing and show the user that error's `message` and `fix`.
 
 Otherwise, with no root, what happens next depends on how this workflow was reached:
 
 - **Auto-selected**: you chose this workflow yourself, without the user naming OpenSpec, naming this skill, or running its slash command. Stop using OpenSpec and answer the request normally, as you would with no OpenSpec installed. Do not ask them to set anything up and do not mention OpenSpec setup.
-- **Explicit OpenSpec request**: the user named OpenSpec, named this skill, or ran its slash command. Stop before writing and ask how to proceed: set this project up (`pnpm exec openspec init`), target a store they already have (`--store <id>`), or continue without OpenSpec for this request. Wait for their answer.
+- **Explicit OpenSpec request**: the user named OpenSpec, named this skill, or ran its slash command. Stop before writing and ask how to proceed: set this project up (`openspec init`), target a store they already have (`--store <id>`), or continue without OpenSpec for this request. Wait for their answer.
 
-In both branches, never create the root as a side effect: do not run `pnpm exec openspec init` until the user asks for it, do not hand-create `openspec/` files, and do not let a command create it.
+In both branches, never create the root as a side effect: do not run `openspec init` until the user asks for it, do not hand-create `openspec/` files, and do not let a command create it.
 
 `<capability-path>` is the spec directory relative to `specs/` (for example, `user-auth` or `identity/user-auth`). Preserve the full path from each delta spec when resolving its main spec.
 
@@ -51,7 +28,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
    If a name is provided, use it. Otherwise:
    - Infer from conversation context if the user mentioned a change
    - Auto-select if only one active change exists
-   - If ambiguous, run `pnpm exec openspec list --json` to get available changes and ask the user to select one
+   - If ambiguous, run `openspec list --json` to get available changes and ask the user to select one
 
    When prompting, show only active changes (not already archived).
    Include the schema used for each change if available.
@@ -62,7 +39,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
 
    After resolving the selected change and planning root, run:
    ```bash
-   pnpm exec openspec instructions archive --change "<name>" --json
+   openspec instructions archive --change "<name>" --json
    ```
    Keep the same selected-root flags on this command. This lookup is advisory and
    optional: it only supplies extra prompt inputs, so it must never block archiving.
@@ -87,7 +64,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
 
 2. **Check artifact completion status**
 
-   Run `pnpm exec openspec status --change "<name>" --json` to check artifact completion.
+   Run `openspec status --change "<name>" --json` to check artifact completion.
 
    Parse the JSON to understand:
    - `schemaName`: The workflow being used
@@ -101,7 +78,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
 
 3. **Check task completion status**
 
-   Run `pnpm exec openspec list --json` with the same selected-root flags and find the
+   Run `openspec list --json` with the same selected-root flags and find the
    entry in `changes` whose `name` exactly matches the selected change.
    Require exactly one match and nonnegative integer `totalTasks` and
    `completedTasks`, with `completedTasks <= totalTasks`. The CLI resolves
@@ -135,8 +112,8 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
    - A missing main spec is **not automatically** "already synced". For a new capability, the main spec is an *output* of the sync, not an input:
      - If the delta has MODIFIED or RENAMED requirements, report that only ADDED requirements can create a new main spec and mark that capability as sync-blocked. Never invent a requirement that has no current version.
      - Otherwise, if the delta has only REMOVED requirements and the change's `.openspec.yaml` declares `retire_capabilities: true`, the capability is already retired: count it as already synced, warn that there is nothing left to remove, and do not recreate the main spec. Apply this rule both now and when verifying a completed sync.
-     - Otherwise, if the delta has no ADDED requirements, report that no sync is possible and mark that capability as sync-blocked. For a REMOVED-only delta, warn that there is no main spec to remove from and leave the main-spec tree unchanged. `pnpm exec openspec archive` refuses the unmarked REMOVED-only case with `Spec must have at least one requirement`.
-     - Otherwise, count the capability as needing sync and name it in the summary (`<capability-path>: new main spec will be created`). If the delta also has REMOVED requirements, warn that they will be ignored because there is no main spec to remove from. The sync creates the main spec from only the delta's ADDED requirements, exactly as `pnpm exec openspec archive` does.
+     - Otherwise, if the delta has no ADDED requirements, report that no sync is possible and mark that capability as sync-blocked. For a REMOVED-only delta, warn that there is no main spec to remove from and leave the main-spec tree unchanged. `openspec archive` refuses the unmarked REMOVED-only case with `Spec must have at least one requirement`.
+     - Otherwise, count the capability as needing sync and name it in the summary (`<capability-path>: new main spec will be created`). If the delta also has REMOVED requirements, warn that they will be ignored because there is no main spec to remove from. The sync creates the main spec from only the delta's ADDED requirements, exactly as `openspec archive` does.
    - Determine what changes would be applied (adds, modifications, removals, renames)
    - Continue assessing the remaining capabilities even when one is sync-blocked. Show a combined summary before prompting.
 
@@ -152,7 +129,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
    - Anything else — ask again rather than archiving
 
    Before a selected sync writes any main spec, run
-   `pnpm exec openspec instructions specs --change "<name>" --json` once with the same
+   `openspec instructions specs --change "<name>" --json` once with the same
    selected-root flags. Require a zero exit status and valid artifact-instruction
    JSON. If the lookup fails or returns invalid JSON, report the error and stop
    before writing any main spec or moving the change. A valid response with omitted
@@ -188,7 +165,7 @@ In both branches, never create the root as a side effect: do not run `pnpm exec 
    mkdir -p "<planningHome.changesDir>/archive"
    ```
 
-   Generate the target name: use the change name as-is when it already starts with a `YYYY-MM-DD-` prefix; otherwise prepend the current date as `YYYY-MM-DD-<change-name>`. Never stack a second date (same rule as `pnpm exec openspec archive`).
+   Generate the target name: use the change name as-is when it already starts with a `YYYY-MM-DD-` prefix; otherwise prepend the current date as `YYYY-MM-DD-<change-name>`. Never stack a second date (same rule as `openspec archive`).
 
    **Check if target already exists:**
    - If yes: Fail with error, suggest renaming existing archive or using different date
@@ -269,7 +246,7 @@ Target archive directory already exists.
 
 **Guardrails**
 - Announce the selected change; prompt for selection when it is ambiguous
-- Use artifact graph (pnpm exec openspec status --json) for completion checking
+- Use artifact graph (openspec status --json) for completion checking
 - Don't block archive on warnings - just inform and confirm
 - Preserve .openspec.yaml when moving to archive (it moves with the directory)
 - Show clear summary of what happened
