@@ -22,7 +22,7 @@ See proposal.md - Why for motivation. The user-facing design is agreed and ready
 ## Decisions
 
 ### Resource root is `model`
-`model generate` is the shared command for both targets. The validated config identifies the generator; there are no target subcommands or duplicate CLI target selector. Require named `--config` / `-c` and `--output` / `-o` options, with no positional arguments or conventional config filename/destination defaults. Existing connection options remain available.
+`model generate` is the shared command for both targets. The target is selected exclusively through the required `--language` option (`dotnet` or `typescript`); there are no target subcommands or duplicate CLI target selector. Require named `--language`, `--config` / `-c`, and `--output` / `-o` options, with no positional arguments or conventional config filename/destination defaults. Existing connection options remain available.
 
 *Alternatives:* `generate models` (keeps every resource a Dataverse object, but breaks resource-first grammar); `types`, `sdk`, `codegen`, `metadata` (rejected as too narrow, too broad, mechanism-named, or naming the input rather than the output).
 
@@ -35,11 +35,11 @@ Reuse the existing `DeprecationInterceptor` and `DeprecatedCommandAttribute` mec
 
 Design the new module from scratch without constraining its contracts or architecture to the legacy implementation. Sharing logic or classes is allowed where it genuinely makes sense and does not compromise the new module. Neither sharing nor a common generation layer is required.
 
-### Config is the contract; the CLI owns the destination
-The config defines what is generated and how. The CLI supplies connection, config path, output location, and execution controls. Individual settings may later move to CLI parameters, but no override mechanism or config-free mode is introduced.
+### Config is the contract; the CLI owns target and destination
+The config defines what is generated and how. The CLI supplies the target selection (`--language`), connection, config path, output location, and execution controls. Individual settings may later move to CLI parameters, but no override mechanism or config-free mode is introduced.
 
-### One target per config; independent shapes
-Each config describes one target. .NET and TypeScript contracts can evolve independently in structure, options, defaults, validation, and schema versions. Shared meaning should use consistent terminology, but shared shape is not required. The current unused TypeScript `namespace` property illustrates why target contracts should not be forced together. A minimal shared envelope and internal implementation reuse remain design choices, not requirements for a shared configuration base class.
+### Target-specific recipes; independent shapes
+Each recipe is specific to one target, selected by the `--language` CLI option. .NET and TypeScript contracts can evolve independently in structure, options, defaults, validation, and schema versions. Shared meaning should use consistent terminology, but shared shape is not required. The current unused TypeScript `namespace` property illustrates why target contracts should not be forced together. There is no shared envelope or polymorphic discriminator; the CLI determines which recipe type to load, so recipes need no `type` property and cannot be mismatched with the wrong generator.
 
 ### Explicit, independent artifact sections
 Artifact categories are opt-in: a section requests that artifact and omission means it is not generated. Categories can be selected independently (for example, TypeScript entities without forms). Required supporting declarations are dependencies of a requested artifact, not separate options. Defaults keep sections concise; there are no switches for every member.
@@ -51,11 +51,11 @@ Use flat artifact sections: both targets have `tables`, `requests`, and `choices
 Each artifact section separates `include`, supported `exclude`, and optional `options`. Include objects use `tables`/`solutions` or `names`/`solutions`; exclude objects use the supported exact-name lists. Additional global choices use a simple `include` name array. `options` contains only explicitly supported, typed generation settings, not an arbitrary extension bag. There is no universal selection wrapper. BPF enrichment belongs under `forms.options.businessProcessFlows`, not a separate artifact section.
 
 ### New recipe schema family
-Use required `type` and numeric `version` fields, starting the new independent recipe family at version 1. `type` selects `dotnet` or `typescript`; each target's versions evolve independently. Unknown versions fail explicitly, without silently treating them as the latest format.
+Use a required numeric `version` field, starting the new independent recipe family at version 1. The target is selected by the required `--language` CLI option, not by any recipe property; recipes do not contain a `type` field. Each target's versions evolve independently. Unknown versions fail explicitly, without silently treating them as the latest format.
 
-Plan schemas at `schemas/modelgeneration/v1/dotnet.schema.json` and `schemas/modelgeneration/v1/typescript.schema.json`. Keep published legacy `schemas/codegeneration/v2/` URLs and legacy loading behavior unchanged; do not introduce codegeneration V3 merely to continue its numbering. Optional `$schema` provides editor assistance, not runtime target/version inference. Do not silently convert legacy configs in `model generate`.
+Plan schemas at `schemas/modelgeneration/v1/dotnet.schema.json` and `schemas/modelgeneration/v1/typescript.schema.json`. Keep published legacy `schemas/codegeneration/v2/` URLs and legacy loading behavior unchanged; do not introduce codegeneration V3 merely to continue its numbering. Optional `$schema` provides editor assistance; it is not used for runtime target or version inference. Do not silently convert legacy configs in `model generate`.
 
-Require `target` for .NET compatibility selection; do not use `profile`. TypeScript has no `target` setting initially and rejects it as unsupported. Keep the optional root property `language` for localized metadata labels; `type` already distinguishes programming-language output. TypeScript has no generated namespace setting.
+Require `target` for .NET compatibility selection; do not use `profile`. TypeScript has no `target` setting initially and rejects it as unsupported. Keep the optional root property `language` for localized metadata labels. TypeScript has no generated namespace setting.
 
 ### Reviewed recipe shapes
 The following representative recipes capture the reviewed property names. Each omitted artifact section disables that output; choices needed by requested artifacts remain automatic dependencies.
@@ -63,7 +63,6 @@ The following representative recipes capture the reviewed property names. Each o
 ```json
 {
   "version": 1,
-  "type": "typescript",
   "tables": {
     "include": { "solutions": ["ContosoCore"] },
     "exclude": { "tables": ["contoso_internalsetting"] }
@@ -89,7 +88,6 @@ The following representative recipes capture the reviewed property names. Each o
 ```json
 {
   "version": 1,
-  "type": "dotnet",
   "target": "netframework",
   "namespace": "Contoso.Dataverse",
   "tables": {
@@ -109,7 +107,7 @@ The following representative recipes capture the reviewed property names. Each o
 }
 ```
 
-Run either recipe with `dgtp model generate --config <file> --output <owned-directory>`. The .NET `WhoAmI` selection produces only a message-name constant, not a duplicate SDK request/response.
+Run the TypeScript recipe with `dgtp model generate --language typescript --config <file> --output <owned-directory>`. Run the .NET recipe with `dgtp model generate --language dotnet --config <file> --output <owned-directory>`. The .NET `WhoAmI` selection produces only a message-name constant, not a duplicate SDK request/response.
 
 ### Minimal, artifact-specific selection
 Selection is the union of includes minus the union of excludes, with exclusion winning, duplicate elimination, and no order dependence. Missing includes never imply select-all. Do not introduce a universal selector language, wildcards, publisher-prefix selection, or arbitrary predicates. Those mechanisms make the generated set harder to predict; explicit names and maintained solution membership cover the initial use cases.

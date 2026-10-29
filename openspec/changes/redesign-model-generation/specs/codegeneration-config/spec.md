@@ -66,15 +66,36 @@ Legacy V2 target schemas MUST require explicit `version` and `type` fields and d
 ## ADDED Requirements
 
 ### Requirement: Model recipes have an independent versioned envelope
-`model generate` SHALL require integer `version: 1` and `type` equal to `dotnet` or `typescript`. `$schema` SHALL be optional editor metadata, not a discriminator. Missing, invalid, unsupported, or legacy recipe formats SHALL fail before authentication or output changes, without inferred versions or automatic conversion.
+`model generate` SHALL require integer `version: 1` in the recipe. The target SHALL be selected exclusively through the required `--language` CLI option (`dotnet` or `typescript`), not through the recipe. Recipes SHALL NOT contain a `type` property. `$schema` SHALL be optional editor metadata. Missing, invalid, unsupported, or legacy recipe formats SHALL fail before authentication or output changes, without inferred versions or automatic conversion.
 
-#### Scenario: Select either target
-- **WHEN** a model recipe supplies version 1 and a supported type, regardless of property order
-- **THEN** generation uses the corresponding target recipe
+#### Scenario: Recipe is loaded for the selected target
+- **WHEN** a model recipe supplies version 1 and `--language` selects the target, regardless of property order
+- **THEN** the recipe is deserialized into the matching target-specific recipe model
 
 #### Scenario: Reject incompatible recipes
-- **WHEN** a recipe omits its version/type, uses an unsupported value, or supplies a legacy V2 configuration
+- **WHEN** a recipe omits its version, uses an unsupported version, or supplies a legacy V2 configuration
 - **THEN** loading fails with supported-format and applicable migration guidance before authentication or output changes
+
+#### Scenario: Recipe contains a type property
+- **WHEN** a recipe contains a `type` property
+- **THEN** loading fails with an actionable error indicating that target selection is done via `--language`, not the recipe
+
+### Requirement: Recipe loading validates target compatibility
+The recipe SHALL be deserialized into the target-specific model selected by `--language`. Settings that are incompatible with the selected target SHALL fail before authentication or output changes. A .NET recipe contains `namespace`, `target`, and optionally `metadata`; a TypeScript recipe contains `forms` and rejects `namespace`, `target`, and `metadata`.
+
+#### Scenario: TypeScript recipe loaded with --language dotnet
+- **WHEN** a recipe containing `forms` or other TypeScript-only settings is loaded with `--language dotnet`
+- **THEN** loading fails with an actionable error identifying the incompatible setting
+- **AND** no authentication or output changes occur
+
+#### Scenario: .NET recipe loaded with --language typescript
+- **WHEN** a recipe containing `namespace`, `target`, or `metadata` is loaded with `--language typescript`
+- **THEN** loading fails with an actionable error identifying the incompatible setting
+- **AND** no authentication or output changes occur
+
+#### Scenario: Matching recipe and language succeed
+- **WHEN** a recipe's settings are compatible with the selected `--language`
+- **THEN** loading succeeds and produces the matching target recipe model
 
 ### Requirement: Model recipe schemas and loading reject unsupported settings
 Model recipe schemas SHALL live under `schemas/modelgeneration/v1/` with separate .NET and TypeScript schemas. Schemas and runtime loading SHALL reject additional properties at every level and require the same target settings. Unknown settings SHALL NOT be silently ignored.
@@ -85,14 +106,14 @@ Model recipe schemas SHALL live under `schemas/modelgeneration/v1/` with separat
 - **AND** runtime rejection occurs before authentication or output changes
 
 #### Scenario: Current examples validate
-- **WHEN** either target's documented model recipe is validated and loaded
+- **WHEN** either target's documented model recipe is validated and loaded with the matching `--language`
 - **THEN** its optional `$schema` and supported settings are accepted by both
 
 ### Requirement: Model compatibility settings are target-specific
 .NET recipes SHALL require `namespace` and `target` of `netframework` or `dotnet`. TypeScript recipes SHALL NOT accept `namespace` or `target`. Both targets SHALL support optional `language` for localized metadata labels, defaulting to the organization base language. Output location SHALL belong exclusively to the CLI.
 
 #### Scenario: Select .NET compatibility
-- **WHEN** a .NET recipe supplies its namespace and supported target
+- **WHEN** a .NET recipe supplies its namespace and supported target and `--language dotnet` is used
 - **THEN** the target controls generated syntax/API compatibility, not plugin/client model behavior
 
 #### Scenario: Unsupported target settings are supplied

@@ -3,17 +3,26 @@
 ## ADDED Requirements
 
 ### Requirement: Model generation is resource-oriented
-The CLI SHALL expose `model generate` with required named `--config/-c` and `--output/-o` options and existing connection options. The recipe SHALL select the target. The command SHALL NOT accept positional destinations, target subcommands, a CLI target override, `--folder`, or an overwrite confirmation flag/prompt.
+The CLI SHALL expose `model generate` with required named `--language`, `--config/-c`, and `--output/-o` options and existing connection options. The `--language` option SHALL select the target (`dotnet` or `typescript`). The command SHALL NOT accept positional destinations, target subcommands, `--folder`, or an overwrite confirmation flag/prompt.
 
 #### Scenario: Generate through either option spelling
-- **WHEN** a user invokes `model generate` with a supported recipe using the long or short config/output options
-- **THEN** the recipe selects .NET or TypeScript and output is rooted directly at the supplied destination
+- **WHEN** a user invokes `model generate` with `--language`, a supported recipe, and the long or short config/output options
+- **THEN** the selected language determines the target and output is rooted directly at the supplied destination
 - **AND** runtime help and shell completion expose the same options
 
 #### Scenario: Required options are missing
-- **WHEN** either config or output is omitted
+- **WHEN** any of `--language`, `--config`, or `--output` is omitted
 - **THEN** parsing fails without authenticating or changing output
 - **AND** no conventional config or destination is inferred
+
+#### Scenario: Unsupported language value is supplied
+- **WHEN** `--language` is set to a value other than `dotnet` or `typescript`
+- **THEN** parsing fails with an actionable diagnostic without authenticating or changing output
+
+#### Scenario: Recipe does not match the selected language
+- **WHEN** the recipe contains settings that are incompatible with the selected `--language` (for example, a TypeScript recipe with `forms` supplied with `--language dotnet`, or a .NET recipe with `namespace`/`target` supplied with `--language typescript`)
+- **THEN** recipe loading fails with an actionable diagnostic identifying the mismatch
+- **AND** no authentication or output changes occur
 
 #### Scenario: Unsupported command shapes are supplied
 - **WHEN** a user supplies a positional destination, a target subcommand, or a removed generation-setting option
