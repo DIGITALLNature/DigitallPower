@@ -53,4 +53,4 @@ The product contract is approved. Implementation requires a separate apply reque
 ## Workflow follow-up
 
 - After implementation and successful verification, synchronize implemented requirements into main specs and archive through the corresponding OpenSpec workflows.
-- Refresh generated Copilot instructions with `pnpm run openspec:update` as required by the repository workflow.
+- Refresh generated Copilot instructions with `pnpm exec openspec update` as required by the repository workflow.
