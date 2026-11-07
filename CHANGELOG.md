@@ -1,3 +1,10 @@
+# [3.0.0-beta.21](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2026-11-07)
+
+
+### Bug Fixes
+
+* **codegeneration:** only sync base.Id for the entity's primary key attribute setter ([#237](https://github.com/DIGITALLNature/DigitallPower/issues/237)) ([336951c](https://github.com/DIGITALLNature/DigitallPower/commit/336951c7b5aacd163d8d8518d94bea66b71e689a))
+
 # [3.0.0-beta.20](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.19...v3.0.0-beta.20) (2026-11-07)
 
 
