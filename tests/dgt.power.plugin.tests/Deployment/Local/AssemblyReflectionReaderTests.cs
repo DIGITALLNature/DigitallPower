@@ -221,7 +221,7 @@ public class AssemblyReflectionReaderTests
         var attributeTypeBuilder = moduleBuilder.DefineType("Digitall.Plugins.Registration.PluginRegistrationAttribute",
             TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class, typeof(Attribute));
         var attributeCtor = attributeTypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard,
-            new[] { typeof(string), typeof(int), typeof(int) });
+            [typeof(string), typeof(int), typeof(int)]);
         attributeCtor.DefineParameter(1, ParameterAttributes.None, "messageName");
         attributeCtor.DefineParameter(2, ParameterAttributes.None, "mode");
         attributeCtor.DefineParameter(3, ParameterAttributes.None, "stage");
@@ -233,8 +233,8 @@ public class AssemblyReflectionReaderTests
 
         var pluginTypeBuilder = moduleBuilder.DefineType("Foreign.Registration.ForeignPlugin",
             TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
-        pluginTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(attributeCtor, new object[] { "Create", 0, 40 }));
-        return pluginTypeBuilder.CreateType()!;
+        pluginTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(attributeCtor, ["Create", 0, 40]));
+        return pluginTypeBuilder.CreateType();
     }
 
     [Test]

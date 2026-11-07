@@ -19,11 +19,14 @@ namespace dgt.power.plugin.Deployment.Local;
 /// Dataverse layer, when the step is compared with the target environment.
 /// </summary>
 /// <remarks>
-/// Registration attributes are detected purely by type name/namespace via reflection metadata
+/// Registration attributes are detected purely by namespace, type name, and defining-assembly
+/// simple name (see <see cref="IsSupportedRegistrationAttribute"/>) via reflection metadata
 /// (<see cref="CustomAttributeData"/>), never by a real type reference - the assembly under
 /// inspection is loaded into a <see cref="MetadataLoadContext"/>, so its types are never
 /// assignable to (or comparable with) any locally referenced attribute type anyway. This module
-/// therefore has no compile-time dependency on the registration attributes package.
+/// therefore has no compile-time dependency on the registration attributes package. The assembly
+/// version is deliberately not compared, so plugins built against any version of the registration
+/// library are detected.
 /// </remarks>
 internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 {
