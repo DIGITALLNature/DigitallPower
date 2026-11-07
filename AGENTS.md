@@ -35,6 +35,29 @@ When making changes to this codebase, **you MUST keep the documentation up to da
    `2.x-to-3.x.md`). The README links to the migration guides directory near the beginning.
    Internal-only breaking changes do not require migration guidance.
 
+   Migration guides are **user-facing only**. In this repository, "user" means a **CLI user** —
+   someone invoking `dgtp` from the command line. Programmatic consumers of the shipped libraries
+   are out of scope and must not be documented in migration guides.
+
+   **Belongs in a migration guide:**
+   - Removed, renamed, or moved commands, branches, options, aliases, and exit codes, with the 3.x replacement
+   - Configuration files, JSON schemas, and transfer/manifest file formats (old format → new format, with migration steps)
+   - Environment variables and global configuration changes
+   - Behavior changes with side effects on Dataverse data or local files (e.g. a new default that writes)
+   - Every entry must be concise and actionable: state **what changed** and **what the user must do or
+     consider when upgrading**
+
+   **Does NOT belong in a migration guide:**
+   - Assembly, module, namespace, or .NET type/member names (internal or public)
+   - Architecture, implementation details, or library API changes
+   - Test results, verification notes, or dev/reviewer remarks (e.g. "not verified", "in this checkout")
+   - Anything a CLI user cannot act on
+
+   Internal details worth keeping belong in the release notes, `docs/architecture/`, or an ADR —
+   never in the migration guide. Link from a migration guide to `docs/reference/...`, `schemas/...`,
+   and `docs/guides/...` using correct relative paths; do not link to README anchors for detailed
+   content (README is the landing page only, see rule 1).
+
 4. **What does NOT require a docs update:**
    - Internal refactoring that doesn't change the public API
    - Bug fixes that don't change behavior or usage
