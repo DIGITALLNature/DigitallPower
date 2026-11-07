@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MS-RL
 
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using dgt.power.plugin.Deployment.Local;
 using dgt.power.plugin.Exceptions;
@@ -187,6 +188,53 @@ public class AssemblyReflectionReaderTests
             await Assert.That(result.HasRegistrationAttribute).IsFalse();
             await Assert.That(result.Steps).IsEmpty();
         }
+    }
+
+    [Test]
+    public async Task BuildPluginType_SameNamedRegistrationAttributeFromForeignAssembly_IsIgnored()
+    {
+        var pluginType = EmitForeignPluginWithSameNamedAttribute();
+        var attribute = CustomAttributeData.GetCustomAttributes(pluginType)
+            .Single(a => a.AttributeType.Name == RegistrationAttributeNames.PluginRegistration);
+
+        using var console = new TestConsole();
+        var reader = new AssemblyReflectionReader(console);
+        var result = reader.BuildPluginType(pluginType);
+
+        using (Assert.Multiple())
+        {
+            await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute)).IsFalse();
+            await Assert.That(result.HasRegistrationAttribute).IsFalse();
+            await Assert.That(result.Steps).IsEmpty();
+        }
+    }
+
+    // Emits a foreign assembly that defines its own Digitall.Plugins.Registration.PluginRegistrationAttribute
+    // with valid constructor metadata. Namespace and attribute name both match the supported contract, so only
+    // the assembly-name check can reject it: without that check this fixture is detected as a registration.
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "S3011", Justification = "The emitted fixture intentionally calls the protected Attribute base constructor.")]
+    private static Type EmitForeignPluginWithSameNamedAttribute()
+    {
+        var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foreign.Registration.Fixture"), AssemblyBuilderAccess.Run);
+        var moduleBuilder = assemblyBuilder.DefineDynamicModule("Foreign.Registration.Fixture");
+
+        var attributeTypeBuilder = moduleBuilder.DefineType("Digitall.Plugins.Registration.PluginRegistrationAttribute",
+            TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class, typeof(Attribute));
+        var attributeCtor = attributeTypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard,
+            new[] { typeof(string), typeof(int), typeof(int) });
+        attributeCtor.DefineParameter(1, ParameterAttributes.None, "messageName");
+        attributeCtor.DefineParameter(2, ParameterAttributes.None, "mode");
+        attributeCtor.DefineParameter(3, ParameterAttributes.None, "stage");
+        var il = attributeCtor.GetILGenerator();
+        il.Emit(OpCodes.Ldarg_0);
+        il.Emit(OpCodes.Call, typeof(Attribute).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null)!);
+        il.Emit(OpCodes.Ret);
+        attributeTypeBuilder.CreateType();
+
+        var pluginTypeBuilder = moduleBuilder.DefineType("Foreign.Registration.ForeignPlugin",
+            TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
+        pluginTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(attributeCtor, new object[] { "Create", 0, 40 }));
+        return pluginTypeBuilder.CreateType()!;
     }
 
     [Test]
