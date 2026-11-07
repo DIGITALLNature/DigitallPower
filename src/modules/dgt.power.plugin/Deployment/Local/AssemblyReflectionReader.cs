@@ -116,7 +116,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
             foreach (var customAttribute in customAttributes)
             {
-                if (!IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace))
+                if (!IsSupportedRegistrationAttribute(customAttribute))
                 {
                     continue;
                 }
@@ -172,7 +172,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
         foreach (var customAttribute in customAttributes)
         {
-            if (!IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) || customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
+            if (!IsSupportedRegistrationAttribute(customAttribute) || customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
             {
                 continue;
             }
@@ -252,10 +252,17 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
     {
         var customAttributes = CustomAttributeData.GetCustomAttributes(declaredType);
         return customAttributes.Any(customAttribute =>
-            IsSupportedRegistrationNamespace(customAttribute.AttributeType.Namespace) && RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
+            IsSupportedRegistrationAttribute(customAttribute) && RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
     }
 
-    private static bool IsSupportedRegistrationNamespace(string? attributeNamespace) => string.Equals(attributeNamespace, RegistrationAttributeNames.Namespace, StringComparison.Ordinal);
+    /// <summary>
+    /// True when the attribute comes from the supported registration namespace AND the registration
+    /// library assembly (simple name match, version ignored). Rejects same-named attributes from any
+    /// other assembly, e.g. a test double or a plugin's own type in that namespace.
+    /// </summary>
+    internal static bool IsSupportedRegistrationAttribute(CustomAttributeData customAttribute) =>
+        string.Equals(customAttribute.AttributeType.Namespace, RegistrationAttributeNames.Namespace, StringComparison.Ordinal) &&
+        string.Equals(customAttribute.AttributeType.Assembly.GetName().Name, RegistrationAttributeNames.AssemblyName, StringComparison.OrdinalIgnoreCase);
 
     private static string[]? GetArrayValues(CustomAttributeData customAttribute, string property)
     {

@@ -11,7 +11,7 @@ namespace dgt.power.plugin.tests.Deployment.Local;
 /// <see cref="System.Reflection.Assembly.GetTypes"/> when this test assembly itself is used as a
 /// "plugin assembly" fixture (see <see cref="PluginPackageReaderTests"/>).
 /// </summary>
-[PluginRegistration("Create", 0, 40, PrimaryEntityName = "account")]
+[PluginRegistration(PluginExecutionMode.Synchronous, "Create", PluginExecutionStage.PostOperation, PrimaryEntityName = "account")]
 public sealed class SamplePlugin : IPlugin
 {
     public void Execute(IServiceProvider serviceProvider) => throw new NotSupportedException();
