@@ -426,4 +426,45 @@ public class DotNetGeneratorTests : CodeGenerationTestsBase
         await Assert.That(attributeCode).Contains($"public const bool {Labels.DefaultFalse} = false;");
         await Assert.That(attributeCode).Contains($"public const bool {Labels.DefaultTrue} = true;");
     }
+
+    [Test]
+    public async Task ShouldOnlySyncBaseIdForPrimaryKeyAttributeSetter()
+    {
+        // Regression test for https://github.com/DIGITALLNature/DigitallPower/issues/234:
+        // Multiple non-primary GUID attributes (e.g. businesstypecodename, donotbulkpostalmailname,
+        // createdbyexternalparty on account) carry IsPrimaryId=true in Dataverse metadata, but only
+        // the entity's PrimaryIdAttribute setter may synchronize base.Id.
+        var accountMetadata = GetEntityMetadataResource(Account.EntityLogicalName);
+        var args = new CodeGenerationVerb { TargetDirectory = ArtifactDirectory };
+        var config = new DotNetCodeGenerationConfig
+        {
+            Entities = new EntityScopeConfig { Names = [accountMetadata.LogicalName] },
+            Output = new DotNetOutput { EditableReadOnly = true }
+        };
+
+        var context = GetBuilder()
+            .WithMetaData(accountMetadata)
+            .Build();
+
+        await context.DotNetGenerator.GenerateAsync(args, config);
+
+        var dotNetPath = GetArtifactPath(Path.Combine(args.Folder, Folders.DotNet));
+        var accountCode = await File.ReadAllTextAsync(Path.Combine(dotNetPath, "Account.cs"));
+
+        // base.Id must be assigned exactly once — in the AccountId (primary key) setter.
+        var baseIdOccurrences = accountCode.Split("base.Id = ").Length - 1;
+        await Assert.That(baseIdOccurrences).IsEqualTo(1);
+
+        // Non-primary GUID attributes (e.g. Address1AddressId, Address2AddressId) must not
+        // contain a base.Id assignment in their setters.
+        foreach (var propertyName in new[] { "Address1AddressId", "Address2AddressId" })
+        {
+            var propertyStart = accountCode.IndexOf($"public Guid? {propertyName}", StringComparison.Ordinal);
+            await Assert.That(propertyStart).IsGreaterThan(-1);
+            var setterStart = accountCode.IndexOf("set", propertyStart, StringComparison.Ordinal);
+            var nextProperty = accountCode.IndexOf("public ", setterStart, StringComparison.Ordinal);
+            var setterBlock = accountCode.Substring(setterStart, nextProperty - setterStart);
+            await Assert.That(setterBlock).DoesNotContain("base.Id = ");
+        }
+    }
 }

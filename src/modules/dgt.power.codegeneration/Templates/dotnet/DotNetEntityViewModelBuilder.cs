@@ -74,7 +74,7 @@ public class DotNetEntityViewModelBuilder(
                 IsValidForRead = attr.IsValidForRead == true,
                 HasSetter = HasSetter(attr, editableReadOnlyProperties),
                 IsPartyList = attr.AttributeType == AttributeTypeCode.PartyList,
-                IsPrimaryId = attr.IsPrimaryId == true,
+                IsPrimaryId = attr.LogicalName == entity.PrimaryIdAttribute,
                 Summary = BuildSummary(GetLocalizedLabel(attr.Description), 2)
             };
         }).ToArray<object>();
