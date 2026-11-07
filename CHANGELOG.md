@@ -1,3 +1,10 @@
+# [3.0.0-beta.20](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.19...v3.0.0-beta.20) (2026-11-07)
+
+
+### Bug Fixes
+
+* **plugin:** match registration attributes only from the registration library assembly ([#236](https://github.com/DIGITALLNature/DigitallPower/issues/236)) ([71ab264](https://github.com/DIGITALLNature/DigitallPower/commit/71ab26485cf8aaf825bebf968beece7609a6b0bf)), closes [#221](https://github.com/DIGITALLNature/DigitallPower/issues/221)
+
 # [3.0.0-beta.19](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2026-10-26)
 
 
