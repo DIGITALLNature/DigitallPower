@@ -30,9 +30,9 @@ public class RegistrationAttributeNamesTests
     {
         using (Assert.Multiple())
         {
-            await Assert.That(RegistrationAttributeNames.PluginRegistration).IsEqualTo(typeof(PluginRegistrationAttribute).Name);
-            await Assert.That(RegistrationAttributeNames.CustomApiRegistration).IsEqualTo(typeof(CustomApiRegistrationAttribute).Name);
-            await Assert.That(RegistrationAttributeNames.CustomDataProviderRegistration).IsEqualTo(typeof(CustomDataProviderRegistrationAttribute).Name);
+            await Assert.That(RegistrationAttributeNames.PluginRegistration).IsEqualTo(nameof(PluginRegistrationAttribute));
+            await Assert.That(RegistrationAttributeNames.CustomApiRegistration).IsEqualTo(nameof(CustomApiRegistrationAttribute));
+            await Assert.That(RegistrationAttributeNames.CustomDataProviderRegistration).IsEqualTo(nameof(CustomDataProviderRegistrationAttribute));
         }
     }
 
