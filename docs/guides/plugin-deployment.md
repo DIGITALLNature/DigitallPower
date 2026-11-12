@@ -18,6 +18,10 @@ Decorate your plugin classes with supported registration attributes. Choose one 
   assembly. This supports single-DLL plugins without a separate registration-attributes
   dependency at deployment time.
 
+As a rule of thumb, use `Digitall.Plugins.Registration` when deploying a NuGet plugin package
+(`.nupkg`), which can include the separate attribute assembly, and use
+`Digitall.Plugins.Registration.Source` when deploying a standalone plugin assembly (`.dll`).
+
 Do not install both packages in the same project.
 
 ```csharp

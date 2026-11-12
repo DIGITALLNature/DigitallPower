@@ -42,7 +42,9 @@ if the version is missing. A package without an attached file is treated as requ
 `Digitall.Plugins.Registration` package (3.0.0 or later) or the
 `Digitall.Plugins.Registration.Source` package, which compiles the attributes into the plugin
 assembly. Use one package, not both. Matching attribute names from unrelated assemblies are not
-recognized.
+recognized. As a rule of thumb, use `Digitall.Plugins.Registration` for a NuGet plugin package
+(`.nupkg`) that includes the separate attribute assembly, and
+`Digitall.Plugins.Registration.Source` for a standalone plugin assembly (`.dll`).
 
 | Attribute | Behavior |
 |-----------|----------|
