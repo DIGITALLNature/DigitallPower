@@ -263,7 +263,7 @@ public class AssemblyReflectionReaderTests
     public async Task Read_SourcePackageRegistration_DiscoversRegistrationDefinedInPluginAssembly()
     {
         using var console = new TestConsole();
-        var assemblyPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "RegistrationSourceFixture", "RegistrationSourceFixture.dll");
+        var assemblyPath = Path.Combine(AppContext.BaseDirectory, "RegistrationSourceFixture.dll");
         using var metadataLoadContext = MetadataLoadContextFactory.Create(Path.GetDirectoryName(assemblyPath)!);
 
         var result = new AssemblyReflectionReader(console).Read(assemblyPath, metadataLoadContext);
