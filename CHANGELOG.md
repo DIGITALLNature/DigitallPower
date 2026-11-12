@@ -1,3 +1,10 @@
+# [3.0.0-beta.22](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.21...v3.0.0-beta.22) (2026-11-12)
+
+
+### Features
+
+* **plugin:** support local registration attributes ([#239](https://github.com/DIGITALLNature/DigitallPower/issues/239)) ([b989ae8](https://github.com/DIGITALLNature/DigitallPower/commit/b989ae85b257ed939cf5b8b027b6c2fdb869fec5))
+
 # [3.0.0-beta.21](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2026-11-07)
 
 
