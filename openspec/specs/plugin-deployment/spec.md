@@ -21,6 +21,28 @@ Specify the safety and compatibility contract for deploying Dataverse plugin ass
 - **WHEN** a non-dry-run plan is applied
 - **THEN** execution applies the already-rendered plan without recalculating deployment decisions
 
+### Requirement: Declarative registrations may be defined in the target plugin assembly
+
+`dgtp plugin push` MUST recognize supported declarative registration attributes when they are
+defined either by the official `Digitall.Plugins.Registration` library or by the target plugin
+assembly being inspected. It MUST NOT recognize matching attribute names and namespaces from
+unrelated assemblies.
+
+#### Scenario: Registration attributes come from the official library
+
+- **WHEN** a plugin type uses a supported registration attribute from `Digitall.Plugins.Registration`
+- **THEN** `plugin push` recognizes the registration
+
+#### Scenario: Registration attributes are defined in the target assembly
+
+- **WHEN** a plugin type uses a supported registration attribute defined in the target plugin assembly
+- **THEN** `plugin push` recognizes the registration
+
+#### Scenario: Registration attributes come from an unrelated assembly
+
+- **WHEN** a plugin type uses an attribute with a supported namespace and name that is defined by neither the official library nor the target plugin assembly
+- **THEN** `plugin push` does not recognize it as a registration
+
 ### Requirement: Confirmation is limited to interactive deployment
 
 When `--confirm` is selected, the command MUST ask before applying a target plan with changes. Dry-run, CI, and non-interactive execution MUST NOT prompt.

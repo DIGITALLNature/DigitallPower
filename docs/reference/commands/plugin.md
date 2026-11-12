@@ -38,8 +38,11 @@ if the version is missing. A package without an attached file is treated as requ
 
 ### Supported registration attributes
 
-`plugin push` requires registration attributes from `Digitall.Plugins.Registration` 3.0.0 or
-later. Other registration namespaces are not recognized.
+`plugin push` recognizes supported registration attributes from either the
+`Digitall.Plugins.Registration` package (3.0.0 or later) or the
+`Digitall.Plugins.Registration.Source` package, which compiles the attributes into the plugin
+assembly. Use one package, not both. Matching attribute names from unrelated assemblies are not
+recognized.
 
 | Attribute | Behavior |
 |-----------|----------|

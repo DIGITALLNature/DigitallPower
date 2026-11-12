@@ -163,7 +163,7 @@ public class AssemblyReflectionReaderTests
         var attribute = CustomAttributeData.GetCustomAttributes(typeof(ExplicitOrderPlugin))
             .Single(a => a.AttributeType.Name == RegistrationAttributeNames.PluginRegistration);
 
-        await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute)).IsTrue();
+        await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute, typeof(ExplicitOrderPlugin).Assembly)).IsTrue();
     }
 
     [Test]
@@ -172,19 +172,22 @@ public class AssemblyReflectionReaderTests
         var attribute = CustomAttributeData.GetCustomAttributes(typeof(ImpostorRegistrationPlugin))
             .Single(a => a.AttributeType.Name == nameof(ImpostorPluginRegistrationAttribute));
 
-        await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute)).IsFalse();
+        await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute, typeof(PluginRegistrationAttribute).Assembly)).IsFalse();
     }
 
     [Test]
-    public async Task BuildPluginType_ForeignAssemblyRegistrationAttribute_IsIgnored()
+    public async Task BuildPluginType_UnknownRegistrationAttributeName_IsIgnored()
     {
         using var console = new TestConsole();
         var reader = new AssemblyReflectionReader(console);
 
         var result = reader.BuildPluginType(typeof(ImpostorRegistrationPlugin));
+        var attribute = CustomAttributeData.GetCustomAttributes(typeof(ImpostorRegistrationPlugin))
+            .Single(a => a.AttributeType.Name == nameof(ImpostorPluginRegistrationAttribute));
 
         using (Assert.Multiple())
         {
+            await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute, typeof(ImpostorRegistrationPlugin).Assembly)).IsTrue();
             await Assert.That(result.HasRegistrationAttribute).IsFalse();
             await Assert.That(result.Steps).IsEmpty();
         }
@@ -203,7 +206,7 @@ public class AssemblyReflectionReaderTests
 
         using (Assert.Multiple())
         {
-            await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute)).IsFalse();
+            await Assert.That(AssemblyReflectionReader.IsSupportedRegistrationAttribute(attribute, typeof(AssemblyReflectionReaderTests).Assembly)).IsFalse();
             await Assert.That(result.HasRegistrationAttribute).IsFalse();
             await Assert.That(result.Steps).IsEmpty();
         }
@@ -215,10 +218,10 @@ public class AssemblyReflectionReaderTests
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "S3011", Justification = "The emitted fixture intentionally calls the protected Attribute base constructor.")]
     private static Type EmitForeignPluginWithSameNamedAttribute()
     {
-        var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foreign.Registration.Fixture"), AssemblyBuilderAccess.Run);
-        var moduleBuilder = assemblyBuilder.DefineDynamicModule("Foreign.Registration.Fixture");
+        var attributeAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foreign.Registration.Fixture"), AssemblyBuilderAccess.Run);
+        var attributeModule = attributeAssembly.DefineDynamicModule("Foreign.Registration.Fixture");
 
-        var attributeTypeBuilder = moduleBuilder.DefineType("Digitall.Plugins.Registration.PluginRegistrationAttribute",
+        var attributeTypeBuilder = attributeModule.DefineType("Digitall.Plugins.Registration.PluginRegistrationAttribute",
             TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class, typeof(Attribute));
         var attributeCtor = attributeTypeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard,
             [typeof(string), typeof(int), typeof(int)]);
@@ -231,7 +234,9 @@ public class AssemblyReflectionReaderTests
         il.Emit(OpCodes.Ret);
         attributeTypeBuilder.CreateType();
 
-        var pluginTypeBuilder = moduleBuilder.DefineType("Foreign.Registration.ForeignPlugin",
+        var pluginAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Plugin.Registration.Fixture"), AssemblyBuilderAccess.Run);
+        var pluginModule = pluginAssembly.DefineDynamicModule("Plugin.Registration.Fixture");
+        var pluginTypeBuilder = pluginModule.DefineType("Plugin.Registration.Plugin",
             TypeAttributes.Public | TypeAttributes.Sealed | TypeAttributes.Class);
         pluginTypeBuilder.SetCustomAttribute(new CustomAttributeBuilder(attributeCtor, ["Create", 0, 40]));
         return pluginTypeBuilder.CreateType();
@@ -251,6 +256,25 @@ public class AssemblyReflectionReaderTests
             await Assert.That(pluginType.HasRegistrationAttribute).IsTrue();
             await Assert.That(pluginType.Steps).Count().IsEqualTo(1);
             await Assert.That(pluginType.Steps[0].ExecutionOrder).IsEqualTo(25);
+        }
+    }
+
+    [Test]
+    public async Task Read_SourcePackageRegistration_DiscoversRegistrationDefinedInPluginAssembly()
+    {
+        using var console = new TestConsole();
+        var assemblyPath = Path.Combine(AppContext.BaseDirectory, "Fixtures", "RegistrationSourceFixture", "RegistrationSourceFixture.dll");
+        using var metadataLoadContext = MetadataLoadContextFactory.Create(Path.GetDirectoryName(assemblyPath)!);
+
+        var result = new AssemblyReflectionReader(console).Read(assemblyPath, metadataLoadContext);
+
+        var pluginType = result!.PluginTypes.Single(type => type.TypeName == "dgt.power.plugin.tests.Fixtures.RegistrationSourceFixture.SourceRegistrationPlugin");
+        using (Assert.Multiple())
+        {
+            await Assert.That(pluginType.HasRegistrationAttribute).IsTrue();
+            await Assert.That(pluginType.Steps).Count().IsEqualTo(1);
+            await Assert.That(pluginType.Steps[0].MessageName).IsEqualTo("Create");
+            await Assert.That(pluginType.Steps[0].ExecutionOrder).IsEqualTo(17);
         }
     }
 
