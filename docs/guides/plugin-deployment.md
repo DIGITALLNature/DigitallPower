@@ -5,12 +5,24 @@ End-to-end workflow for developing, deploying, and managing Dataverse plugins wi
 ## Prerequisites
 
 - A Dataverse environment and a [connection](../reference/commands/connection.md) to it
-- A .NET plugin project referencing `Digitall.Plugins.Registration` 3.0.0 or later
+- A .NET plugin project referencing either `Digitall.Plugins.Registration` 3.0.0 or later, or
+  `Digitall.Plugins.Registration.Source`
 - The `dgtp` CLI [installed](../getting-started/installation.md)
 
 ## 1. Write the plugin
 
-Decorate your plugin classes with registration attributes from `Digitall.Plugins.Registration`:
+Decorate your plugin classes with supported registration attributes. Choose one package:
+
+- `Digitall.Plugins.Registration` references a separate attribute assembly.
+- `Digitall.Plugins.Registration.Source` compiles the attribute definitions into your plugin
+  assembly. This supports single-DLL plugins without a separate registration-attributes
+  dependency at deployment time.
+
+As a rule of thumb, use `Digitall.Plugins.Registration` when deploying a NuGet plugin package
+(`.nupkg`), which can include the separate attribute assembly, and use
+`Digitall.Plugins.Registration.Source` when deploying a standalone plugin assembly (`.dll`).
+
+Do not install both packages in the same project.
 
 ```csharp
 using Digitall.Plugins.Registration;
@@ -74,6 +86,6 @@ For automated deployment in Azure Pipelines, see [CI/CD integration](ci-cd.md) f
 
 | Problem | Solution |
 |---------|----------|
-| `plugin push` fails with "no plugins found" | Ensure your assembly references `Digitall.Plugins.Registration` and every `IPlugin` type has a registration attribute |
+| `plugin push` fails with "no plugins found" | Ensure your project references either registration package and every `IPlugin` type has a supported registration attribute |
 | Managed import fails with "Unable to delete plugintype" | Unlink the step or Custom API handler in downstream environments before removing the type — see [Removals and solution import](../reference/commands/plugin.md#removals-and-solution-import) |
 | Assembly update creates a replacement instead of in-place update | Major/minor version changed — this is expected; steps and images are migrated automatically |

@@ -26,7 +26,7 @@ namespace dgt.power.plugin.Deployment.Local;
 /// assignable to (or comparable with) any locally referenced attribute type anyway. This module
 /// therefore has no compile-time dependency on the registration attributes package. The assembly
 /// version is deliberately not compared, so plugins built against any version of the registration
-/// library are detected.
+/// library or the source package are detected.
 /// </remarks>
 internal sealed class AssemblyReflectionReader(IAnsiConsole console)
 {
@@ -119,7 +119,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
             var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
             foreach (var customAttribute in customAttributes)
             {
-                if (!IsSupportedRegistrationAttribute(customAttribute))
+                if (!IsSupportedRegistrationAttribute(customAttribute, pluginType.Assembly))
                 {
                     continue;
                 }
@@ -175,7 +175,7 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
         var customAttributes = CustomAttributeData.GetCustomAttributes(pluginType);
         foreach (var customAttribute in customAttributes)
         {
-            if (!IsSupportedRegistrationAttribute(customAttribute) || customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
+            if (!IsSupportedRegistrationAttribute(customAttribute, pluginType.Assembly) || customAttribute.AttributeType.Name != RegistrationAttributeNames.PluginRegistration)
             {
                 continue;
             }
@@ -255,17 +255,19 @@ internal sealed class AssemblyReflectionReader(IAnsiConsole console)
     {
         var customAttributes = CustomAttributeData.GetCustomAttributes(declaredType);
         return customAttributes.Any(customAttribute =>
-            IsSupportedRegistrationAttribute(customAttribute) && RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
+            IsSupportedRegistrationAttribute(customAttribute, declaredType.Assembly) &&
+            RegistrationAttributeNames.KnownPluginAttributes.Contains(customAttribute.AttributeType.Name));
     }
 
     /// <summary>
-    /// True when the attribute comes from the supported registration namespace AND the registration
-    /// library assembly (simple name match, version ignored). Rejects same-named attributes from any
-    /// other assembly, e.g. a test double or a plugin's own type in that namespace.
+    /// True when the attribute comes from the supported registration namespace and either the
+    /// registration library or the assembly being inspected (simple name match, version ignored).
+    /// Rejects same-named attributes from any other assembly.
     /// </summary>
-    internal static bool IsSupportedRegistrationAttribute(CustomAttributeData customAttribute) =>
+    internal static bool IsSupportedRegistrationAttribute(CustomAttributeData customAttribute, Assembly targetAssembly) =>
         string.Equals(customAttribute.AttributeType.Namespace, RegistrationAttributeNames.Namespace, StringComparison.Ordinal) &&
-        string.Equals(customAttribute.AttributeType.Assembly.GetName().Name, RegistrationAttributeNames.AssemblyName, StringComparison.OrdinalIgnoreCase);
+        (string.Equals(customAttribute.AttributeType.Assembly.GetName().Name, RegistrationAttributeNames.AssemblyName, StringComparison.OrdinalIgnoreCase) ||
+         string.Equals(customAttribute.AttributeType.Assembly.GetName().Name, targetAssembly.GetName().Name, StringComparison.OrdinalIgnoreCase));
 
     private static string[]? GetArrayValues(CustomAttributeData customAttribute, string property)
     {
