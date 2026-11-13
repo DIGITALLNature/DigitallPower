@@ -55,4 +55,4 @@ The public contract is approved. This is a planning artifact, not authorization 
 ## Workflow follow-up
 
 - After implementation approval and successful verification, synchronize implemented requirements into main specs. Keep this change active until its implementation PR is verified as merged into `beta` or `main`; archival is a separate post-merge follow-up, not part of a PR into the planning branch.
-- Refresh generated Copilot instructions with `pnpm run openspec:update` as required by the repository workflow.
+- Refresh generated Copilot instructions with `pnpm exec openspec update` as required by the repository workflow.

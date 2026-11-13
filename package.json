@@ -14,7 +14,6 @@
   },
   "scripts": {
     "prepare": "husky",
-    "openspec:update": "pnpm exec openspec update && node scripts/normalize-openspec-commands.mjs",
     "test:tsl-jest": "pnpm --dir tests/dgt.power.codegeneration.tests/Fixtures/TslJest test"
   },
   "devEngines": {

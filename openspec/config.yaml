@@ -10,7 +10,9 @@ context: |
   logs or duplicate API reference documentation. Keep decision rationale in concise ADRs under
   docs/architecture/decisions. Put local implementation details beside the relevant code or tests.
 
-  Use the repository-local CLI via `pnpm exec openspec`; do not assume a global installation.
+  Run every OpenSpec command through the repository-local CLI as `pnpm exec openspec ...`; never
+  install OpenSpec globally. The version pinned by the root pnpm lockfile is the one the
+  generated workflows are written for.
   Create a change proposal for public CLI/API or configuration behavior, schema changes, module or
   architecture changes, and work spanning capabilities. Trivial fixes, test-only changes, and
   behavior-preserving refactors do not need a proposal.
@@ -44,14 +46,35 @@ githubCopilot:
 #     tasks:
 #       - Break tasks into chunks of max 2 hours
 
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+# Per-operation guidance: advisory instructions that the generated apply and archive
+# workflows receive at runtime through `openspec instructions <operation> --json`.
+operations:
+  apply:
+    guidance:
+      - >-
+        After implementation is complete, report "Implementation complete; awaiting stable
+        release on main" instead of offering immediate archival.
+  archive:
+    guidance:
+      - >-
+        Keep the change active until a stable GitHub release containing the implementation
+        has been published from main. A merge into beta, a merge into main without a
+        published stable release, or a beta/prerelease publication is not sufficient.
+      - >-
+        Before any archive-related writes, verify the implementation PR with
+        `gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,mergeCommit,url`:
+        require state MERGED, a non-null mergedAt, and baseRefName exactly main, and confirm
+        the PR contains this change.
+      - >-
+        Verify the release with
+        `gh release view <tag> --repo DIGITALLNature/DigitallPower --json isDraft,isPrerelease,publishedAt,tagName`:
+        require a published, non-draft, non-prerelease release.
+      - >-
+        Fetch main and the release tag, then verify the PR merge commit is an ancestor of
+        the release tag and the release tag commit is reachable from origin/main.
+      - >-
+        If the PR, release, or commit ancestry cannot be verified, report the blocker and
+        leave the change active; do not archive, and do not let confirmation bypass this gate.
+      - >-
+        Archive only as a separate post-release follow-up using a checkout containing the
+        released implementation, never during beta preparation or in the implementation PR.
