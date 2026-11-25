@@ -33,5 +33,6 @@
 
 ## Workflow follow-up
 
+- Merge the shared scaffolding proposals first, then start each implementation from an up-to-date target branch in a separate branch and PR. Implement webresource scaffolding first, followed by plugin scaffolding; this order is recommended, not a technical dependency.
 - Keep the change active through implementation review, beta integration, and stable release preparation.
 - Archive only in a separate post-release follow-up after verifying the implementation PR was merged into `main`, a containing non-draft/non-prerelease GitHub release is published, and the required release/main commit ancestry holds.

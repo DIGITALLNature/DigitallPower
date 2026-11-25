@@ -41,6 +41,7 @@ The team selected dgtp as the shared initialization entry point. Template public
 
 ## Workflow follow-up
 
+- Merge the shared scaffolding proposals first, then start each implementation from an up-to-date target branch in a separate branch and PR. Implement webresource scaffolding first, followed by plugin scaffolding; this order is recommended, not a technical dependency.
 - Native template publication alone does not mean the dgtp integration is implemented and does not satisfy this repository's archive gate.
 - Keep this change active while its implementation PR is open and after merge until a stable release containing it is published from `main`.
 - Archive only in a separate post-release follow-up after verifying the implementation PR was merged into `main`, the release is published/non-draft/non-prerelease, and the required merge-commit/release-tag/main ancestry holds.
