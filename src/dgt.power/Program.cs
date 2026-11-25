@@ -143,6 +143,7 @@ registrations.AddScoped<IDotNetGenerator, DotNetGenerator>();
 registrations.AddScoped<ITypeScriptGenerator, TypeScriptGenerator>();
 registrations.AddScoped<IMetadataGenerator, MetadataGenerator>();
 registrations.AddSingleton(appConsole);
+registrations.AddSingleton(_ => new HttpClient());
 registrations.AddSingleton<ShellShimInstaller>();
 var registrar = new TypeRegistrar(registrations);
 var app = new CommandApp(registrar);

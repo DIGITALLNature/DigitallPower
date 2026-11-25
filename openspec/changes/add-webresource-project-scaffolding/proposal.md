@@ -31,7 +31,7 @@ None. Existing deployment, command execution, and shared command-tree requiremen
 
 - Add settings, a command, and focused scaffolding helpers to `src/modules/dgt.power.webresource/`; register the command in `src/dgt.power/CommandTree.cs`.
 - Add module tests plus command-tree, help, and settings-parsing coverage in `tests/dgt.power.cli.tests/`.
-- Update `docs/reference/commands/webresource.md` and add a user-facing scaffolding guide; document any new validation command in `docs/development/build-and-test.md`.
+- Update `docs/reference/commands/webresource.md` and add a user-facing scaffolding guide. Put the contributor-facing real-template acceptance procedure in `docs/development/webresource-scaffolding.md` and link to it from `docs/development/build-and-test.md`.
 - Use .NET HTTP, JSON, and archive facilities where sufficient; no new NuGet dependency is planned.
 - Coordinate a separately reviewed template-repository update for explicit customization tokens, compatible dgtp scripts/tool versions, and accurate generated-project onboarding. This proposal authorizes no writes to that repository.
 - Require GitHub network access at scaffolding time, but no Git, PAC, Node.js, pnpm, or Dataverse credentials merely to generate files.

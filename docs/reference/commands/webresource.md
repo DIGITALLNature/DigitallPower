@@ -1,6 +1,46 @@
 # `webresource` — Manage webresources
 
-Commands for deploying Dataverse webresources.
+Commands for creating and deploying Dataverse webresource projects.
+
+## `init` — Create a webresource project
+
+Creates a local project from the DIGITALL webresource template. Initialization downloads the
+selected template revision and customizes the project files; it does not install dependencies,
+generate Dataverse models, select a connection, or deploy resources.
+
+### Usage
+
+```bash
+dgtp webresource init ./contoso-webresources \
+  --name contoso-webresources \
+  --global Contoso
+
+dgtp webresource init ./contoso-webresources \
+  --name contoso-webresources \
+  --global Contoso \
+  --template-version v1.2.0 \
+  --solution ContosoCore \
+  --publisher-prefix contoso
+```
+
+### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `<Directory>` | Yes | Absent or empty destination directory for the generated project |
+| `--name` | Yes | Unscoped lowercase npm package name |
+| `--global` | Yes | Single JavaScript identifier exposed by generated bundles |
+| `--template-version` | No | Existing template tag or full commit SHA; defaults to current `main` |
+| `--solution` | No | Explicit default solution unique name for deployment scripts |
+| `--publisher-prefix` | No | Explicit default publisher prefix for deployment scripts |
+
+On success, the command reports the generated directory and exact template commit, then prints
+commands to install dependencies and build the frontend. Follow the generated project's
+`README.md` for additional setup. The optional deployment values are independent; omitted values
+are not replaced with sample targets and must be provided when the deployment script runs.
+Connection selection also happens at script execution. See the
+[webresource scaffolding guide](../../guides/webresource-scaffolding.md) for revision selection,
+destination restrictions, and recovery from template compatibility errors.
 
 ## `push` — Deploy webresources
 

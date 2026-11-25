@@ -79,6 +79,24 @@ public class CommandTreeTests
     }
 
     [Test]
+    public async Task WebResourceInit_HelpShowsRequiredValuesAndOptionalDefaults()
+    {
+        var tester = new CommandAppTester();
+        tester.Configure(CommandTree.Register);
+
+        var result = tester.Run("webresource", "init", "--help");
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(result.Output).Contains("<Directory>");
+        await Assert.That(result.Output).Contains("--name");
+        await Assert.That(result.Output).Contains("--global");
+        await Assert.That(result.Output).Contains("Required");
+        await Assert.That(result.Output).Contains("--template-version");
+        await Assert.That(result.Output).Contains("--solution");
+        await Assert.That(result.Output).Contains("--publisher-prefix");
+    }
+
+    [Test]
     [Arguments("push")]
     [Arguments("register")] // alias for push
     public async Task PluginSubCommand_HelpInvocation_Succeeds(string subCommand)

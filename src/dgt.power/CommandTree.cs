@@ -165,6 +165,11 @@ internal static class CommandTree
         config.AddBranch<WebResourceSettings>("webresource", webresource =>
         {
             webresource.SetDescription("Manages Dataverse webresources");
+            webresource.AddCommand<WebResourceInitCommand>("init")
+                .WithDescription("Creates a webresource project from the DIGITALL template")
+                .WithExample(
+                    "webresource", "init", "c:/TargetDir/contoso-webresources",
+                    "--name", "contoso-webresources", "--global", "Contoso");
             webresource.AddCommand<WebResourcePushCommand>("push")
                 .WithDescription("Pushes webresources from a directory or a single file")
                 .WithExample("webresource", "push", "c:/TargetDir/webresources", "--publisher-prefix", "sample")

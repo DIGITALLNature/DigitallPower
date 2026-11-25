@@ -121,6 +121,67 @@ public class SettingsParsingTests
     }
 
     [Test]
+    public async Task WebResourceInitSettings_ParsesRequiredAndOptionalOptions()
+    {
+        var result = Parse<WebResourceInitSettings>(
+            "./generated project",
+            "--name", "contoso-webresources",
+            "--global", "Contoso",
+            "--template-version", "release/v1.0",
+            "--solution", "ContosoCore",
+            "--publisher-prefix", "contoso",
+            "--connection", "stored-name");
+
+        var settings = (WebResourceInitSettings)result.Settings!;
+
+        await Assert.That(result.ExitCode).IsEqualTo(0);
+        await Assert.That(settings.Destination).IsEqualTo("./generated project");
+        await Assert.That(settings.Name).IsEqualTo("contoso-webresources");
+        await Assert.That(settings.Global).IsEqualTo("Contoso");
+        await Assert.That(settings.TemplateVersion).IsEqualTo("release/v1.0");
+        await Assert.That(settings.Solution).IsEqualTo("ContosoCore");
+        await Assert.That(settings.PublisherPrefix).IsEqualTo("contoso");
+        await Assert.That(settings.Connection).IsEqualTo("stored-name");
+    }
+
+    [Test]
+    public async Task WebResourceInitSettings_LeavesDeploymentDefaultsOptional()
+    {
+        var solutionOnly = (WebResourceInitSettings)Parse<WebResourceInitSettings>(
+            "target", "--name", "contoso-webresources", "--global", "Contoso", "--solution", "ContosoCore")
+            .Settings!;
+        var prefixOnly = (WebResourceInitSettings)Parse<WebResourceInitSettings>(
+            "target", "--name", "contoso-webresources", "--global", "Contoso", "--publisher-prefix", "contoso")
+            .Settings!;
+        var defaults = (WebResourceInitSettings)Parse<WebResourceInitSettings>(
+            "target", "--name", "contoso-webresources", "--global", "Contoso")
+            .Settings!;
+
+        await Assert.That(solutionOnly.Solution).IsEqualTo("ContosoCore");
+        await Assert.That(solutionOnly.PublisherPrefix).IsNull();
+        await Assert.That(prefixOnly.Solution).IsNull();
+        await Assert.That(prefixOnly.PublisherPrefix).IsEqualTo("contoso");
+        await Assert.That(defaults.Solution).IsNull();
+        await Assert.That(defaults.PublisherPrefix).IsNull();
+        await Assert.That(defaults.TemplateVersion).IsNull();
+    }
+
+    [Test]
+    public async Task WebResourceInitSettings_RejectsMissingRequiredArgumentsAndOptions()
+    {
+        var missingOptions = Parse<WebResourceInitSettings>("target");
+        var missingName = Parse<WebResourceInitSettings>("target", "--global", "Contoso");
+        var missingGlobal = Parse<WebResourceInitSettings>("target", "--name", "contoso-webresources");
+        var missingDirectory = Parse<WebResourceInitSettings>(
+            "--name", "contoso-webresources", "--global", "Contoso");
+
+        await Assert.That(missingOptions.ExitCode).IsNotEqualTo(0);
+        await Assert.That(missingName.ExitCode).IsNotEqualTo(0);
+        await Assert.That(missingGlobal.ExitCode).IsNotEqualTo(0);
+        await Assert.That(missingDirectory.ExitCode).IsNotEqualTo(0);
+    }
+
+    [Test]
     public async Task SolutionLintSettings_ParsesPositionalArgumentAndOptions()
     {
         var result = Parse<SolutionLintSettings>(
