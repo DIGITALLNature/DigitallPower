@@ -37,15 +37,15 @@ The open `DIGITALLNature/webresources-template#13` migration moves the global co
 
 ```text
 dgtp webresource init <directory> --name contoso-webresources --global Contoso
-dgtp webresource init <directory> --name contoso-webresources --global Contoso --solution ContosoCore --publisher-prefix contoso
+dgtp webresource init <directory> --name contoso-webresources --global Contoso --dgtp-connection dev --solution ContosoCore --publisher-prefix contoso
 dgtp webresource init <directory> --name contoso-webresources --global Contoso --template-version v1.0.0
 ```
 
 Add dedicated init settings under the existing webresource branch. Require both customization values rather than deriving one from the destination or another identifier. Restrict package names to a conservative, unscoped lowercase npm-compatible subset and globals to single ASCII JavaScript identifiers, excluding reserved words. Dotted namespace expressions are not supported initially.
 
-Accept `--solution` and `--publisher-prefix` as optional, independent deployment defaults. Apply only explicitly supplied values; never infer them from project identity. Reject explicitly empty or whitespace-only deployment values before acquisition. If either is omitted, generation and frontend builds still succeed, but deployment requires the missing value when the push script is invoked.
+The essential tier requires only project identity and produces a buildable starter. Accept `--dgtp-connection`, `--solution`, and `--publisher-prefix` as optional, independent local workflow defaults. Supplying all three configures the model-generation and local-deployment scripts, while installation, locally configured credentials, adapting example code and models, and running the scripts remain the developer's responsibility. Apply only explicitly supplied values; never infer them from project identity. Reject explicitly empty or whitespace-only values before acquisition. If any is omitted, generation and frontend builds still succeed, but each script requires its missing values when invoked.
 
-Connection names belong to script execution rather than scaffolding. Generated scripts take an explicit connection selection per invocation instead of retaining `sample-app` or changing the globally selected connection. Inherited dgtp connection flags must not be interpreted as values to embed in generated files, and connection strings or credentials must never be copied into output.
+`--dgtp-connection` supplies a shared named connection default to both generated scripts; explicit script arguments override it. The name is project configuration and may be shared, but each developer must configure that connection locally. The inherited `--connection` option remains invocation-only and does not populate this default; explain the distinction in help and documentation. Initialization must not resolve, create, select, or verify a connection. Connection strings and credentials must never be copied into output.
 
 No prompting is needed: incomplete input fails equally in interactive and non-interactive use. The command derives from `PowerCommand<TSettings>` and requests telemetry/console and acquisition collaborators, but no `IDataverseConnection`. Constructors perform no I/O. Register it through `CommandTree.Register` so runtime and completion share the metadata.
 
@@ -71,10 +71,11 @@ Maintain a small marker-to-value set in dgtp:
 |---|---|
 | `__DGTP_PROJECT_NAME__` | Required `--name` |
 | `__DGTP_GLOBAL_NAME__` | Required `--global` |
+| `__DGTP_CONNECTION_NAME__` | Optional `--dgtp-connection`, otherwise an empty default |
 | `__DGTP_SOLUTION__` | Optional `--solution`, otherwise an empty default |
 | `__DGTP_PUBLISHER_PREFIX__` | Optional `--publisher-prefix`, otherwise an empty default |
 
-All four markers must occur in the template even though the last two values are optional. An empty replacement leaves the generated script responsible for requiring the missing deployment value at execution time.
+All five markers must occur in the template even though the last three values are optional. An empty replacement leaves each generated script responsible for requiring its missing values at execution time. Template revisions lacking the connection marker are incompatible with this convention.
 
 Scan extracted regular UTF-8 text files, including hidden files, rather than locating specific configuration filenames. Leave binary and unsupported-encoding files untouched. Do not execute hooks or introduce a template manifest, bundler adapter, shared project-settings file, or version registry.
 
@@ -87,7 +88,7 @@ Do not impose exact occurrence counts or require particular file locations. Repl
 
 Markers have a stable insertion convention, not arbitrary executable semantics. The template places configuration values in documented string-literal positions; escape replacements for the text format and documented quoting convention, including PowerShell and YAML, rather than interpolating raw command expressions. Input validation and safe insertion are separate from the two marker checks. Prevent recursive marker expansion.
 
-The template owns its build scripts, tool pins, disabled CI examples, and scaffold-ready onboarding. It must not claim that generated projects belong to the template repository; provenance links and license attribution remain legitimate. dgtp does not patch particular bundler files, rename provider-specific pipelines, rewrite dependency versions, or change lockfiles. The template's README documents supplied deployment defaults, execution-time connections, missing deployment values, model filters, and deliberate CI enablement. No omitted value falls back to `WebResources`, `sample-app`, or a sample prefix.
+The template owns its build scripts, tool pins, disabled CI examples, and scaffold-ready onboarding. It must not claim that generated projects belong to the template repository; provenance links and license attribution remain legitimate. dgtp does not patch particular bundler files, rename provider-specific pipelines, rewrite dependency versions, or change lockfiles. The template's README documents the two setup tiers, supplied local workflow defaults, execution-time overrides, local connection prerequisites, model filters, and deliberate CI enablement. No omitted value falls back to `WebResources`, `sample-app`, or a sample prefix.
 
 Coordinate new or changed reserved markers and their insertion conventions with dgtp support before adopting them on `main`. Ordinary source, tooling, layout, and dependency changes need no dgtp update if the marker convention remains intact. A separately reviewed upstream preparation must first add the markers, correct old commands/options, and provide safe CI/onboarding defaults. Existing version-2 model configuration requires no unrelated redesign.
 
@@ -124,11 +125,11 @@ Use the existing command result/exit-code behavior. Escape all user-controlled v
 
 Use injected HTTP behavior and small in-memory archive fixtures for `main`/tag/SHA resolution, acquisition errors, extraction, and customization tests. Exercise real temporary filesystem publication for destination protection and cleanup. Fixtures are test inputs, not a production bundled template.
 
-Extend CLI tests for the new settings, help, required options, template-version parsing, optional deployment defaults, and shared command registration. Test both supplied, either omitted, and both omitted deployment defaults, including escaped values, script prerequisite validation before any dgtp invocation, and absence of embedded connection credentials. Assert that success output points to the generated README. Add a no-Dataverse command test and verify no child process is started.
+Extend CLI tests for the new settings, help, required options, template-version parsing, optional local workflow defaults, and shared command registration. Test all supplied and independently omitted defaults, including safely escaped connection names, script overrides and prerequisite validation before any dgtp invocation, the distinction from inherited connection flags, and absence of embedded connection credentials. Assert that success output points to the generated README. Add a no-Dataverse command test and verify no child process is started.
 
 Add fixtures with the same markers in differently named Webpack/Rolldown configuration files and in multiple configuration/documentation locations. Verify those succeed without filename adapters, while missing required markers and unresolved unknown markers fail. Verify ordinary TODOs remain and omitted optional values do not leave markers behind.
 
-For initial feature acceptance and changes to the marker convention, perform a separate real-template check: scaffold representative custom names into a path containing spaces, record the downloaded commit, install with the frozen lockfile, run the production build, and inspect the sample bundles for the requested global. Cover projects with and without deployment defaults; verify consistent substitution, missing-value checks without Dataverse access, the success hint, tool-manifest/script compatibility, and disabled CI onboarding. Template maintainers should keep checking their own changes, but dgtp does not approve each template commit or release. Document the acceptance procedure rather than adding network or frontend installation to every .NET build/test.
+For initial feature acceptance and changes to the marker convention, perform a separate real-template check: scaffold representative custom names into a path containing spaces, record the downloaded commit, install with the frozen lockfile, run the production build, and inspect the sample bundles for the requested global. Cover projects with and without local workflow defaults; verify consistent substitution, script overrides, missing-value checks without Dataverse access, the success hint, tool-manifest/script compatibility, and disabled CI onboarding. Template maintainers should keep checking their own changes, but dgtp does not approve each template commit or release. Document the acceptance procedure rather than adding network or frontend installation to every .NET build/test.
 
 ## Risks / Trade-offs
 
