@@ -32,11 +32,14 @@ not require a dgtp filename adapter.
    `pnpm install --frozen-lockfile` and `pnpm run build:prod`; verify both builds succeed, the
    generated bundles expose the selected global, and the dependency lockfile is unchanged.
 3. Check that the generated README explains the remaining model, connection, deployment, and CI
-   setup. Verify both scripts use the shared connection default and allow an execution-time override;
-   verify missing required script values fail before any Dataverse operation. Check that the scripts
-   use the pinned dgtp tooling and scaffolding does not select or persist a connection. Confirm
-   automatic pipeline triggers are disabled and the README warns that a manual run on `main`
-   attempts deployment.
+   setup. Verify omitted connection, solution, and publisher-prefix values become `REPLACE_ME` in
+   generated files, including scripts and the pipeline; supplied values must remain intact. Users
+   must replace or override placeholders before running scripts or pipelines: scripts may pass
+   `REPLACE_ME` to dgtp. Verify both scripts use the shared connection default and allow an
+   execution-time override. Use a fake dgtp invocation to check placeholder forwarding and explicit
+   empty-argument validation without contacting Dataverse. Check that the scripts use the pinned
+   dgtp tooling and scaffolding does not select or persist a connection. Confirm automatic pipeline
+   triggers are disabled and the README warns that a manual run on `main` attempts deployment.
 4. Repeat initialization with `--template-version <resolved-commit-sha>` to verify revision
    reproducibility. This check does not create a dgtp release pin and does not require template
    tags or GitHub Releases.

@@ -109,7 +109,7 @@ public class WebResourceInitCommandTests : CommandTestsBase<WebResourceInitComma
     }
 
     [Test]
-    [Arguments(null, "")]
+    [Arguments(null, "REPLACE_ME")]
     [Arguments("shared-dev", "shared-dev")]
     public async Task Execute_UsesOnlyTheExplicitDgtpConnectionDefault(
         string? dgtpConnection, string expected)
@@ -133,7 +133,7 @@ public class WebResourceInitCommandTests : CommandTestsBase<WebResourceInitComma
 
             await Assert.That(success).IsTrue();
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(destination, "deploy.ps1")))
-                .IsEqualTo($"'{expected}' '' ''");
+                .IsEqualTo($"'{expected}' 'REPLACE_ME' 'REPLACE_ME'");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(destination, "README.md")))
                 .DoesNotContain("secret-connection-string");
         }

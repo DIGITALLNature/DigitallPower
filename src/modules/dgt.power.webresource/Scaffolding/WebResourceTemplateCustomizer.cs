@@ -9,6 +9,7 @@ namespace dgt.power.webresource.Scaffolding;
 
 internal static partial class WebResourceTemplateCustomizer
 {
+    private const string UnspecifiedValue = "REPLACE_ME";
     private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
     private static readonly HashSet<string> JavaScriptExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -25,9 +26,9 @@ internal static partial class WebResourceTemplateCustomizer
         {
             ["__DGTP_PROJECT_NAME__"] = values => values.Name,
             ["__DGTP_GLOBAL_NAME__"] = values => values.Global,
-            ["__DGTP_CONNECTION_NAME__"] = values => values.DgtpConnection ?? string.Empty,
-            ["__DGTP_SOLUTION__"] = values => values.Solution ?? string.Empty,
-            ["__DGTP_PUBLISHER_PREFIX__"] = values => values.PublisherPrefix ?? string.Empty
+            ["__DGTP_CONNECTION_NAME__"] = values => values.DgtpConnection ?? UnspecifiedValue,
+            ["__DGTP_SOLUTION__"] = values => values.Solution ?? UnspecifiedValue,
+            ["__DGTP_PUBLISHER_PREFIX__"] = values => values.PublisherPrefix ?? UnspecifiedValue
         };
 
     public static Task CustomizeAsync(

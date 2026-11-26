@@ -59,8 +59,10 @@ dgtp webresource init ./contoso-webresources \
 
 These independent values are defaults in the relevant generated scripts and examples; they are not
 inferred from the package or global name. Solution and publisher prefix may contain letters, digits,
-periods, underscores, and hyphens. If a value is omitted, no sample target is substituted: provide
-it when invoking the relevant script. Script arguments can override any default.
+periods, underscores, and hyphens. Each omitted value becomes `REPLACE_ME` in the generated files.
+Replace it in the project or override it with script arguments before running the relevant script;
+configure pipeline values before running the pipeline. Scripts can pass `REPLACE_ME` to dgtp if it
+is not replaced.
 
 `--dgtp-connection` sets the shared connection name used by generated scripts; the inherited
 `--connection` applies only to the current dgtp invocation and does not set that default.

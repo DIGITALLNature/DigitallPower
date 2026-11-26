@@ -75,7 +75,7 @@ public class WebResourceTemplateCustomizerTests
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, configFile)))
                 .IsEqualTo("global: 'Contoso';");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "setup.md")))
-                .IsEqualTo("  ");
+                .IsEqualTo("REPLACE_ME REPLACE_ME REPLACE_ME");
         });
     }
 
@@ -169,13 +169,13 @@ public class WebResourceTemplateCustomizerTests
     }
 
     [Test]
-    [Arguments(null, null, null, "'' '' ''")]
-    [Arguments("dev", null, null, "'dev' '' ''")]
-    [Arguments(null, "solution", null, "'' 'solution' ''")]
-    [Arguments(null, null, "prefix", "'' '' 'prefix'")]
-    [Arguments("dev", "solution", null, "'dev' 'solution' ''")]
-    [Arguments("dev", null, "prefix", "'dev' '' 'prefix'")]
-    [Arguments(null, "solution", "prefix", "'' 'solution' 'prefix'")]
+    [Arguments(null, null, null, "'REPLACE_ME' 'REPLACE_ME' 'REPLACE_ME'")]
+    [Arguments("dev", null, null, "'dev' 'REPLACE_ME' 'REPLACE_ME'")]
+    [Arguments(null, "solution", null, "'REPLACE_ME' 'solution' 'REPLACE_ME'")]
+    [Arguments(null, null, "prefix", "'REPLACE_ME' 'REPLACE_ME' 'prefix'")]
+    [Arguments("dev", "solution", null, "'dev' 'solution' 'REPLACE_ME'")]
+    [Arguments("dev", null, "prefix", "'dev' 'REPLACE_ME' 'prefix'")]
+    [Arguments(null, "solution", "prefix", "'REPLACE_ME' 'solution' 'prefix'")]
     [Arguments("dev", "solution", "prefix", "'dev' 'solution' 'prefix'")]
     public async Task Customize_OptionalWorkflowDefaultsAreIndependent(
         string? connection, string? solution, string? prefix, string expected)
@@ -183,6 +183,8 @@ public class WebResourceTemplateCustomizerTests
         var archive = TemplateArchiveFixture.Create(
             new TemplateArchiveFixture.FixtureEntry("setup.txt", "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__"),
             new TemplateArchiveFixture.FixtureEntry("defaults.ps1",
+                "'__DGTP_CONNECTION_NAME__' '__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'"),
+            new TemplateArchiveFixture.FixtureEntry("pipeline.yml",
                 "'__DGTP_CONNECTION_NAME__' '__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'"));
 
         await WithExtractedArchive(archive, async directory =>
@@ -193,6 +195,8 @@ public class WebResourceTemplateCustomizerTests
                 CancellationToken.None);
 
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "defaults.ps1")))
+                .IsEqualTo(expected);
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "pipeline.yml")))
                 .IsEqualTo(expected);
         });
     }

@@ -61,7 +61,7 @@ The command MUST require an unscoped lowercase npm-compatible package name and a
 
 ### Requirement: Local workflow defaults are optional and explicit
 
-The command MUST accept `--dgtp-connection`, `--solution`, and `--publisher-prefix` independently as generated local workflow defaults. Scripts and examples MUST use supplied values consistently; omitted values MUST NOT retain samples. Scripts MUST require missing values before Dataverse operations and allow overrides. Omitting defaults MUST NOT prevent generation or frontend builds.
+The command MUST accept `--dgtp-connection`, `--solution`, and `--publisher-prefix` independently as generated local workflow defaults. Scripts and examples MUST use supplied values consistently; omitted values MUST become `REPLACE_ME` placeholders rather than sample targets. Scripts MUST allow overrides. Omitting defaults MUST NOT prevent generation or frontend builds.
 
 #### Scenario: All local workflow defaults are supplied
 
@@ -74,9 +74,10 @@ The command MUST accept `--dgtp-connection`, `--solution`, and `--publisher-pref
 #### Scenario: Some or all local workflow defaults are omitted
 
 - **WHEN** initialization omits any of the three local workflow defaults
-- **THEN** generation succeeds without using sample connection, solution, or publisher-prefix defaults
+- **THEN** generation succeeds with `REPLACE_ME` for each omitted connection, solution, or publisher-prefix value rather than a sample target
 - **AND** the project remains buildable without deployment setup
-- **AND** each generated script requires its missing values when invoked, before contacting Dataverse
+- **AND** users must replace or override placeholders before using the affected workflow
+- **AND** scripts do not treat the placeholder as a special validation error and can pass it to dgtp
 
 ### Requirement: Connection defaults are separate from invocation credentials
 
@@ -128,8 +129,8 @@ Before replacement, the command MUST check that every required marker configured
 #### Scenario: Local workflow defaults are not supplied
 
 - **WHEN** optional connection, solution, or publisher-prefix values are omitted
-- **THEN** their recognized markers are replaced with empty defaults rather than left unresolved
-- **AND** generated scripts continue to require missing values at execution time
+- **THEN** their recognized markers are replaced with `REPLACE_ME` rather than left unresolved
+- **AND** explicitly supplied defaults are retained independently
 
 #### Scenario: Manual setup reminders remain
 
@@ -194,7 +195,7 @@ Initialization MUST NOT require Git, PAC, Node.js, pnpm, or a Dataverse connecti
 
 ### Requirement: Generated projects have actionable onboarding
 
-Successful initialization MUST report the destination and resolved commit, show install and build commands, and direct users to the generated `README.md`. That README MUST distinguish the essential starter from the local workflow configured with all three optional defaults and explain local prerequisites and optional CI setup. Deployment workflows MUST NOT run until explicitly configured and enabled.
+Successful initialization MUST report the destination and resolved commit, show install and build commands, and direct users to the generated `README.md`. That README MUST distinguish the essential starter from the local workflow configured with all three optional defaults and explain local prerequisites and optional CI setup. Automatic CI triggers MUST be disabled by default.
 
 #### Scenario: A project is generated successfully
 
@@ -202,6 +203,12 @@ Successful initialization MUST report the destination and resolved commit, show 
 - **THEN** output explains how to enter the project, install dependencies, and run its production build
 - **AND** output explicitly directs the user to the generated `README.md` for additional configuration and setup steps
 - **AND** that README documents supplied local workflow defaults, script overrides, local connection prerequisites, and remaining model-scope and CI setup without treating them as prerequisites for a frontend build
+
+#### Scenario: A user considers the optional pipeline
+
+- **WHEN** a user configures or manually runs the generated pipeline
+- **THEN** the README explains that automatic triggers are disabled by default
+- **AND** it warns that a manual run on `main` attempts deployment after a successful build, so the target must be configured and reviewed first
 
 #### Scenario: The prepared template is validated end to end
 
