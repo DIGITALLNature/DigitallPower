@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: DIGITALL Nature
 // SPDX-License-Identifier: MS-RL
 
-using System.Net;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using dgt.power.webresource.Scaffolding;
@@ -34,6 +34,38 @@ public class WebResourceTemplateDownloaderTests
         await Assert.That(requests[1].Url.AbsolutePath).EndsWith($"/zipball/{CommitSha}");
         await Assert.That(requests.All(request => !request.HasAuthorization)).IsTrue();
         await Assert.That(requests.All(request => request.HasUserAgent)).IsTrue();
+    }
+
+    [Test]
+    [Arguments(true)]
+    [Arguments(false)]
+    public async Task Download_ReportsReceivedBytesWithOptionalTotal(bool hasContentLength)
+    {
+        var updates = new List<WebResourceScaffoldingProgress>();
+        using var client = CreateClient(request =>
+        {
+            if (request.RequestUri!.AbsolutePath.EndsWith("/commits/main", StringComparison.Ordinal))
+            {
+                return JsonResponse(CommitResponse(CommitSha));
+            }
+
+            var response = BytesResponse(new byte[100_000]);
+            if (!hasContentLength)
+            {
+                response.Content.Headers.ContentLength = null;
+            }
+
+            return response;
+        });
+
+        await new WebResourceTemplateDownloader(client).DownloadAsync(null, CancellationToken.None, updates.Add);
+
+        await Assert.That(updates[0].CurrentStage).IsEqualTo(WebResourceScaffoldingProgress.Stage.Resolving);
+        var download = updates.Where(update => update.CurrentStage == WebResourceScaffoldingProgress.Stage.Downloading).ToList();
+        await Assert.That(download[0].BytesReceived).IsZero();
+        await Assert.That(download[^1].BytesReceived).IsEqualTo(100_000);
+        await Assert.That(download[^1].TotalBytes).IsEqualTo(hasContentLength ? 100_000L : null);
+        await Assert.That(download.Zip(download.Skip(1), (first, second) => first.BytesReceived <= second.BytesReceived).All(value => value)).IsTrue();
     }
 
     [Test]

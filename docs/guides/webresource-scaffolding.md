@@ -43,28 +43,34 @@ limit, or network error fails the command; it does not silently switch to anothe
 retry, or use a known compatible tag or SHA. GitHub network access is required at generation time;
 Git, GitHub Releases, PAC, Node.js, pnpm, and Dataverse credentials are not required to generate files.
 
-## Optional deployment defaults
+## Optional local workflow defaults
 
-Solution and publisher-prefix defaults can be supplied independently:
+The essential options above create a buildable starter. To configure both model-generation and
+local-deployment scripts, also supply a shared dgtp connection name, solution, and publisher prefix:
 
 ```shell
 dgtp webresource init ./contoso-webresources \
   --name contoso-webresources \
   --global Contoso \
+  --dgtp-connection dev \
   --solution ContosoCore \
   --publisher-prefix contoso
 ```
 
-These values are used only as defaults in generated deployment scripts and examples; they are not
-inferred from the package or global name. They may contain letters, digits, periods, underscores, and
-hyphens. If either value is omitted, no sample deployment target is substituted. The generated
-deployment script requires any missing value and a connection selection when the script is run.
-Scaffolding itself does not select or persist a Dataverse connection.
+These independent values are defaults in the relevant generated scripts and examples; they are not
+inferred from the package or global name. Solution and publisher prefix may contain letters, digits,
+periods, underscores, and hyphens. If a value is omitted, no sample target is substituted: provide
+it when invoking the relevant script. Script arguments can override any default.
+
+`--dgtp-connection` sets the shared connection name used by generated scripts; the inherited
+`--connection` applies only to the current dgtp invocation and does not set that default.
+Initialization neither checks nor creates the connection. Each developer must configure the named
+connection locally; no connection string or credentials are embedded in the project.
 
 Generation does not require deployment configuration. Install and build the frontend project with
-the commands printed by `dgtp`; additional model-generation, local deployment, and CI setup are
-described in the generated project `README.md`. Review and deliberately enable any deployment
-workflow before using it.
+the commands printed by `dgtp`; adapting models and example code, model-generation, local deployment,
+and optional CI setup are described in the generated project `README.md`. Review and configure
+the target before manually running a deployment workflow.
 
 ## Template compatibility errors
 

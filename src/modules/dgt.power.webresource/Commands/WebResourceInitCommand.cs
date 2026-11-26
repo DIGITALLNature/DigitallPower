@@ -27,24 +27,63 @@ public sealed class WebResourceInitCommand(
 
         try
         {
-            var commitSha = await new WebResourceProjectScaffolder(httpClient).CreateAsync(
-                settings.Destination,
-                settings.TemplateVersion,
-                new WebResourceProjectValues(
-                    settings.Name,
-                    settings.Global,
-                    settings.Solution,
-                    settings.PublisherPrefix),
-                cancellationToken);
+            Task<string> CreateAsync(Action<WebResourceScaffoldingProgress> progress) =>
+                new WebResourceProjectScaffolder(httpClient).CreateAsync(
+                    settings.Destination,
+                    settings.TemplateVersion,
+                    new WebResourceProjectValues(
+                        settings.Name,
+                        settings.Global,
+                        settings.Solution,
+                        settings.PublisherPrefix,
+                        settings.DgtpConnection),
+                    cancellationToken,
+                    progress);
+
+            var commitSha = settings.NonInteractive || !Console.Profile.Capabilities.Interactive
+                ? await CreateWithoutAnimationAsync(CreateAsync)
+                : await Console.Progress()
+                .AutoClear(true)
+                .Columns(
+                    new TaskDescriptionColumn(),
+                    new ProgressBarColumn(),
+                    new PercentageColumn(),
+                    new SpinnerColumn())
+                .StartAsync(async context =>
+                {
+                    var stage = WebResourceScaffoldingProgress.Stage.Resolving;
+                    var task = context.AddTask("Resolving template...");
+                    task.IsIndeterminate = true;
+                    var sha = await CreateAsync(update =>
+                        {
+                            if (update.CurrentStage != stage)
+                            {
+                                task.StopTask();
+                                stage = update.CurrentStage;
+                                task = context.AddTask(StageDescription(stage));
+                            }
+
+                            task.IsIndeterminate = update.TotalBytes is null;
+                            if (update.TotalBytes is { } totalBytes)
+                            {
+                                task.MaxValue = totalBytes;
+                                task.Value = update.BytesReceived;
+                            }
+                        });
+                    task.StopTask();
+                    return sha;
+                });
 
             var destination = Markup.Escape(Path.GetFullPath(settings.Destination));
-            Console.MarkupLine($"[green]Webresource project created at[/] {destination}");
-            Console.MarkupLine($"Template commit: {commitSha}");
-            Console.MarkupLine("Next steps:");
-            Console.MarkupLine($"  cd \"{Markup.Escape(Path.GetFullPath(settings.Destination))}\"");
-            Console.MarkupLine("  pnpm install --frozen-lockfile");
-            Console.MarkupLine("  pnpm run build:prod");
-            Console.MarkupLine("See README.md in the generated project for additional configuration and setup steps.");
+            Console.MarkupLine($"[green]{Emoji.Known.CheckMark}[/] Webresource project created at {destination}");
+            Console.MarkupLine($"[grey]Template commit: {commitSha}[/]");
+            Console.WriteLine();
+            Console.MarkupLine($"{Emoji.Known.Rocket} Next steps:");
+            Console.MarkupLine($"   cd \"{Markup.Escape(Path.GetFullPath(settings.Destination))}\"");
+            Console.MarkupLine("   pnpm install --frozen-lockfile");
+            Console.MarkupLine("   pnpm run build:prod");
+            Console.WriteLine();
+            Console.MarkupLine($"{Emoji.Known.OpenBook} See README.md in the generated project for additional configuration and setup steps.");
             return true;
         }
         catch (WebResourceScaffoldingException exception)
@@ -58,4 +97,26 @@ public sealed class WebResourceInitCommand(
             return false;
         }
     }
+
+    private async Task<string> CreateWithoutAnimationAsync(
+        Func<Action<WebResourceScaffoldingProgress>, Task<string>> create)
+    {
+        WebResourceScaffoldingProgress.Stage? stage = null;
+        return await create(update =>
+        {
+            if (update.CurrentStage != stage)
+            {
+                stage = update.CurrentStage;
+                Console.WriteLine(StageDescription(stage.Value));
+            }
+        });
+    }
+
+    private static string StageDescription(WebResourceScaffoldingProgress.Stage stage) => stage switch
+    {
+        WebResourceScaffoldingProgress.Stage.Resolving => "Resolving template...",
+        WebResourceScaffoldingProgress.Stage.Downloading => "Downloading template...",
+        WebResourceScaffoldingProgress.Stage.Creating => "Creating project...",
+        _ => throw new InvalidOperationException("Unknown scaffolding stage.")
+    };
 }

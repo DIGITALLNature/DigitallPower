@@ -24,13 +24,16 @@ public class WebResourceProjectScaffolderTests
             }
 
             using var client = CreateTemplateClient();
+            var progress = new List<WebResourceScaffoldingProgress>();
             var sha = await new WebResourceProjectScaffolder(client).CreateAsync(
                 destination,
                 null,
                 Values,
-                CancellationToken.None);
+                CancellationToken.None,
+                progress.Add);
 
             await Assert.That(sha).IsEqualTo(CommitSha);
+            await Assert.That(progress[^1].CurrentStage).IsEqualTo(WebResourceScaffoldingProgress.Stage.Creating);
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(destination, "README.md")))
                 .IsEqualTo("contoso-webresources Contoso");
             await Assert.That(Directory.EnumerateFileSystemEntries(parent.FullName)
@@ -234,7 +237,7 @@ public class WebResourceProjectScaffolderTests
     {
         var templateArchive = archive ?? TemplateArchiveFixture.Create(
             new TemplateArchiveFixture.FixtureEntry("README.md", "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__"),
-            new TemplateArchiveFixture.FixtureEntry("deployment.ps1", "'__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'"));
+            new TemplateArchiveFixture.FixtureEntry("deployment.ps1", "'__DGTP_CONNECTION_NAME__' '__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'"));
 
         return new HttpClient(new StubHttpMessageHandler(respond ?? ((request, _) =>
             Task.FromResult(TemplateResponse(request, templateArchive)))));
@@ -254,7 +257,7 @@ public class WebResourceProjectScaffolderTests
         {
             Content = new ByteArrayContent(archive ?? TemplateArchiveFixture.Create(
                 new TemplateArchiveFixture.FixtureEntry("README.md", "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__"),
-                new TemplateArchiveFixture.FixtureEntry("deployment.ps1", "'__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'")))
+                new TemplateArchiveFixture.FixtureEntry("deployment.ps1", "'__DGTP_CONNECTION_NAME__' '__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'")))
         };
     }
 

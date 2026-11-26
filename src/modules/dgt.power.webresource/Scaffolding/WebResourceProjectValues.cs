@@ -7,4 +7,5 @@ internal sealed record WebResourceProjectValues(
     string Name,
     string Global,
     string? Solution,
-    string? PublisherPrefix);
+    string? PublisherPrefix,
+    string? DgtpConnection = null);

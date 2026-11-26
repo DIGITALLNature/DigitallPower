@@ -25,6 +25,7 @@ internal static partial class WebResourceTemplateCustomizer
         {
             ["__DGTP_PROJECT_NAME__"] = values => values.Name,
             ["__DGTP_GLOBAL_NAME__"] = values => values.Global,
+            ["__DGTP_CONNECTION_NAME__"] = values => values.DgtpConnection ?? string.Empty,
             ["__DGTP_SOLUTION__"] = values => values.Solution ?? string.Empty,
             ["__DGTP_PUBLISHER_PREFIX__"] = values => values.PublisherPrefix ?? string.Empty
         };

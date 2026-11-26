@@ -19,6 +19,7 @@ dgtp webresource init ./contoso-webresources \
   --name contoso-webresources \
   --global Contoso \
   --template-version v1.2.0 \
+  --dgtp-connection dev \
   --solution ContosoCore \
   --publisher-prefix contoso
 ```
@@ -31,14 +32,18 @@ dgtp webresource init ./contoso-webresources \
 | `--name` | Yes | Unscoped lowercase npm package name |
 | `--global` | Yes | Single JavaScript identifier exposed by generated bundles |
 | `--template-version` | No | Existing template tag or full commit SHA; defaults to current `main` |
+| `--dgtp-connection` | No | Shared dgtp connection name used as a default in generated local scripts |
 | `--solution` | No | Explicit default solution unique name for deployment scripts |
 | `--publisher-prefix` | No | Explicit default publisher prefix for deployment scripts |
 
-On success, the command reports the generated directory and exact template commit, then prints
+The command reports its progress while resolving, downloading, and creating the project. On success,
+it reports the generated directory and exact template commit, then prints
 commands to install dependencies and build the frontend. Follow the generated project's
-`README.md` for additional setup. The optional deployment values are independent; omitted values
-are not replaced with sample targets and must be provided when the deployment script runs.
-Connection selection also happens at script execution. See the
+`README.md` for additional setup. The required options create a buildable starter. Supplying all
+three local workflow defaults configures the generated scripts; developers still need to install
+dependencies, configure the named connection locally, and adapt their models and code. Omitted
+values must be supplied when the relevant script runs, and script arguments can override defaults.
+`--dgtp-connection` sets the shared project default; the inherited `--connection` does not. See the
 [webresource scaffolding guide](../../guides/webresource-scaffolding.md) for revision selection,
 destination restrictions, and recovery from template compatibility errors.
 

@@ -3,8 +3,8 @@
 
 using System.Net;
 using System.Net.Http.Headers;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
 namespace dgt.power.webresource.Scaffolding;
@@ -33,12 +33,14 @@ internal sealed partial class WebResourceTemplateDownloader
 
     public async Task<DownloadedWebResourceTemplate> DownloadAsync(
         string? templateVersion,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        Action<WebResourceScaffoldingProgress>? progress = null)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(_requestTimeout);
         try
         {
+            progress?.Invoke(new(WebResourceScaffoldingProgress.Stage.Resolving));
             string commitSha;
             if (templateVersion is null)
             {
@@ -53,7 +55,7 @@ internal sealed partial class WebResourceTemplateDownloader
                 commitSha = await ResolveTagAsync(templateVersion, timeout.Token);
             }
 
-            var archive = await DownloadArchiveAsync(commitSha, timeout.Token);
+            var archive = await DownloadArchiveAsync(commitSha, progress, timeout.Token);
             return new DownloadedWebResourceTemplate(commitSha, archive);
         }
         catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
@@ -147,8 +149,12 @@ internal sealed partial class WebResourceTemplateDownloader
             "or omit --template-version to use the current main branch.");
     }
 
-    private async Task<byte[]> DownloadArchiveAsync(string commitSha, CancellationToken cancellationToken)
+    private async Task<byte[]> DownloadArchiveAsync(
+        string commitSha,
+        Action<WebResourceScaffoldingProgress>? progress,
+        CancellationToken cancellationToken)
     {
+        progress?.Invoke(new(WebResourceScaffoldingProgress.Stage.Downloading));
         using var response = await SendAsync($"repos/{Repository}/zipball/{commitSha}", cancellationToken);
 
         EnsureSuccess(response, $"Could not download template commit {commitSha}.");
@@ -160,6 +166,8 @@ internal sealed partial class WebResourceTemplateDownloader
 
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
         await using var archive = new MemoryStream();
+        var totalBytes = response.Content.Headers.ContentLength is > 0 and var length ? length : (long?)null;
+        progress?.Invoke(new(WebResourceScaffoldingProgress.Stage.Downloading, 0, totalBytes));
         var buffer = new byte[81920];
         while (true)
         {
@@ -176,6 +184,10 @@ internal sealed partial class WebResourceTemplateDownloader
             }
 
             await archive.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
+            progress?.Invoke(new(
+                WebResourceScaffoldingProgress.Stage.Downloading,
+                archive.Length,
+                archive.Length <= totalBytes ? totalBytes : null));
         }
 
         return archive.ToArray();

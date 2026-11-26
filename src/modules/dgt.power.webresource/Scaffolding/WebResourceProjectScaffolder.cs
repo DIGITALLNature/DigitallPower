@@ -12,7 +12,8 @@ internal sealed class WebResourceProjectScaffolder(HttpClient httpClient)
         string destination,
         string? templateVersion,
         WebResourceProjectValues values,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        Action<WebResourceScaffoldingProgress>? progress = null)
     {
         var target = ValidateDestination(destination);
         var parent = Path.GetDirectoryName(target.Path)!;
@@ -24,7 +25,8 @@ internal sealed class WebResourceProjectScaffolder(HttpClient httpClient)
 
         try
         {
-            var downloaded = await _downloader.DownloadAsync(templateVersion, cancellationToken);
+            var downloaded = await _downloader.DownloadAsync(templateVersion, cancellationToken, progress);
+            progress?.Invoke(new(WebResourceScaffoldingProgress.Stage.Creating));
             Directory.CreateDirectory(parent);
             EnsureNoReparsePoints(target.Path);
             await using (var marker = new FileStream(

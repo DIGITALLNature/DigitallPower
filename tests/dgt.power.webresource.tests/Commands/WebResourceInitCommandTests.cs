@@ -8,6 +8,8 @@ using dgt.power.webresource.Commands;
 using dgt.power.webresource.Scaffolding;
 using dgt.power.webresource.tests.Scaffolding;
 using Microsoft.Extensions.DependencyInjection;
+using Spectre.Console;
+using Spectre.Console.Testing;
 
 namespace dgt.power.webresource.tests.Commands;
 
@@ -30,11 +32,63 @@ public class WebResourceInitCommandTests : CommandTestsBase<WebResourceInitComma
             await Assert.That(TestConsole.Output).Contains("pnpm install --frozen-lockfile");
             await Assert.That(TestConsole.Output).Contains("pnpm run build:prod");
             await Assert.That(TestConsole.Output).Contains("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            var output = TestConsole.Output.Replace("\r\n", "\n", StringComparison.Ordinal);
+            await Assert.That(output).Contains($"{Emoji.Known.CheckMark} Webresource project created at");
+            await Assert.That(output).Contains("\nTemplate commit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            await Assert.That(output).Contains($"\n\n{Emoji.Known.Rocket} Next steps:");
+            await Assert.That(output).Contains($"\n\n{Emoji.Known.OpenBook} See README.md");
         }
         finally
         {
             parent.Delete(recursive: true);
         }
+    }
+
+    [Test]
+    public async Task Execute_NonInteractiveShowsStagesWithoutAnimatedPercentages()
+    {
+        var parent = Directory.CreateTempSubdirectory();
+        try
+        {
+            var destination = Path.Combine(parent.FullName, "project");
+            using var client = CreateTemplateClient();
+            var settings = new WebResourceInitSettings
+            {
+                Destination = destination,
+                Name = "contoso-webresources",
+                Global = "Contoso",
+                NonInteractive = true
+            };
+
+            var success = Build(client).Execute(settings);
+
+            await Assert.That(success).IsTrue();
+            await Assert.That(TestConsole.Output).Contains("Resolving template...");
+            await Assert.That(TestConsole.Output).Contains("Downloading template...");
+            await Assert.That(TestConsole.Output).Contains("Creating project...");
+            await Assert.That(TestConsole.Output).DoesNotContain("0%");
+        }
+        finally
+        {
+            parent.Delete(recursive: true);
+        }
+    }
+
+    [Test]
+    public async Task Execute_InteractiveDisplaysProgressWhileWaiting()
+    {
+        TestConsole.Interactive();
+        using var client = CreateClient(async (_, cancellationToken) =>
+        {
+            await Task.Delay(250, cancellationToken);
+            return new HttpResponseMessage(HttpStatusCode.NotFound);
+        });
+
+        var success = Build(client).Execute(ValidSettings("generated"));
+
+        await Assert.That(success).IsFalse();
+        await Assert.That(TestConsole.Output).Contains("Resolving template...");
+        await Assert.That(TestConsole.Output).Contains("HTTP 404");
     }
 
     [Test]
@@ -52,6 +106,65 @@ public class WebResourceInitCommandTests : CommandTestsBase<WebResourceInitComma
         await Assert.That(success).IsFalse();
         await Assert.That(requestCount).IsZero();
         await Assert.That(TestConsole.Output).Contains("--global");
+    }
+
+    [Test]
+    [Arguments(null, "")]
+    [Arguments("shared-dev", "shared-dev")]
+    public async Task Execute_UsesOnlyTheExplicitDgtpConnectionDefault(
+        string? dgtpConnection, string expected)
+    {
+        var parent = Directory.CreateTempSubdirectory();
+        try
+        {
+            var destination = Path.Combine(parent.FullName, "project");
+            using var client = CreateTemplateClient();
+            var settings = new WebResourceInitSettings
+            {
+                Destination = destination,
+                Name = "contoso-webresources",
+                Global = "Contoso",
+                DgtpConnection = dgtpConnection,
+                Connection = "invocation-only",
+                ConnectionString = "secret-connection-string"
+            };
+
+            var success = Build(client).Execute(settings);
+
+            await Assert.That(success).IsTrue();
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(destination, "deploy.ps1")))
+                .IsEqualTo($"'{expected}' '' ''");
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(destination, "README.md")))
+                .DoesNotContain("secret-connection-string");
+        }
+        finally
+        {
+            parent.Delete(recursive: true);
+        }
+    }
+
+    [Test]
+    public async Task Execute_EmptyDgtpConnectionFailsBeforeTemplateAcquisition()
+    {
+        var requestCount = 0;
+        using var client = CreateClient((_, _) =>
+        {
+            requestCount++;
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+        });
+        var settings = new WebResourceInitSettings
+        {
+            Destination = "generated",
+            Name = "contoso-webresources",
+            Global = "Contoso",
+            DgtpConnection = " "
+        };
+
+        var success = Build(client).Execute(settings);
+
+        await Assert.That(success).IsFalse();
+        await Assert.That(requestCount).IsZero();
+        await Assert.That(TestConsole.Output).Contains("--dgtp-connection");
     }
 
     [Test]
@@ -96,10 +209,18 @@ public class WebResourceInitCommandTests : CommandTestsBase<WebResourceInitComma
             Task.FromResult(new HttpResponseMessage(HttpStatusCode.NotFound)));
         var context = Build(client);
 
-        var success = context.Execute(ValidSettings("generated"));
+        var success = context.Execute(new WebResourceInitSettings
+        {
+            Destination = "generated",
+            Name = "contoso-webresources",
+            Global = "Contoso",
+            NonInteractive = true
+        });
 
         await Assert.That(success).IsFalse();
         await Assert.That(TestConsole.Output).Contains("HTTP 404");
+        await Assert.That(TestConsole.Output).Contains("Resolving template...");
+        await Assert.That(TestConsole.Output).DoesNotContain("Creating project...");
     }
 
     [Test]
@@ -158,7 +279,7 @@ public class WebResourceInitCommandTests : CommandTestsBase<WebResourceInitComma
             new TemplateArchiveFixture.FixtureEntry("README.md", "Project `__DGTP_PROJECT_NAME__`"),
             new TemplateArchiveFixture.FixtureEntry("package.json", """{"name":"__DGTP_PROJECT_NAME__"}"""),
             new TemplateArchiveFixture.FixtureEntry("config/rollup.js", "'__DGTP_GLOBAL_NAME__'"),
-            new TemplateArchiveFixture.FixtureEntry("deploy.ps1", "'__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'"));
+            new TemplateArchiveFixture.FixtureEntry("deploy.ps1", "'__DGTP_CONNECTION_NAME__' '__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'"));
 
         return CreateClient((request, _) =>
         {

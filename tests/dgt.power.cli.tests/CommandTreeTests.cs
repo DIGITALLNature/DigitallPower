@@ -92,6 +92,7 @@ public class CommandTreeTests
         await Assert.That(result.Output).Contains("--global");
         await Assert.That(result.Output).Contains("Required");
         await Assert.That(result.Output).Contains("--template-version");
+        await Assert.That(result.Output).Contains("--dgtp-connection");
         await Assert.That(result.Output).Contains("--solution");
         await Assert.That(result.Output).Contains("--publisher-prefix");
     }

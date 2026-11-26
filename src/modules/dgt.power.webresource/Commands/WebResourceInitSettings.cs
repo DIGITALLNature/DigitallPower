@@ -36,6 +36,10 @@ public sealed partial class WebResourceInitSettings : WebResourceSettings
     [Description("Template tag or full commit SHA (default: current main)")]
     public string? TemplateVersion { get; init; }
 
+    [CommandOption("--dgtp-connection <Name>")]
+    [Description("Optional shared dgtp connection name for generated scripts (unlike --connection)")]
+    public string? DgtpConnection { get; init; }
+
     [CommandOption("--solution <UniqueName>")]
     [Description("Optional default Dataverse solution unique name for deployment scripts")]
     public string? Solution { get; init; }
@@ -76,6 +80,11 @@ public sealed partial class WebResourceInitSettings : WebResourceSettings
         if (TemplateVersion is not null && string.IsNullOrWhiteSpace(TemplateVersion))
         {
             return "--template-version must be a non-empty tag or full commit SHA.";
+        }
+
+        if (DgtpConnection is not null && string.IsNullOrWhiteSpace(DgtpConnection))
+        {
+            return "--dgtp-connection must be a non-empty connection name.";
         }
 
         if (Solution is not null && !DeploymentValueRegex().IsMatch(Solution))

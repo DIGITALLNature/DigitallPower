@@ -128,6 +128,7 @@ public class SettingsParsingTests
             "--name", "contoso-webresources",
             "--global", "Contoso",
             "--template-version", "release/v1.0",
+            "--dgtp-connection", "shared-dev",
             "--solution", "ContosoCore",
             "--publisher-prefix", "contoso",
             "--connection", "stored-name");
@@ -139,6 +140,7 @@ public class SettingsParsingTests
         await Assert.That(settings.Name).IsEqualTo("contoso-webresources");
         await Assert.That(settings.Global).IsEqualTo("Contoso");
         await Assert.That(settings.TemplateVersion).IsEqualTo("release/v1.0");
+        await Assert.That(settings.DgtpConnection).IsEqualTo("shared-dev");
         await Assert.That(settings.Solution).IsEqualTo("ContosoCore");
         await Assert.That(settings.PublisherPrefix).IsEqualTo("contoso");
         await Assert.That(settings.Connection).IsEqualTo("stored-name");
@@ -162,6 +164,7 @@ public class SettingsParsingTests
         await Assert.That(prefixOnly.Solution).IsNull();
         await Assert.That(prefixOnly.PublisherPrefix).IsEqualTo("contoso");
         await Assert.That(defaults.Solution).IsNull();
+        await Assert.That(defaults.DgtpConnection).IsNull();
         await Assert.That(defaults.PublisherPrefix).IsNull();
         await Assert.That(defaults.TemplateVersion).IsNull();
     }

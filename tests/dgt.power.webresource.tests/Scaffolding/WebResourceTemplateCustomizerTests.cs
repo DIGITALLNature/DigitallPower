@@ -22,7 +22,8 @@ public class WebResourceTemplateCustomizerTests
             new TemplateArchiveFixture.FixtureEntry("rolldown.config.js", "global: '__DGTP_GLOBAL_NAME__'; docs: '__DGTP_GLOBAL_NAME__';"),
             new TemplateArchiveFixture.FixtureEntry("README.md",
                 "Package `__DGTP_PROJECT_NAME__` for `__DGTP_GLOBAL_NAME__`; defaults `__DGTP_SOLUTION__` / `__DGTP_PUBLISHER_PREFIX__`.\nTODO: configure models manually."),
-            new TemplateArchiveFixture.FixtureEntry("scripts/push.ps1", "$solution = '__DGTP_SOLUTION__'; $prefix = '__DGTP_PUBLISHER_PREFIX__';"),
+            new TemplateArchiveFixture.FixtureEntry("scripts/push.ps1", "$connection = '__DGTP_CONNECTION_NAME__'; $solution = '__DGTP_SOLUTION__'; $prefix = '__DGTP_PUBLISHER_PREFIX__';"),
+            new TemplateArchiveFixture.FixtureEntry("scripts/model.ps1", "$connection = '__DGTP_CONNECTION_NAME__';"),
             new TemplateArchiveFixture.FixtureEntry("LICENSE", license),
             new TemplateArchiveFixture.FixtureEntry("pnpm-lock.yaml", lockfile),
             new TemplateArchiveFixture.FixtureEntry("assets/icon.bin", binary));
@@ -31,7 +32,7 @@ public class WebResourceTemplateCustomizerTests
         {
             await WebResourceTemplateCustomizer.CustomizeAsync(
                 directory,
-                new WebResourceProjectValues("contoso-webresources", "Contoso", "ContosoCore", "contoso"),
+                new WebResourceProjectValues("contoso-webresources", "Contoso", "ContosoCore", "contoso", "dev"),
                 CancellationToken.None);
 
             var package = await File.ReadAllTextAsync(Path.Combine(directory, "package.json"));
@@ -44,7 +45,9 @@ public class WebResourceTemplateCustomizerTests
             await Assert.That(readme).Contains("Package `contoso-webresources` for `Contoso`");
             await Assert.That(readme).Contains("defaults `ContosoCore` / `contoso`");
             await Assert.That(readme).Contains("TODO: configure models manually.");
-            await Assert.That(scripts).IsEqualTo("$solution = 'ContosoCore'; $prefix = 'contoso';");
+            await Assert.That(scripts).IsEqualTo("$connection = 'dev'; $solution = 'ContosoCore'; $prefix = 'contoso';");
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "scripts", "model.ps1")))
+                .IsEqualTo("$connection = 'dev';");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "LICENSE"))).IsEqualTo(license);
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "pnpm-lock.yaml"))).IsEqualTo(lockfile);
             await Assert.That(await File.ReadAllBytesAsync(Path.Combine(directory, "assets", "icon.bin")))
@@ -60,7 +63,7 @@ public class WebResourceTemplateCustomizerTests
         var archive = TemplateArchiveFixture.Create(
             new TemplateArchiveFixture.FixtureEntry(configFile, "global: '__DGTP_GLOBAL_NAME__';"),
             new TemplateArchiveFixture.FixtureEntry("package.json", "__DGTP_PROJECT_NAME__"),
-            new TemplateArchiveFixture.FixtureEntry("setup.md", "__DGTP_SOLUTION__ __DGTP_PUBLISHER_PREFIX__"));
+            new TemplateArchiveFixture.FixtureEntry("setup.md", "__DGTP_CONNECTION_NAME__ __DGTP_SOLUTION__ __DGTP_PUBLISHER_PREFIX__"));
 
         await WithExtractedArchive(archive, async directory =>
         {
@@ -72,14 +75,14 @@ public class WebResourceTemplateCustomizerTests
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, configFile)))
                 .IsEqualTo("global: 'Contoso';");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "setup.md")))
-                .IsEqualTo(" ");
+                .IsEqualTo("  ");
         });
     }
 
     [Test]
     public async Task Customize_ReportsMissingRequiredMarkerBeforeWriting()
     {
-        const string original = "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__ __DGTP_SOLUTION__";
+        const string original = "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__ __DGTP_SOLUTION__ __DGTP_PUBLISHER_PREFIX__";
         var archive = TemplateArchiveFixture.Create(new TemplateArchiveFixture.FixtureEntry("setup.txt", original));
 
         await WithExtractedArchive(archive, async directory =>
@@ -91,7 +94,7 @@ public class WebResourceTemplateCustomizerTests
                         CancellationToken.None))
                 .Throws<WebResourceScaffoldingException>();
 
-            await Assert.That(exception!.Message).Contains("__DGTP_PUBLISHER_PREFIX__");
+            await Assert.That(exception!.Message).Contains("__DGTP_CONNECTION_NAME__");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "setup.txt"))).IsEqualTo(original);
         });
     }
@@ -100,7 +103,7 @@ public class WebResourceTemplateCustomizerTests
     public async Task Customize_ReportsUnknownReservedMarkersBeforeWriting()
     {
         const string original =
-            "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__ __DGTP_SOLUTION__ __DGTP_PUBLISHER_PREFIX__ __DGTP_FUTURE__";
+            "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__ __DGTP_CONNECTION_NAME__ __DGTP_SOLUTION__ __DGTP_PUBLISHER_PREFIX__ __DGTP_FUTURE__";
         var archive = TemplateArchiveFixture.Create(new TemplateArchiveFixture.FixtureEntry("setup.txt", original));
 
         await WithExtractedArchive(archive, async directory =>
@@ -122,7 +125,7 @@ public class WebResourceTemplateCustomizerTests
     {
         var archive = TemplateArchiveFixture.Create(
             new TemplateArchiveFixture.FixtureEntry("package.json", "\"__DGTP_PROJECT_NAME__\""),
-            new TemplateArchiveFixture.FixtureEntry("script.ps1", "'__DGTP_SOLUTION__'"),
+            new TemplateArchiveFixture.FixtureEntry("script.ps1", "'__DGTP_SOLUTION__' '__DGTP_CONNECTION_NAME__'"),
             new TemplateArchiveFixture.FixtureEntry("pipeline.yml", "\"__DGTP_PUBLISHER_PREFIX__\""),
             new TemplateArchiveFixture.FixtureEntry("README.md", "`__DGTP_SOLUTION__` __DGTP_GLOBAL_NAME__"));
 
@@ -130,11 +133,11 @@ public class WebResourceTemplateCustomizerTests
         {
             await WebResourceTemplateCustomizer.CustomizeAsync(
                 directory,
-                new WebResourceProjectValues("contoso-webresources", "Contoso", "O'Reilly \"Core\"", "Contoso \"Partners\""),
+                new WebResourceProjectValues("contoso-webresources", "Contoso", "O'Reilly \"Core\"", "Contoso \"Partners\"", "O'Reilly Dev"),
                 CancellationToken.None);
 
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "script.ps1")))
-                .IsEqualTo("'O''Reilly \"Core\"'");
+                .IsEqualTo("'O''Reilly \"Core\"' 'O''Reilly Dev'");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "pipeline.yml")))
                 .IsEqualTo("\"Contoso \\u0022Partners\\u0022\"");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "README.md")))
@@ -148,7 +151,7 @@ public class WebResourceTemplateCustomizerTests
         var archive = TemplateArchiveFixture.Create(
             new TemplateArchiveFixture.FixtureEntry("package.json", "__DGTP_PROJECT_NAME__"),
             new TemplateArchiveFixture.FixtureEntry("setup.md",
-                "__DGTP_GLOBAL_NAME__ __DGTP_SOLUTION__ __DGTP_PUBLISHER_PREFIX__"));
+                "__DGTP_GLOBAL_NAME__ __DGTP_CONNECTION_NAME__ __DGTP_SOLUTION__ __DGTP_PUBLISHER_PREFIX__"));
 
         await WithExtractedArchive(archive, async directory =>
         {
@@ -162,6 +165,35 @@ public class WebResourceTemplateCustomizerTests
             await Assert.That(exception!.Message).Contains("cannot be safely inserted");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "package.json")))
                 .IsEqualTo("__DGTP_PROJECT_NAME__");
+        });
+    }
+
+    [Test]
+    [Arguments(null, null, null, "'' '' ''")]
+    [Arguments("dev", null, null, "'dev' '' ''")]
+    [Arguments(null, "solution", null, "'' 'solution' ''")]
+    [Arguments(null, null, "prefix", "'' '' 'prefix'")]
+    [Arguments("dev", "solution", null, "'dev' 'solution' ''")]
+    [Arguments("dev", null, "prefix", "'dev' '' 'prefix'")]
+    [Arguments(null, "solution", "prefix", "'' 'solution' 'prefix'")]
+    [Arguments("dev", "solution", "prefix", "'dev' 'solution' 'prefix'")]
+    public async Task Customize_OptionalWorkflowDefaultsAreIndependent(
+        string? connection, string? solution, string? prefix, string expected)
+    {
+        var archive = TemplateArchiveFixture.Create(
+            new TemplateArchiveFixture.FixtureEntry("setup.txt", "__DGTP_PROJECT_NAME__ __DGTP_GLOBAL_NAME__"),
+            new TemplateArchiveFixture.FixtureEntry("defaults.ps1",
+                "'__DGTP_CONNECTION_NAME__' '__DGTP_SOLUTION__' '__DGTP_PUBLISHER_PREFIX__'"));
+
+        await WithExtractedArchive(archive, async directory =>
+        {
+            await WebResourceTemplateCustomizer.CustomizeAsync(
+                directory,
+                new WebResourceProjectValues("project", "Global", solution, prefix, connection),
+                CancellationToken.None);
+
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(directory, "defaults.ps1")))
+                .IsEqualTo(expected);
         });
     }
 
