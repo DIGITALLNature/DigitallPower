@@ -237,13 +237,15 @@ public class WebResourceInitCommandTests : CommandTestsBase<WebResourceInitComma
             });
             using var cancellation = new CancellationTokenSource();
             await cancellation.CancelAsync();
+            var token = cancellation.Token;
+            var scaffolder = new WebResourceProjectScaffolder(client);
 
             await Assert.That(async () =>
-                    await new WebResourceProjectScaffolder(client).CreateAsync(
+                    await scaffolder.CreateAsync(
                         destination,
                         null,
                         new WebResourceProjectValues("contoso-webresources", "Contoso", null, null),
-                        cancellation.Token))
+                        token))
                 .Throws<OperationCanceledException>();
 
             await Assert.That(Directory.Exists(destination)).IsFalse();

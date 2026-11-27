@@ -14,15 +14,15 @@ internal sealed partial class WebResourceTemplateDownloader
     private const string Repository = "DIGITALLNature/webresources-template";
     private const int MaximumArchiveBytes = 20 * 1024 * 1024;
     private const int MaximumAnnotatedTagDepth = 8;
-    private static readonly TimeSpan DefaultRequestTimeout = TimeSpan.FromSeconds(30);
-    private static readonly Uri ApiBaseUri = new("https://api.github.com/");
+    private static readonly TimeSpan s_defaultRequestTimeout = TimeSpan.FromSeconds(30);
+    private static readonly Uri s_apiBaseUri = new("https://api.github.com/");
     private readonly HttpClient _httpClient;
     private readonly TimeSpan _requestTimeout;
 
     public WebResourceTemplateDownloader(HttpClient httpClient, TimeSpan? requestTimeout = null)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
-        _requestTimeout = requestTimeout ?? DefaultRequestTimeout;
+        _requestTimeout = requestTimeout ?? s_defaultRequestTimeout;
         if (_requestTimeout <= TimeSpan.Zero)
         {
             throw new ArgumentOutOfRangeException(nameof(requestTimeout), "Request timeout must be positive.");
@@ -197,28 +197,26 @@ internal sealed partial class WebResourceTemplateDownloader
         string relativeUri,
         CancellationToken cancellationToken)
     {
-        using (var request = CreateApiRequest(relativeUri))
+        using var request = CreateApiRequest(relativeUri);
+        try
         {
-            try
-            {
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
-                request.Headers.UserAgent.ParseAdd("dgtp");
-                return await _httpClient.SendAsync(
-                    request,
-                    HttpCompletionOption.ResponseHeadersRead,
-                    cancellationToken);
-            }
-            catch (HttpRequestException exception)
-            {
-                throw new WebResourceScaffoldingException(
-                    "Could not reach GitHub to download the webresource template. Check network access and retry.",
-                    exception);
-            }
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+            request.Headers.UserAgent.ParseAdd("dgtp");
+            return await _httpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead,
+                cancellationToken);
+        }
+        catch (HttpRequestException exception)
+        {
+            throw new WebResourceScaffoldingException(
+                "Could not reach GitHub to download the webresource template. Check network access and retry.",
+                exception);
         }
     }
 
     private static HttpRequestMessage CreateApiRequest(string relativeUri) =>
-        new(HttpMethod.Get, new Uri(ApiBaseUri, relativeUri));
+        new(HttpMethod.Get, new Uri(s_apiBaseUri, relativeUri));
 
     private static async Task<T?> ReadJsonAsync<T>(
         HttpResponseMessage response,
@@ -259,6 +257,9 @@ internal sealed partial class WebResourceTemplateDownloader
         return type;
     }
 
+    // These response types are instantiated and populated by System.Text.Json.
+    // ReSharper disable ClassNeverInstantiated.Local
+    // ReSharper disable UnusedAutoPropertyAccessor.Local
     private sealed class GitHubCommitResponse
     {
         [JsonPropertyName("sha")]
@@ -279,6 +280,8 @@ internal sealed partial class WebResourceTemplateDownloader
         [JsonPropertyName("sha")]
         public string? Sha { get; init; }
     }
+    // ReSharper restore UnusedAutoPropertyAccessor.Local
+    // ReSharper restore ClassNeverInstantiated.Local
 
     private static void EnsureSuccess(HttpResponseMessage response, string message)
     {

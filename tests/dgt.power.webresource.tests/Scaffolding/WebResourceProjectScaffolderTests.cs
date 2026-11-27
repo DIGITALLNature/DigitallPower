@@ -56,9 +56,10 @@ public class WebResourceProjectScaffolderTests
             const string hiddenFile = ".user-config";
             await File.WriteAllTextAsync(Path.Combine(destination.FullName, hiddenFile), "preserve");
             using var client = CreateTemplateClient();
+            var scaffolder = new WebResourceProjectScaffolder(client);
 
             var exception = await Assert.That(async () =>
-                    await new WebResourceProjectScaffolder(client).CreateAsync(
+                    await scaffolder.CreateAsync(
                         destination.FullName,
                         null,
                         Values,
@@ -204,9 +205,10 @@ public class WebResourceProjectScaffolderTests
 
                 return Task.FromResult(TemplateResponse(request));
             });
+            var scaffolder = new WebResourceProjectScaffolder(client);
 
             var failure = await Assert.That(async () =>
-                    await new WebResourceProjectScaffolder(client).CreateAsync(
+                    await scaffolder.CreateAsync(
                         destination,
                         null,
                         Values,

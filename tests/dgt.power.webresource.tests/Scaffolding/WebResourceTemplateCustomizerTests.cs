@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: DIGITALL Nature
 // SPDX-License-Identifier: MS-RL
 
-using System.Text;
 using dgt.power.webresource.Scaffolding;
 
 namespace dgt.power.webresource.tests.Scaffolding;
@@ -11,10 +10,7 @@ public class WebResourceTemplateCustomizerTests
     [Test]
     public async Task Customize_ReplacesAllLocationsAndPreservesOtherContent()
     {
-        var binary = new byte[] { 0 }
-            .Concat(Encoding.UTF8.GetBytes("__DGTP_GLOBAL_NAME__"))
-            .Append((byte)255)
-            .ToArray();
+        byte[] binary = [0, .. "__DGTP_GLOBAL_NAME__"u8, 255];
         const string lockfile = "lockfile: unchanged\n";
         const string license = "template license\n";
         var archive = TemplateArchiveFixture.Create(

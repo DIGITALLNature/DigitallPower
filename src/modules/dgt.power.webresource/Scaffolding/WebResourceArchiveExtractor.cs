@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: DIGITALL Nature
 // SPDX-License-Identifier: MS-RL
 
-using System.IO.Compression;
 using System.Collections.ObjectModel;
+using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -17,7 +17,7 @@ internal sealed partial class WebResourceArchiveExtractor
     private const int UnixDirectory = 0x4000;
     private const int UnixSymbolicLink = 0xA000;
     private const string InvalidPathCharacters = "<>:\"|?*";
-    private static readonly HashSet<string> ReservedDeviceNames = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> s_reservedDeviceNames = new(StringComparer.OrdinalIgnoreCase)
     {
         "CON",
         "PRN",
@@ -52,8 +52,8 @@ internal sealed partial class WebResourceArchiveExtractor
         string stagingDirectory,
         CancellationToken cancellationToken)
     {
-        using var archiveStream = new MemoryStream(archiveBytes, writable: false);
-        using var archive = new ZipArchive(archiveStream, ZipArchiveMode.Read);
+        await using var archiveStream = new MemoryStream(archiveBytes, writable: false);
+        await using var archive = new ZipArchive(archiveStream, ZipArchiveMode.Read);
         if (archive.Entries.Count is 0 || archive.Entries.Count > _maximumEntryCount)
         {
             throw new WebResourceScaffoldingException(
@@ -239,7 +239,7 @@ internal sealed partial class WebResourceArchiveExtractor
     private static bool IsReservedDeviceName(string segment)
     {
         var deviceName = segment.Split('.')[0];
-        return ReservedDeviceNames.Contains(deviceName) ||
+        return s_reservedDeviceNames.Contains(deviceName) ||
                ReservedDeviceNumberRegex().IsMatch(deviceName);
     }
 

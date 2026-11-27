@@ -11,7 +11,7 @@ namespace dgt.power.webresource.Commands;
 
 public sealed partial class WebResourceInitSettings : WebResourceSettings
 {
-    private static readonly HashSet<string> ReservedJavaScriptWords = new(StringComparer.Ordinal)
+    private static readonly HashSet<string> s_reservedJavaScriptWords = new(StringComparer.Ordinal)
     {
         "await", "break", "case", "catch", "class", "const", "continue", "debugger", "default",
         "delete", "do", "else", "enum", "export", "extends", "false", "finally", "for", "function",
@@ -34,6 +34,7 @@ public sealed partial class WebResourceInitSettings : WebResourceSettings
 
     [CommandOption("--template-version <TagOrCommit>")]
     [Description("Template tag or full commit SHA (default: current main)")]
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global -- bound by Spectre.Console.Cli via reflection.
     public string? TemplateVersion { get; init; }
 
     [CommandOption("--dgtp-connection <Name>")]
@@ -72,7 +73,7 @@ public sealed partial class WebResourceInitSettings : WebResourceSettings
         }
 
         if (!JavaScriptIdentifierRegex().IsMatch(Global) ||
-            ReservedJavaScriptWords.Contains(Global))
+            s_reservedJavaScriptWords.Contains(Global))
         {
             return "--global must be a non-reserved single JavaScript identifier.";
         }

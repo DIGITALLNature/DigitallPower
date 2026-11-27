@@ -15,19 +15,19 @@ public class WebResourceArchiveExtractorTests
             new TemplateArchiveFixture.FixtureEntry("LICENSE", "license"),
             new TemplateArchiveFixture.FixtureEntry("pnpm-lock.yaml", "lockfile"),
             new TemplateArchiveFixture.FixtureEntry("webpack.config.js", "marker stays in its own file"),
-            new TemplateArchiveFixture.FixtureEntry("assets/icon.bin", new byte[] { 0, 1, 2, 255 }));
+            new TemplateArchiveFixture.FixtureEntry("assets/icon.bin", [0, 1, 2, 255]));
         var staging = Directory.CreateTempSubdirectory();
         try
         {
             await new WebResourceArchiveExtractor().ExtractAsync(archive, staging.FullName, CancellationToken.None);
 
-            await Assert.That(File.ReadAllText(Path.Combine(staging.FullName, ".config", "local.json")))
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(staging.FullName, ".config", "local.json")))
                 .IsEqualTo("{}");
-            await Assert.That(File.ReadAllText(Path.Combine(staging.FullName, "LICENSE"))).IsEqualTo("license");
-            await Assert.That(File.ReadAllText(Path.Combine(staging.FullName, "pnpm-lock.yaml"))).IsEqualTo("lockfile");
-            await Assert.That(File.ReadAllText(Path.Combine(staging.FullName, "webpack.config.js")))
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(staging.FullName, "LICENSE"))).IsEqualTo("license");
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(staging.FullName, "pnpm-lock.yaml"))).IsEqualTo("lockfile");
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(staging.FullName, "webpack.config.js")))
                 .IsEqualTo("marker stays in its own file");
-            await Assert.That(File.ReadAllBytes(Path.Combine(staging.FullName, "assets", "icon.bin")))
+            await Assert.That(await File.ReadAllBytesAsync(Path.Combine(staging.FullName, "assets", "icon.bin")))
                 .IsEquivalentTo(new byte[] { 0, 1, 2, 255 });
             await Assert.That(Directory.Exists(Path.Combine(staging.FullName, "webresources-template-test")))
                 .IsFalse();

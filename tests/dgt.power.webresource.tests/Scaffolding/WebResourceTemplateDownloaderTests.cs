@@ -72,9 +72,10 @@ public class WebResourceTemplateDownloaderTests
     public async Task Download_RejectsCommitResponseWithoutSha()
     {
         using var client = CreateClient(_ => JsonResponse("{}"));
+        var downloader = new WebResourceTemplateDownloader(client);
 
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync(null, CancellationToken.None))
+                await downloader.DownloadAsync(null, CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("invalid template commit SHA");
@@ -116,9 +117,10 @@ public class WebResourceTemplateDownloaderTests
     public async Task Download_RejectsTagReferenceWithoutObject()
     {
         using var client = CreateClient(_ => JsonResponse("{}"));
+        var downloader = new WebResourceTemplateDownloader(client);
 
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync("v1.0", CancellationToken.None))
+                await downloader.DownloadAsync("v1.0", CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("invalid template tag reference");
@@ -179,8 +181,9 @@ public class WebResourceTemplateDownloaderTests
                 : new HttpResponseMessage(HttpStatusCode.NotFound);
         });
 
+        var downloader = new WebResourceTemplateDownloader(client);
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync("feature", CancellationToken.None))
+                await downloader.DownloadAsync("feature", CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("is a branch");
@@ -202,8 +205,9 @@ public class WebResourceTemplateDownloaderTests
             return new HttpResponseMessage(HttpStatusCode.NotFound);
         });
 
+        var downloader = new WebResourceTemplateDownloader(client);
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync("missing", CancellationToken.None))
+                await downloader.DownloadAsync("missing", CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("was not found");
@@ -225,8 +229,9 @@ public class WebResourceTemplateDownloaderTests
             return new HttpResponseMessage(HttpStatusCode.ServiceUnavailable);
         });
 
+        var downloader = new WebResourceTemplateDownloader(client);
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync(null, CancellationToken.None))
+                await downloader.DownloadAsync(null, CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("HTTP 503");
@@ -243,8 +248,9 @@ public class WebResourceTemplateDownloaderTests
             return response;
         });
 
+        var downloader = new WebResourceTemplateDownloader(client);
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync(null, CancellationToken.None))
+                await downloader.DownloadAsync(null, CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("rate limit");
@@ -265,8 +271,9 @@ public class WebResourceTemplateDownloaderTests
             return response;
         });
 
+        var downloader = new WebResourceTemplateDownloader(client);
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync(null, CancellationToken.None))
+                await downloader.DownloadAsync(null, CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("20 MiB limit");
@@ -287,8 +294,9 @@ public class WebResourceTemplateDownloaderTests
             return response;
         });
 
+        var downloader = new WebResourceTemplateDownloader(client);
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync(null, CancellationToken.None))
+                await downloader.DownloadAsync(null, CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("20 MiB limit");
@@ -307,8 +315,9 @@ public class WebResourceTemplateDownloaderTests
             throw new HttpRequestException("connection reset");
         });
 
+        var downloader = new WebResourceTemplateDownloader(client);
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client).DownloadAsync(null, CancellationToken.None))
+                await downloader.DownloadAsync(null, CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("Could not reach GitHub");
@@ -323,9 +332,9 @@ public class WebResourceTemplateDownloaderTests
             return new HttpResponseMessage(HttpStatusCode.OK);
         });
 
+        var downloader = new WebResourceTemplateDownloader(client, TimeSpan.FromMilliseconds(10));
         var exception = await Assert.That(async () =>
-                await new WebResourceTemplateDownloader(client, TimeSpan.FromMilliseconds(10))
-                    .DownloadAsync(null, CancellationToken.None))
+                await downloader.DownloadAsync(null, CancellationToken.None))
             .Throws<WebResourceScaffoldingException>();
 
         await Assert.That(exception!.Message).Contains("timed out");

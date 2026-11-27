@@ -11,6 +11,7 @@ namespace dgt.power.webresource.Scaffolding;
     Justification = "The exception is internal and is translated to command diagnostics.")]
 internal sealed class WebResourceScaffoldingException : Exception
 {
+    // ReSharper disable once UnusedMember.Global -- required by standard exception constructor conventions.
     public WebResourceScaffoldingException()
     {
     }

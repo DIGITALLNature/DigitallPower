@@ -10,8 +10,8 @@ namespace dgt.power.webresource.Scaffolding;
 internal static partial class WebResourceTemplateCustomizer
 {
     private const string UnspecifiedValue = "REPLACE_ME";
-    private static readonly UTF8Encoding StrictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
-    private static readonly HashSet<string> JavaScriptExtensions = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly UTF8Encoding s_strictUtf8 = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+    private static readonly HashSet<string> s_javaScriptExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".js",
         ".mjs",
@@ -21,7 +21,7 @@ internal static partial class WebResourceTemplateCustomizer
         ".jsx"
     };
 
-    private static readonly IReadOnlyDictionary<string, Func<WebResourceProjectValues, string>> Replacements =
+    private static readonly IReadOnlyDictionary<string, Func<WebResourceProjectValues, string>> s_replacements =
         new Dictionary<string, Func<WebResourceProjectValues, string>>(StringComparer.Ordinal)
         {
             ["__DGTP_PROJECT_NAME__"] = values => values.Name,
@@ -58,7 +58,7 @@ internal static partial class WebResourceTemplateCustomizer
             }
 
             files.Add((path, content));
-            foreach (var marker in Replacements.Keys)
+            foreach (var marker in s_replacements.Keys)
             {
                 if (content.Contains(marker, StringComparison.Ordinal))
                 {
@@ -67,7 +67,7 @@ internal static partial class WebResourceTemplateCustomizer
             }
         }
 
-        var missingMarkers = Replacements.Keys
+        var missingMarkers = s_replacements.Keys
             .Where(marker => !foundMarkers.Contains(marker))
             .Order(StringComparer.Ordinal)
             .ToArray();
@@ -84,7 +84,7 @@ internal static partial class WebResourceTemplateCustomizer
             cancellationToken.ThrowIfCancellationRequested();
             var customized = ReservedMarkerRegex().Replace(
                 content,
-                match => Replacements.TryGetValue(match.Value, out var valueFactory)
+                match => s_replacements.TryGetValue(match.Value, out var valueFactory)
                     ? EscapeValue(path, content, match, valueFactory(values))
                     : match.Value);
 
@@ -109,7 +109,7 @@ internal static partial class WebResourceTemplateCustomizer
         foreach (var (path, content) in customizedFiles)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await File.WriteAllTextAsync(path, content, StrictUtf8, cancellationToken);
+            await File.WriteAllTextAsync(path, content, s_strictUtf8, cancellationToken);
         }
     }
 
@@ -123,7 +123,7 @@ internal static partial class WebResourceTemplateCustomizer
 
         try
         {
-            return StrictUtf8.GetString(bytes);
+            return s_strictUtf8.GetString(bytes);
         }
         catch (DecoderFallbackException)
         {
@@ -201,7 +201,7 @@ internal static partial class WebResourceTemplateCustomizer
     private static bool IsSafeUnquotedCharacter(char character) =>
         char.IsAsciiLetterOrDigit(character) || character is '_' or '-' or '.';
 
-    private static bool IsJavaScriptText(string extension) => JavaScriptExtensions.Contains(extension);
+    private static bool IsJavaScriptText(string extension) => s_javaScriptExtensions.Contains(extension);
 
     private static bool IsSupportedDoubleQuotedText(string extension) =>
         IsJavaScriptText(extension) ||
