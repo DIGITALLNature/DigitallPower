@@ -33,6 +33,7 @@ context: |
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
 githubCopilot:
   cloudAgent: true
+skillsScope: project
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.

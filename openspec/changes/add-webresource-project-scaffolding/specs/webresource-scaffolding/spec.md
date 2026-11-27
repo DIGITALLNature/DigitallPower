@@ -8,12 +8,12 @@ Let users create a customized, buildable Dataverse webresource project from a se
 
 ### Requirement: Webresource initialization is a discoverable command
 
-The CLI MUST expose `webresource init <directory>` with required `--name` and `--global` options and optional `--template-version`, `--solution`, and `--publisher-prefix` options. Help and shell completion MUST expose the same command and options.
+The CLI MUST expose `webresource init <directory>` with required `--name` and `--global` options and optional `--template-version`, `--dgtp-connection`, `--solution`, and `--publisher-prefix` options. Help and shell completion MUST expose the same command and options.
 
 #### Scenario: Initialization help is requested
 
 - **WHEN** a user invokes `dgtp webresource init --help`
-- **THEN** help describes the destination, required package name and JavaScript global, optional template version, and optional deployment defaults
+- **THEN** help describes the destination, required package name and JavaScript global, optional template version, and optional local workflow defaults
 - **AND** help succeeds without downloading a template or opening Dataverse
 
 ### Requirement: Template downloads default to main with explicit revision overrides
@@ -59,23 +59,35 @@ The command MUST require an unscoped lowercase npm-compatible package name and a
 - **THEN** initialization fails before any template download or destination write
 - **AND** the diagnostic identifies the invalid option
 
-### Requirement: Deployment defaults are optional and explicit
+### Requirement: Local workflow defaults are optional and explicit
 
-The command MUST accept `--solution` and `--publisher-prefix` independently as generated deployment defaults and apply supplied values consistently in deployment scripts and examples. Omitted values MUST NOT retain sample targets. Deployment scripts MUST require missing values and connection selection at execution time before any Dataverse operation. Omitting these options MUST NOT prevent generation or frontend builds.
+The command MUST accept `--dgtp-connection`, `--solution`, and `--publisher-prefix` independently as generated local workflow defaults. Scripts and examples MUST use supplied values consistently; omitted values MUST become `REPLACE_ME` placeholders rather than sample targets. Scripts MUST allow overrides. Omitting defaults MUST NOT prevent generation or frontend builds.
 
-#### Scenario: Deployment defaults are supplied
+#### Scenario: All local workflow defaults are supplied
 
-- **WHEN** initialization receives `--solution ContosoCore --publisher-prefix contoso`
-- **THEN** the generated push script and corresponding deployment examples use those values
-- **AND** neither value is derived from the package name or JavaScript global
-- **AND** scaffolding does not select or persist a local connection
+- **WHEN** initialization receives `--dgtp-connection dev --solution ContosoCore --publisher-prefix contoso`
+- **THEN** the generated model-generation and push scripts use the supplied connection name by default and the push script uses the supplied deployment defaults
+- **AND** script arguments can override those defaults at execution time
+- **AND** no value is derived from the package name or JavaScript global
+- **AND** scaffolding does not resolve, create, or select a local connection
 
-#### Scenario: Some or all deployment defaults are omitted
+#### Scenario: Some or all local workflow defaults are omitted
 
-- **WHEN** initialization omits either or both deployment options
-- **THEN** generation succeeds without using sample solution or publisher-prefix defaults
+- **WHEN** initialization omits any of the three local workflow defaults
+- **THEN** generation succeeds with `REPLACE_ME` for each omitted connection, solution, or publisher-prefix value rather than a sample target
 - **AND** the project remains buildable without deployment setup
-- **AND** the generated push script requires missing deployment values and connection selection when invoked, before contacting Dataverse
+- **AND** users must replace or override placeholders before using the affected workflow
+- **AND** scripts do not treat the placeholder as a special validation error and can pass it to dgtp
+
+### Requirement: Connection defaults are separate from invocation credentials
+
+`--dgtp-connection` MUST supply only the shared connection name. The inherited `--connection` MUST NOT populate that default, and connection strings and credentials MUST NOT be embedded.
+
+#### Scenario: The inherited connection option is supplied
+
+- **WHEN** initialization receives `--connection` without `--dgtp-connection`
+- **THEN** the inherited option does not become a generated project default
+- **AND** initialization does not resolve or select that connection
 
 ### Requirement: Only compatible templates are customized
 
@@ -114,11 +126,11 @@ Before replacement, the command MUST check that every required marker configured
 - **THEN** initialization fails before publishing a project
 - **AND** the diagnostic identifies the unresolved marker and the need to coordinate template and dgtp support
 
-#### Scenario: Deployment defaults are not supplied
+#### Scenario: Local workflow defaults are not supplied
 
-- **WHEN** optional solution or publisher-prefix values are omitted
-- **THEN** their recognized markers are replaced with empty defaults rather than left unresolved
-- **AND** generated scripts continue to require missing values at execution time
+- **WHEN** optional connection, solution, or publisher-prefix values are omitted
+- **THEN** their recognized markers are replaced with `REPLACE_ME` rather than left unresolved
+- **AND** explicitly supplied defaults are retained independently
 
 #### Scenario: Manual setup reminders remain
 
@@ -133,6 +145,12 @@ Initialization MUST accept only an absent destination or an existing empty direc
 
 - **WHEN** a valid project is initialized into an absent or empty destination directory
 - **THEN** the generated project appears directly in that directory without a repository-archive wrapper folder
+
+#### Scenario: An ancestor is a symbolic link
+
+- **WHEN** an absent or empty destination is inside a directory reached through a symbolic link
+- **THEN** initialization can create the project in that destination
+- **AND** a symbolic link used as the destination itself is rejected
 
 #### Scenario: Existing content is present
 
@@ -183,14 +201,20 @@ Initialization MUST NOT require Git, PAC, Node.js, pnpm, or a Dataverse connecti
 
 ### Requirement: Generated projects have actionable onboarding
 
-Successful initialization MUST identify the output directory and resolved template commit, show dependency-install and production-build commands, and direct users to the generated `README.md` for additional configuration and setup. That README MUST distinguish frontend build readiness from optional model-generation, local-deployment, and CI setup. No generated deployment workflow MUST run until the user explicitly configures and enables it.
+Successful initialization MUST report the destination and resolved commit, show install and build commands, and direct users to the generated `README.md`. That README MUST distinguish the essential starter from the local workflow configured with all three optional defaults and explain local prerequisites and optional CI setup. Automatic CI triggers MUST be disabled by default.
 
 #### Scenario: A project is generated successfully
 
 - **WHEN** initialization completes
 - **THEN** output explains how to enter the project, install dependencies, and run its production build
 - **AND** output explicitly directs the user to the generated `README.md` for additional configuration and setup steps
-- **AND** that README documents supplied deployment defaults and remaining connection, deployment, model-scope, and CI setup without treating them as prerequisites for a frontend build
+- **AND** that README documents supplied local workflow defaults, script overrides, local connection prerequisites, and remaining model-scope and CI setup without treating them as prerequisites for a frontend build
+
+#### Scenario: A user considers the optional pipeline
+
+- **WHEN** a user configures or manually runs the generated pipeline
+- **THEN** the README explains that automatic triggers are disabled by default
+- **AND** it warns that a manual run on `main` attempts deployment after a successful build, so the target must be configured and reviewed first
 
 #### Scenario: The prepared template is validated end to end
 

@@ -1,6 +1,53 @@
 # `webresource` — Manage webresources
 
-Commands for deploying Dataverse webresources.
+Commands for creating and deploying Dataverse webresource projects.
+
+## `init` — Create a webresource project
+
+Creates a local project from the DIGITALL webresource template. Initialization downloads the
+selected template revision and customizes the project files; it does not install dependencies,
+generate Dataverse models, select a connection, or deploy resources.
+
+### Usage
+
+```bash
+dgtp webresource init ./contoso-webresources \
+  --name contoso-webresources \
+  --global Contoso
+
+dgtp webresource init ./contoso-webresources \
+  --name contoso-webresources \
+  --global Contoso \
+  --template-version v1.2.0 \
+  --dgtp-connection dev \
+  --solution ContosoCore \
+  --publisher-prefix contoso
+```
+
+### Options
+
+| Option | Required | Behavior |
+|--------|----------|----------|
+| `<Directory>` | Yes | Absent or empty destination directory for the generated project |
+| `--name` | Yes | Unscoped lowercase npm package name |
+| `--global` | Yes | Single JavaScript identifier exposed by generated bundles |
+| `--template-version` | No | Existing template tag or full commit SHA; defaults to current `main` |
+| `--dgtp-connection` | No | Shared dgtp connection name used as a default in generated local scripts |
+| `--solution` | No | Explicit default solution unique name for deployment scripts |
+| `--publisher-prefix` | No | Explicit default publisher prefix for deployment scripts |
+
+The command reports its progress while resolving, downloading, and creating the project. On success,
+it reports the generated directory and exact template commit, then prints
+commands to install dependencies and build the frontend. Follow the generated project's
+`README.md` for additional setup. The required options create a buildable starter. Supplying all
+three local workflow defaults configures the generated scripts; developers still need to install
+dependencies, configure the named connection locally, and adapt their models and code. Omitted
+values become `REPLACE_ME` in the generated project. Replace them or override them with script
+arguments before running scripts or configuring the pipeline. Scripts can pass `REPLACE_ME` to
+dgtp if it is not replaced.
+`--dgtp-connection` sets the shared project default; the inherited `--connection` does not. See the
+[webresource scaffolding guide](../../guides/webresource-scaffolding.md) for revision selection,
+destination restrictions, and recovery from template compatibility errors.
 
 ## `push` — Deploy webresources
 

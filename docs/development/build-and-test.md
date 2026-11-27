@@ -28,3 +28,9 @@ The resulting `.nupkg` is placed in the `packages/` folder and can be installed 
 ```bash
 dotnet tool install --global --add-source ./packages dgt.power --version <version>
 ```
+
+## Webresource scaffolding acceptance
+
+The template-specific, opt-in acceptance procedure is documented in the
+[webresource scaffolding developer guide](webresource-scaffolding.md). It is separate from routine
+.NET builds and tests.

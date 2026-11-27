@@ -332,10 +332,10 @@ Do not create a proposal for a localized bug fix, test-only or documentation-onl
 ### Workflow
 
 1. Read the relevant main specs with `pnpm exec openspec list --specs` and inspect the implementation, tests, schemas, and docs that define current behavior.
-2. For unclear or broad work, explore first. Otherwise create a proposal with `/opsx-propose`; include scope, affected capabilities, design constraints, and test/validation tasks.
-3. Review the proposal before implementation. Implement only after the user authorizes the work, using `/opsx-apply` where available.
+2. For unclear or broad work, explore first. Otherwise create a proposal with the `openspec-propose` skill; include scope, affected capabilities, design constraints, and test/validation tasks.
+3. Review the proposal before implementation. Implement only after the user authorizes the work, using the `openspec-apply-change` skill where available.
 4. Update the main specs to match the implemented behavior, run focused tests and `pnpm exec openspec validate --all`, and submit the implementation PR. Keep the change active while the PR is open, even when all tasks and checks are complete.
-5. Archive with `/opsx-archive` only after a stable GitHub release containing the implementation has been published from `main`. A merge into `beta` (including beta preparation for a later main release), a merge into `main` before release, or a beta/prerelease publication is not sufficient. Before any archive-related write:
+5. Archive with the `openspec-archive-change` skill only after a stable GitHub release containing the implementation has been published from `main`. A merge into `beta` (including beta preparation for a later main release), a merge into `main` before release, or a beta/prerelease publication is not sufficient. Before any archive-related write:
    - Verify the implementation PR belongs to this change and has `state: MERGED`, a non-null `mergedAt`, and `baseRefName: main`, for example with `gh pr view <number-or-url> --repo DIGITALLNature/DigitallPower --json state,mergedAt,baseRefName,mergeCommit,url`.
    - Verify a GitHub release containing that implementation is published and is neither a draft nor a prerelease, for example with `gh release view <tag> --repo DIGITALLNature/DigitallPower --json isDraft,isPrerelease,publishedAt,tagName`.
    - Fetch the latest `main` and release tag, then verify the PR merge commit is an ancestor of the release tag and the release tag commit is reachable from `origin/main`.

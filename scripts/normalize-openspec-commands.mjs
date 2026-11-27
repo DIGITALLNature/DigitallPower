@@ -3,8 +3,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const generatedDirectories = ["agents", "prompts", "skills"].map((directory) =>
-    join(repositoryRoot, ".github", directory));
+const skillsDirectory = join(repositoryRoot, ".agents", "skills");
 const commands = [
     "--version",
     "context",
@@ -36,12 +35,12 @@ const localInstallGuidance =
     "Do not install OpenSpec globally; use the repository-local CLI through pnpm.";
 const archiveGateFiles = new Set([
     ".github/agents/openspec.agent.md",
-    ".github/prompts/opsx-apply.prompt.md",
-    ".github/prompts/opsx-archive.prompt.md",
-    ".github/prompts/opsx-update.prompt.md",
-    ".github/skills/openspec-apply-change/SKILL.md",
-    ".github/skills/openspec-archive-change/SKILL.md",
-    ".github/skills/openspec-update-change/SKILL.md"
+    ".agents/skills/openspec/SKILL.md",
+    ".agents/skills/openspec-apply-change/SKILL.md",
+    ".agents/skills/openspec-archive-change/SKILL.md",
+    ".agents/skills/openspec-bulk-archive-change/SKILL.md",
+    ".agents/skills/openspec-update-change/SKILL.md",
+    ".agents/skills/openspec/references/without-skills.md"
 ]);
 const archiveGate = `<!-- digitallpower:post-merge-archive -->
 ## Repository archive gate (required)
@@ -91,30 +90,53 @@ async function findMarkdownFiles(directory) {
     return files;
 }
 
+let skillEntries;
+try {
+    skillEntries = await readdir(skillsDirectory, { withFileTypes: true });
+} catch (error) {
+    if (error.code !== "ENOENT") {
+        throw error;
+    }
+    skillEntries = [];
+}
+
+const generatedFiles = [];
+for (const entry of skillEntries) {
+    if (entry.isDirectory() && (entry.name === "openspec" || entry.name.startsWith("openspec-"))) {
+        generatedFiles.push(...await findMarkdownFiles(join(skillsDirectory, entry.name)));
+    }
+}
+const agentFile = join(repositoryRoot, ".github", "agents", "openspec.agent.md");
+if ((await findMarkdownFiles(dirname(agentFile))).includes(agentFile)) {
+    generatedFiles.push(agentFile);
+}
+
 let updatedCount = 0;
-for (const directory of generatedDirectories) {
-    for (const filePath of await findMarkdownFiles(directory)) {
-        const content = await readFile(filePath, "utf8");
-        let normalized = content
-            .replace(commandPattern, "pnpm exec openspec ")
-            .replaceAll(globalInstallFallback, localInstallGuidance);
+for (const filePath of generatedFiles) {
+    const content = await readFile(filePath, "utf8");
+    let normalized = content
+        .replace(commandPattern, "pnpm exec openspec ")
+        .replaceAll(globalInstallFallback, localInstallGuidance);
 
-        if (archiveGateFiles.has(relative(repositoryRoot, filePath).replaceAll("\\", "/"))) {
-            normalized = normalized.replace(
-                /<!-- digitallpower:post-merge-archive -->[\s\S]*?<!-- \/digitallpower:post-merge-archive -->\r?\n*/g,
-                ""
-            );
-            const frontmatter = /^(---\r?\n[\s\S]*?\r?\n---\r?\n)\s*/;
-            if (!frontmatter.test(normalized)) {
-                throw new Error(`Missing YAML frontmatter in ${filePath}`);
-            }
+    const relativePath = relative(repositoryRoot, filePath).replaceAll("\\", "/");
+    if (archiveGateFiles.has(relativePath)) {
+        normalized = normalized.replace(
+            /<!-- digitallpower:post-merge-archive -->[\s\S]*?<!-- \/digitallpower:post-merge-archive -->\r?\n*/g,
+            ""
+        );
+        const frontmatter = /^(---\r?\n[\s\S]*?\r?\n---\r?\n)\s*/;
+        if (relativePath.endsWith("/references/without-skills.md")) {
+            normalized = `${archiveGate}\n\n${normalized}`;
+        } else if (frontmatter.test(normalized)) {
             normalized = normalized.replace(frontmatter, `$1\n${archiveGate}\n\n`);
+        } else {
+            throw new Error(`Missing YAML frontmatter in ${filePath}`);
         }
+    }
 
-        if (normalized !== content) {
-            await writeFile(filePath, normalized);
-            updatedCount++;
-        }
+    if (normalized !== content) {
+        await writeFile(filePath, normalized);
+        updatedCount++;
     }
 }
 
