@@ -14,7 +14,8 @@ dgtp webresource init ./contoso-webresources \
 ```
 
 The destination must not exist or must be an empty directory. Hidden files count as content; the
-command will not merge with or overwrite an existing project.
+command will not merge with or overwrite an existing project. The destination itself cannot be a
+symbolic link, but its parent directories may contain symbolic links.
 
 `--name` is an unscoped, lowercase npm package name. `--global` is a single, non-reserved JavaScript
 identifier exposed by the generated bundles. The command reports the destination and exact template

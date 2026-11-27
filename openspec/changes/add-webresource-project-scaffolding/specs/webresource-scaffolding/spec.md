@@ -146,6 +146,12 @@ Initialization MUST accept only an absent destination or an existing empty direc
 - **WHEN** a valid project is initialized into an absent or empty destination directory
 - **THEN** the generated project appears directly in that directory without a repository-archive wrapper folder
 
+#### Scenario: An ancestor is a symbolic link
+
+- **WHEN** an absent or empty destination is inside a directory reached through a symbolic link
+- **THEN** initialization can create the project in that destination
+- **AND** a symbolic link used as the destination itself is rejected
+
 #### Scenario: Existing content is present
 
 - **WHEN** the destination contains a file, including only a hidden file

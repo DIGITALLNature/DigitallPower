@@ -133,18 +133,51 @@ public class WebResourceProjectScaffolderTests
                         Values,
                         CancellationToken.None))
                 .Throws<WebResourceScaffoldingException>();
-            var ancestorFailure = await Assert.That(async () =>
-                    await scaffolder.CreateAsync(
-                        Path.Combine(link, "project"),
-                        null,
-                        Values,
-                        CancellationToken.None))
-                .Throws<WebResourceScaffoldingException>();
-
             await Assert.That(destinationFailure!.Message).Contains("symbolic link or reparse point");
-            await Assert.That(ancestorFailure!.Message).Contains("symbolic link or reparse point");
             await Assert.That(await File.ReadAllTextAsync(Path.Combine(target.FullName, "existing.txt")))
                 .IsEqualTo(content);
+        }
+        finally
+        {
+            parent.Delete(recursive: true);
+        }
+    }
+
+    [Test]
+    [Arguments(false)]
+    [Arguments(true)]
+    public async Task Create_AllowsSymlinkedAncestor(bool createDestination)
+    {
+        var parent = Directory.CreateTempSubdirectory();
+        try
+        {
+            var target = Directory.CreateDirectory(Path.Combine(parent.FullName, "target"));
+            var link = Path.Combine(parent.FullName, "link");
+            try
+            {
+                Directory.CreateSymbolicLink(link, target.FullName);
+            }
+            catch (Exception exception) when (
+                exception is UnauthorizedAccessException or IOException or PlatformNotSupportedException)
+            {
+                return;
+            }
+
+            var destination = Path.Combine(link, "project");
+            if (createDestination)
+            {
+                Directory.CreateDirectory(destination);
+            }
+
+            using var client = CreateTemplateClient();
+            await new WebResourceProjectScaffolder(client).CreateAsync(
+                destination, null, Values, CancellationToken.None);
+
+            await Assert.That(await File.ReadAllTextAsync(Path.Combine(target.FullName, "project", "README.md")))
+                .IsEqualTo("contoso-webresources Contoso");
+            await Assert.That(Directory.EnumerateFileSystemEntries(target.FullName)
+                    .Any(path => Path.GetFileName(path).StartsWith(".dgtp-webresource-", StringComparison.Ordinal)))
+                .IsFalse();
         }
         finally
         {

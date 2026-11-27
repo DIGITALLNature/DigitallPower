@@ -28,7 +28,7 @@ internal sealed class WebResourceProjectScaffolder(HttpClient httpClient)
             var downloaded = await _downloader.DownloadAsync(templateVersion, cancellationToken, progress);
             progress?.Invoke(new(WebResourceScaffoldingProgress.Stage.Creating));
             Directory.CreateDirectory(parent);
-            EnsureNoReparsePoints(target.Path);
+            ValidateDestinationPath(target.Path);
             await using (var marker = new FileStream(
                              ownershipMarker,
                              FileMode.CreateNew,
@@ -134,7 +134,7 @@ internal sealed class WebResourceProjectScaffolder(HttpClient httpClient)
             throw new WebResourceScaffoldingException("The destination cannot be a filesystem root.");
         }
 
-        EnsureNoReparsePoints(fullPath);
+        ValidateDestinationPath(fullPath);
         if (File.Exists(fullPath))
         {
             throw new WebResourceScaffoldingException($"The destination '{fullPath}' is a file.");
@@ -150,7 +150,7 @@ internal sealed class WebResourceProjectScaffolder(HttpClient httpClient)
         return new Destination(fullPath, exists);
     }
 
-    private static void EnsureNoReparsePoints(string path)
+    private static void ValidateDestinationPath(string path)
     {
         var root = Path.GetPathRoot(path)!;
         var current = Path.TrimEndingDirectorySeparator(Path.GetFullPath(path));
@@ -158,15 +158,15 @@ internal sealed class WebResourceProjectScaffolder(HttpClient httpClient)
         {
             if (TryGetAttributes(current, out var attributes))
             {
-                if ((attributes & FileAttributes.ReparsePoint) != 0)
+                var isDestination = string.Equals(current, Path.TrimEndingDirectorySeparator(path),
+                    OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+                if (isDestination && (attributes & FileAttributes.ReparsePoint) != 0)
                 {
                     throw new WebResourceScaffoldingException(
-                        $"The destination path contains a symbolic link or reparse point: '{current}'.");
+                        $"The destination is a symbolic link or reparse point: '{current}'.");
                 }
 
-                if (!string.Equals(current, Path.TrimEndingDirectorySeparator(path),
-                        OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) &&
-                    (attributes & FileAttributes.Directory) == 0)
+                if (!isDestination && (attributes & FileAttributes.Directory) == 0 && !Directory.Exists(current))
                 {
                     throw new WebResourceScaffoldingException(
                         $"The destination path has a non-directory ancestor: '{current}'.");

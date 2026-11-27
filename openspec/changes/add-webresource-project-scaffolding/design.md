@@ -105,7 +105,7 @@ Validate arguments and destination
     --> Report next steps
 ```
 
-Create staging beside the target, on the same filesystem, and strip only the single expected archive root. Validate destination ancestors for reparse points/symlinks and reject unsafe destinations. Before extraction, normalize all entry paths for the destination platform; reject absolute/traversal paths, links, duplicate or colliding paths, and platform-invalid entries. Preserve dotfiles such as the local tool manifest.
+Create staging beside the target, on the same filesystem, and strip only the single expected archive root. Allow symlinked destination ancestors, but reject a symlink as the destination itself and reject non-directory ancestors. Before extraction, normalize all entry paths for the destination platform; reject absolute/traversal paths, links, duplicate or colliding paths, and platform-invalid entries. Preserve dotfiles such as the local tool manifest.
 
 Use bounded streaming downloads, cancellation-aware I/O, and finite timeouts. Initial internal limits are 20 MiB compressed, 100 MiB total expanded data, and 10,000 entries; enforce actual streamed sizes as well as archive metadata. Keep archive/extraction failures outside the destination.
 
