@@ -2,16 +2,17 @@
 
 Use [OpenSpec](https://github.com/Fission-AI/OpenSpec) for significant changes to public CLI/API
 behavior, configuration and schemas, architecture, module boundaries, or behavior spanning
-capabilities. Start with `/opsx-propose`; after review, implement with `/opsx-apply`, update the
-main specs, validate them, and archive the completed change. Small fixes, test-only changes, and
-behavior-preserving refactors do not require a proposal. The CLI is installed locally with pnpm
-and is run as `pnpm exec openspec`.
+capabilities. Use the `openspec-propose` skill; after review, implement with `openspec-apply-change`
+and update and validate the main specs. Keep the change active until a stable release on `main`
+contains the implementation; verify the release and commit ancestry before archiving. Small fixes,
+test-only changes, and behavior-preserving refactors do not require a proposal. The CLI is installed
+locally with pnpm and is run as `pnpm exec openspec`.
 
 Current requirements live in [`openspec/specs/`](../../openspec/specs/). Durable design rationale lives in
 [`docs/architecture/decisions/](../architecture/decisions/). User-facing documentation lives in
 [`docs/](../README.md); implementation details belong beside their code and tests.
-Run `pnpm run openspec:update` when refreshing generated Copilot files; it restores local `pnpm exec`
-CLI examples after OpenSpec updates them.
+Run `pnpm run openspec:update` to refresh generated skills in `.agents/skills/`; it restores local
+`pnpm exec` CLI examples and the stable-release archive gate after OpenSpec updates them.
 
 GitHub Copilot cloud agent support is opt-in through `githubCopilot.cloudAgent` in
 [`openspec/config.yaml`](../../openspec/config.yaml). Its setup workflow installs the locked pnpm

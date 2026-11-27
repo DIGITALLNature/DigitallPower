@@ -3,13 +3,13 @@
   "devDependencies": {
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
-    "@droidsolutions-oss/semantic-release-nuget": "^2.1.1",
-    "@droidsolutions-oss/semantic-release-update-file": "^2.0.0",
-    "@fission-ai/openspec": "^1.15.0",
+    "@droidsolutions-oss/semantic-release-nuget": "^2.1.2",
+    "@droidsolutions-oss/semantic-release-update-file": "^2.0.2",
+    "@fission-ai/openspec": "^2.2.0",
     "@semantic-release/changelog": "github:semantic-release/changelog",
     "@semantic-release/git": "github:semantic-release/git",
     "husky": "^9.1.7",
-    "semantic-release": "^25.0.9",
+    "semantic-release": "^26.0.1",
     "typescript": "7.0.2"
   },
   "scripts": {
@@ -20,12 +20,12 @@
   "devEngines": {
     "runtime": {
       "name": "node",
-      "version": "24",
+      "version": "26.13.1",
       "onFail": "download"
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "12.15.0",
+      "version": "12.23.0",
       "onFail": "error"
     }
   },
