@@ -77,11 +77,7 @@ the target before manually running a deployment workflow.
 
 ## Template compatibility errors
 
-The template and `dgtp` share reserved `__DGTP_*__` markers. Initialization checks that every
-required marker is present, replaces all occurrences in supported UTF-8 text files, and rejects any
-unknown reserved marker before publishing the project. Ordinary `TODO` reminders are not scaffolding
-markers. Binary files and unrelated text are left unchanged.
-
-A missing or unsupported marker means the selected template revision and `dgtp` do not agree.
-Choose a compatible revision or update the template and `dgtp` marker support together; do not
-manually edit the generated project to conceal a compatibility error.
+If initialization reports a template compatibility error, try a known-compatible template tag or
+commit with `--template-version`. If no compatible revision is available, use a `dgtp` version that
+supports the template or contact the template or CLI maintainer. Do not edit generated files to
+bypass the error; the resulting project may be incomplete.

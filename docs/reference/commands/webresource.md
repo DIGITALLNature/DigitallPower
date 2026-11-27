@@ -36,18 +36,13 @@ dgtp webresource init ./contoso-webresources \
 | `--solution` | No | Explicit default solution unique name for deployment scripts |
 | `--publisher-prefix` | No | Explicit default publisher prefix for deployment scripts |
 
-The command reports its progress while resolving, downloading, and creating the project. On success,
-it reports the generated directory and exact template commit, then prints
-commands to install dependencies and build the frontend. Follow the generated project's
-`README.md` for additional setup. The required options create a buildable starter. Supplying all
-three local workflow defaults configures the generated scripts; developers still need to install
-dependencies, configure the named connection locally, and adapt their models and code. Omitted
-values become `REPLACE_ME` in the generated project. Replace them or override them with script
-arguments before running scripts or configuring the pipeline. Scripts can pass `REPLACE_ME` to
-dgtp if it is not replaced.
-`--dgtp-connection` sets the shared project default; the inherited `--connection` does not. See the
-[webresource scaffolding guide](../../guides/webresource-scaffolding.md) for revision selection,
-destination restrictions, and recovery from template compatibility errors.
+On success, dgtp reports the generated directory and selected template commit, then prints commands
+to install dependencies and build the frontend. Follow the generated project's `README.md` for
+remaining setup. Replace or override `REPLACE_ME` values before running generated scripts or the
+pipeline. `--dgtp-connection` sets the shared default for generated scripts; `--connection` applies
+only to the current dgtp invocation. See the [webresource scaffolding
+guide](../../guides/webresource-scaffolding.md) for revision selection, optional defaults, and
+template compatibility errors.
 
 ## `push` — Deploy webresources
 
