@@ -1,3 +1,9 @@
+# [3.0.0-beta.23](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.22...v3.0.0-beta.23) (2026-11-27)
+
+### Features
+
+* **webresource:** scaffold webresource projects ([#242](https://github.com/DIGITALLNature/DigitallPower/issues/242)) ([5b86d75](https://github.com/DIGITALLNature/DigitallPower/commit/5b86d75a0d9d91c489f6e8e51e51a588946c0053))
+
 # [3.0.0-beta.22](https://github.com/DIGITALLNature/DigitallPower/compare/v3.0.0-beta.21...v3.0.0-beta.22) (2026-11-12)
 
 

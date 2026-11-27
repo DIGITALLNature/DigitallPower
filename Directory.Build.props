@@ -19,9 +19,9 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.0.0-beta.22</Version>
-    <InformationalVersion>3.0.0-beta.22</InformationalVersion>
-    <RepositoryCommit>b989ae85b257ed939cf5b8b027b6c2fdb869fec5</RepositoryCommit>
+    <Version>3.0.0-beta.23</Version>
+    <InformationalVersion>3.0.0-beta.23</InformationalVersion>
+    <RepositoryCommit>5b86d75a0d9d91c489f6e8e51e51a588946c0053</RepositoryCommit>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
